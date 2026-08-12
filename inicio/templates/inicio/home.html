@@ -1,0 +1,2351 @@
+{% extends "base.html" %}
+
+{% block title %}
+Início | AgroIA Moxico
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+  /* =========================================================
+   ANIMAÇÕES GLOBAIS
+========================================================= */
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(35px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+  @keyframes fadeLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+
+  @keyframes fadeRight {
+    from {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+
+  @keyframes floating {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+
+  @keyframes pulse {
+
+    0% {
+      transform: scale(1);
+      opacity: .8;
+    }
+
+    50% {
+      transform: scale(1.15);
+      opacity: .4;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: .8;
+    }
+  }
+
+
+  @keyframes rotateSlow {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+
+  /* =========================================================
+   HERO
+========================================================= */
+
+  .hero {
+    position: relative;
+    min-height: 720px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    isolation: isolate;
+    background: #0c3825;
+  }
+
+
+  /* =========================================================
+   SLIDER
+========================================================= */
+
+  .hero-slides {
+    position: absolute;
+    inset: 0;
+    z-index: -5;
+  }
+
+
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+
+    background-size: cover;
+    background-position: center;
+
+    opacity: 0;
+
+    transform: scale(1.10);
+
+    transition:
+      opacity 1.4s ease,
+      transform 8s ease;
+
+    animation: heroImageZoom 8s ease-in-out infinite;
+  }
+
+
+  .hero-slide.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+
+  @keyframes heroImageZoom {
+
+    0% {
+      transform: scale(1.08);
+    }
+
+    50% {
+      transform: scale(1.02);
+    }
+
+    100% {
+      transform: scale(1.08);
+    }
+  }
+
+
+  /* =========================================================
+   IMAGENS EXTERNAS
+========================================================= */
+
+  .hero-slide:nth-child(1) {
+    background-image:
+      url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=90");
+  }
+
+
+  .hero-slide:nth-child(2) {
+    background-image:
+      url("https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=2200&q=90");
+  }
+
+
+  .hero-slide:nth-child(3) {
+    background-image:
+      url("https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?auto=format&fit=crop&w=2200&q=90");
+  }
+
+
+  .hero-slide:nth-child(4) {
+    background-image:
+      url("https://images.unsplash.com/photo-1523742810424-1f1a9a1f1c1d?auto=format&fit=crop&w=2200&q=90");
+  }
+
+
+  /* =========================================================
+   OVERLAY
+========================================================= */
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    z-index: -3;
+
+    background:
+      linear-gradient(90deg,
+        rgba(4, 36, 23, .96) 0%,
+        rgba(7, 61, 38, .88) 35%,
+        rgba(8, 70, 44, .55) 65%,
+        rgba(3, 31, 20, .25) 100%);
+  }
+
+
+  /* =========================================================
+   ELEMENTOS DECORATIVOS
+========================================================= */
+
+  .hero-decoration {
+    position: absolute;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+
+  .hero-circle {
+    width: 480px;
+    height: 480px;
+
+    right: -220px;
+    top: -180px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, .12);
+
+    animation: rotateSlow 35s linear infinite;
+  }
+
+
+  .hero-circle::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 45px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, .08);
+  }
+
+
+  .hero-glow {
+    width: 500px;
+    height: 500px;
+
+    right: -150px;
+    bottom: -250px;
+
+    border-radius: 50%;
+
+    background:
+      radial-gradient(circle,
+        rgba(88, 211, 137, .25),
+        transparent 70%);
+
+    filter: blur(10px);
+
+    animation: floating 6s ease-in-out infinite;
+  }
+
+
+  /* =========================================================
+   CONTEÚDO HERO
+========================================================= */
+
+  .hero-container {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+  }
+
+
+  .hero-content {
+    max-width: 760px;
+    color: white;
+
+    animation:
+      fadeUp 1s ease both;
+  }
+
+
+  /* =========================================================
+   BADGE
+========================================================= */
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 16px;
+
+    margin-bottom: 24px;
+
+    border-radius: 100px;
+
+    color: white;
+
+    background:
+      rgba(255, 255, 255, .11);
+
+    border:
+      1px solid rgba(255, 255, 255, .18);
+
+    backdrop-filter: blur(12px);
+
+    font-size: .82rem;
+    font-weight: 700;
+  }
+
+
+  .hero-badge-dot {
+    position: relative;
+
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #72d69a;
+  }
+
+
+  .hero-badge-dot::after {
+    content: "";
+
+    position: absolute;
+
+    inset: -5px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(114, 214, 154, .5);
+
+    animation: pulse 2s infinite;
+  }
+
+
+  /* =========================================================
+   TÍTULO
+========================================================= */
+
+  .hero h1 {
+    max-width: 800px;
+
+    margin-bottom: 25px;
+
+    color: white;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size:
+      clamp(2.8rem, 6vw, 5.4rem);
+
+    line-height: 1.01;
+
+    letter-spacing: -.06em;
+  }
+
+
+  .hero h1 strong {
+    display: block;
+
+    color: #83dda7;
+  }
+
+
+  /* =========================================================
+   DESCRIÇÃO
+========================================================= */
+
+  .hero-description {
+    max-width: 650px;
+
+    margin-bottom: 34px;
+
+    color:
+      rgba(255, 255, 255, .82);
+
+    font-size: 1.08rem;
+
+    line-height: 1.8;
+  }
+
+
+  /* =========================================================
+   BOTÕES
+========================================================= */
+
+  .hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 13px;
+  }
+
+
+  .hero-buttons .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    transition:
+      transform .3s ease,
+      box-shadow .3s ease,
+      background .3s ease;
+  }
+
+
+  .hero-buttons .btn svg {
+    width: 19px;
+    height: 19px;
+
+    stroke-width: 2;
+  }
+
+
+  .hero-buttons .btn-primary {
+    color: #103d2a;
+
+    background: white;
+
+    box-shadow:
+      0 15px 35px rgba(0, 0, 0, .20);
+  }
+
+
+  .hero-buttons .btn-primary:hover {
+    color: white;
+
+    background: var(--primary);
+
+    transform: translateY(-4px);
+
+    box-shadow:
+      0 18px 35px rgba(0, 0, 0, .25);
+  }
+
+
+  .hero-buttons .btn-secondary {
+    color: white;
+
+    background:
+      rgba(255, 255, 255, .10);
+
+    border:
+      1px solid rgba(255, 255, 255, .25);
+
+    backdrop-filter: blur(10px);
+  }
+
+
+  .hero-buttons .btn-secondary:hover {
+    color: white;
+
+    background:
+      rgba(255, 255, 255, .20);
+
+    transform: translateY(-4px);
+  }
+
+
+  /* =========================================================
+   INDICADORES DO HERO
+========================================================= */
+
+  .hero-indicators {
+    position: absolute;
+
+    left: 50%;
+    bottom: 30px;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 8px;
+
+    z-index: 10;
+  }
+
+
+  .hero-indicator {
+    width: 28px;
+    height: 4px;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 20px;
+
+    background:
+      rgba(255, 255, 255, .35);
+
+    cursor: pointer;
+
+    transition:
+      width .35s ease,
+      background .35s ease;
+  }
+
+
+  .hero-indicator.active {
+    width: 58px;
+
+    background: white;
+  }
+
+
+  /* =========================================================
+   SCROLL
+========================================================= */
+
+  .hero-scroll {
+    position: absolute;
+
+    right: 35px;
+    bottom: 28px;
+
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+    place-items: center;
+
+    color: white;
+
+    border-radius: 50%;
+
+    background:
+      rgba(255, 255, 255, .10);
+
+    border:
+      1px solid rgba(255, 255, 255, .20);
+
+    animation: floating 2s ease-in-out infinite;
+  }
+
+
+  .hero-scroll svg {
+    width: 20px;
+  }
+
+
+  /* =========================================================
+   ESTATÍSTICAS
+========================================================= */
+
+  .stats {
+    padding: 32px 0;
+
+    background: white;
+
+    border-top:
+      1px solid var(--border);
+
+    border-bottom:
+      1px solid var(--border);
+  }
+
+
+  .stats-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(4, 1fr);
+
+    gap: 20px;
+  }
+
+
+  .stat {
+    position: relative;
+
+    text-align: center;
+
+    padding: 14px;
+
+    transition:
+      transform .3s ease;
+  }
+
+
+  .stat:hover {
+    transform: translateY(-5px);
+  }
+
+
+  .stat-icon {
+    width: 42px;
+    height: 42px;
+
+    margin: 0 auto 10px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--primary);
+
+    background:
+      var(--primary-light);
+
+    border-radius: 12px;
+  }
+
+
+  .stat-icon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+
+  .stat-number {
+    font-family: "Manrope", sans-serif;
+
+    font-size: 1.9rem;
+
+    font-weight: 800;
+
+    color: var(--primary);
+  }
+
+
+  .stat-label {
+    color: var(--text-light);
+
+    font-size: .85rem;
+  }
+
+
+  /* =========================================================
+   SOBRE
+========================================================= */
+
+  .about-grid {
+    display: grid;
+
+    grid-template-columns:
+      .9fr 1.1fr;
+
+    align-items: center;
+
+    gap: 65px;
+  }
+
+
+  .about-visual {
+    position: relative;
+
+    min-height: 430px;
+
+    overflow: hidden;
+
+    border-radius: 28px;
+
+    background:
+      url("https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=1300&q=90") center / cover;
+
+    box-shadow:
+      0 25px 60px rgba(23, 107, 69, .16);
+
+    transition:
+      transform .5s ease;
+  }
+
+
+  .about-visual:hover {
+    transform:
+      translateY(-8px);
+  }
+
+
+  .about-visual::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+      linear-gradient(145deg,
+        rgba(15, 85, 55, .10),
+        rgba(5, 42, 27, .75));
+  }
+
+
+  .about-visual-content {
+    position: absolute;
+
+    z-index: 2;
+
+    left: 25px;
+    right: 25px;
+    bottom: 25px;
+
+    padding: 22px;
+
+    color: white;
+
+    border-radius: 18px;
+
+    background:
+      rgba(10, 50, 33, .68);
+
+    backdrop-filter:
+      blur(12px);
+
+    border:
+      1px solid rgba(255, 255, 255, .12);
+  }
+
+
+  .about-visual-content strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size: 1.15rem;
+  }
+
+
+  .about-visual-content span {
+    color:
+      rgba(255, 255, 255, .75);
+
+    font-size: .84rem;
+  }
+
+
+  .about-content h2 {
+    font-size:
+      clamp(2rem, 4vw, 2.8rem);
+
+    letter-spacing: -.045em;
+
+    margin-bottom: 20px;
+  }
+
+
+  .about-content p {
+    color: var(--text-light);
+
+    margin-bottom: 15px;
+
+    line-height: 1.75;
+  }
+
+
+  /* =========================================================
+   LISTA DE FUNCIONALIDADES
+========================================================= */
+
+  .feature-list {
+    list-style: none;
+
+    margin-top: 28px;
+  }
+
+
+  .feature-list li {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin-bottom: 15px;
+
+    font-weight: 600;
+
+    font-size: .94rem;
+  }
+
+
+  .feature-icon {
+    flex-shrink: 0;
+
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 9px;
+
+    color: var(--primary);
+
+    background:
+      var(--primary-light);
+  }
+
+
+  .feature-icon svg {
+    width: 17px;
+    height: 17px;
+  }
+
+
+  /* =========================================================
+   COMO FUNCIONA
+========================================================= */
+
+  .steps {
+    background: white;
+  }
+
+
+  .steps-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, 1fr);
+
+    gap: 22px;
+  }
+
+
+  .step-card {
+    position: relative;
+
+    padding: 30px;
+
+    overflow: hidden;
+
+    transition:
+      transform .35s ease,
+      box-shadow .35s ease;
+  }
+
+
+  .step-card:hover {
+    transform:
+      translateY(-8px);
+
+    box-shadow:
+      0 20px 40px rgba(23, 107, 69, .10);
+  }
+
+
+  .step-number {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 14px;
+
+    color: white;
+
+    background:
+      var(--primary);
+
+    font-family: "Manrope", sans-serif;
+
+    font-weight: 800;
+
+    box-shadow:
+      0 10px 20px rgba(23, 107, 69, .20);
+  }
+
+
+  .step-icon {
+    position: absolute;
+
+    right: 25px;
+    top: 25px;
+
+    width: 45px;
+    height: 45px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--primary);
+
+    opacity: .12;
+  }
+
+
+  .step-icon svg {
+    width: 42px;
+    height: 42px;
+  }
+
+
+  .step-card h3 {
+    font-size: 1.1rem;
+
+    margin-bottom: 10px;
+  }
+
+
+  .step-card p {
+    color: var(--text-light);
+
+    font-size: .9rem;
+
+    line-height: 1.7;
+  }
+
+
+  /* =========================================================
+   CULTURAS
+========================================================= */
+
+  .culture-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(4, 1fr);
+
+    gap: 20px;
+  }
+
+
+  .culture-card {
+    overflow: hidden;
+
+    padding: 0;
+
+    transition:
+      transform .35s ease,
+      box-shadow .35s ease;
+  }
+
+
+  .culture-card:hover {
+    transform:
+      translateY(-8px);
+
+    box-shadow:
+      0 20px 40px rgba(23, 107, 69, .13);
+  }
+
+
+  .culture-image {
+    height: 190px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background-size: cover;
+    background-position: center;
+
+    transition:
+      transform .6s ease;
+  }
+
+
+  .culture-card:hover .culture-image {
+    transform:
+      scale(1.06);
+  }
+
+
+  .culture-image::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+      linear-gradient(transparent 30%,
+        rgba(0, 0, 0, .45));
+  }
+
+
+  /* IMAGENS DAS CULTURAS */
+
+  .culture-image.milho {
+    background-image:
+      url("https://images.unsplash.com/photo-1601593768792-2f6e6c8c8a7b?auto=format&fit=crop&w=900&q=85");
+  }
+
+
+  .culture-image.mandioca {
+    background-image:
+      url("https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=900&q=85");
+  }
+
+
+  .culture-image.feijao {
+    background-image:
+      url("https://images.unsplash.com/photo-1586444248902-2f64eddc13df?auto=format&fit=crop&w=900&q=85");
+  }
+
+
+  .culture-image.soja {
+    background-image:
+      url("https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&w=900&q=85");
+  }
+
+
+  .culture-info {
+    padding: 22px;
+  }
+
+
+  .culture-info h3 {
+    font-size: 1.05rem;
+
+    margin-bottom: 7px;
+  }
+
+
+  .culture-info p {
+    color: var(--text-light);
+
+    font-size: .84rem;
+
+    line-height: 1.6;
+
+    margin-bottom: 14px;
+  }
+
+
+  .culture-link {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--primary);
+
+    font-size: .84rem;
+
+    font-weight: 700;
+
+    transition:
+      gap .3s ease;
+  }
+
+
+  .culture-link:hover {
+    gap: 12px;
+  }
+
+
+  /* =========================================================
+   IA
+========================================================= */
+
+  .ai-section {
+    padding: 75px 0;
+  }
+
+
+  .ai-box {
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 60px;
+
+    border-radius: 28px;
+
+    color: white;
+
+    background:
+      linear-gradient(135deg,
+        #0c4d31,
+        #176b45);
+
+    box-shadow:
+      0 25px 60px rgba(23, 107, 69, .20);
+  }
+
+
+  .ai-box::before {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    right: -170px;
+    top: -220px;
+
+    border-radius: 50%;
+
+    border:
+      1px solid rgba(255, 255, 255, .10);
+
+    animation:
+      rotateSlow 30s linear infinite;
+  }
+
+
+  .ai-box::after {
+    content: "";
+
+    position: absolute;
+
+    width: 320px;
+    height: 320px;
+
+    right: -120px;
+    bottom: -170px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(255, 255, 255, .06);
+  }
+
+
+  .ai-content {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 720px;
+  }
+
+
+  .ai-content .eyebrow {
+    color: white;
+
+    background:
+      rgba(255, 255, 255, .12);
+  }
+
+
+  .ai-content h2 {
+    font-size:
+      clamp(2rem, 4vw, 2.9rem);
+
+    margin-bottom: 16px;
+  }
+
+
+  .ai-content p {
+    color: #c5ddd0;
+
+    line-height: 1.75;
+
+    margin-bottom: 28px;
+  }
+
+
+  .ai-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: var(--primary);
+
+    background: white;
+
+    transition:
+      transform .3s ease,
+      background .3s ease;
+  }
+
+
+  .ai-button svg {
+    width: 19px;
+  }
+
+
+  .ai-button:hover {
+    color: var(--primary-dark);
+
+    background: #f2f7f4;
+
+    transform:
+      translateY(-4px);
+  }
+
+
+  /* =========================================================
+   ANIMAÇÃO AO ENTRAR NO ECRÃ
+========================================================= */
+
+  .animate-on-scroll {
+    opacity: 0;
+
+    transform:
+      translateY(35px);
+
+    transition:
+      opacity .8s ease,
+      transform .8s ease;
+  }
+
+
+  .animate-on-scroll.visible {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+
+
+  .delay-1 {
+    transition-delay: .1s;
+  }
+
+
+  .delay-2 {
+    transition-delay: .2s;
+  }
+
+
+  .delay-3 {
+    transition-delay: .3s;
+  }
+
+
+  .delay-4 {
+    transition-delay: .4s;
+  }
+
+
+  /* =========================================================
+   RESPONSIVO
+========================================================= */
+
+  @media (max-width: 1000px) {
+
+    .hero {
+      min-height: 680px;
+    }
+
+
+    .stats-grid {
+      grid-template-columns:
+        repeat(2, 1fr);
+    }
+
+
+    .about-grid {
+      grid-template-columns: 1fr;
+
+      gap: 40px;
+    }
+
+
+    .culture-grid {
+      grid-template-columns:
+        repeat(2, 1fr);
+    }
+  }
+
+
+  @media (max-width: 700px) {
+
+    .hero {
+      min-height: 690px;
+    }
+
+
+    .hero-overlay {
+      background:
+        linear-gradient(90deg,
+          rgba(4, 36, 23, .96),
+          rgba(5, 55, 35, .75));
+    }
+
+
+    .hero h1 {
+      font-size: 2.9rem;
+    }
+
+
+    .hero-description {
+      font-size: 1rem;
+    }
+
+
+    .steps-grid {
+      grid-template-columns: 1fr;
+    }
+
+
+    .ai-box {
+      padding: 40px 28px;
+    }
+
+
+    .hero-scroll {
+      display: none;
+    }
+  }
+
+
+  @media (max-width: 520px) {
+
+    .hero {
+      min-height: 700px;
+    }
+
+
+    .hero-buttons {
+      flex-direction: column;
+    }
+
+
+    .hero-buttons .btn {
+      width: 100%;
+    }
+
+
+    .stats-grid {
+      grid-template-columns:
+        1fr 1fr;
+    }
+
+
+    .culture-grid {
+      grid-template-columns: 1fr;
+    }
+
+
+    .about-visual {
+      min-height: 300px;
+    }
+
+
+    .hero-indicators {
+      bottom: 18px;
+    }
+
+
+    .hero-indicator.active {
+      width: 42px;
+    }
+  }
+
+
+  /* =========================================================
+   ACESSIBILIDADE
+========================================================= */
+
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section class="hero">
+
+  <div class="hero-slides">
+
+    <div class="hero-slide active"></div>
+    <div class="hero-slide"></div>
+    <div class="hero-slide"></div>
+    <div class="hero-slide"></div>
+
+  </div>
+
+
+  <div class="hero-overlay"></div>
+
+
+  <div class="hero-decoration hero-circle"></div>
+
+  <div class="hero-decoration hero-glow"></div>
+
+
+  <div class="container hero-container">
+
+    <div class="hero-content">
+
+      <div class="hero-badge">
+
+        <span class="hero-badge-dot"></span>
+
+        Agricultura inteligente para o Moxico
+
+      </div>
+
+
+      <h1>
+
+        Tecnologia para uma
+
+        <strong>
+          agricultura mais inteligente.
+        </strong>
+
+      </h1>
+
+
+      <p class="hero-description">
+
+        O AgroIA Moxico utiliza inteligência
+        artificial para apoiar a identificação
+        de doenças em culturas agrícolas através
+        da análise inteligente de imagens.
+
+      </p>
+
+
+      <div class="hero-buttons">
+
+        <!-- ÍCONE DE CÂMERA / SCANNER -->
+
+        <a href="{% url 'diagnostico' %}" class="btn btn-primary">
+
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round">
+
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
+
+            <circle cx="12" cy="13" r="3" />
+
+          </svg>
+
+          Analisar Cultura
+
+        </a>
+
+
+        <!-- ÍCONE DE FOLHA -->
+
+        <a href="{% url 'lista_culturas' %}" class="btn btn-secondary">
+
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round">
+
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+
+          </svg>
+
+          Ver Culturas
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- INDICADORES -->
+
+  <div class="hero-indicators">
+
+    <button class="hero-indicator active" data-slide="0" aria-label="Imagem 1">
+    </button>
+
+    <button class="hero-indicator" data-slide="1" aria-label="Imagem 2">
+    </button>
+
+    <button class="hero-indicator" data-slide="2" aria-label="Imagem 3">
+    </button>
+
+    <button class="hero-indicator" data-slide="3" aria-label="Imagem 4">
+    </button>
+
+  </div>
+
+
+  <!-- SCROLL -->
+
+  <div class="hero-scroll">
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+
+      <path d="M12 5v14" />
+      <path d="m19 12-7 7-7-7" />
+
+    </svg>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     ESTATÍSTICAS
+========================================================= -->
+
+<section class="stats">
+
+  <div class="container stats-grid">
+
+
+    <div class="stat animate-on-scroll">
+
+      <div class="stat-icon">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round">
+
+          <path d="M12 2v20" />
+          <path d="M2 12h20" />
+          <path d="M5 5l14 14" />
+          <path d="M19 5 5 19" />
+
+        </svg>
+
+      </div>
+
+      <div class="stat-number">
+        04+
+      </div>
+
+      <div class="stat-label">
+        Culturas suportadas
+      </div>
+
+    </div>
+
+
+    <div class="stat animate-on-scroll delay-1">
+
+      <div class="stat-icon">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round">
+
+          <path d="M12 2a10 10 0 1 0 10 10" />
+
+          <path d="M12 6v6l4 2" />
+
+          <path d="M19 2v4" />
+
+          <path d="M17 4h4" />
+
+        </svg>
+
+      </div>
+
+      <div class="stat-number">
+        IA
+      </div>
+
+      <div class="stat-label">
+        Tecnologia inteligente
+      </div>
+
+    </div>
+
+
+    <div class="stat animate-on-scroll delay-2">
+
+      <div class="stat-icon">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round">
+
+          <circle cx="12" cy="12" r="9" />
+
+          <polyline points="12 7 12 12 15 14" />
+
+        </svg>
+
+      </div>
+
+      <div class="stat-number">
+        24/7
+      </div>
+
+      <div class="stat-label">
+        Plataforma disponível
+      </div>
+
+    </div>
+
+
+    <div class="stat animate-on-scroll delay-3">
+
+      <div class="stat-icon">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round">
+
+          <path d="M20 21a8 8 0 0 0-16 0" />
+
+          <circle cx="12" cy="7" r="4" />
+
+        </svg>
+
+      </div>
+
+      <div class="stat-number">
+        01
+      </div>
+
+      <div class="stat-label">
+        Objetivo: apoiar o agricultor
+      </div>
+
+    </div>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     SOBRE
+========================================================= -->
+
+<section class="section" id="sobre">
+
+  <div class="container about-grid">
+
+
+    <div class="about-visual animate-on-scroll">
+
+      <div class="about-visual-content">
+
+        <strong>
+          AgroIA Moxico
+        </strong>
+
+        <span>
+          Tecnologia aplicada à agricultura
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="about-content animate-on-scroll">
+
+      <span class="eyebrow">
+        Sobre o AgroIA Moxico
+      </span>
+
+
+      <h2>
+        Agricultura e inteligência artificial
+        lado a lado.
+      </h2>
+
+
+      <p>
+
+        O AgroIA Moxico é uma plataforma concebida
+        para apoiar agricultores na identificação
+        de possíveis doenças que afetam as suas
+        culturas.
+
+      </p>
+
+
+      <p>
+
+        Através da análise de imagens, o sistema
+        está preparado para integrar modelos de
+        inteligência artificial capazes de auxiliar
+        na identificação de problemas agrícolas.
+
+      </p>
+
+
+      <ul class="feature-list">
+
+
+        <li>
+
+          <span class="feature-icon">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="m5 12 5 5L20 7" />
+
+            </svg>
+
+          </span>
+
+          Análise de imagens de culturas
+
+        </li>
+
+
+        <li>
+
+          <span class="feature-icon">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="m5 12 5 5L20 7" />
+
+            </svg>
+
+          </span>
+
+          Identificação de possíveis doenças
+
+        </li>
+
+
+        <li>
+
+          <span class="feature-icon">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="m5 12 5 5L20 7" />
+
+            </svg>
+
+          </span>
+
+          Informações agrícolas organizadas
+
+        </li>
+
+
+        <li>
+
+          <span class="feature-icon">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="m5 12 5 5L20 7" />
+
+            </svg>
+
+          </span>
+
+          Preparado para integração com IA
+
+        </li>
+
+
+      </ul>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     COMO FUNCIONA
+========================================================= -->
+
+<section class="section steps">
+
+  <div class="container">
+
+
+    <div class="section-header animate-on-scroll">
+
+      <span class="eyebrow">
+        Processo simples
+      </span>
+
+      <h2>
+        Como funciona?
+      </h2>
+
+      <p>
+        O sistema foi pensado para tornar o
+        processo de análise simples e acessível.
+      </p>
+
+    </div>
+
+
+    <div class="steps-grid">
+
+
+      <!-- PASSO 01 -->
+
+      <div class="card step-card animate-on-scroll">
+
+        <div class="step-number">
+          01
+        </div>
+
+
+        <div class="step-icon">
+
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round">
+
+            <path d="M12 20h9" />
+
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L8 18l-4 1 1-4Z" />
+
+          </svg>
+
+        </div>
+
+
+        <h3>
+          Escolha a cultura
+        </h3>
+
+
+        <p>
+          Selecione a cultura agrícola que
+          deseja analisar.
+        </p>
+
+      </div>
+
+
+
+      <!-- PASSO 02 -->
+
+      <div class="card step-card animate-on-scroll delay-1">
+
+        <div class="step-number">
+          02
+        </div>
+
+
+        <div class="step-icon">
+
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round">
+
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
+
+            <circle cx="12" cy="13" r="3" />
+
+          </svg>
+
+        </div>
+
+
+        <h3>
+          Envie uma imagem
+        </h3>
+
+
+        <p>
+          Faça o carregamento de uma fotografia
+          da planta ou da área afetada.
+        </p>
+
+      </div>
+
+
+
+      <!-- PASSO 03 -->
+
+      <div class="card step-card animate-on-scroll delay-2">
+
+        <div class="step-number">
+          03
+        </div>
+
+
+        <div class="step-icon">
+
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round">
+
+            <path d="M12 2a10 10 0 1 0 10 10" />
+
+            <path d="m16 8-5 5-2-2" />
+
+          </svg>
+
+        </div>
+
+
+        <h3>
+          Receba o diagnóstico
+        </h3>
+
+
+        <p>
+          A área de inteligência artificial
+          apresentará o resultado da análise.
+        </p>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     CULTURAS
+========================================================= -->
+
+<section class="section" id="culturas">
+
+  <div class="container">
+
+
+    <div class="section-header animate-on-scroll">
+
+      <span class="eyebrow">
+        Culturas agrícolas
+      </span>
+
+      <h2>
+        Culturas suportadas
+      </h2>
+
+      <p>
+        Conheça algumas das culturas que poderão
+        ser acompanhadas pela plataforma.
+      </p>
+
+    </div>
+
+
+    <div class="culture-grid">
+
+
+      <!-- MILHO -->
+
+      <div class="card culture-card animate-on-scroll">
+
+        <div class="culture-image milho"></div>
+
+        <div class="culture-info">
+
+          <h3>
+            Milho
+          </h3>
+
+          <p>
+            Informações e possíveis doenças
+            associadas à cultura.
+          </p>
+
+          <a href="{% url 'lista_culturas' %}" class="culture-link">
+
+            Ver informações
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+
+            </svg>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- MANDIOCA -->
+
+      <div class="card culture-card animate-on-scroll delay-1">
+
+        <div class="culture-image mandioca"></div>
+
+        <div class="culture-info">
+
+          <h3>
+            Mandioca
+          </h3>
+
+          <p>
+            Informações e possíveis doenças
+            associadas à cultura.
+          </p>
+
+          <a href="{% url 'lista_culturas' %}" class="culture-link">
+
+            Ver informações
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+
+            </svg>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- FEIJÃO -->
+
+      <div class="card culture-card animate-on-scroll delay-2">
+
+        <div class="culture-image feijao"></div>
+
+        <div class="culture-info">
+
+          <h3>
+            Feijão
+          </h3>
+
+          <p>
+            Informações e possíveis doenças
+            associadas à cultura.
+          </p>
+
+          <a href="{% url 'lista_culturas' %}" class="culture-link">
+
+            Ver informações
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+
+            </svg>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- SOJA -->
+
+      <div class="card culture-card animate-on-scroll delay-3">
+
+        <div class="culture-image soja"></div>
+
+        <div class="culture-info">
+
+          <h3>
+            Soja
+          </h3>
+
+          <p>
+            Informações e possíveis doenças
+            associadas à cultura.
+          </p>
+
+          <a href="{% url 'lista_culturas' %}" class="culture-link">
+
+            Ver informações
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+
+            </svg>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     ÁREA DE IA
+========================================================= -->
+
+<section class="ai-section">
+
+  <div class="container">
+
+    <div class="ai-box animate-on-scroll">
+
+      <div class="ai-content">
+
+        <span class="eyebrow">
+          Inteligência artificial
+        </span>
+
+
+        <h2>
+          Prepare-se para analisar
+          a sua cultura.
+        </h2>
+
+
+        <p>
+
+          A área de diagnóstico do AgroIA Moxico
+          foi preparada para receber imagens e
+          processá-las através de modelos de
+          inteligência artificial.
+
+        </p>
+
+
+        <a href="{% url 'diagnostico' %}" class="btn ai-button">
+
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round">
+
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
+
+            <circle cx="12" cy="13" r="3" />
+
+          </svg>
+
+          Ir para Diagnóstico
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+  /* =========================================================
+     HERO SLIDER
+  ========================================================= */
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const slides =
+      document.querySelectorAll(".hero-slide");
+
+    const indicators =
+      document.querySelectorAll(".hero-indicator");
+
+    let currentSlide = 0;
+
+    const intervalTime = 6000;
+
+    let sliderInterval;
+
+
+    function showSlide(index) {
+
+      slides.forEach(function (slide) {
+
+        slide.classList.remove("active");
+
+      });
+
+
+      indicators.forEach(function (indicator) {
+
+        indicator.classList.remove("active");
+
+      });
+
+
+      slides[index].classList.add("active");
+
+      indicators[index].classList.add("active");
+
+      currentSlide = index;
+
+    }
+
+
+    function nextSlide() {
+
+      currentSlide =
+        (currentSlide + 1) %
+        slides.length;
+
+      showSlide(currentSlide);
+
+    }
+
+
+    function restartSlider() {
+
+      clearInterval(sliderInterval);
+
+      sliderInterval =
+        setInterval(
+          nextSlide,
+          intervalTime
+        );
+
+    }
+
+
+    /* Troca automática */
+
+    restartSlider();
+
+
+    /* Clique nos indicadores */
+
+    indicators.forEach(function (indicator) {
+
+      indicator.addEventListener(
+        "click",
+        function () {
+
+          const index =
+            Number(
+              this.dataset.slide
+            );
+
+          showSlide(index);
+
+          restartSlider();
+
+        }
+      );
+
+    });
+
+
+    /* =====================================================
+       ANIMAÇÕES AO FAZER SCROLL
+    ===================================================== */
+
+    const animatedElements =
+      document.querySelectorAll(
+        ".animate-on-scroll"
+      );
+
+
+    const observer =
+      new IntersectionObserver(
+        function (entries) {
+
+          entries.forEach(function (entry) {
+
+            if (entry.isIntersecting) {
+
+              entry.target.classList.add(
+                "visible"
+              );
+
+              observer.unobserve(
+                entry.target
+              );
+
+            }
+
+          });
+
+        },
+        {
+          threshold: 0.15
+        }
+      );
+
+
+    animatedElements.forEach(function (element) {
+
+      observer.observe(element);
+
+    });
+
+
+    /* =====================================================
+       SCROLL DO BOTÃO DO HERO
+    ===================================================== */
+
+    const scrollButton =
+      document.querySelector(".hero-scroll");
+
+
+    if (scrollButton) {
+
+      scrollButton.addEventListener(
+        "click",
+        function () {
+
+          const sobre =
+            document.querySelector("#sobre");
+
+          if (sobre) {
+
+            sobre.scrollIntoView({
+              behavior: "smooth"
+            });
+
+          }
+
+        }
+      );
+
+    }
+
+  });
+
+</script>
+
+{% endblock %}
