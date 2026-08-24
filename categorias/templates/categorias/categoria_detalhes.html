@@ -821,7 +821,7 @@
              VOLTAR PARA PRODUTOS AGRÍCOLAS
              ================================================== -->
 
-    <a href="{% url 'culturas:produtos_agricolas' %}" class="category-back">
+    <a href="{% url 'produtos:produtos_agricolas' %}" class="category-back">
 
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M19 12H5"></path>
@@ -967,7 +967,7 @@
 
       <!-- NOVO PRODUTO -->
 
-      <a href="{% url 'culturas:criar_produto' %}?categoria={{ categoria.pk }}" class="category-action-button">
+      <a href="{% url 'produtos:criar_produto' %}?categoria={{ categoria.pk }}" class="category-action-button">
 
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 
@@ -1076,7 +1076,7 @@
 
           <!-- DETALHES DO PRODUTO -->
 
-          <a href="{% url 'culturas:detalhe_produto' produto.pk %}" class="category-product-details">
+          <a href="{% url 'produtos:detalhe_produto' produto.pk %}" class="category-product-details">
 
             <span>
               Ver detalhes
@@ -1132,7 +1132,7 @@
       </p>
 
 
-      <a href="{% url 'culturas:criar_produto' %}?categoria={{ categoria.pk }}" class="category-action-button">
+      <a href="{% url 'produtos:criar_produto' %}?categoria={{ categoria.pk }}" class="category-action-button">
 
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 

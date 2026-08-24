@@ -18,15 +18,16 @@ def produtos(request):
     Página principal dos produtos agrícolas.
 
     Mostra:
-    - Produtos ativos
-    - Categorias cadastradas
-    - Total de produtos
-    - Total de categorias
-    - Total de produtos disponíveis
-    - Quantidade de produtos por categoria
-    - Filtro de produtos por categoria
+    - Produtos ativos;
+    - Categorias cadastradas;
+    - Total de produtos;
+    - Total de categorias;
+    - Total de produtos disponíveis;
+    - Quantidade de produtos por categoria;
+    - Filtro de produtos por categoria;
+    - Quantidade de produtos do utilizador autenticado.
 
-    A listagem continua pública.
+    A página é pública.
     """
 
     # ========================================================
@@ -45,7 +46,9 @@ def produtos(request):
 
     produtos_queryset = (
         ProdutoAgricola.objects
-        .filter(ativo=True)
+        .filter(
+            ativo=True
+        )
         .select_related("usuario")
         .prefetch_related("categorias")
         .order_by("-criado_em")
@@ -56,10 +59,13 @@ def produtos(request):
     # ========================================================
 
     categoria_id = request.GET.get("categoria")
+
     categoria_selecionada = None
 
     if categoria_id:
+
         try:
+
             categoria_selecionada = get_object_or_404(
                 Categoria,
                 pk=int(categoria_id),
@@ -73,16 +79,19 @@ def produtos(request):
                 .distinct()
             )
 
-        except (ValueError, TypeError):
+        except (
+            ValueError,
+            TypeError,
+        ):
+
             categoria_selecionada = None
 
-    # ========================================================
-    # CONTADORES GERAIS
-    # ========================================================
 
     total_produtos = (
         ProdutoAgricola.objects
-        .filter(ativo=True)
+        .filter(
+            ativo=True
+        )
         .count()
     )
 
@@ -93,17 +102,30 @@ def produtos(request):
 
     total_disponiveis = (
         ProdutoAgricola.objects
-        .filter(ativo=True)
+        .filter(
+            ativo=True
+        )
         .count()
     )
 
-    # ========================================================
-    # PRODUTOS POR CATEGORIA
-    # ========================================================
+
+
+    total_produtos_analise = (
+        ProdutoAgricola.objects
+        .filter(
+            ativo=True,
+            analise_por_imagem=True,
+        )
+        .count()
+    )
+
+
 
     produtos_para_contagem = (
         ProdutoAgricola.objects
-        .filter(ativo=True)
+        .filter(
+            ativo=True
+        )
         .prefetch_related("categorias")
     )
 
@@ -113,18 +135,19 @@ def produtos(request):
     }
 
     for produto in produtos_para_contagem:
+
         for categoria in produto.categorias.all():
 
             if categoria.pk in categoria_quantidades:
+
                 categoria_quantidades[categoria.pk] += 1
 
-    # ========================================================
-    # PRODUTOS DO UTILIZADOR AUTENTICADO
-    # ========================================================
+
 
     meus_produtos = 0
 
     if request.user.is_authenticated:
+
         meus_produtos = (
             ProdutoAgricola.objects
             .filter(
@@ -140,47 +163,32 @@ def produtos(request):
 
     context = {
         "produtos": produtos_queryset,
-
         "categorias": categorias_queryset,
-
         "categoria_selecionada": categoria_selecionada,
 
         "total_produtos": total_produtos,
-
         "total_categorias": total_categorias,
-
         "total_disponiveis": total_disponiveis,
+        "total_produtos_analise": total_produtos_analise,
 
         "categoria_quantidades": categoria_quantidades,
-
-        # Quantidade de produtos do utilizador
         "meus_produtos": meus_produtos,
     }
 
-    # ========================================================
-    # TEMPLATE
-    # ========================================================
+
 
     return render(
         request,
-        "culturas/produtos.html",
+        "produtos/produtos.html",
         context,
     )
 
 
-# ============================================================
-# CRIAR PRODUTO
-# ============================================================
 
 @login_required
 @transaction.atomic
 def criar_produto(request):
-    """
-    Cadastra um novo produto agrícola.
 
-    O produto é automaticamente associado
-    ao utilizador autenticado.
-    """
 
     categorias = (
         Categoria.objects
@@ -188,9 +196,7 @@ def criar_produto(request):
         .order_by("nome")
     )
 
-    # ========================================================
-    # POST
-    # ========================================================
+
 
     if request.method == "POST":
 
@@ -201,25 +207,17 @@ def criar_produto(request):
 
         if form.is_valid():
 
-            # ==================================================
-            # SALVAR PRODUTO
-            # ==================================================
 
             produto = form.save(
                 commit=False
             )
 
-            # ==================================================
-            # ASSOCIAR AO UTILIZADOR AUTENTICADO
-            # ==================================================
 
             produto.usuario = request.user
 
             produto.save()
 
-            # ==================================================
-            # SALVAR CATEGORIAS
-            # ==================================================
+
 
             form.save_m2m()
 
@@ -230,25 +228,15 @@ def criar_produto(request):
             )
 
             return redirect(
-                "culturas:detalhe_produto",
+                "produtos:detalhe_produto",
                 pk=produto.pk,
             )
 
-    # ========================================================
-    # GET
-    # ========================================================
 
     else:
 
         form = ProdutoForm()
 
-        # ====================================================
-        # CATEGORIA ENVIADA PELA URL
-        #
-        # Exemplo:
-        #
-        # /culturas/criar/?categoria=3
-        # ====================================================
 
         categoria_id = request.GET.get(
             "categoria"
@@ -273,11 +261,10 @@ def criar_produto(request):
                 ValueError,
                 TypeError,
             ):
+
                 pass
 
-    # ========================================================
-    # CONTEXTO
-    # ========================================================
+
 
     context = {
         "form": form,
@@ -288,24 +275,15 @@ def criar_produto(request):
 
     return render(
         request,
-        "culturas/criar_produto.html",
+        "produtos/criar_produto.html",
         context,
     )
 
 
-# ============================================================
-# EDITAR PRODUTO
-# ============================================================
-
 @login_required
 @transaction.atomic
 def editar_produto(request, pk):
-    """
-    Edita um produto agrícola.
 
-    Apenas o utilizador que cadastrou o produto
-    pode editá-lo.
-    """
 
     produto = get_object_or_404(
         ProdutoAgricola.objects.prefetch_related(
@@ -314,11 +292,7 @@ def editar_produto(request, pk):
         pk=pk,
     )
 
-    # ========================================================
-    # SEGURANÇA
-    # ========================================================
-
-    if produto.usuario != request.user:
+    if produto.usuario_id != request.user.id:
 
         messages.error(
             request,
@@ -327,9 +301,10 @@ def editar_produto(request, pk):
         )
 
         return redirect(
-            "culturas:detalhe_produto",
+            "produtos:detalhe_produto",
             pk=produto.pk,
         )
+
 
     categorias = (
         Categoria.objects
@@ -337,9 +312,6 @@ def editar_produto(request, pk):
         .order_by("nome")
     )
 
-    # ========================================================
-    # POST
-    # ========================================================
 
     if request.method == "POST":
 
@@ -351,32 +323,34 @@ def editar_produto(request, pk):
 
         if form.is_valid():
 
-            produto = form.save()
+            produto_atualizado = form.save(
+                commit=False
+            )
+
+
+
+            produto_atualizado.usuario = request.user
+
+            produto_atualizado.save()
+
+            form.save_m2m()
 
             messages.success(
                 request,
-                f'O produto "{produto.nome}" '
+                f'O produto "{produto_atualizado.nome}" '
                 f'foi atualizado com sucesso.',
             )
 
             return redirect(
-                "culturas:detalhe_produto",
-                pk=produto.pk,
+                "produtos:detalhe_produto",
+                pk=produto_atualizado.pk,
             )
-
-    # ========================================================
-    # GET
-    # ========================================================
 
     else:
 
         form = ProdutoForm(
             instance=produto
         )
-
-    # ========================================================
-    # CONTEXTO
-    # ========================================================
 
     context = {
         "form": form,
@@ -388,93 +362,54 @@ def editar_produto(request, pk):
 
     return render(
         request,
-        "culturas/editar_produto.html",
+        "produtos/editar_produto.html",
         context,
     )
 
 
-# ============================================================
-# DETALHES DO PRODUTO
-# ============================================================
-
 def detalhe_produto(request, pk):
-    """
-    Mostra os detalhes completos
-    de um produto agrícola.
-
-    A página continua pública.
-    """
 
     produto = get_object_or_404(
         ProdutoAgricola.objects
         .select_related("usuario")
         .prefetch_related("categorias"),
         pk=pk,
+        ativo=True,
     )
 
     categorias = produto.categorias.all()
 
-    # ========================================================
-    # VERIFICAÇÃO DO UTILIZADOR
-    # ========================================================
-
     sou_dono = False
 
     if request.user.is_authenticated:
+
         sou_dono = (
             produto.usuario_id == request.user.id
         )
 
-    # ========================================================
-    # CONTEXTO
-    # ========================================================
-
     context = {
         "produto": produto,
         "categorias": categorias,
-
-        # Informa ao template se o produto
-        # pertence ao utilizador atual
         "sou_dono": sou_dono,
     }
 
     return render(
         request,
-        "culturas/detalhe_produto.html",
+        "produtos/detalhe_produto.html",
         context,
     )
 
 
-# ============================================================
-# ELIMINAR PRODUTO
-# ============================================================
-
 @login_required
 @transaction.atomic
 def eliminar_produto(request, pk):
-    """
-    Elimina um produto agrícola.
-
-    GET:
-        Mostra a confirmação.
-
-    POST:
-        Elimina definitivamente.
-
-    Apenas o utilizador que cadastrou o produto
-    pode eliminá-lo.
-    """
 
     produto = get_object_or_404(
         ProdutoAgricola,
         pk=pk,
     )
 
-    # ========================================================
-    # SEGURANÇA
-    # ========================================================
-
-    if produto.usuario != request.user:
+    if produto.usuario_id != request.user.id:
 
         messages.error(
             request,
@@ -483,26 +418,22 @@ def eliminar_produto(request, pk):
         )
 
         return redirect(
-            "culturas:detalhe_produto",
+            "produtos:detalhe_produto",
             pk=produto.pk,
         )
 
-    # ========================================================
-    # POST
-    # ========================================================
 
     if request.method == "POST":
 
         nome = produto.nome
 
-        # ----------------------------------------------------
-        # REMOVER IMAGEM ASSOCIADA
-        # ----------------------------------------------------
 
         if produto.imagem:
+
             produto.imagem.delete(
                 save=False
             )
+
 
         produto.delete()
 
@@ -513,12 +444,8 @@ def eliminar_produto(request, pk):
         )
 
         return redirect(
-            "culturas:produtos",
+            "produtos:produtos"
         )
-
-    # ========================================================
-    # CONTEXTO
-    # ========================================================
 
     context = {
         "produto": produto,
@@ -526,6 +453,7 @@ def eliminar_produto(request, pk):
 
     return render(
         request,
-        "culturas/eliminar_produto.html",
+        "produtos/eliminar_produto.html",
         context,
     )
+

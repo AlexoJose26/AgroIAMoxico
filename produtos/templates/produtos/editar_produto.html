@@ -2174,7 +2174,7 @@ Editar {{ produto.nome }} | AgroIA Moxico
           /
         </span>
 
-        <a href="{% url 'culturas:produtos_agricolas' %}">
+        <a href="{% url 'produtos:produtos_agricolas' %}">
           Produtos
         </a>
 
@@ -2182,7 +2182,7 @@ Editar {{ produto.nome }} | AgroIA Moxico
           /
         </span>
 
-        <a href="{% url 'culturas:detalhe_produto' produto.id %}">
+        <a href="{% url 'produtos:detalhe_produto' produto.id %}">
           {{ produto.nome }}
         </a>
 
@@ -2197,7 +2197,7 @@ Editar {{ produto.nome }} | AgroIA Moxico
       </nav>
 
 
-      <a href="{% url 'culturas:detalhe_produto' produto.id %}" class="product-edit-back" id="cancelTop">
+      <a href="{% url 'produtos:detalhe_produto' produto.id %}" class="product-edit-back" id="cancelTop">
 
         ←
 
@@ -2982,7 +2982,7 @@ Editar {{ produto.nome }} | AgroIA Moxico
 
             <div class="product-actions-left">
 
-              <a href="{% url 'culturas:detalhe_produto' produto.id %}"
+              <a href="{% url 'produtos:detalhe_produto' produto.id %}"
                 class="product-action-button product-action-cancel" id="cancelEdit">
 
                 ←
@@ -4128,7 +4128,7 @@ Editar {{ produto.nome }} | AgroIA Moxico
 
       /* ========================================================
          CANCELAR / VOLTAR
-  
+
          Não existe confirm().
          O botão simplesmente navega para os detalhes.
       ======================================================== */

@@ -9,11 +9,14 @@ Entrar | AgroIA Moxico
 
 <style>
   /* ============================================================
-   AGROIA MOXICO — LOGIN INDEPENDENTE
+   AGROIA MOXICO — LOGIN PREMIUM
    Navbar e Footer ocultos nesta página
 ============================================================ */
 
-  /* Ocultar navbar e footer somente nesta página */
+  /* ============================================================
+   OCULTAR NAVBAR E FOOTER
+============================================================ */
+
   body.login-page-body .navbar,
   body.login-page-body nav,
   body.login-page-body footer,
@@ -23,7 +26,7 @@ Entrar | AgroIA Moxico
 
 
   /* ============================================================
-   RESET ESPECÍFICO
+   RESET
 ============================================================ */
 
   .login-page,
@@ -40,16 +43,13 @@ Entrar | AgroIA Moxico
 
   .login-page {
     position: fixed;
-
     inset: 0;
 
     width: 100%;
     height: 100dvh;
-
     min-height: 100vh;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
@@ -162,6 +162,8 @@ Entrar | AgroIA Moxico
 
     animation:
       loginCardEnter .5s ease both;
+
+    overflow: hidden;
   }
 
 
@@ -194,17 +196,282 @@ Entrar | AgroIA Moxico
 
     from {
       opacity: 0;
-
-      transform:
-        translateY(18px);
+      transform: translateY(18px);
     }
 
     to {
       opacity: 1;
-
-      transform:
-        translateY(0);
+      transform: translateY(0);
     }
+
+  }
+
+
+  /* ============================================================
+   ÁREA DE CONTEÚDO
+============================================================ */
+
+  .login-card-content {
+    position: relative;
+    z-index: 1;
+
+    transition:
+      filter .35s ease,
+      opacity .35s ease,
+      transform .35s ease;
+  }
+
+
+  /* ============================================================
+   ESTADO DE CARREGAMENTO
+============================================================ */
+
+  .login-card.is-loading .login-card-content {
+    filter: blur(5px);
+    opacity: .48;
+    transform: scale(.992);
+
+    pointer-events: none;
+    user-select: none;
+  }
+
+
+  /* ============================================================
+   OVERLAY DO SPLASH
+============================================================ */
+
+  .login-loading-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 20;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    background:
+      rgba(255, 255, 255, .58);
+
+    backdrop-filter:
+      blur(2px);
+
+    -webkit-backdrop-filter:
+      blur(2px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+      opacity .25s ease,
+      visibility .25s ease;
+  }
+
+
+  .login-card.is-loading .login-loading-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+
+  /* ============================================================
+   SPLASH CENTRAL
+============================================================ */
+
+  .login-loading-box {
+    width: min(270px, 100%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 27px 24px;
+
+    border:
+      1px solid rgba(23, 107, 69, .12);
+
+    border-radius: 22px;
+
+    background:
+      rgba(255, 255, 255, .94);
+
+    box-shadow:
+      0 18px 50px rgba(23, 107, 69, .15);
+
+    transform: translateY(8px) scale(.96);
+
+    transition:
+      transform .3s ease;
+  }
+
+
+  .login-card.is-loading .login-loading-box {
+    transform: translateY(0) scale(1);
+  }
+
+
+  /* ============================================================
+   SPLASH — ÍCONE
+============================================================ */
+
+  .login-loading-icon {
+    position: relative;
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    border-radius: 18px;
+
+    background:
+      linear-gradient(135deg,
+        rgba(23, 107, 69, .12),
+        rgba(23, 107, 69, .04));
+
+    border:
+      1px solid rgba(23, 107, 69, .10);
+  }
+
+
+  .login-loading-icon::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -5px;
+
+    border:
+      2px solid rgba(23, 107, 69, .10);
+
+    border-top-color:
+      #176b45;
+
+    border-right-color:
+      #d9a441;
+
+    border-radius: 50%;
+
+    animation:
+      loginSplashSpin 1s linear infinite;
+  }
+
+
+  .login-loading-icon svg {
+    width: 27px;
+    height: 27px;
+
+    color:
+      #176b45;
+  }
+
+
+  @keyframes loginSplashSpin {
+
+    to {
+      transform: rotate(360deg);
+    }
+
+  }
+
+
+  /* ============================================================
+   SPLASH — TEXTO
+============================================================ */
+
+  .login-loading-title {
+    margin: 0;
+
+    color:
+      #1b2923;
+
+    font-size: .88rem;
+
+    font-weight: 900;
+
+    text-align: center;
+  }
+
+
+  .login-loading-text {
+    margin: 6px 0 0;
+
+    color:
+      #7a8881;
+
+    font-size: .68rem;
+
+    line-height: 1.5;
+
+    text-align: center;
+  }
+
+
+  /* ============================================================
+   SPLASH — PONTOS
+============================================================ */
+
+  .login-loading-dots {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    margin-top: 14px;
+  }
+
+
+  .login-loading-dots span {
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background:
+      #176b45;
+
+    animation:
+      loginDotPulse 1s ease-in-out infinite;
+  }
+
+
+  .login-loading-dots span:nth-child(2) {
+    animation-delay: .15s;
+  }
+
+
+  .login-loading-dots span:nth-child(3) {
+    animation-delay: .30s;
+  }
+
+
+  @keyframes loginDotPulse {
+
+    0%,
+    60%,
+    100% {
+      opacity: .28;
+      transform: translateY(0);
+    }
+
+    30% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+
   }
 
 
@@ -227,7 +494,6 @@ Entrar | AgroIA Moxico
       0 auto 18px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
@@ -313,7 +579,6 @@ Entrar | AgroIA Moxico
 
   .login-message {
     display: flex;
-
     align-items: flex-start;
 
     gap: 10px;
@@ -568,6 +833,7 @@ Entrar | AgroIA Moxico
 
   /* ============================================================
    BOTÃO LOGIN
+   SEM SPINNER
 ============================================================ */
 
   .login-submit {
@@ -578,6 +844,7 @@ Entrar | AgroIA Moxico
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     gap: 9px;
@@ -631,11 +898,14 @@ Entrar | AgroIA Moxico
 
 
   .login-submit:disabled {
-    opacity: .7;
+    opacity: .65;
 
     cursor: wait;
 
     transform: none;
+
+    box-shadow:
+      0 8px 18px rgba(23, 107, 69, .12);
   }
 
 
@@ -726,6 +996,7 @@ Entrar | AgroIA Moxico
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     gap: 7px;
@@ -746,36 +1017,6 @@ Entrar | AgroIA Moxico
     height: 14px;
 
     flex: 0 0 auto;
-  }
-
-
-  /* ============================================================
-   LOADING
-============================================================ */
-
-  .login-spinner {
-    width: 17px;
-    height: 17px;
-
-    border:
-      2px solid rgba(255, 255, 255, .35);
-
-    border-top-color:
-      #ffffff;
-
-    border-radius: 50%;
-
-    animation:
-      loginSpin .7s linear infinite;
-  }
-
-
-  @keyframes loginSpin {
-
-    to {
-      transform:
-        rotate(360deg);
-    }
   }
 
 
@@ -840,18 +1081,20 @@ Entrar | AgroIA Moxico
     }
 
 
-    .login-help {
-      align-self:
-        flex-end;
-    }
-
-
     .login-security {
       align-items:
         flex-start;
 
       line-height:
         1.45;
+    }
+
+
+    .login-loading-box {
+      width: 245px;
+
+      padding:
+        24px 18px;
     }
 
   }
@@ -907,270 +1150,335 @@ Entrar | AgroIA Moxico
     <div class="login-card" id="loginCard">
 
       <!-- ==================================================
-                 CABEÇALHO
+                 CONTEÚDO PRINCIPAL
             =================================================== -->
 
-      <header class="login-header">
+      <div class="login-card-content">
 
-        <div class="login-icon">
+        <!-- ==================================================
+                     CABEÇALHO
+                =================================================== -->
 
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
+        <header class="login-header">
 
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <div class="login-icon">
 
-            <polyline points="10 17 15 12 10 7"></polyline>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
 
-            <line x1="15" y1="12" x2="3" y2="12"></line>
+              <polyline points="10 17 15 12 10 7"></polyline>
 
-          </svg>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
 
-        </div>
-
-
-        <span class="login-eyebrow">
-          AGROIA MOXICO
-        </span>
-
-
-        <h1>
-          Bem-vindo de volta
-        </h1>
+          </div>
 
 
-        <p>
-          Entre na sua conta para continuar a utilizar
-          as funcionalidades do AgroIA Moxico.
-        </p>
-
-      </header>
+          <span class="login-eyebrow">
+            AGROIA MOXICO
+          </span>
 
 
-      <!-- ==================================================
-                 MENSAGENS DO DJANGO
-            =================================================== -->
-
-      {% if messages %}
-
-      <div class="login-messages">
-
-        {% for message in messages %}
-
-        <div class="login-message {{ message.tags }}" role="alert">
-          {{ message }}
-        </div>
-
-        {% endfor %}
-
-      </div>
-
-      {% endif %}
+          <h1>
+            Bem-vindo de volta
+          </h1>
 
 
-      <!-- ==================================================
-                 FORMULÁRIO
-            =================================================== -->
+          <p>
+            Entre na sua conta para continuar a utilizar
+            as funcionalidades do AgroIA Moxico.
+          </p>
 
-      <form method="post" action="{% url 'inicio:login' %}" class="login-form" id="loginForm" novalidate>
-
-        {% csrf_token %}
+        </header>
 
 
         <!-- ==================================================
-                     NEXT
+                     MENSAGENS DO DJANGO
                 =================================================== -->
 
-        {% if request.GET.next %}
+        {% if messages %}
 
-        <input type="hidden" name="next" value="{{ request.GET.next }}">
+        <div class="login-messages">
+
+          {% for message in messages %}
+
+          <div class="login-message {{ message.tags }}" role="alert">
+            {{ message }}
+          </div>
+
+          {% endfor %}
+
+        </div>
 
         {% endif %}
 
 
         <!-- ==================================================
-                     UTILIZADOR
+                     FORMULÁRIO
                 =================================================== -->
 
-        <div class="login-field">
+        <form method="post" action="{% url 'inicio:login' %}" class="login-form" id="loginForm" novalidate>
 
-          <label for="id_username">
-            Nome de utilizador
-          </label>
+          {% csrf_token %}
 
 
-          <div class="login-input-wrapper">
+          <!-- ==================================================
+                         NEXT
+                    =================================================== -->
 
-            <span class="login-input-icon">
+          {% if request.GET.next %}
 
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round" aria-hidden="true">
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-                <circle cx="12" cy="8" r="4"></circle>
+          {% endif %}
 
-                <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
 
-              </svg>
+          <!-- ==================================================
+                         UTILIZADOR
+                    =================================================== -->
 
+          <div class="login-field">
+
+            <label for="id_username">
+              Nome de utilizador
+            </label>
+
+
+            <div class="login-input-wrapper">
+
+              <span class="login-input-icon">
+
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+
+                  <circle cx="12" cy="8" r="4"></circle>
+
+                  <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+
+                </svg>
+
+              </span>
+
+
+              <input type="text" id="id_username" name="username" class="login-input"
+                placeholder="Digite o seu nome de utilizador" value="{{ username_value|default:'' }}"
+                autocomplete="username" maxlength="150" required>
+
+            </div>
+
+
+            {% if username_error %}
+
+            <span class="login-field-error">
+              {{ username_error }}
             </span>
 
-
-            <input type="text" id="id_username" name="username" class="login-input"
-              placeholder="Digite o seu nome de utilizador" value="{{ username_value|default:'' }}"
-              autocomplete="username" maxlength="150" required>
+            {% endif %}
 
           </div>
 
 
-          {% if username_error %}
+          <!-- ==================================================
+                         PALAVRA-PASSE
+                    =================================================== -->
 
-          <span class="login-field-error">
-            {{ username_error }}
-          </span>
+          <div class="login-field">
 
-          {% endif %}
-
-        </div>
-
-
-        <!-- ==================================================
-                     PALAVRA-PASSE
-                =================================================== -->
-
-        <div class="login-field">
-
-          <label for="id_password">
-            Palavra-passe
-          </label>
+            <label for="id_password">
+              Palavra-passe
+            </label>
 
 
-          <div class="login-input-wrapper">
+            <div class="login-input-wrapper">
 
-            <span class="login-input-icon">
+              <span class="login-input-icon">
 
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
 
-                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                  <rect x="3" y="11" width="18" height="10" rx="2"></rect>
 
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
 
-              </svg>
+                </svg>
 
+              </span>
+
+
+              <input type="password" id="id_password" name="password" class="login-input"
+                placeholder="Digite a sua palavra-passe" autocomplete="current-password" required>
+
+            </div>
+
+
+            {% if password_error %}
+
+            <span class="login-field-error">
+              {{ password_error }}
             </span>
 
-
-            <input type="password" id="id_password" name="password" class="login-input"
-              placeholder="Digite a sua palavra-passe" autocomplete="current-password" required>
+            {% endif %}
 
           </div>
 
 
-          {% if password_error %}
+          <!-- ==================================================
+                         OPÇÕES
+                    =================================================== -->
 
-          <span class="login-field-error">
-            {{ password_error }}
-          </span>
+          <div class="login-options">
 
-          {% endif %}
+            <label class="login-remember">
 
-        </div>
+              <input type="checkbox" name="remember" value="1">
+
+              <span>
+                Lembrar sessão
+              </span>
+
+            </label>
+
+          </div>
 
 
-        <!-- ==================================================
-                     OPÇÕES
-                =================================================== -->
+          <!-- ==================================================
+                         BOTÃO
+                         SEM SPLASH/SPINNER
+                    =================================================== -->
 
-        <div class="login-options">
+          <button type="submit" class="login-submit" id="loginSubmit">
 
-          <label class="login-remember">
+            <svg id="loginSubmitIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 
-            <input type="checkbox" name="remember" value="1">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
 
-            <span>
-              Lembrar sessão
+              <polyline points="10 17 15 12 10 7"></polyline>
+
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+
+            </svg>
+
+
+            <span id="loginSubmitText">
+              Entrar na minha conta
             </span>
 
-          </label>
+          </button>
+
+        </form>
+
+
+        <!-- ==================================================
+                     SEPARADOR
+                =================================================== -->
+
+        <div class="login-divider">
+
+          <span>
+            AINDA NÃO TEM UMA CONTA?
+          </span>
 
         </div>
 
 
         <!-- ==================================================
-                     BOTÃO
+                     CADASTRO
                 =================================================== -->
 
-        <button type="submit" class="login-submit" id="loginSubmit">
+        <div class="login-register">
 
-          <svg id="loginSubmitIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
-            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <span>
+            Crie a sua conta gratuitamente.
+          </span>
 
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+          <a href="{% url 'inicio:cadastro' %}">
+            Criar conta
+          </a>
 
-            <polyline points="10 17 15 12 10 7"></polyline>
+        </div>
 
-            <line x1="15" y1="12" x2="3" y2="12"></line>
+
+        <!-- ==================================================
+                     SEGURANÇA
+                =================================================== -->
+
+        <div class="login-security">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+
+            <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
 
           </svg>
 
 
-          <span id="loginSubmitText">
-            Entrar na minha conta
+          <span>
+            A sua sessão é protegida pelo AgroIA Moxico.
           </span>
 
-        </button>
-
-      </form>
-
-
-      <!-- ==================================================
-                 SEPARADOR
-            =================================================== -->
-
-      <div class="login-divider">
-
-        <span>
-          AINDA NÃO TEM UMA CONTA?
-        </span>
+        </div>
 
       </div>
 
 
       <!-- ==================================================
-                 CADASTRO
+                 SPLASH CENTRAL DE CARREGAMENTO
+                 FICA FORA DO CONTEÚDO QUE SERÁ OFUSCADO
             =================================================== -->
 
-      <div class="login-register">
+      <div class="login-loading-overlay" id="loginLoadingOverlay" aria-hidden="true">
 
-        <span>
-          Crie a sua conta gratuitamente.
-        </span>
+        <div class="login-loading-box">
 
-        <a href="{% url 'inicio:cadastro' %}">
-          Criar conta
-        </a>
+          <div class="login-loading-icon">
 
-      </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+
+              <path d="M12 2v4"></path>
+
+              <path d="M12 18v4"></path>
+
+              <path d="M4.93 4.93l2.83 2.83"></path>
+
+              <path d="M16.24 16.24l2.83 2.83"></path>
+
+              <path d="M2 12h4"></path>
+
+              <path d="M18 12h4"></path>
+
+              <path d="M4.93 19.07l2.83-2.83"></path>
+
+              <path d="M16.24 7.76l2.83-2.83"></path>
+
+            </svg>
+
+          </div>
 
 
-      <!-- ==================================================
-                 SEGURANÇA
-            =================================================== -->
-
-      <div class="login-security">
-
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-          stroke-linejoin="round" aria-hidden="true">
-
-          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
-
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-
-        </svg>
+          <h2 class="login-loading-title">
+            A entrar no AgroIA Moxico...
+          </h2>
 
 
-        <span>
-          A sua sessão é protegida pelo AgroIA Moxico.
-        </span>
+          <p class="login-loading-text">
+            A validar os seus dados e preparar a sua sessão.
+          </p>
+
+
+          <div class="login-loading-dots" aria-hidden="true">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+          </div>
+
+        </div>
 
       </div>
 
@@ -1193,9 +1501,6 @@ Entrar | AgroIA Moxico
 
       /* =====================================================
          IDENTIFICAR A PÁGINA DE LOGIN
-
-         Adicionamos uma classe ao body para permitir
-         ocultar navbar/footer somente nesta página.
       ===================================================== */
 
       document.body.classList.add(
@@ -1217,14 +1522,14 @@ Entrar | AgroIA Moxico
           "loginSubmit"
         );
 
-      const buttonText =
+      const loginCard =
         document.getElementById(
-          "loginSubmitText"
+          "loginCard"
         );
 
-      const buttonIcon =
+      const loadingOverlay =
         document.getElementById(
-          "loginSubmitIcon"
+          "loginLoadingOverlay"
         );
 
 
@@ -1232,44 +1537,81 @@ Entrar | AgroIA Moxico
          VERIFICAÇÃO
       ===================================================== */
 
-      if (!form || !button) {
+      if (
+        !form ||
+        !button ||
+        !loginCard ||
+        !loadingOverlay
+      ) {
         return;
       }
 
 
       /* =====================================================
-         SUBMISSÃO
-
-         Não fazemos autenticação via JavaScript.
+         SUBMISSÃO DO LOGIN
 
          O formulário continua sendo enviado
-         normalmente para a view Django.
+         normalmente para o Django.
+
+         Apenas ativamos o estado visual
+         de carregamento.
       ===================================================== */
 
       form.addEventListener(
         "submit",
-        function () {
+        function (event) {
 
+          /*
+           * Evita múltiplos cliques.
+           */
+          if (
+            loginCard.classList.contains(
+              "is-loading"
+            )
+          ) {
+            event.preventDefault();
+            return;
+          }
+
+
+          /*
+           * Ativa o estado de carregamento.
+           */
+          loginCard.classList.add(
+            "is-loading"
+          );
+
+
+          /*
+           * Ativa o estado ARIA do overlay.
+           */
+          loadingOverlay.setAttribute(
+            "aria-hidden",
+            "false"
+          );
+
+
+          /*
+           * Desativa o botão.
+           *
+           * IMPORTANTE:
+           * O botão não recebe spinner.
+           */
           button.disabled = true;
 
+
+          /*
+           * Mantém o texto do botão.
+           */
+          const buttonText =
+            document.getElementById(
+              "loginSubmitText"
+            );
 
           if (buttonText) {
 
             buttonText.textContent =
-              "A entrar...";
-
-          }
-
-
-          if (buttonIcon) {
-
-            buttonIcon.outerHTML = `
-                        <span
-                            class="login-spinner"
-                            aria-hidden="true"
-                        ></span>
-                    `;
-
+              "A validar...";
           }
 
         }

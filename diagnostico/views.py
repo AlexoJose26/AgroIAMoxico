@@ -6,7 +6,7 @@ from django.core.files.base import ContentFile
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 
-from culturas.models import ProdutoAgricola
+from produtos.models import ProdutoAgricola
 
 from .ai_service import analisar_imagem
 from .models import Diagnostico
@@ -253,8 +253,8 @@ def analisar(request, produto_id):
             "",
         )
 
-        cultura = resultado_ia.get(
-            "cultura",
+        produtos = resultado_ia.get(
+            "produtos",
             "",
         )
 
@@ -452,7 +452,7 @@ def analisar(request, produto_id):
 
             # IA
             "classe": classe,
-            "cultura": cultura,
+            "produtos": produtos,
             "confianca": round(
                 confianca,
                 2,

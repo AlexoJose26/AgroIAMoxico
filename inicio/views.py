@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from culturas.models import ProdutoAgricola
+from produtos.models import ProdutoAgricola
 from diagnostico.models import Diagnostico
 
 from .forms import UserUpdateForm, PerfilUpdateForm
@@ -762,7 +762,7 @@ def produtos(request):
 
     return render(
         request,
-        "inicio/produtos.html",
+        "produtos/produtos.html",
         contexto,
     )
 
@@ -787,7 +787,7 @@ def detalhe_produto(request, pk):
 
     return render(
         request,
-        "culturas/detalhe_produto.html",
+        "produtos/detalhe_produto.html",
         contexto,
     )
 

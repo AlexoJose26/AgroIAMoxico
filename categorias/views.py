@@ -7,15 +7,9 @@ from .forms import CategoriaForm
 from .models import Categoria
 
 
-# ============================================================
-# CRIAR CATEGORIA
-# ============================================================
 
 @login_required
 def categoria_criar(request):
-    """
-    Permite ao utilizador autenticado criar uma nova categoria.
-    """
 
     if request.method == "POST":
 
@@ -30,7 +24,7 @@ def categoria_criar(request):
                 f'A categoria "{categoria.nome}" foi criada com sucesso.'
             )
 
-            return redirect("culturas:produtos")
+            return redirect("produtos:produtos")
 
     else:
 
@@ -49,15 +43,8 @@ def categoria_criar(request):
     )
 
 
-# ============================================================
-# DETALHES DA CATEGORIA
-# ============================================================
 
 def categoria_detalhes(request, pk):
-    """
-    Mostra os detalhes de uma categoria e todos os produtos
-    associados a ela.
-    """
 
     categoria = get_object_or_404(
         Categoria.objects.prefetch_related("produtos"),
@@ -79,16 +66,10 @@ def categoria_detalhes(request, pk):
     )
 
 
-# ============================================================
-# EDITAR CATEGORIA
-# ============================================================
 
 @login_required
 def categoria_editar(request, pk):
-    """
-    Permite ao utilizador autenticado editar uma categoria
-    existente.
-    """
+
 
     categoria = get_object_or_404(
         Categoria,
@@ -111,7 +92,7 @@ def categoria_editar(request, pk):
                 f'A categoria "{categoria.nome}" foi atualizada com sucesso.'
             )
 
-            return redirect("culturas:produtos")
+            return redirect("produtos:produtos")
 
     else:
 
@@ -133,19 +114,10 @@ def categoria_editar(request, pk):
     )
 
 
-# ============================================================
-# ELIMINAR CATEGORIA
-# ============================================================
 
 @login_required
 def categoria_eliminar(request, pk):
-    """
-    Permite eliminar uma categoria depois da confirmação.
 
-    A categoria pode possuir produtos associados. Como a relação
-    normalmente é ManyToMany, a eliminação da categoria remove
-    apenas a associação e não elimina os produtos.
-    """
 
     categoria = get_object_or_404(
         Categoria,
@@ -153,10 +125,6 @@ def categoria_eliminar(request, pk):
     )
 
     produtos_associados = categoria.produtos.count()
-
-    # --------------------------------------------------------
-    # CONFIRMAÇÃO DA ELIMINAÇÃO
-    # --------------------------------------------------------
 
     if request.method == "POST":
 
@@ -171,7 +139,7 @@ def categoria_eliminar(request, pk):
             f'A categoria "{nome}" foi eliminada com sucesso.'
         )
 
-        return redirect("culturas:produtos")
+        return redirect("produtos:produtos")
 
     context = {
         "categoria": categoria,

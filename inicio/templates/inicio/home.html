@@ -4467,22 +4467,14 @@ AgroIA Moxico | Agricultura Inteligente
 
 
 
-                        <!-- AÇÕES -->
+                 
 
                         <div class="home-product-actions">
 
 
-                            <!-- ==================================================
-                                 BOTÃO DETALHES
 
-                                 Vai diretamente para:
 
-                                 culturas:detalhe_produto
-
-                                 passando o ID do produto.
-                            =================================================== -->
-
-                            <a href="{% url 'culturas:detalhe_produto' produto.pk %}"
+                            <a href="{% url 'produtos:detalhe_produto' produto.pk %}"
                                 class="home-product-action home-product-details"
                                 aria-label="Ver detalhes de {{ produto.nome }}">
 

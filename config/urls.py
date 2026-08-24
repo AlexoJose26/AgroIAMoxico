@@ -17,8 +17,8 @@ urlpatterns = [
     ),
 
     path(
-        "culturas/",
-        include("culturas.urls")
+        "produtos/",
+        include("produtos.urls")
     ),
 
     path(

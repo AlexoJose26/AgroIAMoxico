@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from culturas.models import ProdutoAgricola
+from produtos.models import ProdutoAgricola
 
 
 class Diagnostico(models.Model):
