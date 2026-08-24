@@ -1,0 +1,1130 @@
+{% extends "base.html" %}
+
+{% block title %}
+Resultado do Diagnóstico | AgroIA Moxico
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+
+  :root {
+    --ai-green: #176b45;
+    --ai-green-dark: #0d4d31;
+    --ai-green-light: #eaf7ef;
+    --ai-gold: #d9a441;
+    --ai-danger: #c0392b;
+    --ai-warning: #d68910;
+    --ai-blue: #2874a6;
+    --ai-text: #1f2937;
+    --ai-muted: #6b7280;
+    --ai-border: #e5e7eb;
+    --ai-bg: #f5f7f6;
+    --ai-white: #ffffff;
+    --ai-radius: 18px;
+    --ai-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+  }
+
+
+  .diagnostico-detalhe {
+    background: var(--ai-bg);
+    min-height: calc(100vh - 68px);
+    padding: 30px 20px 70px;
+  }
+
+  .diagnostico-container {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+
+
+  .back-navigation {
+    margin-bottom: 22px;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 10px 16px;
+
+    background: var(--ai-white);
+    color: var(--ai-green-dark);
+
+    border: 1px solid var(--ai-border);
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+
+    cursor: pointer;
+
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .btn-back i {
+    font-size: 0.85rem;
+  }
+
+  .btn-back:hover {
+    transform: translateX(-3px);
+    background: var(--ai-green-light);
+    color: var(--ai-green);
+    box-shadow: 0 7px 18px rgba(23, 107, 69, 0.10);
+  }
+
+
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+    margin-bottom: 30px;
+
+    flex-wrap: wrap;
+  }
+
+  .page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .header-icon {
+    width: 54px;
+    height: 54px;
+
+    flex-shrink: 0;
+
+    border-radius: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--ai-green-light);
+    color: var(--ai-green);
+
+    font-size: 24px;
+  }
+
+  .page-header h1 {
+    margin: 0 0 5px;
+
+    color: var(--ai-green-dark);
+
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    font-weight: 800;
+  }
+
+  .page-header p {
+    margin: 0;
+
+    color: var(--ai-muted);
+
+    font-size: 0.95rem;
+  }
+
+
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 11px 17px;
+
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    border: 1px solid transparent;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    background: var(--ai-green);
+    color: white;
+
+    box-shadow: 0 6px 18px rgba(23, 107, 69, 0.18);
+  }
+
+  .btn-primary:hover {
+    background: var(--ai-green-dark);
+  }
+
+  .btn-secondary {
+    background: white;
+    color: var(--ai-green-dark);
+
+    border-color: var(--ai-border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--ai-green-light);
+  }
+
+
+
+  .result-card {
+    background: var(--ai-white);
+
+    border: 1px solid var(--ai-border);
+    border-radius: var(--ai-radius);
+
+    box-shadow: var(--ai-shadow);
+
+    overflow: hidden;
+
+    margin-bottom: 25px;
+  }
+
+  .result-card-header {
+    padding: 22px 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+    border-bottom: 1px solid var(--ai-border);
+  }
+
+  .result-card-header h2 {
+    margin: 0;
+
+    color: var(--ai-green-dark);
+
+    font-size: 1.2rem;
+  }
+
+
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 12px;
+
+    border-radius: 999px;
+
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .status-concluido {
+    background: #e8f7ee;
+    color: #167143;
+  }
+
+  .status-erro {
+    background: #fdecea;
+    color: #a93226;
+  }
+
+  .status-processando {
+    background: #fff5df;
+    color: #9a6700;
+  }
+
+  .status-pendente {
+    background: #eef2f7;
+    color: #52606d;
+  }
+
+
+
+  .result-grid {
+    display: grid;
+
+    grid-template-columns: 390px 1fr;
+
+    gap: 0;
+  }
+
+
+
+
+  .image-panel {
+    padding: 25px;
+
+    background: #f8faf9;
+
+    border-right: 1px solid var(--ai-border);
+  }
+
+  .diagnostico-image {
+    width: 100%;
+    height: 390px;
+
+    object-fit: cover;
+
+    border-radius: 15px;
+
+    display: block;
+
+    border: 1px solid var(--ai-border);
+  }
+
+  .image-caption {
+    margin-top: 12px;
+
+    color: var(--ai-muted);
+
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+
+
+  .info-panel {
+    padding: 28px;
+  }
+
+  .info-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+  }
+
+  .info-item {
+    padding: 17px;
+
+    background: #f8faf9;
+
+    border: 1px solid var(--ai-border);
+
+    border-radius: 13px;
+  }
+
+  .info-label {
+    display: block;
+
+    color: var(--ai-muted);
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    margin-bottom: 6px;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .info-value {
+    color: var(--ai-text);
+
+    font-size: 0.98rem;
+    font-weight: 700;
+
+    word-break: break-word;
+  }
+
+
+
+  .diagnosis-main {
+    padding: 20px;
+
+    border-radius: 15px;
+
+    background: var(--ai-green-light);
+
+    border: 1px solid #cfe8d9;
+
+    margin-bottom: 20px;
+  }
+
+  .diagnosis-main-label {
+    color: var(--ai-green);
+
+    font-size: 0.75rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    margin-bottom: 7px;
+  }
+
+  .diagnosis-main h3 {
+    margin: 0;
+
+    color: var(--ai-green-dark);
+
+    font-size: 1.45rem;
+  }
+
+
+
+
+  .confidence-box {
+    margin-bottom: 25px;
+  }
+
+  .confidence-top {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 8px;
+  }
+
+  .confidence-top span:first-child {
+    color: var(--ai-text);
+
+    font-weight: 700;
+
+    font-size: 0.9rem;
+  }
+
+  .confidence-value {
+    color: var(--ai-green);
+
+    font-weight: 900;
+  }
+
+  .confidence-bar {
+    width: 100%;
+
+    height: 11px;
+
+    background: #e8ecea;
+
+    border-radius: 999px;
+
+    overflow: hidden;
+  }
+
+  .confidence-fill {
+    height: 100%;
+
+    background: var(--ai-green);
+
+    border-radius: inherit;
+
+    transition: width 0.8s ease;
+  }
+
+
+
+  .content-section {
+    margin-top: 25px;
+  }
+
+  .content-section h3 {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin: 0 0 10px;
+
+    color: var(--ai-green-dark);
+
+    font-size: 1.05rem;
+  }
+
+  .content-section h3 i {
+    color: var(--ai-green);
+  }
+
+  .content-section p {
+    margin: 0;
+
+    color: #4b5563;
+
+    line-height: 1.75;
+
+    font-size: 0.95rem;
+
+    white-space: pre-line;
+  }
+
+
+
+  .alert {
+    padding: 16px 18px;
+
+    border-radius: 13px;
+
+    margin-top: 20px;
+
+    font-size: 0.9rem;
+
+    line-height: 1.6;
+  }
+
+  .alert-warning {
+    background: #fff8e8;
+
+    border: 1px solid #f2d28a;
+
+    color: #7a5700;
+  }
+
+  .alert-danger {
+    background: #fdf0ef;
+
+    border: 1px solid #efc0bb;
+
+    color: #8e2f25;
+  }
+
+  .alert-success {
+    background: #edf9f1;
+
+    border: 1px solid #c7e7d2;
+
+    color: #176b45;
+  }
+
+
+
+  .error-card {
+    margin-top: 20px;
+
+    padding: 20px;
+
+    background: #fff4f3;
+
+    border: 1px solid #f0c7c3;
+
+    border-radius: 14px;
+  }
+
+  .error-card h3 {
+    color: var(--ai-danger);
+
+    margin: 0 0 8px;
+  }
+
+  .error-card p {
+    margin: 0;
+
+    color: #7f2d24;
+
+    line-height: 1.6;
+
+    white-space: pre-line;
+  }
+
+
+
+  @media (max-width: 900px) {
+
+    .result-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .image-panel {
+      border-right: none;
+
+      border-bottom: 1px solid var(--ai-border);
+    }
+
+    .diagnostico-image {
+      height: 330px;
+    }
+  }
+
+
+  @media (max-width: 600px) {
+
+    .diagnostico-detalhe {
+      padding: 25px 13px 50px;
+    }
+
+    .back-navigation {
+      margin-bottom: 18px;
+    }
+
+    .btn-back {
+      width: 100%;
+    }
+
+    .page-header {
+      align-items: flex-start;
+    }
+
+    .page-header-left {
+      align-items: flex-start;
+    }
+
+    .header-actions {
+      width: 100%;
+    }
+
+    .btn {
+      flex: 1;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .info-panel {
+      padding: 20px;
+    }
+
+    .image-panel {
+      padding: 18px;
+    }
+
+    .diagnostico-image {
+      height: 270px;
+    }
+
+    .result-card-header {
+      padding: 18px;
+    }
+
+    .page-header h1 {
+      font-size: 1.65rem;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<main class="diagnostico-detalhe">
+
+  <div class="diagnostico-container">
+
+
+
+    <div class="back-navigation">
+
+      <a
+        href="javascript:void(0);"
+        class="btn-back"
+        onclick="voltarPaginaAnterior();"
+        aria-label="Voltar para a página anterior"
+      >
+
+        <i class="fas fa-arrow-left"></i>
+
+        <span>Voltar</span>
+
+      </a>
+
+    </div>
+
+
+    <div class="page-header">
+
+      <div class="page-header-left">
+
+        <div class="header-icon">
+
+          <i class="fas fa-file-medical"></i>
+
+        </div>
+
+        <div>
+
+          <h1>
+            Resultado do Diagnóstico
+          </h1>
+
+          <p>
+            Análise realizada através da inteligência
+            artificial do AgroIA Moxico.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="header-actions">
+
+        {% if diagnostico.produto %}
+
+        <a
+          href="{% url 'diagnostico:diagnostico' diagnostico.produto.id %}"
+          class="btn btn-primary"
+        >
+
+          <i class="fas fa-redo"></i>
+
+          Novo diagnóstico
+
+        </a>
+
+
+        <a
+          href="{% url 'diagnostico:historico_produto' diagnostico.produto.id %}"
+          class="btn btn-secondary"
+        >
+
+          <i class="fas fa-history"></i>
+
+          Histórico
+
+        </a>
+
+        {% endif %}
+
+      </div>
+
+    </div>
+
+
+
+    <section class="result-card">
+
+
+      <div class="result-card-header">
+
+        <h2>
+          Diagnóstico #{{ diagnostico.id }}
+        </h2>
+
+
+        {% if diagnostico.status == "concluido" %}
+
+        <span class="status status-concluido">
+
+          <i class="fas fa-check-circle"></i>
+
+          Concluído
+
+        </span>
+
+
+        {% elif diagnostico.status == "erro" %}
+
+        <span class="status status-erro">
+
+          <i class="fas fa-exclamation-circle"></i>
+
+          Erro
+
+        </span>
+
+
+        {% elif diagnostico.status == "processando" %}
+
+        <span class="status status-processando">
+
+          <i class="fas fa-spinner"></i>
+
+          Processando
+
+        </span>
+
+
+        {% else %}
+
+        <span class="status status-pendente">
+
+          <i class="fas fa-clock"></i>
+
+          Pendente
+
+        </span>
+
+        {% endif %}
+
+      </div>
+
+
+
+
+      <div class="result-grid">
+
+
+
+        <div class="image-panel">
+
+          {% if diagnostico.imagem %}
+
+          <img
+            src="{{ diagnostico.imagem.url }}"
+            alt="Imagem analisada"
+            class="diagnostico-image"
+          >
+
+          <div class="image-caption">
+
+            Imagem utilizada pela inteligência
+            artificial neste diagnóstico.
+
+          </div>
+
+
+          {% elif diagnostico.produto and diagnostico.produto.imagem %}
+
+          <img
+            src="{{ diagnostico.produto.imagem.url }}"
+            alt="{{ diagnostico.produto.nome }}"
+            class="diagnostico-image"
+          >
+
+          <div class="image-caption">
+
+            Imagem do produto analisado.
+
+          </div>
+
+
+          {% else %}
+
+          <div class="alert alert-warning">
+
+            <i class="fas fa-image"></i>
+
+            A imagem deste diagnóstico não está
+            disponível.
+
+          </div>
+
+          {% endif %}
+
+        </div>
+
+
+
+        <div class="info-panel">
+
+
+
+          {% if diagnostico.status == "concluido" %}
+
+          <div class="diagnosis-main">
+
+            <div class="diagnosis-main-label">
+
+              Resultado identificado
+
+            </div>
+
+            <h3>
+
+              {% if diagnostico.doenca_identificada %}
+
+              {{ diagnostico.doenca_identificada }}
+
+              {% else %}
+
+              {{ diagnostico.resultado_legivel }}
+
+              {% endif %}
+
+            </h3>
+
+          </div>
+
+          {% endif %}
+
+
+
+          <div class="info-grid">
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Produto
+              </span>
+
+              <span class="info-value">
+
+                {% if diagnostico.produto %}
+
+                {{ diagnostico.produto.nome }}
+
+                {% else %}
+
+                Produto removido
+
+                {% endif %}
+
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Classe da IA
+              </span>
+
+              <span class="info-value">
+
+                {{ diagnostico.classe_identificada|default:"Não identificada" }}
+
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Tipo de resultado
+              </span>
+
+              <span class="info-value">
+
+                {{ diagnostico.resultado_legivel }}
+
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Confiança da IA
+              </span>
+
+              <span class="info-value">
+
+                {{ diagnostico.confianca_formatada }}
+
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Data
+              </span>
+
+              <span class="info-value">
+
+                {{ diagnostico.data_criacao|date:"d/m/Y H:i" }}
+
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Atualizado
+              </span>
+
+              <span class="info-value">
+
+                {{ diagnostico.data_atualizacao|date:"d/m/Y H:i" }}
+
+              </span>
+
+            </div>
+
+          </div>
+
+
+          {% if diagnostico.status == "concluido" %}
+
+          <div class="confidence-box">
+
+            <div class="confidence-top">
+
+              <span>
+                Confiança da inteligência artificial
+              </span>
+
+              <span class="confidence-value">
+
+                {{ diagnostico.confianca_formatada }}
+
+              </span>
+
+            </div>
+
+
+            <div class="confidence-bar">
+
+              <div
+                class="confidence-fill"
+                style="width: {{ diagnostico.confianca }}%;"
+              ></div>
+
+            </div>
+
+          </div>
+
+          {% endif %}
+
+
+
+          {% if diagnostico.descricao_resultado %}
+
+          <div class="content-section">
+
+            <h3>
+
+              <i class="fas fa-info-circle"></i>
+
+              Descrição
+
+            </h3>
+
+            <p>
+              {{ diagnostico.descricao_resultado }}
+            </p>
+
+          </div>
+
+          {% endif %}
+
+
+
+
+          {% if diagnostico.recomendacoes %}
+
+          <div class="content-section">
+
+            <h3>
+
+              <i class="fas fa-leaf"></i>
+
+              Recomendações
+
+            </h3>
+
+            <p>
+              {{ diagnostico.recomendacoes }}
+            </p>
+
+          </div>
+
+          {% endif %}
+
+
+          {% if diagnostico.observacoes %}
+
+          <div class="alert alert-warning">
+
+            <strong>
+
+              <i class="fas fa-exclamation-triangle"></i>
+
+              Observações
+
+            </strong>
+
+            <div style="margin-top: 7px;">
+
+              {{ diagnostico.observacoes }}
+
+            </div>
+
+          </div>
+
+          {% endif %}
+
+
+          {% if diagnostico.status == "erro" and diagnostico.erro %}
+
+          <div class="error-card">
+
+            <h3>
+
+              <i class="fas fa-exclamation-circle"></i>
+
+              Erro durante o diagnóstico
+
+            </h3>
+
+            <p>
+
+              {{ diagnostico.erro }}
+
+            </p>
+
+          </div>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>
+
+
+
+<script>
+
+  function voltarPaginaAnterior() {
+
+
+    if (window.history.length > 1) {
+
+      window.history.back();
+
+    } else {
+
+
+      window.location.href = "{% url 'diagnostico:historico' %}";
+
+    }
+
+  }
+
+</script>
+
+{% endblock %}

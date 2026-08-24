@@ -1,27 +1,70 @@
+﻿# ============================================================
+# AGROIA MOXICO - GITIGNORE
+# ============================================================
+
 # Ambiente virtual
 venv/
-
-# Django
-db.sqlite3
-*.log
+.venv/
+env/
+ENV/
 
 # Python
 __pycache__/
 *.py[cod]
+*.class
+*.pyo
+*.pyd
 
-# Variáveis de ambiente
-.env
-.env.*
+# Django
+*.log
+local_settings.py
+
+# Banco de dados local
+db.sqlite3
+db.sqlite3-journal
+
+# Arquivos de mídia enviados pelos utilizadores
+media/
 
 # Arquivos estáticos gerados
 staticfiles/
 
-# Uploads
-media/
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
 
-# VS Code
+# IDE / Editores
 .vscode/
+.idea/
 
-# Sistema
+# Sistema operacional
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Testes / cobertura
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# Builds
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Modelos/cache temporário
+*.tmp
+*.temp
+
+# Arquivos temporários
+*.bak
+*.swp
+*.swo
+
+# Dataset de treinamento da IA
+diagnostico/ai/dataset/

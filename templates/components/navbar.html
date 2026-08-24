@@ -1,0 +1,2869 @@
+{% load static %}
+
+
+{% if request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'cadastro' %}
+
+
+<style>
+  :root {
+
+    --agro-green: #176b45;
+    --agro-green-dark: #0d4d31;
+    --agro-green-deep: #083b27;
+    --agro-green-soft: #eaf7ef;
+
+    --agro-gold: #d9a441;
+
+    --agro-text: #17352a;
+    --agro-muted: #6f8479;
+
+    --agro-white: #ffffff;
+
+    --agro-glass:
+      rgba(255, 255, 255, 0.72);
+
+    --agro-border:
+      rgba(23, 107, 69, 0.09);
+
+    --agro-shadow:
+      0 18px 48px rgba(8, 59, 39, 0.11);
+
+    --agro-radius:
+      20px;
+  }
+
+
+  /* ============================================================
+   NAVBAR PRINCIPAL
+============================================================ */
+
+  .agro-navbar {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    z-index: 9999;
+
+    padding: 11px 18px;
+
+    pointer-events: none;
+  }
+
+
+  /* ============================================================
+   SHELL
+============================================================ */
+
+  .agro-navbar-shell {
+
+    width:
+      min(1450px, 100%);
+
+    min-height:
+      68px;
+
+    margin:
+      0 auto;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      16px;
+
+    padding:
+      6px 8px 6px 11px;
+
+    background:
+      linear-gradient(135deg,
+        rgba(234, 247, 239, .74),
+        rgba(255, 255, 255, .58));
+
+    border:
+      1px solid rgba(255, 255, 255, .72);
+
+    border-radius:
+      var(--agro-radius);
+
+    box-shadow:
+      var(--agro-shadow);
+
+    backdrop-filter:
+      blur(24px) saturate(145%);
+
+    -webkit-backdrop-filter:
+      blur(24px) saturate(145%);
+
+    pointer-events:
+      auto;
+
+    position:
+      relative;
+
+    overflow:
+      visible;
+
+    transition:
+      background .3s ease,
+      box-shadow .3s ease,
+      border-color .3s ease;
+  }
+
+
+  /* ============================================================
+   BRILHO SUPERIOR
+============================================================ */
+
+  .agro-navbar-shell::before {
+
+    content:
+      "";
+
+    position:
+      absolute;
+
+    inset:
+      0;
+
+    border-radius:
+      inherit;
+
+    pointer-events:
+      none;
+
+    background:
+      linear-gradient(120deg,
+        rgba(255, 255, 255, .48),
+        transparent 45%,
+        rgba(23, 107, 69, .035));
+  }
+
+
+  /* ============================================================
+   MARCA
+============================================================ */
+
+  .agro-brand {
+
+    position:
+      relative;
+
+    z-index:
+      2;
+
+    display:
+      inline-flex;
+
+    align-items:
+      center;
+
+    gap:
+      9px;
+
+    flex-shrink:
+      0;
+
+    text-decoration:
+      none;
+
+    color:
+      var(--agro-text);
+
+    padding:
+      3px 7px 3px 3px;
+
+    border-radius:
+      14px;
+
+    transition:
+      transform .25s ease,
+      background .25s ease;
+  }
+
+
+  .agro-brand:hover {
+
+    transform:
+      translateY(-1px);
+
+    background:
+      rgba(23, 107, 69, .035);
+  }
+
+
+  /* ============================================================
+   LOGO
+============================================================ */
+
+  .agro-brand-logo {
+
+    width:
+      45px;
+
+    height:
+      45px;
+
+    flex-shrink:
+      0;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    border-radius:
+      14px;
+
+    background:
+      linear-gradient(145deg,
+        var(--agro-green),
+        var(--agro-green-dark));
+
+    border:
+      1px solid rgba(255, 255, 255, .38);
+
+    box-shadow:
+      0 7px 20px rgba(23, 107, 69, .20);
+
+    position:
+      relative;
+
+    overflow:
+      hidden;
+  }
+
+
+  .agro-brand-logo::before {
+
+    content:
+      "";
+
+    position:
+      absolute;
+
+    width:
+      65px;
+
+    height:
+      65px;
+
+    top:
+      -33px;
+
+    right:
+      -33px;
+
+    border-radius:
+      50%;
+
+    background:
+      rgba(255, 255, 255, .10);
+  }
+
+
+  .agro-brand-logo::after {
+
+    content:
+      "";
+
+    position:
+      absolute;
+
+    width:
+      20px;
+
+    height:
+      20px;
+
+    left:
+      -8px;
+
+    bottom:
+      -9px;
+
+    border-radius:
+      50%;
+
+    background:
+      rgba(217, 164, 65, .20);
+  }
+
+
+  .agro-brand-logo svg {
+
+    width:
+      28px;
+
+    height:
+      28px;
+
+    color:
+      #ffffff;
+
+    position:
+      relative;
+
+    z-index:
+      2;
+  }
+
+
+  /* ============================================================
+   TEXTO DA MARCA
+============================================================ */
+
+  .agro-brand-text {
+
+    display:
+      flex;
+
+    flex-direction:
+      column;
+
+    line-height:
+      1;
+  }
+
+
+  .agro-brand-text strong {
+
+    color:
+      var(--agro-green-dark);
+
+    font-size:
+      17px;
+
+    font-weight:
+      850;
+
+    letter-spacing:
+      -.5px;
+  }
+
+
+  .agro-brand-text span {
+
+    margin-top:
+      4px;
+
+    color:
+      var(--agro-muted);
+
+    font-size:
+      8.5px;
+
+    font-weight:
+      750;
+
+    letter-spacing:
+      1.9px;
+
+    text-transform:
+      uppercase;
+  }
+
+
+  /* ============================================================
+   NAVEGAÇÃO DESKTOP
+============================================================ */
+
+  .agro-main-nav {
+
+    flex:
+      1;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    gap:
+      3px;
+
+    position:
+      relative;
+
+    z-index:
+      2;
+  }
+
+
+  /* ============================================================
+   LINKS DA NAVBAR — COMPACTOS
+============================================================ */
+
+  .agro-nav-link {
+
+    position:
+      relative;
+
+    min-height:
+      38px;
+
+    display:
+      inline-flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    gap:
+      7px;
+
+    padding:
+      0 12px;
+
+    border-radius:
+      10px;
+
+    color:
+      #587167;
+
+    font-size:
+      12px;
+
+    font-weight:
+      700;
+
+    text-decoration:
+      none;
+
+    border:
+      1px solid transparent;
+
+    transition:
+      color .25s ease,
+      background .25s ease,
+      border-color .25s ease,
+      transform .25s ease;
+  }
+
+
+  .agro-nav-link:hover {
+
+    color:
+      var(--agro-green-dark);
+
+    background:
+      rgba(23, 107, 69, .055);
+
+    border-color:
+      rgba(23, 107, 69, .045);
+
+    transform:
+      translateY(-1px);
+  }
+
+
+  /* ============================================================
+   LINK ATIVO
+============================================================ */
+
+  .agro-nav-link.active {
+
+    color:
+      var(--agro-green-dark);
+
+    background:
+      rgba(23, 107, 69, .065);
+
+    border-color:
+      rgba(23, 107, 69, .06);
+  }
+
+
+  .agro-nav-link.active::after {
+
+    content:
+      "";
+
+    position:
+      absolute;
+
+    left:
+      50%;
+
+    bottom:
+      2px;
+
+    width:
+      17px;
+
+    height:
+      2px;
+
+    transform:
+      translateX(-50%);
+
+    border-radius:
+      50px;
+
+    background:
+      var(--agro-green);
+  }
+
+
+  /* ============================================================
+   ÍCONES DA NAVEGAÇÃO
+============================================================ */
+
+  .agro-nav-icon {
+
+    width:
+      19px;
+
+    height:
+      19px;
+
+    display:
+      inline-flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    color:
+      currentColor;
+
+    flex-shrink:
+      0;
+  }
+
+
+  .agro-nav-icon svg {
+
+    width:
+      17px;
+
+    height:
+      17px;
+
+    display:
+      block;
+  }
+
+
+  /* ============================================================
+   PRODUTOS
+============================================================ */
+
+  .agro-products-link {
+
+    background:
+      rgba(23, 107, 69, .018);
+  }
+
+
+  /* ============================================================
+   ÁREA DIREITA
+============================================================ */
+
+  .agro-navbar-right {
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      6px;
+
+    flex-shrink:
+      0;
+
+    position:
+      relative;
+
+    z-index:
+      3;
+  }
+
+
+  /* ============================================================
+   ÁREA DO USUÁRIO
+============================================================ */
+
+  .agro-user-wrapper {
+
+    position:
+      relative;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+  }
+
+
+  .agro-user-area {
+
+    min-height:
+      43px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      8px;
+
+    padding:
+      3px 7px 3px 4px;
+
+    border-radius:
+      12px;
+
+    color:
+      var(--agro-text);
+
+    text-decoration:
+      none;
+
+    border:
+      1px solid transparent;
+
+    background:
+      transparent;
+
+    cursor:
+      pointer;
+
+    font-family:
+      inherit;
+
+    transition:
+      background .25s ease,
+      border-color .25s ease,
+      transform .25s ease;
+  }
+
+
+  .agro-user-area:hover,
+  .agro-user-area.active {
+
+    background:
+      rgba(23, 107, 69, .055);
+
+    border-color:
+      rgba(23, 107, 69, .055);
+
+    transform:
+      translateY(-1px);
+  }
+
+
+  /* ============================================================
+   AVATAR — TOTALMENTE CIRCULAR
+============================================================ */
+
+  .agro-user-avatar {
+
+    position:
+      relative;
+
+    width:
+      37px;
+
+    height:
+      37px;
+
+    flex-shrink:
+      0;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    border-radius:
+      50%;
+
+    overflow:
+      hidden;
+
+    background:
+      linear-gradient(135deg,
+        var(--agro-green),
+        var(--agro-green-dark));
+
+    color:
+      #ffffff;
+
+    border:
+      2px solid rgba(255, 255, 255, .82);
+
+    box-shadow:
+      0 5px 15px rgba(23, 107, 69, .18);
+  }
+
+
+  /* ============================================================
+   FOTO DO USUÁRIO
+============================================================ */
+
+  .agro-user-avatar img {
+
+    width:
+      100%;
+
+    height:
+      100%;
+
+    display:
+      block;
+
+    object-fit:
+      cover;
+
+    border-radius:
+      50%;
+
+    aspect-ratio:
+      1 / 1;
+  }
+
+
+  /* ============================================================
+   INICIAL DO USUÁRIO
+============================================================ */
+
+  .agro-user-initial {
+
+    width:
+      100%;
+
+    height:
+      100%;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    border-radius:
+      50%;
+
+    font-size:
+      14px;
+
+    font-weight:
+      850;
+  }
+
+
+  /* ============================================================
+   INDICADOR ONLINE
+============================================================ */
+
+  .agro-user-online {
+
+    position:
+      absolute;
+
+    right:
+      0px;
+
+    bottom:
+      0px;
+
+    width:
+      9px;
+
+    height:
+      9px;
+
+    border-radius:
+      50%;
+
+    background:
+      #38b878;
+
+    border:
+      2px solid #ffffff;
+
+    box-sizing:
+      border-box;
+
+    z-index:
+      3;
+  }
+
+
+  /* ============================================================
+   INFORMAÇÕES DO USUÁRIO
+============================================================ */
+
+  .agro-user-information {
+
+    min-width:
+      80px;
+
+    max-width:
+      125px;
+
+    display:
+      flex;
+
+    flex-direction:
+      column;
+
+    overflow:
+      hidden;
+  }
+
+
+  .agro-user-information strong {
+
+    overflow:
+      hidden;
+
+    white-space:
+      nowrap;
+
+    text-overflow:
+      ellipsis;
+
+    color:
+      var(--agro-text);
+
+    font-size:
+      10.5px;
+
+    font-weight:
+      800;
+  }
+
+
+  .agro-user-information small {
+
+    margin-top:
+      2px;
+
+    color:
+      var(--agro-muted);
+
+    font-size:
+      8.5px;
+
+    font-weight:
+      600;
+  }
+
+
+  /* ============================================================
+   SETA DO USUÁRIO
+============================================================ */
+
+  .agro-user-chevron {
+
+    width:
+      13px;
+
+    height:
+      13px;
+
+    color:
+      #8da096;
+
+    transition:
+      transform .25s ease;
+  }
+
+
+  .agro-user-area.active .agro-user-chevron {
+
+    transform:
+      rotate(180deg);
+  }
+
+
+  /* ============================================================
+   MENU DROPDOWN DO USUÁRIO
+============================================================ */
+
+  .agro-user-dropdown {
+
+    position:
+      absolute;
+
+    top:
+      calc(100% + 9px);
+
+    right:
+      0;
+
+    width:
+      215px;
+
+    padding:
+      7px;
+
+    border-radius:
+      16px;
+
+    background:
+      rgba(248, 253, 250, .95);
+
+    border:
+      1px solid rgba(255, 255, 255, .88);
+
+    box-shadow:
+      0 20px 48px rgba(8, 59, 39, .16);
+
+    backdrop-filter:
+      blur(24px) saturate(145%);
+
+    -webkit-backdrop-filter:
+      blur(24px) saturate(145%);
+
+    opacity:
+      0;
+
+    visibility:
+      hidden;
+
+    pointer-events:
+      none;
+
+    transform:
+      translateY(-7px) scale(.97);
+
+    transform-origin:
+      top right;
+
+    transition:
+      opacity .22s ease,
+      visibility .22s ease,
+      transform .22s ease;
+
+    z-index:
+      10000;
+  }
+
+
+  .agro-user-dropdown.active {
+
+    opacity:
+      1;
+
+    visibility:
+      visible;
+
+    pointer-events:
+      auto;
+
+    transform:
+      translateY(0) scale(1);
+  }
+
+
+  /* ============================================================
+   CABEÇALHO DROPDOWN
+============================================================ */
+
+  .agro-user-dropdown-header {
+
+    padding:
+      8px 9px 9px;
+
+    margin-bottom:
+      3px;
+
+    border-bottom:
+      1px solid rgba(23, 107, 69, .06);
+  }
+
+
+  .agro-user-dropdown-header strong {
+
+    display:
+      block;
+
+    color:
+      var(--agro-green-dark);
+
+    font-size:
+      10.5px;
+
+    font-weight:
+      850;
+
+    overflow:
+      hidden;
+
+    text-overflow:
+      ellipsis;
+
+    white-space:
+      nowrap;
+  }
+
+
+  .agro-user-dropdown-header small {
+
+    display:
+      block;
+
+    margin-top:
+      3px;
+
+    color:
+      var(--agro-muted);
+
+    font-size:
+      8.5px;
+
+    font-weight:
+      600;
+  }
+
+
+  /* ============================================================
+   OPÇÕES DO MENU
+============================================================ */
+
+  .agro-user-menu-link {
+
+    width:
+      100%;
+
+    min-height:
+      43px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      9px;
+
+    padding:
+      0 9px;
+
+    border-radius:
+      11px;
+
+    box-sizing:
+      border-box;
+
+    text-decoration:
+      none;
+
+    color:
+      var(--agro-text);
+
+    font-size:
+      11px;
+
+    font-weight:
+      750;
+
+    transition:
+      background .2s ease,
+      color .2s ease,
+      transform .2s ease;
+  }
+
+
+  .agro-user-menu-link:hover {
+
+    background:
+      var(--agro-green-soft);
+
+    color:
+      var(--agro-green-dark);
+
+    transform:
+      translateX(2px);
+  }
+
+
+  /* ============================================================
+   ÍCONE DAS OPÇÕES
+============================================================ */
+
+  .agro-user-menu-icon {
+
+    width:
+      31px;
+
+    height:
+      31px;
+
+    flex-shrink:
+      0;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    border-radius:
+      9px;
+
+    background:
+      rgba(23, 107, 69, .065);
+
+    color:
+      var(--agro-green);
+  }
+
+
+  .agro-user-menu-icon svg {
+
+    width:
+      16px;
+
+    height:
+      16px;
+
+    display:
+      block;
+  }
+
+
+  /* ============================================================
+   TERMINAR SESSÃO
+============================================================ */
+
+  .agro-user-menu-link.logout {
+
+    margin-top:
+      3px;
+
+    color:
+      #a24d4d;
+
+    border-top:
+      1px solid rgba(23, 107, 69, .06);
+
+    border-radius:
+      11px;
+  }
+
+
+  .agro-user-menu-link.logout:hover {
+
+    color:
+      #8e3939;
+
+    background:
+      rgba(174, 77, 77, .065);
+  }
+
+
+  .agro-user-menu-link.logout .agro-user-menu-icon {
+
+    background:
+      rgba(174, 77, 77, .075);
+
+    color:
+      #a24d4d;
+  }
+
+
+  /* ============================================================
+   DATA / HORA
+============================================================ */
+
+  .agro-datetime {
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      7px;
+
+    min-width:
+      100px;
+
+    padding:
+      6px 9px;
+
+    border-radius:
+      11px;
+
+    background:
+      rgba(23, 107, 69, .035);
+
+    border:
+      1px solid rgba(23, 107, 69, .055);
+  }
+
+
+  .agro-clock-icon {
+
+    width:
+      27px;
+
+    height:
+      27px;
+
+    flex-shrink:
+      0;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    border-radius:
+      8px;
+
+    background:
+      rgba(255, 255, 255, .80);
+
+    color:
+      var(--agro-green);
+  }
+
+
+  .agro-clock-icon svg {
+
+    width:
+      15px;
+
+    height:
+      15px;
+  }
+
+
+  .agro-datetime-text {
+
+    display:
+      flex;
+
+    flex-direction:
+      column;
+
+    line-height:
+      1.1;
+  }
+
+
+  .agro-datetime-text strong {
+
+    color:
+      var(--agro-text);
+
+    font-size:
+      9.5px;
+
+    font-weight:
+      800;
+  }
+
+
+  .agro-datetime-text small {
+
+    margin-top:
+      3px;
+
+    color:
+      var(--agro-muted);
+
+    font-size:
+      8px;
+  }
+
+
+  /* ============================================================
+   VISITANTE
+============================================================ */
+
+  .agro-guest-actions {
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      4px;
+  }
+
+
+  .agro-login-link {
+
+    min-height:
+      37px;
+
+    display:
+      inline-flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    padding:
+      0 11px;
+
+    border-radius:
+      10px;
+
+    color:
+      var(--agro-green-dark);
+
+    font-size:
+      11px;
+
+    font-weight:
+      750;
+
+    text-decoration:
+      none;
+
+    transition:
+      background .25s ease,
+      transform .25s ease;
+  }
+
+
+  .agro-login-link:hover {
+
+    background:
+      rgba(23, 107, 69, .055);
+
+    transform:
+      translateY(-1px);
+  }
+
+
+  .agro-register-button {
+
+    min-height:
+      37px;
+
+    display:
+      inline-flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    padding:
+      0 14px;
+
+    border-radius:
+      10px;
+
+    background:
+      linear-gradient(135deg,
+        var(--agro-green),
+        var(--agro-green-dark));
+
+    color:
+      #ffffff;
+
+    font-size:
+      11px;
+
+    font-weight:
+      800;
+
+    text-decoration:
+      none;
+
+    box-shadow:
+      0 6px 16px rgba(23, 107, 69, .17);
+
+    transition:
+      transform .25s ease,
+      box-shadow .25s ease;
+  }
+
+
+  .agro-register-button:hover {
+
+    transform:
+      translateY(-1px);
+
+    box-shadow:
+      0 9px 21px rgba(23, 107, 69, .23);
+  }
+
+
+  /* ============================================================
+   BOTÃO MOBILE
+============================================================ */
+
+  .agro-mobile-toggle {
+
+    display:
+      none;
+
+    width:
+      40px;
+
+    height:
+      40px;
+
+    padding:
+      0;
+
+    border:
+      1px solid rgba(23, 107, 69, .075);
+
+    border-radius:
+      11px;
+
+    background:
+      rgba(234, 247, 239, .70);
+
+    cursor:
+      pointer;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    flex-direction:
+      column;
+
+    gap:
+      5px;
+  }
+
+
+  .agro-mobile-toggle span {
+
+    width:
+      18px;
+
+    height:
+      2px;
+
+    border-radius:
+      20px;
+
+    background:
+      var(--agro-green-dark);
+
+    transition:
+      transform .25s ease,
+      opacity .25s ease;
+  }
+
+
+  .agro-mobile-toggle.active span:nth-child(1) {
+
+    transform:
+      translateY(7px) rotate(45deg);
+  }
+
+
+  .agro-mobile-toggle.active span:nth-child(2) {
+
+    opacity:
+      0;
+  }
+
+
+  .agro-mobile-toggle.active span:nth-child(3) {
+
+    transform:
+      translateY(-7px) rotate(-45deg);
+  }
+
+
+  /* ============================================================
+   MENU MOBILE
+============================================================ */
+
+  .agro-mobile-menu {
+
+    position:
+      absolute;
+
+    top:
+      calc(100% + 7px);
+
+    right:
+      18px;
+
+    width:
+      min(380px, calc(100% - 36px));
+
+    padding:
+      8px;
+
+    border-radius:
+      17px;
+
+    background:
+      rgba(248, 253, 250, .93);
+
+    border:
+      1px solid rgba(255, 255, 255, .85);
+
+    box-shadow:
+      0 22px 55px rgba(8, 59, 39, .15);
+
+    backdrop-filter:
+      blur(24px) saturate(145%);
+
+    -webkit-backdrop-filter:
+      blur(24px) saturate(145%);
+
+    opacity:
+      0;
+
+    visibility:
+      hidden;
+
+    pointer-events:
+      none;
+
+    transform:
+      translateY(-9px) scale(.98);
+
+    transform-origin:
+      top right;
+
+    transition:
+      opacity .25s ease,
+      visibility .25s ease,
+      transform .25s ease;
+  }
+
+
+  .agro-mobile-menu.active {
+
+    opacity:
+      1;
+
+    visibility:
+      visible;
+
+    pointer-events:
+      auto;
+
+    transform:
+      translateY(0) scale(1);
+  }
+
+
+  .agro-mobile-menu nav {
+
+    display:
+      flex;
+
+    flex-direction:
+      column;
+
+    gap:
+      3px;
+  }
+
+
+  .agro-mobile-menu nav>a {
+
+    min-height:
+      45px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      space-between;
+
+    padding:
+      0 12px;
+
+    border-radius:
+      11px;
+
+    color:
+      var(--agro-text);
+
+    font-size:
+      12px;
+
+    font-weight:
+      700;
+
+    text-decoration:
+      none;
+
+    transition:
+      background .2s ease,
+      color .2s ease,
+      transform .2s ease;
+  }
+
+
+  .agro-mobile-menu nav>a:hover {
+
+    color:
+      var(--agro-green-dark);
+
+    background:
+      var(--agro-green-soft);
+
+    transform:
+      translateX(2px);
+  }
+
+
+  /* ============================================================
+   ÍCONES MOBILE
+============================================================ */
+
+  .agro-mobile-menu-icon {
+
+    width:
+      29px;
+
+    height:
+      29px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    flex-shrink:
+      0;
+
+    border-radius:
+      8px;
+
+    background:
+      rgba(23, 107, 69, .065);
+
+    color:
+      var(--agro-green);
+  }
+
+
+  .agro-mobile-menu-icon svg {
+
+    width:
+      16px;
+
+    height:
+      16px;
+  }
+
+
+  /* ============================================================
+   LOGOUT MOBILE
+============================================================ */
+
+  .agro-mobile-menu .mobile-logout {
+
+    margin-top:
+      3px;
+
+    color:
+      #a24d4d;
+
+    border-top:
+      1px solid rgba(23, 107, 69, .06);
+  }
+
+
+  .agro-mobile-menu .mobile-logout .agro-mobile-menu-icon {
+
+    background:
+      rgba(174, 77, 77, .075);
+
+    color:
+      #a24d4d;
+  }
+
+
+  .agro-mobile-menu .mobile-register {
+
+    justify-content:
+      center;
+
+    margin-top:
+      3px;
+
+    color:
+      #ffffff;
+
+    background:
+      linear-gradient(135deg,
+        var(--agro-green),
+        var(--agro-green-dark));
+  }
+
+
+  /* ============================================================
+   RESPONSIVIDADE
+============================================================ */
+
+  @media (max-width: 1180px) {
+
+    .agro-user-information,
+    .agro-user-chevron {
+
+      display:
+        none;
+    }
+
+    .agro-user-area {
+
+      padding:
+        3px;
+    }
+
+    .agro-user-avatar {
+
+      width:
+        37px;
+
+      height:
+        37px;
+    }
+  }
+
+
+  @media (max-width: 960px) {
+
+    .agro-navbar {
+
+      padding:
+        9px 12px;
+    }
+
+    .agro-navbar-shell {
+
+      min-height:
+        64px;
+
+      gap:
+        9px;
+    }
+
+    .agro-main-nav {
+
+      display:
+        none;
+    }
+
+    .agro-navbar-right {
+
+      margin-left:
+        auto;
+    }
+
+    .agro-mobile-toggle {
+
+      display:
+        flex;
+    }
+
+    .agro-datetime {
+
+      display:
+        none;
+    }
+
+    .agro-user-wrapper {
+
+      display:
+        flex;
+    }
+  }
+
+
+  @media (max-width: 600px) {
+
+    .agro-navbar {
+
+      padding:
+        7px;
+    }
+
+    .agro-navbar-shell {
+
+      min-height:
+        61px;
+
+      padding:
+        5px 6px 5px 8px;
+
+      border-radius:
+        16px;
+    }
+
+    .agro-brand {
+
+      gap:
+        7px;
+    }
+
+    .agro-brand-logo {
+
+      width:
+        40px;
+
+      height:
+        40px;
+
+      border-radius:
+        12px;
+    }
+
+    .agro-brand-logo svg {
+
+      width:
+        24px;
+
+      height:
+        24px;
+    }
+
+    .agro-brand-text strong {
+
+      font-size:
+        15px;
+    }
+
+    .agro-brand-text span {
+
+      font-size:
+        7.5px;
+
+      letter-spacing:
+        1.4px;
+    }
+
+    .agro-user-area {
+
+      display:
+        flex;
+    }
+
+    .agro-user-information,
+    .agro-user-chevron {
+
+      display:
+        none;
+    }
+
+    .agro-user-avatar {
+
+      width:
+        36px;
+
+      height:
+        36px;
+    }
+
+    .agro-user-dropdown {
+
+      position:
+        fixed;
+
+      top:
+        72px;
+
+      right:
+        7px;
+
+      width:
+        min(245px, calc(100vw - 14px));
+    }
+
+    .agro-mobile-menu {
+
+      top:
+        calc(100% + 5px);
+
+      right:
+        7px;
+
+      width:
+        calc(100% - 14px);
+    }
+  }
+
+
+  /* ============================================================
+   ACESSIBILIDADE
+============================================================ */
+
+  .agro-navbar a:focus-visible,
+  .agro-user-area:focus-visible,
+  .agro-mobile-toggle:focus-visible {
+
+    outline:
+      2px solid rgba(23, 107, 69, .22);
+
+    outline-offset:
+      2px;
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+
+    .agro-navbar *,
+    .agro-navbar *::before,
+    .agro-navbar *::after {
+
+      animation:
+        none !important;
+
+      transition:
+        none !important;
+    }
+  }
+</style>
+
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+
+<header class="agro-navbar" id="agroNavbar">
+
+  <div class="agro-navbar-shell">
+
+
+    <!-- ========================================================
+         MARCA
+    ========================================================= -->
+
+    <a href="{% url 'inicio:home' %}" class="agro-brand" aria-label="AgroIA Moxico - Início">
+
+      <span class="agro-brand-logo">
+
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+
+          <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="1.5" opacity=".22" />
+
+          <path d="M24 35V17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+
+          <path d="M24 25C18 25 13 21.5 13 15
+               C19.5 15 24 18.5 24 25Z" fill="currentColor" opacity=".92" />
+
+          <path d="M24 29C30 29 35 25.5 35 19
+               C28.5 19 24 22.5 24 29Z" fill="currentColor" opacity=".72" />
+
+          <path d="M14 36H34" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".65" />
+
+        </svg>
+
+      </span>
+
+
+      <span class="agro-brand-text">
+
+        <strong>AgroIA</strong>
+
+        <span>Moxico</span>
+
+      </span>
+
+    </a>
+
+
+    <!-- ========================================================
+         NAVEGAÇÃO
+    ========================================================= -->
+
+    <nav class="agro-main-nav" aria-label="Navegação principal">
+
+      <!-- INÍCIO -->
+
+      <a href="{% url 'inicio:home' %}"
+        class="agro-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+
+        <span class="agro-nav-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="m3 10 9-7 9 7"></path>
+
+            <path d="M5 9v11h14V9"></path>
+
+            <path d="M9 20v-6h6v6"></path>
+
+          </svg>
+
+        </span>
+
+        <span>Início</span>
+
+      </a>
+
+
+      <!-- PRODUTOS AGRÍCOLAS -->
+
+      <a href="{% url 'culturas:produtos_agricolas' %}"
+        class="agro-nav-link agro-products-link {% if request.resolver_match.url_name == 'produtos_agricolas' %}active{% endif %}">
+
+        <span class="agro-nav-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M12 20V10"></path>
+
+            <path d="M12 14c-4 0-7-2.5-7-7
+                 4.5 0 7 2.5 7 7Z"></path>
+
+            <path d="M12 17c4 0 7-2.5 7-7
+                 -4.5 0-7 2.5-7 7Z"></path>
+
+          </svg>
+
+        </span>
+
+        <span>Produtos Agrícolas</span>
+
+      </a>
+
+    </nav>
+
+
+    <!-- ========================================================
+         ÁREA DIREITA
+    ========================================================= -->
+
+    <div class="agro-navbar-right">
+
+
+      {% if user.is_authenticated %}
+
+
+      <!-- ====================================================
+             USUÁRIO
+        ==================================================== -->
+
+      <div class="agro-user-wrapper">
+
+        <button type="button" class="agro-user-area" id="agroUserButton" aria-label="Abrir menu do usuário"
+          aria-expanded="false" aria-controls="agroUserDropdown">
+
+
+          <!-- AVATAR -->
+
+          <span class="agro-user-avatar">
+
+            {% if user.perfil and user.perfil.foto %}
+
+            <img src="{{ user.perfil.foto.url }}" alt="Foto de {{ user.get_full_name|default:user.username }}"
+              loading="eager" decoding="async">
+
+            {% else %}
+
+            <span class="agro-user-initial">
+
+              {% if user.first_name %}
+
+              {{ user.first_name|first|upper }}
+
+              {% elif user.username %}
+
+              {{ user.username|first|upper }}
+
+              {% else %}
+
+              U
+
+              {% endif %}
+
+            </span>
+
+            {% endif %}
+
+
+            <!-- STATUS ONLINE -->
+
+            <span class="agro-user-online" aria-hidden="true"></span>
+
+          </span>
+
+
+          <!-- INFORMAÇÕES -->
+
+          <span class="agro-user-information">
+
+            <strong>
+
+              {% if user.get_full_name %}
+
+              {{ user.get_full_name }}
+
+              {% else %}
+
+              {{ user.username }}
+
+              {% endif %}
+
+            </strong>
+
+            <small>
+              Minha conta
+            </small>
+
+          </span>
+
+
+          <!-- SETA -->
+
+          <svg class="agro-user-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+            <path d="m6 9 6 6 6-6"></path>
+
+          </svg>
+
+        </button>
+
+
+        <!-- ==================================================
+               DROPDOWN
+          ================================================== -->
+
+        <div class="agro-user-dropdown" id="agroUserDropdown" aria-hidden="true">
+
+
+          <!-- CABEÇALHO -->
+
+          <div class="agro-user-dropdown-header">
+
+            <strong>
+
+              {% if user.get_full_name %}
+
+              {{ user.get_full_name }}
+
+              {% else %}
+
+              {{ user.username }}
+
+              {% endif %}
+
+            </strong>
+
+            <small>
+              Gerencie sua conta
+            </small>
+
+          </div>
+
+
+          <!-- MEU PERFIL -->
+
+          <a href="{% url 'inicio:perfil' %}" class="agro-user-menu-link">
+
+            <span class="agro-user-menu-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <circle cx="12" cy="8" r="3.5"></circle>
+
+                <path d="M5 20c.8-3.5 3.2-5.5 7-5.5
+                       s6.2 2 7 5.5"></path>
+
+              </svg>
+
+            </span>
+
+            <span>
+              Meu perfil
+            </span>
+
+          </a>
+
+
+          <!-- LOGOUT -->
+
+          <a href="{% url 'inicio:logout' %}" class="agro-user-menu-link logout" title="Terminar sessão"
+            aria-label="Terminar sessão">
+
+            <span class="agro-user-menu-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M10 17l5-5-5-5"></path>
+
+                <path d="M15 12H3"></path>
+
+                <path d="M21 19V5a2 2 0 0 0-2-2h-6"></path>
+
+              </svg>
+
+            </span>
+
+            <span>
+              Terminar sessão
+            </span>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <!-- ====================================================
+             DATA / HORA
+        ==================================================== -->
+
+      <div class="agro-datetime" aria-label="Data e hora atual">
+
+        <span class="agro-clock-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <circle cx="12" cy="12" r="9"></circle>
+
+            <path d="M12 7v5l3 2"></path>
+
+          </svg>
+
+        </span>
+
+
+        <span class="agro-datetime-text">
+
+          <strong id="agroCurrentTime">
+            --:--:--
+          </strong>
+
+          <small id="agroCurrentDate">
+            --/--/----
+          </small>
+
+        </span>
+
+      </div>
+
+
+      {% else %}
+
+
+      <!-- ====================================================
+             VISITANTE
+        ==================================================== -->
+
+      <div class="agro-guest-actions">
+
+        <a href="{% url 'inicio:login' %}" class="agro-login-link">
+          Entrar
+        </a>
+
+        <a href="{% url 'inicio:cadastro' %}" class="agro-register-button">
+          Criar conta
+        </a>
+
+      </div>
+
+
+      {% endif %}
+
+
+      <!-- ====================================================
+           MOBILE
+      ==================================================== -->
+
+      <button type="button" class="agro-mobile-toggle" id="agroMobileToggle" aria-label="Abrir menu"
+        aria-expanded="false" aria-controls="agroMobileMenu">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================================
+       MENU MOBILE
+  =========================================================== -->
+
+  <div class="agro-mobile-menu" id="agroMobileMenu" aria-hidden="true">
+
+    <nav aria-label="Menu mobile">
+
+
+      <!-- INÍCIO -->
+
+      <a href="{% url 'inicio:home' %}">
+
+        <span>
+          Início
+        </span>
+
+        <span class="agro-mobile-menu-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="m3 10 9-7 9 7"></path>
+
+            <path d="M5 9v11h14V9"></path>
+
+            <path d="M9 20v-6h6v6"></path>
+
+          </svg>
+
+        </span>
+
+      </a>
+
+
+      <!-- PRODUTOS -->
+
+      <a href="{% url 'culturas:produtos_agricolas' %}">
+
+        <span>
+          Produtos Agrícolas
+        </span>
+
+        <span class="agro-mobile-menu-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M12 20V10"></path>
+
+            <path d="M12 14c-4 0-7-2.5-7-7
+                 4.5 0 7 2.5 7 7Z"></path>
+
+            <path d="M12 17c4 0 7-2.5 7-7
+                 -4.5 0-7 2.5-7 7Z"></path>
+
+          </svg>
+
+        </span>
+
+      </a>
+
+
+      {% if user.is_authenticated %}
+
+
+      <!-- PERFIL -->
+
+      <a href="{% url 'inicio:perfil' %}">
+
+        <span>
+          Meu perfil
+        </span>
+
+        <span class="agro-mobile-menu-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <circle cx="12" cy="8" r="3.5"></circle>
+
+            <path d="M5 20c.8-3.5 3.2-5.5 7-5.5
+                   s6.2 2 7 5.5"></path>
+
+          </svg>
+
+        </span>
+
+      </a>
+
+
+      <!-- LOGOUT -->
+
+      <a href="{% url 'inicio:logout' %}" class="mobile-logout">
+
+        <span>
+          Terminar sessão
+        </span>
+
+        <span class="agro-mobile-menu-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M10 17l5-5-5-5"></path>
+
+            <path d="M15 12H3"></path>
+
+            <path d="M21 19V5a2 2 0 0 0-2-2h-6"></path>
+
+          </svg>
+
+        </span>
+
+      </a>
+
+
+      {% else %}
+
+
+      <!-- LOGIN -->
+
+      <a href="{% url 'inicio:login' %}">
+
+        <span>
+          Entrar
+        </span>
+
+        <span class="agro-mobile-menu-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M10 17l5-5-5-5"></path>
+
+            <path d="M15 12H3"></path>
+
+          </svg>
+
+        </span>
+
+      </a>
+
+
+      <!-- CADASTRO -->
+
+      <a href="{% url 'inicio:cadastro' %}" class="mobile-register">
+
+        <span>
+          Criar conta
+        </span>
+
+      </a>
+
+
+      {% endif %}
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+<!-- ============================================================
+     RELÓGIO
+============================================================ -->
+
+<script>
+
+  (function () {
+
+    "use strict";
+
+    const timeElement =
+      document.getElementById("agroCurrentTime");
+
+    const dateElement =
+      document.getElementById("agroCurrentDate");
+
+
+    function updateDateTime() {
+
+      const now =
+        new Date();
+
+
+      if (timeElement) {
+
+        timeElement.textContent =
+          now.toLocaleTimeString(
+            "pt-PT",
+            {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit"
+            }
+          );
+
+      }
+
+
+      if (dateElement) {
+
+        dateElement.textContent =
+          now.toLocaleDateString(
+            "pt-PT",
+            {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric"
+            }
+          );
+
+      }
+
+    }
+
+
+    updateDateTime();
+
+
+    setInterval(
+      updateDateTime,
+      1000
+    );
+
+  })();
+
+</script>
+
+
+<!-- ============================================================
+     MENU DO USUÁRIO
+============================================================ -->
+
+<script>
+
+  (function () {
+
+    "use strict";
+
+
+    const userButton =
+      document.getElementById("agroUserButton");
+
+    const userDropdown =
+      document.getElementById("agroUserDropdown");
+
+
+    if (!userButton || !userDropdown) {
+
+      return;
+
+    }
+
+
+    function closeUserMenu() {
+
+      userButton.classList.remove("active");
+
+      userDropdown.classList.remove("active");
+
+      userButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      userDropdown.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+    }
+
+
+    function openUserMenu() {
+
+      userButton.classList.add("active");
+
+      userDropdown.classList.add("active");
+
+      userButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      userDropdown.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+    }
+
+
+    userButton.addEventListener(
+      "click",
+      function (event) {
+
+        event.stopPropagation();
+
+
+        if (
+          userDropdown.classList.contains("active")
+        ) {
+
+          closeUserMenu();
+
+        } else {
+
+          openUserMenu();
+
+        }
+
+      }
+    );
+
+
+    userDropdown
+      .querySelectorAll("a")
+      .forEach(
+        function (link) {
+
+          link.addEventListener(
+            "click",
+            function () {
+
+              closeUserMenu();
+
+            }
+          );
+
+        }
+      );
+
+
+    document.addEventListener(
+      "click",
+      function (event) {
+
+        if (
+          !userDropdown.contains(event.target) &&
+          !userButton.contains(event.target)
+        ) {
+
+          closeUserMenu();
+
+        }
+
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeUserMenu();
+
+        }
+
+      }
+    );
+
+  })();
+
+</script>
+
+
+<!-- ============================================================
+     MENU MOBILE
+============================================================ -->
+
+<script>
+
+  (function () {
+
+    "use strict";
+
+
+    const toggle =
+      document.getElementById("agroMobileToggle");
+
+    const menu =
+      document.getElementById("agroMobileMenu");
+
+
+    if (!toggle || !menu) {
+
+      return;
+
+    }
+
+
+    function closeMenu() {
+
+      toggle.classList.remove("active");
+
+      menu.classList.remove("active");
+
+      toggle.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      menu.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+    }
+
+
+    function openMenu() {
+
+      toggle.classList.add("active");
+
+      menu.classList.add("active");
+
+      toggle.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      menu.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+    }
+
+
+    toggle.addEventListener(
+      "click",
+      function (event) {
+
+        event.stopPropagation();
+
+
+        if (
+          toggle.classList.contains("active")
+        ) {
+
+          closeMenu();
+
+        } else {
+
+          openMenu();
+
+        }
+
+      }
+    );
+
+
+    menu
+      .querySelectorAll("a")
+      .forEach(
+        function (link) {
+
+          link.addEventListener(
+            "click",
+            closeMenu
+          );
+
+        }
+      );
+
+
+    document.addEventListener(
+      "click",
+      function (event) {
+
+        if (
+          !menu.contains(event.target) &&
+          !toggle.contains(event.target)
+        ) {
+
+          closeMenu();
+
+        }
+
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeMenu();
+
+        }
+
+      }
+    );
+
+
+    window.addEventListener(
+      "resize",
+      function () {
+
+        if (
+          window.innerWidth > 960
+        ) {
+
+          closeMenu();
+
+        }
+
+      }
+    );
+
+  })();
+
+</script>
+
+
+{% endif %}

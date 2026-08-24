@@ -1,114 +1,285 @@
 from pathlib import Path
 
 
+# ============================================================
+# CAMINHO BASE DO PROJETO
+# ============================================================
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = 'django-insecure-tz!bbh1ouys&b3#cqddhd%t+6^@^3=+b6gdfj$s0)i^_)ts+(*'
+# ============================================================
+# SEGURANÇA
+# ============================================================
 
+SECRET_KEY = (
+    "django-insecure-tz!bbh1ouys&b3#cqddhd%t+6^@^3=+b6gdfj"
+    "$s0)i^_)ts+(*"
+)
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+# ============================================================
+# HOSTS PERMITIDOS
+# ============================================================
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+]
 
 
+# ============================================================
+# APLICAÇÕES INSTALADAS
+# ============================================================
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
 
-    'inicio',
-    'culturas',
-    'diagnostico',
+    # --------------------------------------------------------
+    # Django
+    # --------------------------------------------------------
+
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    # --------------------------------------------------------
+    # AgroIA Moxico
+    # --------------------------------------------------------
+
+    "inicio",
+    "culturas",
+    "categorias",
+    "diagnostico",
 ]
+
+
+# ============================================================
+# MIDDLEWARE
+# ============================================================
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "django.middleware.security.SecurityMiddleware",
+
+    "django.contrib.sessions.middleware.SessionMiddleware",
+
+    "django.middleware.common.CommonMiddleware",
+
+    "django.middleware.csrf.CsrfViewMiddleware",
+
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+    "django.contrib.messages.middleware.MessageMiddleware",
+
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'config.urls'
+
+# ============================================================
+# CONFIGURAÇÃO PRINCIPAL DE URLS
+# ============================================================
+
+ROOT_URLCONF = "config.urls"
+
+
+# ============================================================
+# TEMPLATES
+# ============================================================
 
 TEMPLATES = [
+
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-              'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+
+        # ----------------------------------------------------
+        # Templates globais do projeto
+        # ----------------------------------------------------
+
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
+
+        # ----------------------------------------------------
+        # Permite procurar templates dentro das apps:
+        #
+        # categorias/templates/categorias/
+        # culturas/templates/culturas/
+        # inicio/templates/inicio/
+        # diagnostico/templates/diagnostico/
+        # ----------------------------------------------------
+
+        "APP_DIRS": True,
+
+        "OPTIONS": {
+
+            "context_processors": [
+
+                "django.template.context_processors.request",
+
+                "django.contrib.auth.context_processors.auth",
+
+                "django.contrib.messages.context_processors.messages",
+
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+
+# ============================================================
+# WSGI
+# ============================================================
+
+WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+# ============================================================
+# BASE DE DADOS
+# ============================================================
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+    "default": {
+
+        "ENGINE": "django.db.backends.sqlite3",
+
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
+# ============================================================
+# VALIDAÇÃO DE PASSWORD
+# ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
+
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator",
     },
+
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator",
     },
+
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator",
     },
+
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator",
     },
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/6.1/topics/i18n/
+# ============================================================
+# IDIOMA
+# ============================================================
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "pt-pt"
 
-TIME_ZONE = 'UTC'
+
+# ============================================================
+# FUSO HORÁRIO
+# ============================================================
+
+TIME_ZONE = "Africa/Luanda"
+
+
+# ============================================================
+# INTERNACIONALIZAÇÃO
+# ============================================================
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.1/howto/static-files/
+# ============================================================
+# FICHEIROS ESTÁTICOS
+# ============================================================
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Diretório utilizado quando executares collectstatic.
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+# ============================================================
+# FICHEIROS MEDIA
+# ============================================================
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+# ============================================================
+# AUTENTICAÇÃO
+# ============================================================
+
+LOGIN_URL = "/login/"
+
+LOGIN_REDIRECT_URL = "/"
+
+LOGOUT_REDIRECT_URL = "/"
+
+
+# ============================================================
+# E-MAIL
+# ============================================================
+
+# Em desenvolvimento os e-mails aparecem no terminal.
+
+EMAIL_BACKEND = (
+    "django.core.mail.backends.console.EmailBackend"
+)
+
+
+# ============================================================
+# SESSÕES
+# ============================================================
+
+# 2 semanas
+SESSION_COOKIE_AGE = 1209600
+
+# Mantém a sessão mesmo depois de fechar o navegador.
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+
+# ============================================================
+# CSRF
+# ============================================================
+
+CSRF_COOKIE_HTTPONLY = False
+
+
+# ============================================================
+# SEGURANÇA DO NAVEGADOR
+# ============================================================
+
+X_FRAME_OPTIONS = "DENY"
+
+
+# ============================================================
+# CHAVE PRIMÁRIA PADRÃO
+# ============================================================
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -1,2350 +1,7157 @@
 {% extends "base.html" %}
 
 {% block title %}
-Início | AgroIA Moxico
+AgroIA Moxico | Agricultura Inteligente
 {% endblock %}
-
 
 {% block extra_css %}
 
 <style>
-  /* =========================================================
-   ANIMAÇÕES GLOBAIS
-========================================================= */
+    /* ============================================================
+   AGROIA MOXICO
+   HOME — EXPERIÊNCIA AGRÍCOLA PROFISSIONAL
+   HERO + CATÁLOGO REDESENHADOS
+============================================================ */
 
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(35px);
+    :root {
+        --home-primary: #176b45;
+        --home-primary-dark: #0d4d31;
+        --home-primary-deep: #052719;
+        --home-primary-soft: #eaf7ef;
+
+        --home-green-2: #238457;
+        --home-green-3: #3a9a68;
+
+        --home-gold: #e5b54d;
+        --home-gold-light: #f5d98a;
+
+        --home-text: #14231b;
+        --home-text-soft: #294238;
+        --home-muted: #718078;
+
+        --home-bg: #f3f7f4;
+        --home-white: #ffffff;
+        --home-border: #e0eae4;
+
+        --home-shadow:
+            0 14px 40px rgba(8, 45, 29, .07);
+
+        --home-shadow-lg:
+            0 25px 65px rgba(8, 45, 29, .14);
+
+        --home-radius: 24px;
     }
 
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 
+    /* ============================================================
+   RESET
+============================================================ */
 
-  @keyframes fadeLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-40px);
+    .home-page,
+    .home-page * {
+        box-sizing: border-box;
     }
 
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-
-  @keyframes fadeRight {
-    from {
-      opacity: 0;
-      transform: translateX(40px);
+    .home-page {
+        width: 100%;
+        overflow: hidden;
+        color: var(--home-text);
+        background: #fff;
     }
 
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-
-  @keyframes floating {
-
-    0%,
-    100% {
-      transform: translateY(0);
+    .home-page a {
+        text-decoration: none;
     }
 
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-
-  @keyframes pulse {
-
-    0% {
-      transform: scale(1);
-      opacity: .8;
+    .home-page button,
+    .home-page input,
+    .home-page select {
+        font-family: inherit;
     }
 
-    50% {
-      transform: scale(1.15);
-      opacity: .4;
+    .home-page .container {
+        width: min(1180px, calc(100% - 40px));
+        margin-inline: auto;
     }
 
-    100% {
-      transform: scale(1);
-      opacity: .8;
+
+    /* ============================================================
+   ANIMAÇÕES
+============================================================ */
+
+    @keyframes homeFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(28px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-  }
 
+    @keyframes homeFadeLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
 
-  @keyframes rotateSlow {
-    from {
-      transform: rotate(0deg);
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
 
-    to {
-      transform: rotate(360deg);
+    @keyframes homeFloat {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-8px);
+        }
     }
-  }
+
+    @keyframes homePulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(229, 181, 77, .55);
+        }
+
+        70% {
+            box-shadow: 0 0 0 9px rgba(229, 181, 77, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(229, 181, 77, 0);
+        }
+    }
+
+    @keyframes homeScan {
+        0% {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        20% {
+            opacity: 1;
+        }
+
+        80% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+    }
+
+    @keyframes homeGlow {
+
+        0%,
+        100% {
+            opacity: .3;
+        }
+
+        50% {
+            opacity: .75;
+        }
+    }
+
+    @keyframes homeHeroZoom {
+        from {
+            transform: scale(1);
+        }
+
+        to {
+            transform: scale(1.08);
+        }
+    }
+
+    .home-animate {
+        opacity: 0;
+        transform: translateY(25px);
+        transition:
+            opacity .7s ease,
+            transform .7s ease;
+    }
+
+    .home-animate.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
 
-  /* =========================================================
+    /* ============================================================
    HERO
-========================================================= */
+============================================================ */
 
-  .hero {
-    position: relative;
-    min-height: 720px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    isolation: isolate;
-    background: #0c3825;
-  }
-
-
-  /* =========================================================
-   SLIDER
-========================================================= */
-
-  .hero-slides {
-    position: absolute;
-    inset: 0;
-    z-index: -5;
-  }
-
-
-  .hero-slide {
-    position: absolute;
-    inset: 0;
-
-    background-size: cover;
-    background-position: center;
-
-    opacity: 0;
-
-    transform: scale(1.10);
-
-    transition:
-      opacity 1.4s ease,
-      transform 8s ease;
-
-    animation: heroImageZoom 8s ease-in-out infinite;
-  }
-
-
-  .hero-slide.active {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-
-  @keyframes heroImageZoom {
-
-    0% {
-      transform: scale(1.08);
+    .home-hero {
+        position: relative;
+        min-height: 680px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        color: white;
+        background: var(--home-primary-deep);
     }
 
-    50% {
-      transform: scale(1.02);
+    .home-hero-slides {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
     }
 
-    100% {
-      transform: scale(1.08);
+    .home-hero-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+
+        background-position: center;
+        background-size: cover;
+
+        transform: scale(1);
+
+        transition:
+            opacity 1.2s ease,
+            transform 7s ease;
     }
-  }
 
+    .home-hero-slide.active {
+        opacity: 1;
+        transform: scale(1.06);
+    }
 
-  /* =========================================================
-   IMAGENS EXTERNAS
-========================================================= */
+    .home-hero-slide::after {
+        content: "";
+        position: absolute;
+        inset: 0;
 
-  .hero-slide:nth-child(1) {
-    background-image:
-      url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=90");
-  }
+        background:
+            linear-gradient(90deg,
+                rgba(2, 25, 16, .98) 0%,
+                rgba(4, 50, 31, .93) 32%,
+                rgba(4, 50, 31, .72) 61%,
+                rgba(4, 50, 31, .30) 100%);
+    }
 
 
-  .hero-slide:nth-child(2) {
-    background-image:
-      url("https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=2200&q=90");
-  }
+    /* IMAGENS */
 
+    .home-slide-1 {
+        background-image:
+            url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=90");
+    }
 
-  .hero-slide:nth-child(3) {
-    background-image:
-      url("https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?auto=format&fit=crop&w=2200&q=90");
-  }
+    .home-slide-2 {
+        background-image:
+            url("https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=2200&q=90");
+    }
 
+    .home-slide-3 {
+        background-image:
+            url("https://images.unsplash.com/photo-1523742813662-36c65e0a7e6f?auto=format&fit=crop&w=2200&q=90");
+    }
 
-  .hero-slide:nth-child(4) {
-    background-image:
-      url("https://images.unsplash.com/photo-1523742810424-1f1a9a1f1c1d?auto=format&fit=crop&w=2200&q=90");
-  }
+    .home-slide-4 {
+        background-image:
+            url("https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=2200&q=90");
+    }
 
 
-  /* =========================================================
-   OVERLAY
-========================================================= */
+    /* ELEMENTOS DECORATIVOS */
 
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
+    .home-hero-circle {
+        position: absolute;
 
-    z-index: -3;
+        width: 480px;
+        height: 480px;
 
-    background:
-      linear-gradient(90deg,
-        rgba(4, 36, 23, .96) 0%,
-        rgba(7, 61, 38, .88) 35%,
-        rgba(8, 70, 44, .55) 65%,
-        rgba(3, 31, 20, .25) 100%);
-  }
+        right: -220px;
+        top: -220px;
 
+        z-index: 2;
 
-  /* =========================================================
-   ELEMENTOS DECORATIVOS
-========================================================= */
+        border:
+            1px solid rgba(255, 255, 255, .12);
 
-  .hero-decoration {
-    position: absolute;
-    pointer-events: none;
-    z-index: -1;
-  }
+        border-radius: 50%;
 
+        animation:
+            homeFloat 8s ease-in-out infinite;
+    }
 
-  .hero-circle {
-    width: 480px;
-    height: 480px;
+    .home-hero-circle::before {
+        content: "";
 
-    right: -220px;
-    top: -180px;
+        position: absolute;
+        inset: 55px;
 
-    border-radius: 50%;
+        border:
+            1px solid rgba(229, 181, 77, .16);
 
-    border: 1px solid rgba(255, 255, 255, .12);
+        border-radius: 50%;
+    }
 
-    animation: rotateSlow 35s linear infinite;
-  }
+    .home-hero-circle::after {
+        content: "";
 
+        position: absolute;
+        inset: 120px;
 
-  .hero-circle::before {
-    content: "";
+        border:
+            1px dashed rgba(255, 255, 255, .09);
 
-    position: absolute;
+        border-radius: 50%;
+    }
 
-    inset: 45px;
+    .home-hero-glow {
+        position: absolute;
 
-    border-radius: 50%;
+        width: 550px;
+        height: 550px;
 
-    border: 1px solid rgba(255, 255, 255, .08);
-  }
+        right: -270px;
+        bottom: -360px;
 
+        z-index: 2;
 
-  .hero-glow {
-    width: 500px;
-    height: 500px;
+        border-radius: 50%;
 
-    right: -150px;
-    bottom: -250px;
+        background:
+            radial-gradient(circle,
+                rgba(229, 181, 77, .25),
+                transparent 68%);
+    }
 
-    border-radius: 50%;
 
-    background:
-      radial-gradient(circle,
-        rgba(88, 211, 137, .25),
-        transparent 70%);
+    /* ============================================================
+   HERO CONTAINER
+============================================================ */
 
-    filter: blur(10px);
+    .home-hero-container {
+        position: relative;
+        z-index: 5;
+        width: 100%;
+    }
 
-    animation: floating 6s ease-in-out infinite;
-  }
+    .home-hero-layout {
+        min-height: 680px;
 
+        display: grid;
 
-  /* =========================================================
-   CONTEÚDO HERO
-========================================================= */
+        grid-template-columns:
+            minmax(0, 1fr) 410px;
 
-  .hero-container {
-    position: relative;
-    z-index: 5;
-    width: 100%;
-  }
+        align-items: center;
 
+        gap: 60px;
 
-  .hero-content {
-    max-width: 760px;
-    color: white;
+        padding:
+            105px 0 75px;
+    }
 
-    animation:
-      fadeUp 1s ease both;
-  }
 
+    /* ============================================================
+   HERO CONTENT
+============================================================ */
 
-  /* =========================================================
-   BADGE
-========================================================= */
+    .home-hero-content {
+        max-width: 720px;
+    }
 
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+    .home-hero-badge {
+        display: inline-flex;
 
-    padding: 10px 16px;
+        align-items: center;
 
-    margin-bottom: 24px;
+        gap: 9px;
 
-    border-radius: 100px;
+        margin-bottom: 22px;
 
-    color: white;
+        padding:
+            9px 14px;
 
-    background:
-      rgba(255, 255, 255, .11);
+        color:
+            rgba(255, 255, 255, .92);
 
-    border:
-      1px solid rgba(255, 255, 255, .18);
+        background:
+            rgba(255, 255, 255, .08);
 
-    backdrop-filter: blur(12px);
+        border:
+            1px solid rgba(255, 255, 255, .17);
 
-    font-size: .82rem;
-    font-weight: 700;
-  }
+        border-radius: 100px;
 
+        backdrop-filter:
+            blur(14px);
 
-  .hero-badge-dot {
-    position: relative;
+        font-size: .67rem;
 
-    width: 9px;
-    height: 9px;
+        font-weight: 800;
 
-    border-radius: 50%;
+        text-transform: uppercase;
 
-    background: #72d69a;
-  }
+        letter-spacing: .055em;
 
+        animation:
+            homeFadeUp .8s ease both;
+    }
 
-  .hero-badge-dot::after {
-    content: "";
+    .home-hero-dot {
+        width: 7px;
+        height: 7px;
 
-    position: absolute;
+        border-radius: 50%;
 
-    inset: -5px;
+        background:
+            var(--home-gold);
 
-    border-radius: 50%;
+        animation:
+            homePulse 2s infinite;
+    }
 
-    border: 1px solid rgba(114, 214, 154, .5);
+    .home-hero h1 {
+        margin:
+            0 0 22px;
 
-    animation: pulse 2s infinite;
-  }
+        max-width: 720px;
 
+        font-size:
+            clamp(3rem, 5.2vw, 5rem);
 
-  /* =========================================================
-   TÍTULO
-========================================================= */
+        line-height: .99;
 
-  .hero h1 {
-    max-width: 800px;
+        letter-spacing:
+            -.07em;
 
-    margin-bottom: 25px;
+        font-weight: 900;
 
-    color: white;
+        animation:
+            homeFadeLeft .9s ease .15s both;
+    }
 
-    font-family: "Manrope", sans-serif;
+    .home-hero h1 strong {
+        display: block;
 
-    font-size:
-      clamp(2.8rem, 6vw, 5.4rem);
+        color:
+            var(--home-gold);
+    }
 
-    line-height: 1.01;
+    .home-hero-description {
+        max-width: 620px;
 
-    letter-spacing: -.06em;
-  }
+        margin:
+            0 0 31px;
 
+        color:
+            rgba(255, 255, 255, .75);
 
-  .hero h1 strong {
-    display: block;
+        font-size:
+            clamp(.94rem, 1.5vw, 1.05rem);
 
-    color: #83dda7;
-  }
+        line-height: 1.8;
 
+        animation:
+            homeFadeLeft .9s ease .3s both;
+    }
 
-  /* =========================================================
-   DESCRIÇÃO
-========================================================= */
 
-  .hero-description {
-    max-width: 650px;
+    /* ============================================================
+   HERO BUTTON
+   SOMENTE EXPLORAR PRODUTOS
+============================================================ */
 
-    margin-bottom: 34px;
+    .home-hero-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
 
-    color:
-      rgba(255, 255, 255, .82);
+        animation:
+            homeFadeUp .9s ease .45s both;
+    }
 
-    font-size: 1.08rem;
+    .home-hero-buttons a {
+        display: inline-flex;
 
-    line-height: 1.8;
-  }
+        align-items: center;
+        justify-content: center;
 
+        gap: 9px;
 
-  /* =========================================================
-   BOTÕES
-========================================================= */
+        min-height: 48px;
 
-  .hero-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 13px;
-  }
+        padding:
+            0 21px;
 
+        border-radius: 11px;
 
-  .hero-buttons .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
+        font-size: .74rem;
 
-    transition:
-      transform .3s ease,
-      box-shadow .3s ease,
-      background .3s ease;
-  }
+        font-weight: 850;
 
+        transition:
+            transform .25s ease,
+            background .25s ease,
+            box-shadow .25s ease;
+    }
 
-  .hero-buttons .btn svg {
-    width: 19px;
-    height: 19px;
+    .home-hero-buttons a:hover {
+        transform:
+            translateY(-3px);
+    }
 
-    stroke-width: 2;
-  }
+    .home-secondary-button {
+        color: white;
 
+        background:
+            rgba(255, 255, 255, .10);
 
-  .hero-buttons .btn-primary {
-    color: #103d2a;
+        border:
+            1px solid rgba(255, 255, 255, .24);
 
-    background: white;
+        backdrop-filter:
+            blur(12px);
 
-    box-shadow:
-      0 15px 35px rgba(0, 0, 0, .20);
-  }
+        box-shadow:
+            0 12px 30px rgba(0, 0, 0, .12);
+    }
 
+    .home-secondary-button:hover {
+        color: white;
 
-  .hero-buttons .btn-primary:hover {
-    color: white;
+        background:
+            rgba(255, 255, 255, .18);
+    }
 
-    background: var(--primary);
+    .home-hero-buttons svg {
+        width: 16px;
+        height: 16px;
+    }
 
-    transform: translateY(-4px);
 
-    box-shadow:
-      0 18px 35px rgba(0, 0, 0, .25);
-  }
+    /* ============================================================
+   HERO STATS
+============================================================ */
 
+    .home-hero-stats {
+        width: 100%;
 
-  .hero-buttons .btn-secondary {
-    color: white;
+        display: grid;
 
-    background:
-      rgba(255, 255, 255, .10);
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
 
-    border:
-      1px solid rgba(255, 255, 255, .25);
+        gap: 11px;
 
-    backdrop-filter: blur(10px);
-  }
+        animation:
+            homeFadeUp .9s ease .35s both;
+    }
 
+    .home-hero-stat-card {
+        position: relative;
 
-  .hero-buttons .btn-secondary:hover {
-    color: white;
+        min-width: 0;
 
-    background:
-      rgba(255, 255, 255, .20);
+        min-height: 140px;
 
-    transform: translateY(-4px);
-  }
+        display: flex;
 
+        flex-direction: column;
 
-  /* =========================================================
-   INDICADORES DO HERO
-========================================================= */
+        justify-content: center;
 
-  .hero-indicators {
-    position: absolute;
+        gap: 12px;
 
-    left: 50%;
-    bottom: 30px;
+        padding:
+            18px 15px;
 
-    transform: translateX(-50%);
+        color: white;
 
-    display: flex;
-    gap: 8px;
+        background:
+            linear-gradient(145deg,
+                rgba(255, 255, 255, .13),
+                rgba(255, 255, 255, .055));
 
-    z-index: 10;
-  }
+        border:
+            1px solid rgba(255, 255, 255, .18);
 
+        border-radius: 17px;
 
-  .hero-indicator {
-    width: 28px;
-    height: 4px;
+        box-shadow:
+            0 18px 42px rgba(0, 0, 0, .17);
 
-    padding: 0;
+        backdrop-filter:
+            blur(18px);
 
-    border: 0;
+        overflow: hidden;
 
-    border-radius: 20px;
+        transition:
+            transform .3s ease,
+            background .3s ease,
+            border-color .3s ease;
+    }
 
-    background:
-      rgba(255, 255, 255, .35);
+    .home-hero-stat-card::before {
+        content: "";
 
-    cursor: pointer;
+        position: absolute;
 
-    transition:
-      width .35s ease,
-      background .35s ease;
-  }
+        width: 120px;
+        height: 120px;
 
+        right: -60px;
+        top: -60px;
 
-  .hero-indicator.active {
-    width: 58px;
+        border-radius: 50%;
 
-    background: white;
-  }
+        background:
+            rgba(229, 181, 77, .09);
+    }
 
+    .home-hero-stat-card:hover {
+        transform:
+            translateY(-7px);
 
-  /* =========================================================
-   SCROLL
-========================================================= */
+        background:
+            rgba(255, 255, 255, .15);
 
-  .hero-scroll {
-    position: absolute;
+        border-color:
+            rgba(255, 255, 255, .30);
+    }
 
-    right: 35px;
-    bottom: 28px;
+    .home-hero-stat-icon {
+        width: 39px;
+        height: 39px;
 
-    width: 44px;
-    height: 44px;
+        display: flex;
 
-    display: grid;
-    place-items: center;
+        align-items: center;
+        justify-content: center;
 
-    color: white;
+        color:
+            var(--home-gold);
 
-    border-radius: 50%;
+        background:
+            rgba(229, 181, 77, .12);
 
-    background:
-      rgba(255, 255, 255, .10);
+        border:
+            1px solid rgba(229, 181, 77, .23);
 
-    border:
-      1px solid rgba(255, 255, 255, .20);
+        border-radius: 10px;
+    }
 
-    animation: floating 2s ease-in-out infinite;
-  }
+    .home-hero-stat-icon svg {
+        width: 17px;
+        height: 17px;
+    }
 
+    .home-hero-stat-label {
+        display: block;
 
-  .hero-scroll svg {
-    width: 20px;
-  }
+        margin-bottom: 5px;
 
+        color:
+            rgba(255, 255, 255, .57);
 
-  /* =========================================================
-   ESTATÍSTICAS
-========================================================= */
+        font-size: .52rem;
 
-  .stats {
-    padding: 32px 0;
+        font-weight: 800;
 
-    background: white;
+        text-transform: uppercase;
 
-    border-top:
-      1px solid var(--border);
+        letter-spacing: .06em;
+    }
 
-    border-bottom:
-      1px solid var(--border);
-  }
+    .home-hero-stat-value {
+        display: block;
 
+        margin-bottom: 4px;
 
-  .stats-grid {
-    display: grid;
+        color: white;
 
-    grid-template-columns:
-      repeat(4, 1fr);
+        font-size: 1.65rem;
 
-    gap: 20px;
-  }
+        line-height: 1;
 
+        font-weight: 900;
 
-  .stat {
-    position: relative;
+        letter-spacing: -.055em;
+    }
 
-    text-align: center;
+    .home-hero-stat-description {
+        display: block;
 
-    padding: 14px;
+        color:
+            rgba(255, 255, 255, .48);
 
-    transition:
-      transform .3s ease;
-  }
+        font-size: .56rem;
+    }
 
 
-  .stat:hover {
-    transform: translateY(-5px);
-  }
+    /* ============================================================
+   HERO INDICATORS
+============================================================ */
 
+    .home-hero-indicators {
+        position: absolute;
 
-  .stat-icon {
-    width: 42px;
-    height: 42px;
+        left: 50%;
+        bottom: 25px;
 
-    margin: 0 auto 10px;
+        z-index: 8;
 
-    display: grid;
-    place-items: center;
+        display: flex;
 
-    color: var(--primary);
+        gap: 6px;
 
-    background:
-      var(--primary-light);
+        transform:
+            translateX(-50%);
+    }
 
-    border-radius: 12px;
-  }
+    .home-hero-indicator {
+        width: 22px;
+        height: 3px;
 
+        padding: 0;
 
-  .stat-icon svg {
-    width: 21px;
-    height: 21px;
-  }
+        border: 0;
 
+        border-radius: 10px;
 
-  .stat-number {
-    font-family: "Manrope", sans-serif;
+        background:
+            rgba(255, 255, 255, .28);
 
-    font-size: 1.9rem;
+        cursor: pointer;
 
-    font-weight: 800;
+        transition: .3s ease;
+    }
 
-    color: var(--primary);
-  }
+    .home-hero-indicator.active {
+        width: 42px;
 
+        background:
+            var(--home-gold);
+    }
 
-  .stat-label {
-    color: var(--text-light);
 
-    font-size: .85rem;
-  }
+    /* ============================================================
+   SEÇÕES GERAIS
+============================================================ */
 
+    .home-section {
+        padding: 90px 0;
+    }
 
-  /* =========================================================
+    .home-section-header {
+        max-width: 730px;
+
+        margin:
+            0 auto 42px;
+
+        text-align: center;
+    }
+
+    .home-eyebrow {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        color:
+            var(--home-primary);
+
+        font-size: .65rem;
+
+        font-weight: 900;
+
+        text-transform: uppercase;
+
+        letter-spacing: .10em;
+    }
+
+    .home-eyebrow::before {
+        content: "";
+
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        background:
+            var(--home-gold);
+    }
+
+    .home-section-header h2 {
+        margin:
+            11px 0 12px;
+
+        font-size:
+            clamp(1.9rem, 3.2vw, 2.8rem);
+
+        line-height: 1.08;
+
+        letter-spacing: -.055em;
+    }
+
+    .home-section-header p {
+        margin: 0;
+
+        color:
+            var(--home-muted);
+
+        font-size: .87rem;
+
+        line-height: 1.8;
+    }
+
+
+    /* ============================================================
+   CATÁLOGO
+============================================================ */
+
+    .home-products-section {
+        position: relative;
+
+        padding:
+            105px 0 95px;
+
+        background:
+            linear-gradient(180deg,
+                #f8fbf9 0%,
+                #edf5f0 100%);
+    }
+
+    .home-products-section::before {
+        content: "";
+
+        position: absolute;
+
+        width: 400px;
+        height: 400px;
+
+        top: -180px;
+        right: -180px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(circle,
+                rgba(23, 107, 69, .08),
+                transparent 70%);
+    }
+
+
+    /* ============================================================
+   CABEÇALHO DO CATÁLOGO
+============================================================ */
+
+    .home-catalog-head {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+
+        align-items: flex-end;
+
+        justify-content: space-between;
+
+        gap: 30px;
+
+        margin-bottom: 30px;
+    }
+
+    .home-catalog-heading {
+        max-width: 650px;
+    }
+
+    .home-catalog-heading .home-eyebrow {
+        margin-bottom: 9px;
+    }
+
+    .home-catalog-heading h2 {
+        margin:
+            0 0 10px;
+
+        font-size:
+            clamp(2rem, 3.3vw, 2.9rem);
+
+        line-height: 1.05;
+
+        letter-spacing: -.06em;
+    }
+
+    .home-catalog-heading p {
+        max-width: 610px;
+
+        margin: 0;
+
+        color:
+            var(--home-muted);
+
+        font-size: .78rem;
+
+        line-height: 1.8;
+    }
+
+    .home-catalog-total {
+        flex-shrink: 0;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+
+        padding:
+            13px 16px;
+
+        color:
+            var(--home-primary);
+
+        background:
+            rgba(255, 255, 255, .92);
+
+        border:
+            1px solid var(--home-border);
+
+        border-radius: 13px;
+
+        box-shadow:
+            var(--home-shadow);
+
+        font-size: .62rem;
+
+        font-weight: 800;
+    }
+
+    .home-catalog-total strong {
+        font-size: 1.15rem;
+        font-weight: 900;
+    }
+
+
+    /* ============================================================
+   TOOLBAR
+============================================================ */
+
+    .home-products-toolbar {
+        position: sticky;
+
+        top: 78px;
+
+        z-index: 20;
+
+        display: grid;
+
+        grid-template-columns:
+            minmax(250px, 1fr) 200px 180px;
+
+        gap: 10px;
+
+        margin-bottom: 22px;
+
+        padding: 11px;
+
+        background:
+            rgba(255, 255, 255, .90);
+
+        border:
+            1px solid rgba(225, 235, 229, .95);
+
+        border-radius: 16px;
+
+        box-shadow:
+            0 15px 40px rgba(8, 45, 29, .08);
+
+        backdrop-filter:
+            blur(18px);
+    }
+
+    .home-search {
+        position: relative;
+    }
+
+    .home-search svg {
+        position: absolute;
+
+        left: 14px;
+        top: 50%;
+
+        width: 16px;
+        height: 16px;
+
+        color:
+            var(--home-muted);
+
+        transform:
+            translateY(-50%);
+    }
+
+    .home-search input,
+    .home-filter-select {
+        width: 100%;
+
+        min-height: 44px;
+
+        outline: none;
+
+        color:
+            var(--home-text);
+
+        background:
+            #f7faf8;
+
+        border:
+            1px solid var(--home-border);
+
+        border-radius: 10px;
+
+        font-size: .67rem;
+
+        transition:
+            .25s ease;
+    }
+
+    .home-search input {
+        padding:
+            0 14px 0 40px;
+    }
+
+    .home-filter-select {
+        padding:
+            0 12px;
+
+        cursor: pointer;
+    }
+
+    .home-search input:focus,
+    .home-filter-select:focus {
+        background: white;
+
+        border-color:
+            var(--home-primary);
+
+        box-shadow:
+            0 0 0 4px rgba(23, 107, 69, .07);
+    }
+
+
+    /* ============================================================
+   STATUS
+============================================================ */
+
+    .home-catalog-status {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 15px;
+
+        margin-bottom: 18px;
+
+        color:
+            var(--home-muted);
+
+        font-size: .65rem;
+
+        font-weight: 700;
+    }
+
+    .home-catalog-status strong {
+        color:
+            var(--home-text);
+    }
+
+    .home-view-label {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        color:
+            var(--home-primary);
+
+        font-size: .60rem;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: .04em;
+    }
+
+    .home-view-label svg {
+        width: 14px;
+        height: 14px;
+    }
+
+
+    /* ============================================================
+   PRODUCT GRID
+============================================================ */
+
+    .home-products-grid {
+        position: relative;
+        z-index: 2;
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 18px;
+
+        align-items: stretch;
+    }
+
+
+    /* ============================================================
+   PRODUCT CARD
+============================================================ */
+
+    .home-product-card {
+        position: relative;
+
+        min-width: 0;
+
+        display: flex;
+
+        flex-direction: column;
+
+        overflow: hidden;
+
+        background:
+            white;
+
+        border:
+            1px solid var(--home-border);
+
+        border-radius: 19px;
+
+        box-shadow:
+            0 9px 30px rgba(8, 45, 29, .055);
+
+        transition:
+            transform .35s ease,
+            box-shadow .35s ease,
+            border-color .35s ease;
+
+        animation:
+            homeFadeUp .55s ease both;
+    }
+
+    .home-product-card:hover {
+        transform:
+            translateY(-8px);
+
+        border-color:
+            rgba(23, 107, 69, .23);
+
+        box-shadow:
+            var(--home-shadow-lg);
+    }
+
+    .home-product-card.hidden {
+        display: none;
+    }
+
+
+    /* ============================================================
+   IMAGEM
+============================================================ */
+
+    .home-product-image {
+        position: relative;
+
+        height: 190px;
+
+        overflow: hidden;
+
+        background:
+            linear-gradient(135deg,
+                #e9f1ec,
+                #dceae1);
+    }
+
+    .home-product-image img {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+
+        transition:
+            transform .7s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .home-product-card:hover .home-product-image img {
+        transform:
+            scale(1.08);
+    }
+
+    .home-product-image::after {
+        content: "";
+
+        position: absolute;
+        inset: 0;
+
+        background:
+            linear-gradient(180deg,
+                rgba(0, 0, 0, .03) 30%,
+                rgba(2, 25, 16, .65) 100%);
+
+        pointer-events: none;
+    }
+
+
+    /* ============================================================
+   SEM IMAGEM
+============================================================ */
+
+    .home-no-image {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        flex-direction: column;
+
+        gap: 8px;
+
+        color:
+            var(--home-muted);
+
+        font-size: .62rem;
+
+        font-weight: 700;
+    }
+
+    .home-no-image svg {
+        width: 40px;
+        height: 40px;
+
+        opacity: .65;
+    }
+
+
+    /* ============================================================
+   BADGES
+============================================================ */
+
+    .home-product-category {
+        position: absolute;
+
+        z-index: 5;
+
+        top: 11px;
+        right: 11px;
+
+        max-width: 135px;
+
+        overflow: hidden;
+
+        padding:
+            6px 9px;
+
+        color: white;
+
+        background:
+            rgba(5, 39, 25, .78);
+
+        border:
+            1px solid rgba(255, 255, 255, .18);
+
+        border-radius: 100px;
+
+        backdrop-filter:
+            blur(10px);
+
+        font-size: .52rem;
+
+        font-weight: 800;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+    }
+
+    .home-product-diagnostic-badge {
+        position: absolute;
+
+        z-index: 6;
+
+        left: 11px;
+        bottom: 11px;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 5px;
+
+        padding:
+            6px 8px;
+
+        color: white;
+
+        background:
+            rgba(23, 107, 69, .93);
+
+        border:
+            1px solid rgba(255, 255, 255, .18);
+
+        border-radius: 8px;
+
+        backdrop-filter:
+            blur(8px);
+
+        font-size: .51rem;
+
+        font-weight: 800;
+    }
+
+    .home-product-diagnostic-badge svg {
+        width: 12px;
+        height: 12px;
+    }
+
+
+    /* ============================================================
+   BODY
+============================================================ */
+
+    .home-product-body {
+        flex: 1;
+
+        display: flex;
+
+        flex-direction: column;
+
+        padding:
+            16px;
+    }
+
+    .home-product-top {
+        display: flex;
+
+        align-items: flex-start;
+
+        justify-content: space-between;
+
+        gap: 8px;
+
+        margin-bottom: 8px;
+    }
+
+    .home-product-title {
+        min-width: 0;
+    }
+
+    .home-product-title h3 {
+        margin: 0;
+
+        overflow: hidden;
+
+        color:
+            var(--home-text);
+
+        font-size: .94rem;
+
+        line-height: 1.3;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+    }
+
+    .home-product-status {
+        width: 8px;
+        height: 8px;
+
+        flex-shrink: 0;
+
+        margin-top: 5px;
+
+        border-radius: 50%;
+
+        background:
+            #35a56a;
+
+        box-shadow:
+            0 0 0 4px #e7f5ec;
+    }
+
+    .home-product-status.inactive {
+        background:
+            #d86d60;
+
+        box-shadow:
+            0 0 0 4px #f9e9e6;
+    }
+
+    .home-product-description {
+        min-height: 48px;
+
+        margin:
+            0 0 12px;
+
+        overflow: hidden;
+
+        color:
+            var(--home-muted);
+
+        font-size: .63rem;
+
+        line-height: 1.65;
+
+        display:
+            -webkit-box;
+
+        -webkit-line-clamp:
+            3;
+
+        -webkit-box-orient:
+            vertical;
+    }
+
+
+    /* ============================================================
+   META
+============================================================ */
+
+    .home-product-meta {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 6px;
+
+        margin-bottom: 12px;
+    }
+
+    .home-product-meta-item {
+        min-width: 0;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 5px;
+
+        color:
+            var(--home-muted);
+
+        font-size: .54rem;
+
+        font-weight: 700;
+    }
+
+    .home-product-meta-item svg {
+        width: 13px;
+        height: 13px;
+
+        flex-shrink: 0;
+
+        color:
+            var(--home-primary);
+    }
+
+
+    /* ============================================================
+   PROBLEMAS
+============================================================ */
+
+    .home-problems {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 4px;
+
+        min-height: 23px;
+
+        margin-bottom: 12px;
+    }
+
+    .home-problem {
+        max-width: 100%;
+
+        overflow: hidden;
+
+        padding:
+            4px 7px;
+
+        color:
+            #496258;
+
+        background:
+            #eaf7ef;
+
+        border-radius: 6px;
+
+        font-size: .49rem;
+
+        font-weight: 700;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+    }
+
+
+    /* ============================================================
+   FOOTER CARD
+============================================================ */
+
+    .home-product-footer {
+        display: flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        margin-top: auto;
+
+        padding-top: 11px;
+
+        border-top:
+            1px solid var(--home-border);
+    }
+
+    .home-analysis-status {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 4px;
+
+        color:
+            var(--home-primary);
+
+        font-size: .51rem;
+
+        font-weight: 800;
+    }
+
+    .home-analysis-status.disabled {
+        color:
+            var(--home-muted);
+    }
+
+
+    /* ============================================================
+   NOVOS BOTÕES DOS PRODUTOS
+============================================================ */
+
+    .home-product-actions {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 6px;
+
+        margin-left: auto;
+    }
+
+    .home-product-action {
+        min-height: 33px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 5px;
+
+        padding:
+            0 9px;
+
+        border-radius: 8px;
+
+        font-size: .51rem;
+
+        font-weight: 850;
+
+        transition:
+            .25s ease;
+    }
+
+    .home-product-action svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .home-product-details {
+        color:
+            var(--home-primary);
+
+        background:
+            #edf7f1;
+
+        border:
+            1px solid #d8ecdf;
+
+        cursor: pointer;
+    }
+
+    .home-product-details:hover {
+        color:
+            var(--home-primary-dark);
+
+        background:
+            #dff1e7;
+
+        transform:
+            translateY(-2px);
+    }
+
+    .home-analysis-button {
+        color:
+            white;
+
+        background:
+            var(--home-primary);
+
+        border:
+            1px solid var(--home-primary);
+
+        cursor: pointer;
+    }
+
+    .home-analysis-button:hover {
+        color:
+            white;
+
+        background:
+            var(--home-primary-dark);
+
+        border-color:
+            var(--home-primary-dark);
+
+        transform:
+            translateY(-2px);
+    }
+
+
+    /* ============================================================
+   PAGINAÇÃO
+============================================================ */
+
+    .home-pagination {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 5px;
+
+        margin-top: 32px;
+
+        flex-wrap: wrap;
+    }
+
+    .home-page-button {
+        min-width: 34px;
+        height: 34px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        padding:
+            0 9px;
+
+        color:
+            var(--home-muted);
+
+        background:
+            white;
+
+        border:
+            1px solid var(--home-border);
+
+        border-radius: 8px;
+
+        cursor: pointer;
+
+        font-size: .60rem;
+
+        font-weight: 800;
+
+        transition: .2s ease;
+    }
+
+    .home-page-button:hover {
+        color:
+            var(--home-primary);
+
+        border-color:
+            rgba(23, 107, 69, .25);
+
+        transform:
+            translateY(-2px);
+    }
+
+    .home-page-button.active {
+        color:
+            white;
+
+        background:
+            var(--home-primary);
+
+        border-color:
+            var(--home-primary);
+
+        box-shadow:
+            0 7px 16px rgba(23, 107, 69, .18);
+    }
+
+    .home-page-button.disabled {
+        opacity: .4;
+        pointer-events: none;
+    }
+
+    .home-pagination-info {
+        margin-top: 10px;
+
+        text-align: center;
+
+        color:
+            var(--home-muted);
+
+        font-size: .56rem;
+    }
+
+
+    /* ============================================================
+   EMPTY
+============================================================ */
+
+    .home-empty-products,
+    .home-no-result {
+        grid-column:
+            1 / -1;
+
+        padding:
+            70px 25px;
+
+        text-align: center;
+
+        background:
+            white;
+
+        border:
+            1px solid var(--home-border);
+
+        border-radius: 20px;
+
+        box-shadow:
+            var(--home-shadow);
+    }
+
+    .home-empty-icon,
+    .home-no-result-icon {
+        width: 62px;
+        height: 62px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin:
+            0 auto 16px;
+
+        color:
+            var(--home-primary);
+
+        background:
+            var(--home-primary-soft);
+
+        border-radius: 17px;
+    }
+
+    .home-empty-icon svg,
+    .home-no-result-icon svg {
+        width: 29px;
+        height: 29px;
+    }
+
+    .home-empty-products h3,
+    .home-no-result h3 {
+        margin:
+            0 0 7px;
+
+        font-size: 1rem;
+    }
+
+    .home-empty-products p,
+    .home-no-result p {
+        margin: 0;
+
+        color:
+            var(--home-muted);
+
+        font-size: .70rem;
+
+        line-height: 1.7;
+    }
+
+    .home-no-result {
+        display: none;
+    }
+
+    .home-no-result.show {
+        display: block;
+    }
+
+
+    /* ============================================================
+   MODAL / DETALHES DO PRODUTO
+============================================================ */
+
+    .home-product-modal {
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 9999;
+
+        display: none;
+
+        align-items: center;
+        justify-content: center;
+
+        padding:
+            25px;
+
+        background:
+            rgba(2, 25, 16, .72);
+
+        backdrop-filter:
+            blur(9px);
+    }
+
+    .home-product-modal.active {
+        display: flex;
+    }
+
+    .home-product-modal-box {
+        position: relative;
+
+        width:
+            min(760px, 100%);
+
+        max-height:
+            min(720px, 90vh);
+
+        overflow-y: auto;
+
+        background:
+            white;
+
+        border-radius: 24px;
+
+        box-shadow:
+            0 35px 100px rgba(0, 0, 0, .30);
+
+        animation:
+            homeFadeUp .35s ease both;
+    }
+
+    .home-product-modal-close {
+        position: absolute;
+
+        z-index: 10;
+
+        top: 14px;
+        right: 14px;
+
+        width: 36px;
+        height: 36px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        color:
+            white;
+
+        background:
+            rgba(5, 39, 25, .75);
+
+        border:
+            1px solid rgba(255, 255, 255, .20);
+
+        border-radius: 50%;
+
+        cursor: pointer;
+
+        backdrop-filter:
+            blur(10px);
+
+        transition:
+            .25s ease;
+    }
+
+    .home-product-modal-close:hover {
+        background:
+            var(--home-primary);
+
+        transform:
+            rotate(90deg);
+    }
+
+    .home-product-modal-close svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    .home-modal-image {
+        width: 100%;
+        height: 270px;
+
+        overflow: hidden;
+
+        background:
+            linear-gradient(135deg,
+                #e9f1ec,
+                #dceae1);
+    }
+
+    .home-modal-image img {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+    }
+
+    .home-modal-content {
+        padding:
+            28px;
+    }
+
+    .home-modal-category {
+        display: inline-flex;
+
+        align-items: center;
+
+        margin-bottom: 10px;
+
+        padding:
+            6px 10px;
+
+        color:
+            var(--home-primary);
+
+        background:
+            var(--home-primary-soft);
+
+        border-radius: 100px;
+
+        font-size: .55rem;
+
+        font-weight: 850;
+
+        text-transform: uppercase;
+
+        letter-spacing: .05em;
+    }
+
+    .home-modal-content h2 {
+        margin:
+            0 0 10px;
+
+        color:
+            var(--home-text);
+
+        font-size:
+            clamp(1.7rem, 3vw, 2.4rem);
+
+        letter-spacing:
+            -.05em;
+    }
+
+    .home-modal-description {
+        margin:
+            0 0 20px;
+
+        color:
+            var(--home-muted);
+
+        font-size: .78rem;
+
+        line-height: 1.8;
+    }
+
+    .home-modal-info-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 10px;
+
+        margin-bottom: 20px;
+    }
+
+    .home-modal-info {
+        padding:
+            13px;
+
+        background:
+            #f7faf8;
+
+        border:
+            1px solid var(--home-border);
+
+        border-radius: 12px;
+    }
+
+    .home-modal-info small {
+        display: block;
+
+        margin-bottom: 4px;
+
+        color:
+            var(--home-muted);
+
+        font-size: .52rem;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+    }
+
+    .home-modal-info strong {
+        color:
+            var(--home-text);
+
+        font-size: .70rem;
+    }
+
+    .home-modal-problems {
+        margin-bottom: 20px;
+    }
+
+    .home-modal-problems h4 {
+        margin:
+            0 0 9px;
+
+        font-size: .72rem;
+    }
+
+    .home-modal-problem-list {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 6px;
+    }
+
+    .home-modal-problem {
+        padding:
+            6px 9px;
+
+        color:
+            #496258;
+
+        background:
+            #eaf7ef;
+
+        border-radius: 7px;
+
+        font-size: .54rem;
+
+        font-weight: 700;
+    }
+
+    .home-modal-actions {
+        display: flex;
+
+        gap: 8px;
+
+        flex-wrap: wrap;
+
+        padding-top:
+            18px;
+
+        border-top:
+            1px solid var(--home-border);
+    }
+
+    .home-modal-diagnostic {
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 7px;
+
+        min-height: 43px;
+
+        padding:
+            0 16px;
+
+        color:
+            white;
+
+        background:
+            var(--home-primary);
+
+        border-radius: 10px;
+
+        font-size: .65rem;
+
+        font-weight: 850;
+
+        transition: .25s ease;
+    }
+
+    .home-modal-diagnostic:hover {
+        color: white;
+
+        background:
+            var(--home-primary-dark);
+
+        transform:
+            translateY(-2px);
+    }
+
+    .home-modal-diagnostic svg {
+        width: 15px;
+        height: 15px;
+    }
+
+
+    /* ============================================================
    SOBRE
-========================================================= */
+============================================================ */
 
-  .about-grid {
-    display: grid;
+    .home-about {
+        position: relative;
 
-    grid-template-columns:
-      .9fr 1.1fr;
+        padding:
+            105px 0;
 
-    align-items: center;
+        overflow: hidden;
 
-    gap: 65px;
-  }
+        background:
+            #ffffff;
+    }
 
+    .home-about::before {
+        content: "";
 
-  .about-visual {
-    position: relative;
+        position: absolute;
 
-    min-height: 430px;
+        width: 520px;
+        height: 520px;
 
-    overflow: hidden;
+        left: -310px;
+        top: 20px;
 
-    border-radius: 28px;
+        border-radius: 50%;
 
-    background:
-      url("https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=1300&q=90") center / cover;
+        background:
+            radial-gradient(circle,
+                rgba(23, 107, 69, .09),
+                transparent 68%);
+    }
 
-    box-shadow:
-      0 25px 60px rgba(23, 107, 69, .16);
+    .home-about::after {
+        content: "";
 
-    transition:
-      transform .5s ease;
-  }
+        position: absolute;
 
+        width: 330px;
+        height: 330px;
 
-  .about-visual:hover {
-    transform:
-      translateY(-8px);
-  }
+        right: -180px;
+        bottom: -180px;
 
+        border-radius: 50%;
 
-  .about-visual::before {
-    content: "";
+        background:
+            radial-gradient(circle,
+                rgba(229, 181, 77, .10),
+                transparent 68%);
+    }
 
-    position: absolute;
+    .home-about-grid {
+        position: relative;
 
-    inset: 0;
+        z-index: 2;
 
-    background:
-      linear-gradient(145deg,
-        rgba(15, 85, 55, .10),
-        rgba(5, 42, 27, .75));
-  }
+        display: grid;
 
+        grid-template-columns:
+            .95fr 1.05fr;
 
-  .about-visual-content {
-    position: absolute;
+        gap: 70px;
 
-    z-index: 2;
+        align-items: center;
+    }
 
-    left: 25px;
-    right: 25px;
-    bottom: 25px;
+    .home-about-content {
+        max-width: 570px;
+    }
 
-    padding: 22px;
+    .home-about-content h2 {
+        margin:
+            13px 0 18px;
 
-    color: white;
+        font-size:
+            clamp(2rem, 4vw, 3.25rem);
 
-    border-radius: 18px;
+        line-height: 1.03;
 
-    background:
-      rgba(10, 50, 33, .68);
+        letter-spacing: -.06em;
+    }
 
-    backdrop-filter:
-      blur(12px);
+    .home-about-content h2 span {
+        display: block;
 
-    border:
-      1px solid rgba(255, 255, 255, .12);
-  }
+        color:
+            var(--home-primary);
+    }
 
+    .home-about-content p {
+        margin:
+            0 0 13px;
 
-  .about-visual-content strong {
-    display: block;
+        color:
+            var(--home-muted);
 
-    margin-bottom: 5px;
+        font-size: .83rem;
 
-    font-family: "Manrope", sans-serif;
+        line-height: 1.85;
+    }
 
-    font-size: 1.15rem;
-  }
+    .home-feature-list {
+        display: grid;
 
+        grid-template-columns:
+            1fr 1fr;
 
-  .about-visual-content span {
-    color:
-      rgba(255, 255, 255, .75);
+        gap: 10px;
 
-    font-size: .84rem;
-  }
+        margin:
+            26px 0 0;
 
+        padding: 0;
 
-  .about-content h2 {
-    font-size:
-      clamp(2rem, 4vw, 2.8rem);
+        list-style: none;
+    }
 
-    letter-spacing: -.045em;
+    .home-feature-list li {
+        display: flex;
 
-    margin-bottom: 20px;
-  }
+        align-items: center;
 
+        gap: 9px;
 
-  .about-content p {
-    color: var(--text-light);
+        min-height: 66px;
 
-    margin-bottom: 15px;
+        padding: 10px;
 
-    line-height: 1.75;
-  }
+        background:
+            #f8fbf9;
 
+        border:
+            1px solid var(--home-border);
 
-  /* =========================================================
-   LISTA DE FUNCIONALIDADES
-========================================================= */
+        border-radius: 13px;
 
-  .feature-list {
-    list-style: none;
+        color:
+            var(--home-text-soft);
 
-    margin-top: 28px;
-  }
+        font-size: .60rem;
 
+        font-weight: 800;
 
-  .feature-list li {
-    display: flex;
+        transition: .3s ease;
+    }
 
-    align-items: center;
+    .home-feature-list li:hover {
+        transform:
+            translateY(-4px);
 
-    gap: 13px;
+        background: white;
 
-    margin-bottom: 15px;
+        border-color:
+            rgba(23, 107, 69, .18);
 
-    font-weight: 600;
+        box-shadow:
+            var(--home-shadow);
+    }
 
-    font-size: .94rem;
-  }
+    .home-feature-icon {
+        width: 32px;
+        height: 32px;
 
+        display: flex;
 
-  .feature-icon {
-    flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
 
-    width: 32px;
-    height: 32px;
+        flex-shrink: 0;
 
-    display: grid;
-    place-items: center;
+        color:
+            var(--home-primary);
 
-    border-radius: 9px;
+        background:
+            #e5f5eb;
 
-    color: var(--primary);
+        border:
+            1px solid #d4eddd;
 
-    background:
-      var(--primary-light);
-  }
-
-
-  .feature-icon svg {
-    width: 17px;
-    height: 17px;
-  }
-
-
-  /* =========================================================
-   COMO FUNCIONA
-========================================================= */
-
-  .steps {
-    background: white;
-  }
-
-
-  .steps-grid {
-    display: grid;
-
-    grid-template-columns:
-      repeat(3, 1fr);
-
-    gap: 22px;
-  }
-
-
-  .step-card {
-    position: relative;
-
-    padding: 30px;
-
-    overflow: hidden;
-
-    transition:
-      transform .35s ease,
-      box-shadow .35s ease;
-  }
-
-
-  .step-card:hover {
-    transform:
-      translateY(-8px);
-
-    box-shadow:
-      0 20px 40px rgba(23, 107, 69, .10);
-  }
-
-
-  .step-number {
-    width: 48px;
-    height: 48px;
-
-    display: grid;
-    place-items: center;
-
-    margin-bottom: 20px;
-
-    border-radius: 14px;
-
-    color: white;
-
-    background:
-      var(--primary);
-
-    font-family: "Manrope", sans-serif;
-
-    font-weight: 800;
-
-    box-shadow:
-      0 10px 20px rgba(23, 107, 69, .20);
-  }
-
-
-  .step-icon {
-    position: absolute;
-
-    right: 25px;
-    top: 25px;
-
-    width: 45px;
-    height: 45px;
-
-    display: grid;
-    place-items: center;
-
-    color: var(--primary);
-
-    opacity: .12;
-  }
-
-
-  .step-icon svg {
-    width: 42px;
-    height: 42px;
-  }
-
-
-  .step-card h3 {
-    font-size: 1.1rem;
-
-    margin-bottom: 10px;
-  }
-
-
-  .step-card p {
-    color: var(--text-light);
-
-    font-size: .9rem;
-
-    line-height: 1.7;
-  }
-
-
-  /* =========================================================
-   CULTURAS
-========================================================= */
-
-  .culture-grid {
-    display: grid;
-
-    grid-template-columns:
-      repeat(4, 1fr);
-
-    gap: 20px;
-  }
-
-
-  .culture-card {
-    overflow: hidden;
-
-    padding: 0;
-
-    transition:
-      transform .35s ease,
-      box-shadow .35s ease;
-  }
-
-
-  .culture-card:hover {
-    transform:
-      translateY(-8px);
-
-    box-shadow:
-      0 20px 40px rgba(23, 107, 69, .13);
-  }
-
-
-  .culture-image {
-    height: 190px;
-
-    position: relative;
-
-    overflow: hidden;
-
-    background-size: cover;
-    background-position: center;
-
-    transition:
-      transform .6s ease;
-  }
-
-
-  .culture-card:hover .culture-image {
-    transform:
-      scale(1.06);
-  }
-
-
-  .culture-image::after {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-      linear-gradient(transparent 30%,
-        rgba(0, 0, 0, .45));
-  }
-
-
-  /* IMAGENS DAS CULTURAS */
-
-  .culture-image.milho {
-    background-image:
-      url("https://images.unsplash.com/photo-1601593768792-2f6e6c8c8a7b?auto=format&fit=crop&w=900&q=85");
-  }
-
-
-  .culture-image.mandioca {
-    background-image:
-      url("https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=900&q=85");
-  }
-
-
-  .culture-image.feijao {
-    background-image:
-      url("https://images.unsplash.com/photo-1586444248902-2f64eddc13df?auto=format&fit=crop&w=900&q=85");
-  }
-
-
-  .culture-image.soja {
-    background-image:
-      url("https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&w=900&q=85");
-  }
-
-
-  .culture-info {
-    padding: 22px;
-  }
-
-
-  .culture-info h3 {
-    font-size: 1.05rem;
-
-    margin-bottom: 7px;
-  }
-
-
-  .culture-info p {
-    color: var(--text-light);
-
-    font-size: .84rem;
-
-    line-height: 1.6;
-
-    margin-bottom: 14px;
-  }
-
-
-  .culture-link {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    color: var(--primary);
-
-    font-size: .84rem;
-
-    font-weight: 700;
-
-    transition:
-      gap .3s ease;
-  }
-
-
-  .culture-link:hover {
-    gap: 12px;
-  }
-
-
-  /* =========================================================
-   IA
-========================================================= */
-
-  .ai-section {
-    padding: 75px 0;
-  }
-
-
-  .ai-box {
-    position: relative;
-
-    overflow: hidden;
-
-    padding: 60px;
-
-    border-radius: 28px;
-
-    color: white;
-
-    background:
-      linear-gradient(135deg,
-        #0c4d31,
-        #176b45);
-
-    box-shadow:
-      0 25px 60px rgba(23, 107, 69, .20);
-  }
-
-
-  .ai-box::before {
-    content: "";
-
-    position: absolute;
-
-    width: 420px;
-    height: 420px;
-
-    right: -170px;
-    top: -220px;
-
-    border-radius: 50%;
-
-    border:
-      1px solid rgba(255, 255, 255, .10);
-
-    animation:
-      rotateSlow 30s linear infinite;
-  }
-
-
-  .ai-box::after {
-    content: "";
-
-    position: absolute;
-
-    width: 320px;
-    height: 320px;
-
-    right: -120px;
-    bottom: -170px;
-
-    border-radius: 50%;
-
-    background:
-      rgba(255, 255, 255, .06);
-  }
-
-
-  .ai-content {
-    position: relative;
-
-    z-index: 2;
-
-    max-width: 720px;
-  }
-
-
-  .ai-content .eyebrow {
-    color: white;
-
-    background:
-      rgba(255, 255, 255, .12);
-  }
-
-
-  .ai-content h2 {
-    font-size:
-      clamp(2rem, 4vw, 2.9rem);
-
-    margin-bottom: 16px;
-  }
-
-
-  .ai-content p {
-    color: #c5ddd0;
-
-    line-height: 1.75;
-
-    margin-bottom: 28px;
-  }
-
-
-  .ai-button {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    color: var(--primary);
-
-    background: white;
-
-    transition:
-      transform .3s ease,
-      background .3s ease;
-  }
-
-
-  .ai-button svg {
-    width: 19px;
-  }
-
-
-  .ai-button:hover {
-    color: var(--primary-dark);
-
-    background: #f2f7f4;
-
-    transform:
-      translateY(-4px);
-  }
-
-
-  /* =========================================================
-   ANIMAÇÃO AO ENTRAR NO ECRÃ
-========================================================= */
-
-  .animate-on-scroll {
-    opacity: 0;
-
-    transform:
-      translateY(35px);
-
-    transition:
-      opacity .8s ease,
-      transform .8s ease;
-  }
-
-
-  .animate-on-scroll.visible {
-    opacity: 1;
-
-    transform:
-      translateY(0);
-  }
-
-
-  .delay-1 {
-    transition-delay: .1s;
-  }
-
-
-  .delay-2 {
-    transition-delay: .2s;
-  }
-
-
-  .delay-3 {
-    transition-delay: .3s;
-  }
-
-
-  .delay-4 {
-    transition-delay: .4s;
-  }
-
-
-  /* =========================================================
-   RESPONSIVO
-========================================================= */
-
-  @media (max-width: 1000px) {
-
-    .hero {
-      min-height: 680px;
+        border-radius: 9px;
     }
 
 
-    .stats-grid {
-      grid-template-columns:
-        repeat(2, 1fr);
+    /* ABOUT VISUAL */
+
+    .home-about-visual {
+        position: relative;
+
+        min-height: 500px;
+    }
+
+    .home-about-image {
+        position: absolute;
+
+        inset:
+            0 45px 45px 0;
+
+        overflow: hidden;
+
+        border-radius: 28px;
+
+        background:
+            url("https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=1500&q=90") center / cover no-repeat;
+
+        box-shadow:
+            0 30px 70px rgba(8, 45, 29, .18);
+
+        transform:
+            rotate(-1deg);
+
+        transition:
+            transform .5s ease;
+    }
+
+    .home-about-visual:hover .home-about-image {
+        transform:
+            rotate(0deg) scale(1.01);
+    }
+
+    .home-about-image::before {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        background:
+            linear-gradient(135deg,
+                rgba(5, 39, 25, .08),
+                rgba(5, 39, 25, .72));
+    }
+
+    .home-about-image::after {
+        content: "";
+
+        position: absolute;
+
+        left: 0;
+        right: 0;
+
+        height: 3px;
+
+        top: 0;
+
+        background:
+            var(--home-gold);
+
+        box-shadow:
+            0 0 18px rgba(229, 181, 77, .7);
+
+        animation:
+            homeScan 5s linear infinite;
+    }
+
+    .home-about-image-label {
+        position: absolute;
+
+        z-index: 4;
+
+        left: 22px;
+        top: 22px;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        padding:
+            8px 11px;
+
+        color: white;
+
+        background:
+            rgba(5, 39, 25, .60);
+
+        border:
+            1px solid rgba(255, 255, 255, .18);
+
+        border-radius: 100px;
+
+        backdrop-filter:
+            blur(12px);
+
+        font-size: .55rem;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: .06em;
+    }
+
+    .home-about-image-label span {
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        background:
+            var(--home-gold);
+
+        box-shadow:
+            0 0 10px rgba(229, 181, 77, .8);
+    }
+
+    .home-about-image-info {
+        position: absolute;
+
+        z-index: 4;
+
+        left: 23px;
+        bottom: 23px;
+
+        max-width: 310px;
+
+        color: white;
+    }
+
+    .home-about-image-info strong {
+        display: block;
+
+        margin-bottom: 6px;
+
+        font-size: 1.45rem;
+
+        letter-spacing: -.04em;
+    }
+
+    .home-about-image-info span {
+        color:
+            rgba(255, 255, 255, .72);
+
+        font-size: .62rem;
+
+        line-height: 1.65;
+    }
+
+    .home-about-panel {
+        position: absolute;
+
+        z-index: 8;
+
+        right: 0;
+        bottom: 0;
+
+        width: 265px;
+
+        padding: 19px;
+
+        background:
+            rgba(255, 255, 255, .95);
+
+        border:
+            1px solid rgba(255, 255, 255, .80);
+
+        border-radius: 17px;
+
+        box-shadow:
+            0 25px 55px rgba(0, 0, 0, .15);
+
+        backdrop-filter:
+            blur(16px);
+
+        animation:
+            homeFloat 5s ease-in-out infinite;
+    }
+
+    .home-about-panel-head {
+        display: flex;
+
+        align-items: center;
+
+        gap: 9px;
+
+        margin-bottom: 12px;
+    }
+
+    .home-about-panel-icon {
+        width: 37px;
+        height: 37px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        color:
+            var(--home-primary);
+
+        background:
+            var(--home-primary-soft);
+
+        border-radius: 10px;
+    }
+
+    .home-about-panel-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .home-about-panel small {
+        color:
+            var(--home-muted);
+
+        font-size: .50rem;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: .05em;
+    }
+
+    .home-about-panel strong {
+        display: block;
+
+        margin-bottom: 5px;
+
+        color:
+            var(--home-primary);
+
+        font-size: 1rem;
+    }
+
+    .home-about-panel p {
+        margin: 0;
+
+        color:
+            var(--home-muted);
+
+        font-size: .58rem;
+
+        line-height: 1.65;
+    }
+
+    .home-about-data {
+        position: absolute;
+
+        z-index: 7;
+
+        top: 80px;
+        right: -17px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 7px;
+    }
+
+    .home-about-data-item {
+        min-width: 115px;
+
+        padding:
+            9px 11px;
+
+        color: white;
+
+        background:
+            rgba(5, 39, 25, .82);
+
+        border:
+            1px solid rgba(255, 255, 255, .16);
+
+        border-radius: 10px;
+
+        backdrop-filter:
+            blur(12px);
+
+        box-shadow:
+            0 12px 30px rgba(0, 0, 0, .15);
+    }
+
+    .home-about-data-item strong {
+        display: block;
+
+        color:
+            var(--home-gold);
+
+        font-size: .9rem;
+    }
+
+    .home-about-data-item span {
+        color:
+            rgba(255, 255, 255, .62);
+
+        font-size: .50rem;
     }
 
 
-    .about-grid {
-      grid-template-columns: 1fr;
+    /* ============================================================
+   AGRICULTURA CONECTADA
+============================================================ */
 
-      gap: 40px;
+    .home-agriculture {
+        position: relative;
+
+        padding:
+            90px 0;
+
+        background:
+            var(--home-bg);
+    }
+
+    .home-agriculture-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 16px;
+    }
+
+    .home-agriculture-card {
+        position: relative;
+
+        min-height: 245px;
+
+        padding: 25px;
+
+        overflow: hidden;
+
+        background: white;
+
+        border:
+            1px solid var(--home-border);
+
+        border-radius: 20px;
+
+        box-shadow:
+            var(--home-shadow);
+
+        transition:
+            transform .35s ease,
+            box-shadow .35s ease;
+    }
+
+    .home-agriculture-card:hover {
+        transform:
+            translateY(-7px);
+
+        box-shadow:
+            var(--home-shadow-lg);
+    }
+
+    .home-agriculture-card::before {
+        content: "";
+
+        position: absolute;
+
+        width: 130px;
+        height: 130px;
+
+        right: -50px;
+        bottom: -55px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(23, 107, 69, .06);
+    }
+
+    .home-agriculture-icon {
+        width: 48px;
+        height: 48px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin-bottom: 20px;
+
+        color:
+            var(--home-primary);
+
+        background:
+            var(--home-primary-soft);
+
+        border-radius: 13px;
+    }
+
+    .home-agriculture-icon svg {
+        width: 23px;
+        height: 23px;
+    }
+
+    .home-agriculture-card:nth-child(2) .home-agriculture-icon {
+        color:
+            #9a741d;
+
+        background:
+            #fff6df;
+    }
+
+    .home-agriculture-card:nth-child(3) .home-agriculture-icon {
+        color:
+            #6b4ca2;
+
+        background:
+            #f1ebfa;
+    }
+
+    .home-agriculture-card h3 {
+        margin:
+            0 0 9px;
+
+        font-size: 1rem;
+
+        letter-spacing: -.02em;
+    }
+
+    .home-agriculture-card p {
+        margin: 0;
+
+        color:
+            var(--home-muted);
+
+        font-size: .66rem;
+
+        line-height: 1.75;
+    }
+
+    .home-agriculture-number {
+        position: absolute;
+
+        top: 22px;
+        right: 22px;
+
+        color:
+            rgba(23, 107, 69, .12);
+
+        font-size: 2.5rem;
+
+        font-weight: 900;
+
+        line-height: 1;
     }
 
 
-    .culture-grid {
-      grid-template-columns:
-        repeat(2, 1fr);
-    }
-  }
+    /* ============================================================
+   CTA DIAGNÓSTICO
+============================================================ */
 
+    .home-diagnostic-cta {
+        position: relative;
 
-  @media (max-width: 700px) {
+        padding:
+            25px 0 100px;
 
-    .hero {
-      min-height: 690px;
-    }
-
-
-    .hero-overlay {
-      background:
-        linear-gradient(90deg,
-          rgba(4, 36, 23, .96),
-          rgba(5, 55, 35, .75));
+        background:
+            var(--home-bg);
     }
 
+    .home-diagnostic-card {
+        position: relative;
 
-    .hero h1 {
-      font-size: 2.9rem;
+        min-height: 410px;
+
+        display: flex;
+
+        align-items: center;
+
+        overflow: hidden;
+
+        border-radius: 30px;
+
+        background:
+            #052719;
+
+        box-shadow:
+            0 30px 75px rgba(5, 39, 25, .22);
+    }
+
+    .home-diagnostic-background {
+        position: absolute;
+
+        inset: 0;
+
+        background:
+            url("https://images.unsplash.com/photo-1523742813662-36c65e0a7e6f?auto=format&fit=crop&w=1800&q=90") center / cover no-repeat;
+
+        transform:
+            scale(1.03);
+
+        transition:
+            transform 1.2s ease;
+    }
+
+    .home-diagnostic-card:hover .home-diagnostic-background {
+        transform:
+            scale(1.08);
+    }
+
+    .home-diagnostic-background::after {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        background:
+            linear-gradient(90deg,
+                rgba(2, 25, 16, .97) 0%,
+                rgba(3, 42, 27, .91) 45%,
+                rgba(3, 42, 27, .63) 72%,
+                rgba(3, 42, 27, .32) 100%);
+    }
+
+    .home-diagnostic-card::before {
+        content: "";
+
+        position: absolute;
+
+        width: 400px;
+        height: 400px;
+
+        right: -170px;
+        top: -180px;
+
+        border:
+            1px solid rgba(255, 255, 255, .10);
+
+        border-radius: 50%;
+    }
+
+    .home-diagnostic-card::after {
+        content: "";
+
+        position: absolute;
+
+        width: 240px;
+        height: 240px;
+
+        right: -80px;
+        bottom: -150px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(circle,
+                rgba(229, 181, 77, .22),
+                transparent 70%);
+
+        animation:
+            homeGlow 5s ease-in-out infinite;
+    }
+
+    .home-diagnostic-content {
+        position: relative;
+
+        z-index: 5;
+
+        width: 62%;
+
+        padding: 60px;
+    }
+
+    .home-diagnostic-eyebrow {
+        color:
+            #f8e7b7;
+    }
+
+    .home-diagnostic-eyebrow::before {
+        background:
+            var(--home-gold);
+    }
+
+    .home-diagnostic-content h2 {
+        max-width: 600px;
+
+        margin:
+            12px 0 13px;
+
+        color: white;
+
+        font-size:
+            clamp(2rem, 4vw, 3.15rem);
+
+        line-height: 1.03;
+
+        letter-spacing: -.055em;
+    }
+
+    .home-diagnostic-content p {
+        max-width: 560px;
+
+        margin:
+            0 0 23px;
+
+        color:
+            rgba(255, 255, 255, .70);
+
+        font-size: .82rem;
+
+        line-height: 1.8;
+    }
+
+    .home-diagnostic-buttons {
+        display: flex;
+
+        gap: 9px;
+
+        flex-wrap: wrap;
+    }
+
+    .home-diagnostic-button,
+    .home-diagnostic-secondary {
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        min-height: 44px;
+
+        padding:
+            0 17px;
+
+        border-radius: 10px;
+
+        font-size: .68rem;
+
+        font-weight: 800;
+
+        transition: .25s ease;
+    }
+
+    .home-diagnostic-button {
+        color:
+            var(--home-primary-dark);
+
+        background:
+            var(--home-gold);
+
+        box-shadow:
+            0 10px 25px rgba(0, 0, 0, .15);
+    }
+
+    .home-diagnostic-button:hover {
+        color:
+            var(--home-primary-dark);
+
+        background:
+            var(--home-gold-light);
+
+        transform:
+            translateY(-3px);
+    }
+
+    .home-diagnostic-secondary {
+        color: white;
+
+        background:
+            rgba(255, 255, 255, .08);
+
+        border:
+            1px solid rgba(255, 255, 255, .20);
+
+        backdrop-filter:
+            blur(10px);
+    }
+
+    .home-diagnostic-secondary:hover {
+        color: white;
+
+        background:
+            rgba(255, 255, 255, .16);
+
+        transform:
+            translateY(-3px);
+    }
+
+    .home-diagnostic-visual {
+        position: absolute;
+
+        z-index: 5;
+
+        right: 65px;
+
+        width: 280px;
+        height: 280px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+    }
+
+    .home-diagnostic-circle {
+        position: relative;
+
+        width: 180px;
+        height: 180px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        color:
+            var(--home-gold);
+
+        background:
+            rgba(255, 255, 255, .07);
+
+        border:
+            1px solid rgba(255, 255, 255, .18);
+
+        border-radius: 50%;
+
+        backdrop-filter:
+            blur(12px);
+
+        box-shadow:
+            0 0 0 25px rgba(255, 255, 255, .025),
+            0 0 0 50px rgba(255, 255, 255, .018);
+
+        animation:
+            homeFloat 5s ease-in-out infinite;
+    }
+
+    .home-diagnostic-circle::before {
+        content: "";
+
+        position: absolute;
+
+        inset: 18px;
+
+        border:
+            1px dashed rgba(229, 181, 77, .35);
+
+        border-radius: 50%;
+    }
+
+    .home-diagnostic-circle svg {
+        position: relative;
+
+        z-index: 3;
+
+        width: 65px;
+        height: 65px;
+    }
+
+    .home-ai-label {
+        position: absolute;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        padding:
+            7px 10px;
+
+        color:
+            rgba(255, 255, 255, .82);
+
+        background:
+            rgba(255, 255, 255, .08);
+
+        border:
+            1px solid rgba(255, 255, 255, .14);
+
+        border-radius: 100px;
+
+        backdrop-filter:
+            blur(10px);
+
+        font-size: .53rem;
+
+        font-weight: 800;
+
+        white-space: nowrap;
+    }
+
+    .home-ai-label::before {
+        content: "";
+
+        width: 5px;
+        height: 5px;
+
+        border-radius: 50%;
+
+        background:
+            var(--home-gold);
+    }
+
+    .home-ai-label.one {
+        top: 25px;
+        right: 15px;
+    }
+
+    .home-ai-label.two {
+        left: 0;
+        bottom: 55px;
+    }
+
+    .home-ai-label.three {
+        right: 5px;
+        bottom: 20px;
     }
 
 
-    .hero-description {
-      font-size: 1rem;
+    /* ============================================================
+   RESPONSIVE
+============================================================ */
+
+    @media (max-width:1100px) {
+
+        .home-hero-layout {
+            grid-template-columns:
+                minmax(0, 1fr) 390px;
+
+            gap: 35px;
+        }
+
+        .home-products-grid {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+
+        .home-about-grid {
+            gap: 45px;
+        }
+
+        .home-agriculture-grid {
+            gap: 12px;
+        }
+
+        .home-diagnostic-visual {
+            right: 25px;
+        }
     }
 
 
-    .steps-grid {
-      grid-template-columns: 1fr;
+    @media (max-width:950px) {
+
+        .home-hero {
+            min-height:
+                auto;
+        }
+
+        .home-hero-layout {
+            grid-template-columns:
+                1fr;
+
+            min-height:
+                auto;
+
+            gap: 38px;
+
+            padding:
+                95px 0 70px;
+        }
+
+        .home-hero-content {
+            max-width:
+                750px;
+        }
+
+        .home-hero-stats {
+            max-width:
+                650px;
+        }
+
+        .home-products-grid {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+
+        .home-products-toolbar {
+            position:
+                static;
+
+            grid-template-columns:
+                1fr 1fr;
+        }
+
+        .home-search {
+            grid-column:
+                1 / -1;
+        }
+
+        .home-about-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+        .home-about-content {
+            max-width:
+                700px;
+        }
+
+        .home-about-visual {
+            min-height:
+                470px;
+        }
+
+        .home-agriculture-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+        .home-diagnostic-content {
+            width:
+                68%;
+
+            padding:
+                50px;
+        }
+
+        .home-diagnostic-visual {
+            right:
+                -15px;
+
+            opacity:
+                .65;
+        }
     }
 
 
-    .ai-box {
-      padding: 40px 28px;
+    @media (max-width:780px) {
+
+        .home-hero-stats {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap:
+                8px;
+        }
+
+        .home-hero-stat-card {
+            min-height:
+                115px;
+
+            padding:
+                13px 10px;
+        }
+
+        .home-hero-stat-value {
+            font-size:
+                1.35rem;
+        }
+
+        .home-hero-stat-description {
+            font-size:
+                .53rem;
+        }
+
+        .home-about-visual {
+            min-height:
+                430px;
+        }
+
+        .home-feature-list {
+            grid-template-columns:
+                1fr 1fr;
+        }
+
+        .home-diagnostic-card {
+            min-height:
+                430px;
+        }
+
+        .home-diagnostic-content {
+            width:
+                100%;
+
+            padding:
+                45px;
+        }
+
+        .home-diagnostic-visual {
+            right:
+                -70px;
+
+            opacity:
+                .28;
+        }
+
+        .home-product-modal {
+            padding:
+                15px;
+        }
+
+        .home-modal-image {
+            height:
+                230px;
+        }
     }
 
 
-    .hero-scroll {
-      display: none;
+    @media (max-width:600px) {
+
+        .home-page .container {
+            width:
+                min(100% - 28px, 1180px);
+        }
+
+        .home-hero-layout {
+            padding:
+                70px 0 65px;
+
+            gap:
+                30px;
+        }
+
+        .home-hero h1 {
+            font-size:
+                2.75rem;
+        }
+
+        .home-hero-description {
+            font-size:
+                .88rem;
+        }
+
+        .home-hero-buttons {
+            align-items:
+                stretch;
+        }
+
+        .home-hero-buttons a {
+            width:
+                100%;
+        }
+
+        .home-hero-stats {
+            grid-template-columns:
+                1fr;
+        }
+
+        .home-hero-stat-card {
+            min-height:
+                85px;
+
+            flex-direction:
+                row;
+
+            align-items:
+                center;
+
+            padding:
+                13px 15px;
+        }
+
+        .home-hero-stat-icon {
+            width:
+                40px;
+
+            height:
+                40px;
+        }
+
+        .home-catalog-head {
+            align-items:
+                stretch;
+
+            flex-direction:
+                column;
+        }
+
+        .home-catalog-total {
+            align-self:
+                flex-start;
+        }
+
+        .home-products-toolbar {
+            grid-template-columns:
+                1fr;
+        }
+
+        .home-search {
+            grid-column:
+                auto;
+        }
+
+        .home-products-grid {
+            grid-template-columns:
+                1fr 1fr;
+
+            gap:
+                10px;
+        }
+
+        .home-product-image {
+            height:
+                155px;
+        }
+
+        .home-product-body {
+            padding:
+                11px;
+        }
+
+        .home-product-title h3 {
+            font-size:
+                .78rem;
+        }
+
+        .home-product-description {
+            font-size:
+                .57rem;
+        }
+
+        .home-product-meta {
+            display:
+                none;
+        }
+
+        .home-product-footer {
+            align-items:
+                stretch;
+
+            flex-direction:
+                column;
+        }
+
+        .home-product-actions {
+            width:
+                100%;
+
+            margin-left:
+                0;
+        }
+
+        .home-product-action {
+            width:
+                100%;
+        }
+
+        .home-about {
+            padding:
+                80px 0 85px;
+        }
+
+        .home-about-visual {
+            min-height:
+                390px;
+        }
+
+        .home-about-image {
+            inset:
+                0 25px 40px 0;
+        }
+
+        .home-about-data {
+            right:
+                -3px;
+
+            top:
+                75px;
+        }
+
+        .home-about-panel {
+            width:
+                220px;
+
+            padding:
+                16px;
+        }
+
+        .home-feature-list {
+            grid-template-columns:
+                1fr;
+        }
+
+        .home-diagnostic-cta {
+            padding:
+                20px 0 75px;
+        }
+
+        .home-diagnostic-card {
+            min-height:
+                470px;
+
+            border-radius:
+                24px;
+        }
+
+        .home-diagnostic-content {
+            padding:
+                35px 25px;
+        }
+
+        .home-diagnostic-content h2 {
+            font-size:
+                2rem;
+        }
+
+        .home-diagnostic-buttons {
+            flex-direction:
+                column;
+
+            align-items:
+                stretch;
+        }
+
+        .home-diagnostic-button,
+        .home-diagnostic-secondary {
+            width:
+                100%;
+        }
+
+        .home-diagnostic-visual {
+            right:
+                -100px;
+
+            bottom:
+                -40px;
+        }
+
+        .home-modal-content {
+            padding:
+                22px;
+        }
+
+        .home-modal-info-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+        .home-modal-actions {
+            flex-direction:
+                column;
+        }
+
+        .home-modal-diagnostic {
+            width:
+                100%;
+        }
     }
-  }
 
 
-  @media (max-width: 520px) {
+    @media (max-width:450px) {
 
-    .hero {
-      min-height: 700px;
+        .home-section {
+            padding:
+                65px 0;
+        }
+
+        .home-hero h1 {
+            font-size:
+                2.45rem;
+        }
+
+        .home-products-grid {
+            grid-template-columns:
+                1fr;
+        }
+
+        .home-product-image {
+            height:
+                200px;
+        }
+
+        .home-product-meta {
+            display:
+                flex;
+        }
+
+        .home-about-visual {
+            min-height:
+                350px;
+        }
+
+        .home-about-image {
+            inset:
+                0 10px 30px 0;
+        }
+
+        .home-about-panel {
+            width:
+                185px;
+
+            padding:
+                14px;
+        }
+
+        .home-about-data {
+            display:
+                none;
+        }
+
+        .home-about-image-info {
+            left:
+                18px;
+
+            bottom:
+                18px;
+
+            max-width:
+                220px;
+        }
+
+        .home-about-image-info strong {
+            font-size:
+                1.1rem;
+        }
+
+        .home-diagnostic-card {
+            min-height:
+                500px;
+        }
     }
 
 
-    .hero-buttons {
-      flex-direction: column;
-    }
-
-
-    .hero-buttons .btn {
-      width: 100%;
-    }
-
-
-    .stats-grid {
-      grid-template-columns:
-        1fr 1fr;
-    }
-
-
-    .culture-grid {
-      grid-template-columns: 1fr;
-    }
-
-
-    .about-visual {
-      min-height: 300px;
-    }
-
-
-    .hero-indicators {
-      bottom: 18px;
-    }
-
-
-    .hero-indicator.active {
-      width: 42px;
-    }
-  }
-
-
-  /* =========================================================
+    /* ============================================================
    ACESSIBILIDADE
-========================================================= */
+============================================================ */
 
-  @media (prefers-reduced-motion: reduce) {
+    .home-page a:focus-visible,
+    .home-search input:focus-visible,
+    .home-filter-select:focus-visible,
+    .home-page-button:focus-visible,
+    .home-hero-indicator:focus-visible,
+    .home-product-action:focus-visible,
+    .home-product-modal-close:focus-visible {
+        outline:
+            3px solid rgba(229, 181, 77, .75);
 
-    *,
-    *::before,
-    *::after {
-      animation-duration: .01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: .01ms !important;
+        outline-offset:
+            3px;
     }
-  }
+
+    @media (prefers-reduced-motion:reduce) {
+
+        *,
+        *::before,
+        *::after {
+            animation-duration:
+                .01ms !important;
+
+            animation-iteration-count:
+                1 !important;
+
+            transition-duration:
+                .01ms !important;
+        }
+    }
 </style>
 
 {% endblock %}
 
 
-
 {% block content %}
 
+<div class="home-page">
 
-<!-- =========================================================
-     HERO
-========================================================= -->
+    <!-- ======================================================
+         HERO
+    ======================================================= -->
 
-<section class="hero">
+    <section class="home-hero" aria-label="Apresentação do AgroIA Moxico">
 
-  <div class="hero-slides">
+        <!-- ==================================================
+             SLIDES
+        =================================================== -->
 
-    <div class="hero-slide active"></div>
-    <div class="hero-slide"></div>
-    <div class="hero-slide"></div>
-    <div class="hero-slide"></div>
+        <div class="home-hero-slides">
 
-  </div>
+            <div class="home-hero-slide home-slide-1 active"></div>
 
+            <div class="home-hero-slide home-slide-2"></div>
 
-  <div class="hero-overlay"></div>
+            <div class="home-hero-slide home-slide-3"></div>
 
+            <div class="home-hero-slide home-slide-4"></div>
 
-  <div class="hero-decoration hero-circle"></div>
-
-  <div class="hero-decoration hero-glow"></div>
-
-
-  <div class="container hero-container">
-
-    <div class="hero-content">
-
-      <div class="hero-badge">
-
-        <span class="hero-badge-dot"></span>
-
-        Agricultura inteligente para o Moxico
-
-      </div>
+        </div>
 
 
-      <h1>
+        <!-- ELEMENTOS DECORATIVOS -->
 
-        Tecnologia para uma
+        <div class="home-hero-circle"></div>
 
-        <strong>
-          agricultura mais inteligente.
-        </strong>
-
-      </h1>
+        <div class="home-hero-glow"></div>
 
 
-      <p class="hero-description">
 
-        O AgroIA Moxico utiliza inteligência
-        artificial para apoiar a identificação
-        de doenças em culturas agrícolas através
-        da análise inteligente de imagens.
+        <!-- ==================================================
+             CONTEÚDO PRINCIPAL
+        =================================================== -->
 
-      </p>
+        <div class="container home-hero-container">
 
-
-      <div class="hero-buttons">
-
-        <!-- ÍCONE DE CÂMERA / SCANNER -->
-
-        <a href="{% url 'diagnostico' %}" class="btn btn-primary">
-
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-linecap="round" stroke-linejoin="round">
-
-            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
-
-            <circle cx="12" cy="13" r="3" />
-
-          </svg>
-
-          Analisar Cultura
-
-        </a>
+            <div class="home-hero-layout">
 
 
-        <!-- ÍCONE DE FOLHA -->
+                <!-- ==================================================
+                     TEXTO DA HERO
+                =================================================== -->
 
-        <a href="{% url 'lista_culturas' %}" class="btn btn-secondary">
+                <div class="home-hero-content">
 
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-linecap="round" stroke-linejoin="round">
 
-            <path
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+                    <!-- BADGE -->
 
-          </svg>
+                    <div class="home-hero-badge">
 
-          Ver Culturas
+                        <span class="home-hero-dot"></span>
 
-        </a>
+                        AgroIA Moxico · Agricultura Inteligente
 
-      </div>
+                    </div>
+
+
+
+                    <!-- TÍTULO -->
+
+                    <h1 id="homeHeroTitle">
+
+                        Tecnologia para uma
+
+                        <strong>
+                            agricultura mais inteligente.
+                        </strong>
+
+                    </h1>
+
+
+
+                    <!-- DESCRIÇÃO -->
+
+                    <p class="home-hero-description" id="homeHeroDescription">
+
+                        Utilize tecnologia e inteligência artificial
+                        para conhecer melhor os seus produtos agrícolas
+                        e apoiar a identificação de possíveis problemas
+                        através da análise de imagens.
+
+                    </p>
+
+
+
+                    <!-- ==================================================
+                         BOTÃO
+                    =================================================== -->
+
+                    <div class="home-hero-buttons">
+
+                        <a href="#produtos-agricolas" class="home-secondary-button">
+
+                            Explorar produtos
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                                <path d="M12 5v14" />
+
+                                <path d="m19 12-7 7-7-7" />
+
+                            </svg>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     ESTATÍSTICAS
+                =================================================== -->
+
+                <div class="home-hero-stats">
+
+
+                    <!-- ==================================================
+                         CARD 1 — TOTAL DE PRODUTOS
+                    =================================================== -->
+
+                    <article class="home-hero-stat-card">
+
+
+                        <div class="home-hero-stat-icon">
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                                <path d="M20 7h-9" />
+
+                                <path d="M20 12h-9" />
+
+                                <path d="M20 17h-9" />
+
+                                <path d="M4 7h.01" />
+
+                                <path d="M4 12h.01" />
+
+                                <path d="M4 17h.01" />
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="home-hero-stat-label">
+                                Produtos cadastrados
+                            </span>
+
+
+                            <strong class="home-hero-stat-value">
+
+                                {{ total_produtos|default:"0" }}
+
+                            </strong>
+
+
+                            <span class="home-hero-stat-description">
+                                Produtos disponíveis no catálogo
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- ==================================================
+                         CARD 2 — DISPONIBILIDADE DO SITE
+                    =================================================== -->
+
+                    <article class="home-hero-stat-card">
+
+
+                        <div class="home-hero-stat-icon">
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                                <path d="M20 6 9 17l-5-5" />
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="home-hero-stat-label">
+                                Disponibilidade
+                            </span>
+
+
+                            <strong class="home-hero-stat-value">
+
+                                Online
+
+                            </strong>
+
+
+                            <span class="home-hero-stat-description">
+                                Plataforma disponível
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- ==================================================
+                         CARD 3 — TOTAL DE DIAGNÓSTICOS
+                    =================================================== -->
+
+                    <article class="home-hero-stat-card">
+
+
+                        <div class="home-hero-stat-icon">
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                                <path d="M4 19V5" />
+
+                                <path d="M4 19h16" />
+
+                                <path d="m7 15 3-4 3 2 5-7" />
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="home-hero-stat-label">
+                                Diagnósticos realizados
+                            </span>
+
+
+                            <strong class="home-hero-stat-value">
+
+                                {{ total_diagnosticos|default:"0" }}
+
+                            </strong>
+
+
+                            <span class="home-hero-stat-description">
+                                Análises realizadas pela plataforma
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             INDICADORES DOS SLIDES
+        =================================================== -->
+
+        <div class="home-hero-indicators">
+
+            <button class="home-hero-indicator active" data-slide="0" aria-label="Slide 1">
+            </button>
+
+
+            <button class="home-hero-indicator" data-slide="1" aria-label="Slide 2">
+            </button>
+
+
+            <button class="home-hero-indicator" data-slide="2" aria-label="Slide 3">
+            </button>
+
+
+            <button class="home-hero-indicator" data-slide="3" aria-label="Slide 4">
+            </button>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ======================================================
+     CATÁLOGO AGRÍCOLA
+======================================================= -->
+
+<section class="home-section home-products-section" id="produtos-agricolas">
+
+    <div class="container">
+
+
+        <!-- ==================================================
+             CABEÇALHO
+        =================================================== -->
+
+        <div class="home-catalog-head home-animate">
+
+            <div class="home-catalog-heading">
+
+                <span class="home-eyebrow">
+                    Catálogo agrícola
+                </span>
+
+                <h2>
+                    Produtos agrícolas da plataforma
+                </h2>
+
+                <p>
+                    Explore a nossa base de produtos agrícolas,
+                    consulte informações importantes e utilize
+                    as ferramentas de análise disponíveis para
+                    apoiar a identificação de possíveis problemas.
+                </p>
+
+            </div>
+
+
+            <div class="home-catalog-total">
+
+                <strong>
+                    {{ total_produtos|default:"0" }}
+                </strong>
+
+                produtos cadastrados
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             TOOLBAR
+        =================================================== -->
+
+        <div class="home-products-toolbar home-animate">
+
+
+            <!-- PESQUISA -->
+
+            <div class="home-search">
+
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                    <circle cx="11" cy="11" r="7" />
+
+                    <path d="m20 20-4-4" />
+
+                </svg>
+
+
+                <input type="search" id="homeProductSearch" placeholder="Pesquisar produto, cultura ou informação..."
+                    autocomplete="off">
+
+            </div>
+
+
+
+            <!-- FILTRO DE CATEGORIA -->
+
+            <select id="homeCategoryFilter" class="home-filter-select" aria-label="Filtrar por categoria">
+
+                <option value="">
+                    Todas as categorias
+                </option>
+
+
+                {% for produto in produtos %}
+
+                {% for categoria in produto.categorias.all %}
+
+                <option value="{{ categoria.nome|lower }}">
+                    {{ categoria.nome }}
+                </option>
+
+                {% endfor %}
+
+                {% endfor %}
+
+            </select>
+
+
+
+            <!-- ORDENAÇÃO -->
+
+            <select id="homeSortProducts" class="home-filter-select" aria-label="Ordenar produtos">
+
+                <option value="default">
+                    Ordem padrão
+                </option>
+
+                <option value="az">
+                    Nome A → Z
+                </option>
+
+                <option value="za">
+                    Nome Z → A
+                </option>
+
+                <option value="diagnostic">
+                    Com diagnóstico
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             STATUS DO CATÁLOGO
+        =================================================== -->
+
+        <div class="home-catalog-status">
+
+            <span id="homeProductCounter">
+                {{ total_produtos|default:"0" }} produtos
+            </span>
+
+
+            <span class="home-view-label">
+
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                    <rect x="3" y="3" width="7" height="7" />
+
+                    <rect x="14" y="3" width="7" height="7" />
+
+                    <rect x="3" y="14" width="7" height="7" />
+
+                    <rect x="14" y="14" width="7" height="7" />
+
+                </svg>
+
+                Catálogo inteligente
+
+            </span>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             GRID DOS PRODUTOS
+        =================================================== -->
+
+        <div class="home-products-grid" id="homeProductsGrid">
+
+
+            {% for produto in produtos %}
+
+
+            <!-- ==================================================
+                 CARD DO PRODUTO
+            =================================================== -->
+
+            <article class="home-product-card home-animate" data-product-name="{{ produto.nome|lower }}"
+                data-product-category="
+                    {% for categoria in produto.categorias.all %}
+                        {{ categoria.nome|lower }}
+                        {% if not forloop.last %}|{% endif %}
+                    {% endfor %}
+                " data-product-diagnostic="
+                    {% if produto.analise_por_imagem %}
+                        true
+                    {% else %}
+                        false
+                    {% endif %}
+                " data-product-id="{{ produto.id }}" data-product-title="{{ produto.nome|escape }}"
+                data-product-description="
+                    {% if produto.descricao %}
+                        {{ produto.descricao|escape }}
+                    {% else %}
+                        Informação agrícola disponível no AgroIA Moxico.
+                    {% endif %}
+                " data-product-category-name="
+                    {% for categoria in produto.categorias.all %}
+                        {{ categoria.nome|escape }}
+                        {% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        Sem categoria
+                    {% endfor %}
+                " data-product-active="
+                    {% if produto.ativo %}
+                        Ativo
+                    {% else %}
+                        Inativo
+                    {% endif %}
+                " data-product-problems="
+                    {% for problema in produto.lista_problemas %}
+                        {{ problema|escape }}
+                        {% if not forloop.last %}||{% endif %}
+                    {% endfor %}
+                " data-product-image="
+                    {% if produto.imagem %}
+                        {{ produto.imagem.url }}
+                    {% endif %}
+                ">
+
+
+
+                <!-- ==================================================
+                     IMAGEM
+                =================================================== -->
+
+                <div class="home-product-image">
+
+
+                    {% if produto.imagem %}
+
+                    <img src="{{ produto.imagem.url }}" alt="Imagem de {{ produto.nome }}" loading="lazy">
+
+                    {% else %}
+
+                    <div class="home-no-image">
+
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+
+                            <path d="m21 15-5-5L5 21" />
+
+                        </svg>
+
+                        Sem imagem
+
+                    </div>
+
+                    {% endif %}
+
+
+
+                    <!-- ==================================================
+                         CATEGORIAS DO PRODUTO
+                    =================================================== -->
+
+                    <span class="home-product-category">
+
+                        {% for categoria in produto.categorias.all %}
+
+                        {{ categoria.nome }}
+
+                        {% if not forloop.last %}
+                        ·
+                        {% endif %}
+
+                        {% empty %}
+
+                        Sem categoria
+
+                        {% endfor %}
+
+                    </span>
+
+
+
+                    <!-- ==================================================
+                         BADGE DE IA
+                    =================================================== -->
+
+                    {% if produto.analise_por_imagem %}
+
+                    <span class="home-product-diagnostic-badge">
+
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                            <path
+                                d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
+
+                            <circle cx="12" cy="13" r="3" />
+
+                        </svg>
+
+                        IA disponível
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     BODY
+                =================================================== -->
+
+                <div class="home-product-body">
+
+
+                    <!-- ==================================================
+                         TÍTULO E STATUS
+                    =================================================== -->
+
+                    <div class="home-product-top">
+
+
+                        <div class="home-product-title">
+
+                            <h3>
+                                {{ produto.nome }}
+                            </h3>
+
+                        </div>
+
+
+                        {% if produto.ativo %}
+
+                        <span class="home-product-status"></span>
+
+                        {% else %}
+
+                        <span class="home-product-status inactive"></span>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         DESCRIÇÃO
+                    =================================================== -->
+
+                    <p class="home-product-description">
+
+                        {% if produto.descricao %}
+
+                        {{ produto.descricao }}
+
+                        {% else %}
+
+                        Informação agrícola disponível
+                        no AgroIA Moxico.
+
+                        {% endif %}
+
+                    </p>
+
+
+
+                    <!-- ==================================================
+                         META INFORMAÇÕES
+                    =================================================== -->
+
+                    <div class="home-product-meta">
+
+
+                        <!-- CATEGORIAS -->
+
+                        <span class="home-product-meta-item">
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                                <path d="M12 21s7-4.35 7-10a7 7 0 1 0-14 0c0 5.65 7 10 7 10z" />
+
+                                <circle cx="12" cy="11" r="2.5" />
+
+                            </svg>
+
+
+                            {% for categoria in produto.categorias.all %}
+
+                            {{ categoria.nome }}
+
+                            {% if not forloop.last %}
+                            ·
+                            {% endif %}
+
+                            {% empty %}
+
+                            Geral
+
+                            {% endfor %}
+
+                        </span>
+
+
+
+                        <!-- TIPO DE INFORMAÇÃO -->
+
+                        <span class="home-product-meta-item">
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                                <path d="M20 6 9 17l-5-5" />
+
+                            </svg>
+
+
+                            {% if produto.analise_por_imagem %}
+
+                            IA
+
+                            {% else %}
+
+                            Informação
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         PROBLEMAS
+                    =================================================== -->
+
+                    <div class="home-problems">
+
+
+                        {% for problema in produto.lista_problemas|slice:":2" %}
+
+                        <span class="home-problem">
+                            {{ problema }}
+                        </span>
+
+                        {% empty %}
+
+                        <span class="home-problem">
+                            Sem problemas registados
+                        </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         RODAPÉ E BOTÕES
+                    =================================================== -->
+
+                    <div class="home-product-footer">
+
+
+                        <!-- STATUS -->
+
+                        <span class="home-analysis-status">
+
+                            {% if produto.analise_por_imagem %}
+
+                            ✓ IA disponível
+
+                            {% else %}
+
+                            Informação
+
+                            {% endif %}
+
+                        </span>
+
+
+
+                        <!-- AÇÕES -->
+
+                        <div class="home-product-actions">
+
+
+                            <!-- ==================================================
+                                 BOTÃO DETALHES
+
+                                 Vai diretamente para:
+
+                                 culturas:detalhe_produto
+
+                                 passando o ID do produto.
+                            =================================================== -->
+
+                            <a href="{% url 'culturas:detalhe_produto' produto.pk %}"
+                                class="home-product-action home-product-details"
+                                aria-label="Ver detalhes de {{ produto.nome }}">
+
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                                    <circle cx="12" cy="12" r="9" />
+
+                                    <path d="M12 10v6" />
+
+                                    <path d="M12 7h.01" />
+
+                                </svg>
+
+                                Detalhes
+
+                            </a>
+
+
+
+                            <!-- ==================================================
+                                 BOTÃO DIAGNÓSTICO
+                            =================================================== -->
+
+                            {% if produto.analise_por_imagem %}
+
+
+                            <a href="{% url 'diagnostico:diagnostico' produto.pk %}"
+                                class="home-product-action home-analysis-button">
+
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                                    <path
+                                        d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
+
+                                    <circle cx="12" cy="13" r="3" />
+
+                                </svg>
+
+                                Analisar
+
+                            </a>
+
+
+                            {% else %}
+
+
+                            <a href="{% url 'diagnostico:diagnostico' produto.pk %}"
+                                class="home-product-action home-analysis-button">
+
+                                Diagnóstico
+
+                            </a>
+
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- ==================================================
+                 NENHUM PRODUTO
+            =================================================== -->
+
+            {% empty %}
+
+
+            <div class="home-empty-products">
+
+
+                <div class="home-empty-icon">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+
+                        <path d="M20 13.5V6a2 2 0 0 0-2-2h-7.5" />
+
+                        <path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" />
+
+                        <path d="M15 4h5v5" />
+
+                        <path d="m20 4-8 8" />
+
+                    </svg>
+
+                </div>
+
+
+                <h3>
+                    Nenhum produto agrícola cadastrado
+                </h3>
+
+
+                <p>
+                    A base agrícola ainda está a ser construída.
+                </p>
+
+            </div>
+
+
+            {% endfor %}
+
+
+            <!-- ==================================================
+                 NENHUM RESULTADO DA PESQUISA/FILTRO
+            =================================================== -->
+
+            <div class="home-no-result" id="homeNoResult">
+
+                <div class="home-no-result-icon">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+                        <circle cx="11" cy="11" r="7" />
+
+                        <path d="m20 20-4-4" />
+
+                    </svg>
+
+                </div>
+
+
+                <h3>
+                    Nenhum produto encontrado
+                </h3>
+
+
+                <p>
+                    Experimente alterar a pesquisa ou os filtros.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             PAGINAÇÃO
+        =================================================== -->
+
+        <div class="home-pagination" id="homePagination">
+        </div>
+
+
+        <div class="home-pagination-info" id="homePaginationInfo">
+        </div>
 
     </div>
-
-  </div>
-
-
-  <!-- INDICADORES -->
-
-  <div class="hero-indicators">
-
-    <button class="hero-indicator active" data-slide="0" aria-label="Imagem 1">
-    </button>
-
-    <button class="hero-indicator" data-slide="1" aria-label="Imagem 2">
-    </button>
-
-    <button class="hero-indicator" data-slide="2" aria-label="Imagem 3">
-    </button>
-
-    <button class="hero-indicator" data-slide="3" aria-label="Imagem 4">
-    </button>
-
-  </div>
-
-
-  <!-- SCROLL -->
-
-  <div class="hero-scroll">
-
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round">
-
-      <path d="M12 5v14" />
-      <path d="m19 12-7 7-7-7" />
-
-    </svg>
-
-  </div>
 
 </section>
 
 
 
-<!-- =========================================================
-     ESTATÍSTICAS
-========================================================= -->
+<section class="home-about">
 
-<section class="stats">
+    <!-- ========================================================
+         IMAGEM DE FUNDO
+    ========================================================= -->
 
-  <div class="container stats-grid">
+    <div class="home-about-background"></div>
+
+    <!-- Camadas visuais -->
+
+    <div class="home-about-overlay"></div>
+
+    <div class="home-about-light"></div>
 
 
-    <div class="stat animate-on-scroll">
+    <!-- ========================================================
+         ELEMENTOS DECORATIVOS
+    ========================================================= -->
 
-      <div class="stat-icon">
+    <div class="home-about-lines"></div>
 
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-linecap="round" stroke-linejoin="round">
+    <div class="home-about-circle-decoration"></div>
 
-          <path d="M12 2v20" />
-          <path d="M2 12h20" />
-          <path d="M5 5l14 14" />
-          <path d="M19 5 5 19" />
 
-        </svg>
+    <div class="container">
 
-      </div>
+        <div class="home-about-content home-animate">
 
-      <div class="stat-number">
-        04+
-      </div>
+            <!-- ==================================================
+                 IDENTIFICAÇÃO
+            =================================================== -->
 
-      <div class="stat-label">
-        Culturas suportadas
-      </div>
+            <div class="home-about-eyebrow">
+
+                <span class="home-about-eyebrow-line"></span>
+
+                <span>
+                    SOBRE O AGROIA MOXICO
+                </span>
+
+                <span class="home-about-eyebrow-dot"></span>
+
+            </div>
+
+
+            <!-- ==================================================
+                 TÍTULO
+            =================================================== -->
+
+            <h2>
+
+                Tecnologia para
+                <span>
+                    fortalecer o campo.
+                </span>
+
+            </h2>
+
+
+            <!-- ==================================================
+                 TEXTO PRINCIPAL
+            =================================================== -->
+
+            <div class="home-about-text">
+
+                <p class="home-about-lead">
+
+                    O <strong>AgroIA Moxico</strong> nasce com uma missão
+                    simples: aproximar o conhecimento agrícola das
+                    tecnologias digitais e criar novas possibilidades
+                    para quem vive e trabalha no campo.
+
+                </p>
+
+                <p>
+
+                    A plataforma reúne informação agrícola, conhecimento
+                    sobre culturas e recursos de inteligência artificial
+                    em um ambiente digital desenvolvido para apoiar
+                    agricultores, técnicos, estudantes e profissionais
+                    da agricultura.
+
+                </p>
+
+            </div>
+
+
+            <!-- ==================================================
+                 INFORMAÇÃO
+            =================================================== -->
+
+            <div class="home-about-highlights">
+
+                <div class="home-about-highlight">
+
+                    <span class="home-about-highlight-number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Conhecimento
+                        </strong>
+
+                        <span>
+                            Informação agrícola organizada
+                            e acessível.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="home-about-highlight">
+
+                    <span class="home-about-highlight-number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Tecnologia
+                        </strong>
+
+                        <span>
+                            Ferramentas digitais pensadas
+                            para a agricultura.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="home-about-highlight">
+
+                    <span class="home-about-highlight-number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Inteligência
+                        </strong>
+
+                        <span>
+                            IA aplicada ao apoio
+                            à análise agrícola.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 FRASE FINAL
+            =================================================== -->
+
+            <div class="home-about-footer">
+
+                <span class="home-about-footer-icon">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+
+                        <path d="M12 21V10" />
+
+                        <path d="
+                            M12 15
+                            C8 15 5 12.5 5 8
+                            C9.5 8 12 10.5 12 15
+                        " />
+
+                        <path d="
+                            M12 13
+                            C12 8.5 15 5.5 19 5.5
+                            C19 10 16 13 12 13
+                        " />
+
+                    </svg>
+
+                </span>
+
+
+                <span>
+                    Agricultura conectada,
+                    conhecimento compartilhado
+                    e tecnologia a serviço do campo.
+                </span>
+
+            </div>
+
+        </div>
 
     </div>
 
+</section>
 
-    <div class="stat animate-on-scroll delay-1">
 
-      <div class="stat-icon">
+<!-- ============================================================
+     CSS — SOBRE AGROIA MOXICO
+============================================================ -->
 
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-linecap="round" stroke-linejoin="round">
+<style>
+    /* ============================================================
+   SEÇÃO PRINCIPAL
+============================================================ */
 
-          <path d="M12 2a10 10 0 1 0 10 10" />
+    .home-about {
 
-          <path d="M12 6v6l4 2" />
+        position: relative;
 
-          <path d="M19 2v4" />
+        isolation: isolate;
 
-          <path d="M17 4h4" />
+        overflow: hidden;
 
-        </svg>
+        min-height: 690px;
 
-      </div>
+        display: flex;
 
-      <div class="stat-number">
-        IA
-      </div>
+        align-items: center;
 
-      <div class="stat-label">
-        Tecnologia inteligente
-      </div>
+        padding: 120px 0;
+
+        background: #0a3d27;
+
+    }
+
+
+    /* ============================================================
+   IMAGEM DE FUNDO
+============================================================ */
+
+    .home-about-background {
+
+        position: absolute;
+
+        inset: 0;
+
+        z-index: -3;
+
+        background-image:
+
+            url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=90");
+
+        background-size: cover;
+
+        background-position: center center;
+
+        transform: scale(1.03);
+
+        transition:
+            transform 1.5s ease;
+
+    }
+
+
+    /* Pequeno movimento ao passar o mouse */
+
+    .home-about:hover .home-about-background {
+
+        transform: scale(1.06);
+
+    }
+
+
+    /* ============================================================
+   OVERLAY PRINCIPAL
+============================================================ */
+
+    .home-about-overlay {
+
+        position: absolute;
+
+        inset: 0;
+
+        z-index: -2;
+
+        background:
+
+            linear-gradient(90deg,
+                rgba(5, 37, 24, .96) 0%,
+                rgba(5, 43, 27, .88) 38%,
+                rgba(5, 45, 28, .58) 70%,
+                rgba(4, 37, 24, .38) 100%);
+
+    }
+
+
+    /* ============================================================
+   LUZ SUAVE NO LADO DIREITO
+============================================================ */
+
+    .home-about-light {
+
+        position: absolute;
+
+        width: 650px;
+
+        height: 650px;
+
+        right: -180px;
+
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        border-radius: 50%;
+
+        background:
+
+            radial-gradient(circle,
+                rgba(217, 164, 65, .13) 0%,
+                rgba(217, 164, 65, .05) 30%,
+                transparent 70%);
+
+        z-index: -1;
+
+        pointer-events: none;
+
+    }
+
+
+    /* ============================================================
+   LINHAS DECORATIVAS
+============================================================ */
+
+    .home-about-lines {
+
+        position: absolute;
+
+        inset: 0;
+
+        z-index: -1;
+
+        opacity: .12;
+
+        background-image:
+
+            linear-gradient(90deg,
+                transparent 49.8%,
+                rgba(255, 255, 255, .25) 50%,
+                transparent 50.2%),
+
+            linear-gradient(transparent 49.8%,
+                rgba(255, 255, 255, .18) 50%,
+                transparent 50.2%);
+
+        background-size:
+            120px 120px;
+
+        mask-image:
+
+            linear-gradient(to bottom,
+                black,
+                transparent 85%);
+
+    }
+
+
+    /* ============================================================
+   CÍRCULO DECORATIVO
+============================================================ */
+
+    .home-about-circle-decoration {
+
+        position: absolute;
+
+        width: 520px;
+
+        height: 520px;
+
+        right: -240px;
+
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        border:
+
+            1px solid rgba(255, 255, 255, .13);
+
+        border-radius: 50%;
+
+        z-index: -1;
+
+    }
+
+
+    .home-about-circle-decoration::before {
+
+        content: "";
+
+        position: absolute;
+
+        inset: 45px;
+
+        border:
+
+            1px dashed rgba(255, 255, 255, .11);
+
+        border-radius: 50%;
+
+    }
+
+
+    /* ============================================================
+   CONTEÚDO
+============================================================ */
+
+    .home-about-content {
+
+        position: relative;
+
+        max-width: 900px;
+
+        color: white;
+
+    }
+
+
+    /* ============================================================
+   EYEBROW
+============================================================ */
+
+    .home-about-eyebrow {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        margin-bottom: 24px;
+
+        color:
+
+            rgba(255, 255, 255, .76);
+
+        font-size: 10px;
+
+        font-weight: 800;
+
+        letter-spacing: .20em;
+
+        text-transform: uppercase;
+
+    }
+
+
+    .home-about-eyebrow-line {
+
+        width: 38px;
+
+        height: 1px;
+
+        background:
+
+            #d9a441;
+
+    }
+
+
+    .home-about-eyebrow-dot {
+
+        width: 6px;
+
+        height: 6px;
+
+        border-radius: 50%;
+
+        background: #d9a441;
+
+        box-shadow:
+
+            0 0 0 5px rgba(217, 164, 65, .12);
+
+    }
+
+
+    /* ============================================================
+   TÍTULO
+============================================================ */
+
+    .home-about-content h2 {
+
+        max-width: 760px;
+
+        margin: 0 0 30px;
+
+        color: white;
+
+        font-size:
+
+            clamp(48px, 6vw, 78px);
+
+        font-weight: 800;
+
+        line-height: .98;
+
+        letter-spacing: -3.5px;
+
+    }
+
+
+    .home-about-content h2 span {
+
+        display: block;
+
+        color: #d9eac0;
+
+    }
+
+
+    /* ============================================================
+   TEXTOS
+============================================================ */
+
+    .home-about-text {
+
+        max-width: 700px;
+
+    }
+
+
+    .home-about-text p {
+
+        margin: 0 0 17px;
+
+        color:
+
+            rgba(255, 255, 255, .70);
+
+        font-size: 15px;
+
+        line-height: 1.85;
+
+    }
+
+
+    .home-about-text .home-about-lead {
+
+        color:
+
+            rgba(255, 255, 255, .88);
+
+        font-size: 17px;
+
+        line-height: 1.8;
+
+    }
+
+
+    .home-about-text strong {
+
+        color: #d9eac0;
+
+        font-weight: 800;
+
+    }
+
+
+    /* ============================================================
+   DESTAQUES
+============================================================ */
+
+    .home-about-highlights {
+
+        display: grid;
+
+        grid-template-columns:
+
+            repeat(3, minmax(0, 1fr));
+
+        max-width: 800px;
+
+        margin-top: 40px;
+
+        padding-top: 28px;
+
+        border-top:
+
+            1px solid rgba(255, 255, 255, .16);
+
+    }
+
+
+    .home-about-highlight {
+
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 13px;
+
+        padding-right: 28px;
+
+    }
+
+
+    .home-about-highlight+.home-about-highlight {
+
+        padding-left: 28px;
+
+        border-left:
+
+            1px solid rgba(255, 255, 255, .13);
+
+    }
+
+
+    .home-about-highlight-number {
+
+        color: #d9a441;
+
+        font-size: 10px;
+
+        font-weight: 800;
+
+        letter-spacing: .08em;
+
+    }
+
+
+    .home-about-highlight strong {
+
+        display: block;
+
+        margin-bottom: 5px;
+
+        color: white;
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+    }
+
+
+    .home-about-highlight div span {
+
+        display: block;
+
+        color:
+
+            rgba(255, 255, 255, .57);
+
+        font-size: 11px;
+
+        line-height: 1.55;
+
+    }
+
+
+    /* ============================================================
+   FOOTER INFORMATIVO
+============================================================ */
+
+    .home-about-footer {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 14px;
+
+        max-width: 650px;
+
+        margin-top: 42px;
+
+        color:
+
+            rgba(255, 255, 255, .60);
+
+        font-size: 11px;
+
+        line-height: 1.6;
+
+    }
+
+
+    .home-about-footer-icon {
+
+        flex: 0 0 40px;
+
+        width: 40px;
+
+        height: 40px;
+
+        display: grid;
+
+        place-items: center;
+
+        border:
+
+            1px solid rgba(217, 234, 192, .22);
+
+        border-radius: 50%;
+
+        color: #d9eac0;
+
+        background:
+
+            rgba(255, 255, 255, .06);
+
+    }
+
+
+    .home-about-footer-icon svg {
+
+        width: 21px;
+
+        height: 21px;
+
+    }
+
+
+    /* ============================================================
+   RESPONSIVIDADE
+============================================================ */
+
+    @media (max-width: 900px) {
+
+        .home-about {
+
+            min-height: auto;
+
+            padding: 95px 0;
+
+        }
+
+
+        .home-about-overlay {
+
+            background:
+
+                linear-gradient(90deg,
+                    rgba(5, 37, 24, .95),
+                    rgba(5, 43, 27, .80));
+
+        }
+
+
+        .home-about-content {
+
+            max-width: 760px;
+
+        }
+
+
+        .home-about-highlights {
+
+            max-width: 100%;
+
+        }
+
+    }
+
+
+    @media (max-width: 700px) {
+
+        .home-about {
+
+            padding: 80px 0;
+
+        }
+
+
+        .home-about-content h2 {
+
+            font-size: 45px;
+
+            letter-spacing: -2.3px;
+
+        }
+
+
+        .home-about-highlights {
+
+            grid-template-columns: 1fr;
+
+            gap: 20px;
+
+        }
+
+
+        .home-about-highlight {
+
+            padding: 0 !important;
+
+        }
+
+
+        .home-about-highlight+.home-about-highlight {
+
+            padding-top: 20px !important;
+
+            border-left: 0;
+
+            border-top:
+
+                1px solid rgba(255, 255, 255, .12);
+
+        }
+
+
+        .home-about-circle-decoration {
+
+            width: 380px;
+
+            height: 380px;
+
+            right: -260px;
+
+        }
+
+    }
+
+
+    @media (max-width: 480px) {
+
+        .home-about {
+
+            padding: 70px 0;
+
+        }
+
+
+        .home-about-content h2 {
+
+            font-size: 38px;
+
+            line-height: 1;
+
+        }
+
+
+        .home-about-text .home-about-lead {
+
+            font-size: 15px;
+
+        }
+
+
+        .home-about-eyebrow {
+
+            font-size: 8px;
+
+            letter-spacing: .15em;
+
+        }
+
+
+        .home-about-footer {
+
+            align-items: flex-start;
+
+        }
+
+    }
+</style>
+
+
+
+
+<section class="home-agriculture">
+
+    <div class="container">
+
+        <div class="home-section-header home-animate">
+
+            <span class="home-eyebrow">
+                Uma agricultura mais conectada
+            </span>
+
+            <h2>
+                Tecnologia que aproxima conhecimento do campo
+            </h2>
+
+            <p>
+                O AgroIA Moxico reúne diferentes recursos para criar
+                uma experiência digital voltada para informação,
+                análise e inovação agrícola.
+            </p>
+
+        </div>
+
+
+        <div class="home-agriculture-grid">
+
+            <article class="home-agriculture-card home-animate">
+
+                <span class="home-agriculture-number">
+                    01
+                </span>
+
+                <div class="home-agriculture-icon">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+
+                        <path d="M12 21s8-4.5 8-11V5l-8-3-8 3v5c0 6.5 8 11 8 11z" />
+                        <path d="m9 12 2 2 4-5" />
+
+                    </svg>
+
+                </div>
+
+                <h3>
+                    Conhecimento agrícola
+                </h3>
+
+                <p>
+                    Produtos e informações organizados para facilitar
+                    a consulta e tornar o conhecimento agrícola mais
+                    acessível.
+                </p>
+
+            </article>
+
+
+            <article class="home-agriculture-card home-animate">
+
+                <span class="home-agriculture-number">
+                    02
+                </span>
+
+                <div class="home-agriculture-icon">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+
+                        <path d="M12 3v18" />
+                        <path d="M3 12h18" />
+                        <path d="M5.5 5.5 18.5 18.5" />
+                        <path d="M18.5 5.5 5.5 18.5" />
+
+                    </svg>
+
+                </div>
+
+                <h3>
+                    Agricultura orientada por dados
+                </h3>
+
+                <p>
+                    A tecnologia permite organizar dados e imagens
+                    agrícolas para apoiar uma compreensão mais clara
+                    dos produtos e dos seus possíveis problemas.
+                </p>
+
+            </article>
+
+
+            <article class="home-agriculture-card home-animate">
+
+                <span class="home-agriculture-number">
+                    03
+                </span>
+
+                <div class="home-agriculture-icon">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+
+                        <circle cx="12" cy="12" r="8" />
+
+                        <path d="M12 8v4l3 2" />
+
+                    </svg>
+
+                </div>
+
+                <h3>
+                    Inovação para o futuro
+                </h3>
+
+                <p>
+                    Uma base preparada para incorporar novas ferramentas,
+                    modelos de inteligência artificial e recursos
+                    digitais destinados ao setor agrícola.
+                </p>
+
+            </article>
+
+        </div>
 
     </div>
-
-
-    <div class="stat animate-on-scroll delay-2">
-
-      <div class="stat-icon">
-
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-linecap="round" stroke-linejoin="round">
-
-          <circle cx="12" cy="12" r="9" />
-
-          <polyline points="12 7 12 12 15 14" />
-
-        </svg>
-
-      </div>
-
-      <div class="stat-number">
-        24/7
-      </div>
-
-      <div class="stat-label">
-        Plataforma disponível
-      </div>
-
-    </div>
-
-
-    <div class="stat animate-on-scroll delay-3">
-
-      <div class="stat-icon">
-
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-linecap="round" stroke-linejoin="round">
-
-          <path d="M20 21a8 8 0 0 0-16 0" />
-
-          <circle cx="12" cy="7" r="4" />
-
-        </svg>
-
-      </div>
-
-      <div class="stat-number">
-        01
-      </div>
-
-      <div class="stat-label">
-        Objetivo: apoiar o agricultor
-      </div>
-
-    </div>
-
-
-  </div>
 
 </section>
 
 
 
-<!-- =========================================================
-     SOBRE
-========================================================= -->
-
-<section class="section" id="sobre">
-
-  <div class="container about-grid">
-
-
-    <div class="about-visual animate-on-scroll">
-
-      <div class="about-visual-content">
-
-        <strong>
-          AgroIA Moxico
-        </strong>
-
-        <span>
-          Tecnologia aplicada à agricultura
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <div class="about-content animate-on-scroll">
-
-      <span class="eyebrow">
-        Sobre o AgroIA Moxico
-      </span>
-
-
-      <h2>
-        Agricultura e inteligência artificial
-        lado a lado.
-      </h2>
-
-
-      <p>
-
-        O AgroIA Moxico é uma plataforma concebida
-        para apoiar agricultores na identificação
-        de possíveis doenças que afetam as suas
-        culturas.
-
-      </p>
-
-
-      <p>
-
-        Através da análise de imagens, o sistema
-        está preparado para integrar modelos de
-        inteligência artificial capazes de auxiliar
-        na identificação de problemas agrícolas.
-
-      </p>
-
-
-      <ul class="feature-list">
-
-
-        <li>
-
-          <span class="feature-icon">
-
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="m5 12 5 5L20 7" />
-
-            </svg>
-
-          </span>
-
-          Análise de imagens de culturas
-
-        </li>
-
-
-        <li>
-
-          <span class="feature-icon">
-
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="m5 12 5 5L20 7" />
-
-            </svg>
-
-          </span>
-
-          Identificação de possíveis doenças
-
-        </li>
-
-
-        <li>
-
-          <span class="feature-icon">
-
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="m5 12 5 5L20 7" />
-
-            </svg>
-
-          </span>
-
-          Informações agrícolas organizadas
-
-        </li>
-
-
-        <li>
-
-          <span class="feature-icon">
-
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="m5 12 5 5L20 7" />
-
-            </svg>
-
-          </span>
-
-          Preparado para integração com IA
-
-        </li>
-
-
-      </ul>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     COMO FUNCIONA
-========================================================= -->
-
-<section class="section steps">
-
-  <div class="container">
-
-
-    <div class="section-header animate-on-scroll">
-
-      <span class="eyebrow">
-        Processo simples
-      </span>
-
-      <h2>
-        Como funciona?
-      </h2>
-
-      <p>
-        O sistema foi pensado para tornar o
-        processo de análise simples e acessível.
-      </p>
-
-    </div>
-
-
-    <div class="steps-grid">
-
-
-      <!-- PASSO 01 -->
-
-      <div class="card step-card animate-on-scroll">
-
-        <div class="step-number">
-          01
-        </div>
-
-
-        <div class="step-icon">
-
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-linecap="round" stroke-linejoin="round">
-
-            <path d="M12 20h9" />
-
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L8 18l-4 1 1-4Z" />
-
-          </svg>
-
-        </div>
-
-
-        <h3>
-          Escolha a cultura
-        </h3>
-
-
-        <p>
-          Selecione a cultura agrícola que
-          deseja analisar.
-        </p>
-
-      </div>
-
-
-
-      <!-- PASSO 02 -->
-
-      <div class="card step-card animate-on-scroll delay-1">
-
-        <div class="step-number">
-          02
-        </div>
-
-
-        <div class="step-icon">
-
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-linecap="round" stroke-linejoin="round">
-
-            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
-
-            <circle cx="12" cy="13" r="3" />
-
-          </svg>
-
-        </div>
-
-
-        <h3>
-          Envie uma imagem
-        </h3>
-
-
-        <p>
-          Faça o carregamento de uma fotografia
-          da planta ou da área afetada.
-        </p>
-
-      </div>
-
-
-
-      <!-- PASSO 03 -->
-
-      <div class="card step-card animate-on-scroll delay-2">
-
-        <div class="step-number">
-          03
-        </div>
-
-
-        <div class="step-icon">
-
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-linecap="round" stroke-linejoin="round">
-
-            <path d="M12 2a10 10 0 1 0 10 10" />
-
-            <path d="m16 8-5 5-2-2" />
-
-          </svg>
-
-        </div>
-
-
-        <h3>
-          Receba o diagnóstico
-        </h3>
-
-
-        <p>
-          A área de inteligência artificial
-          apresentará o resultado da análise.
-        </p>
-
-      </div>
-
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     CULTURAS
-========================================================= -->
-
-<section class="section" id="culturas">
-
-  <div class="container">
-
-
-    <div class="section-header animate-on-scroll">
-
-      <span class="eyebrow">
-        Culturas agrícolas
-      </span>
-
-      <h2>
-        Culturas suportadas
-      </h2>
-
-      <p>
-        Conheça algumas das culturas que poderão
-        ser acompanhadas pela plataforma.
-      </p>
-
-    </div>
-
-
-    <div class="culture-grid">
-
-
-      <!-- MILHO -->
-
-      <div class="card culture-card animate-on-scroll">
-
-        <div class="culture-image milho"></div>
-
-        <div class="culture-info">
-
-          <h3>
-            Milho
-          </h3>
-
-          <p>
-            Informações e possíveis doenças
-            associadas à cultura.
-          </p>
-
-          <a href="{% url 'lista_culturas' %}" class="culture-link">
-
-            Ver informações
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-
-            </svg>
-
-          </a>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- MANDIOCA -->
-
-      <div class="card culture-card animate-on-scroll delay-1">
-
-        <div class="culture-image mandioca"></div>
-
-        <div class="culture-info">
-
-          <h3>
-            Mandioca
-          </h3>
-
-          <p>
-            Informações e possíveis doenças
-            associadas à cultura.
-          </p>
-
-          <a href="{% url 'lista_culturas' %}" class="culture-link">
-
-            Ver informações
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-
-            </svg>
-
-          </a>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- FEIJÃO -->
-
-      <div class="card culture-card animate-on-scroll delay-2">
-
-        <div class="culture-image feijao"></div>
-
-        <div class="culture-info">
-
-          <h3>
-            Feijão
-          </h3>
-
-          <p>
-            Informações e possíveis doenças
-            associadas à cultura.
-          </p>
-
-          <a href="{% url 'lista_culturas' %}" class="culture-link">
-
-            Ver informações
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-
-            </svg>
-
-          </a>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- SOJA -->
-
-      <div class="card culture-card animate-on-scroll delay-3">
-
-        <div class="culture-image soja"></div>
-
-        <div class="culture-info">
-
-          <h3>
-            Soja
-          </h3>
-
-          <p>
-            Informações e possíveis doenças
-            associadas à cultura.
-          </p>
-
-          <a href="{% url 'lista_culturas' %}" class="culture-link">
-
-            Ver informações
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-
-            </svg>
-
-          </a>
-
-        </div>
-
-      </div>
-
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     ÁREA DE IA
-========================================================= -->
-
-<section class="ai-section">
-
-  <div class="container">
-
-    <div class="ai-box animate-on-scroll">
-
-      <div class="ai-content">
-
-        <span class="eyebrow">
-          Inteligência artificial
-        </span>
-
-
-        <h2>
-          Prepare-se para analisar
-          a sua cultura.
-        </h2>
-
-
-        <p>
-
-          A área de diagnóstico do AgroIA Moxico
-          foi preparada para receber imagens e
-          processá-las através de modelos de
-          inteligência artificial.
-
-        </p>
-
-
-        <a href="{% url 'diagnostico' %}" class="btn ai-button">
-
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-linecap="round" stroke-linejoin="round">
-
-            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" />
-
-            <circle cx="12" cy="13" r="3" />
-
-          </svg>
-
-          Ir para Diagnóstico
-
-        </a>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
+</div>
 
 {% endblock %}
-
 
 
 {% block extra_js %}
 
 <script>
 
-  /* =========================================================
-     HERO SLIDER
-  ========================================================= */
-
-  document.addEventListener("DOMContentLoaded", function () {
-
-    const slides =
-      document.querySelectorAll(".hero-slide");
-
-    const indicators =
-      document.querySelectorAll(".hero-indicator");
-
-    let currentSlide = 0;
-
-    const intervalTime = 6000;
-
-    let sliderInterval;
-
-
-    function showSlide(index) {
-
-      slides.forEach(function (slide) {
-
-        slide.classList.remove("active");
-
-      });
-
-
-      indicators.forEach(function (indicator) {
-
-        indicator.classList.remove("active");
-
-      });
-
-
-      slides[index].classList.add("active");
-
-      indicators[index].classList.add("active");
-
-      currentSlide = index;
-
-    }
-
-
-    function nextSlide() {
-
-      currentSlide =
-        (currentSlide + 1) %
-        slides.length;
-
-      showSlide(currentSlide);
-
-    }
-
-
-    function restartSlider() {
-
-      clearInterval(sliderInterval);
-
-      sliderInterval =
-        setInterval(
-          nextSlide,
-          intervalTime
-        );
-
-    }
-
-
-    /* Troca automática */
-
-    restartSlider();
-
-
-    /* Clique nos indicadores */
-
-    indicators.forEach(function (indicator) {
-
-      indicator.addEventListener(
-        "click",
+    document.addEventListener(
+        "DOMContentLoaded",
         function () {
 
-          const index =
-            Number(
-              this.dataset.slide
-            );
-
-          showSlide(index);
-
-          restartSlider();
-
-        }
-      );
-
-    });
 
 
-    /* =====================================================
-       ANIMAÇÕES AO FAZER SCROLL
-    ===================================================== */
+            const slides =
+                document.querySelectorAll(
+                    ".home-hero-slide"
+                );
 
-    const animatedElements =
-      document.querySelectorAll(
-        ".animate-on-scroll"
-      );
+            const indicators =
+                document.querySelectorAll(
+                    ".home-hero-indicator"
+                );
+
+            const heroTitle =
+                document.getElementById(
+                    "homeHeroTitle"
+                );
+
+            const heroDescription =
+                document.getElementById(
+                    "homeHeroDescription"
+                );
+
+            const hero =
+                document.querySelector(
+                    ".home-hero"
+                );
 
 
-    const observer =
-      new IntersectionObserver(
-        function (entries) {
+            const heroContent = [
 
-          entries.forEach(function (entry) {
+                {
+                    title:
+                        "Tecnologia para uma",
 
-            if (entry.isIntersecting) {
+                    strong:
+                        "agricultura mais inteligente.",
 
-              entry.target.classList.add(
-                "visible"
-              );
+                    description:
+                        "Utilize tecnologia e inteligência artificial para conhecer melhor os seus produtos agrícolas e apoiar a identificação de possíveis problemas através da análise de imagens."
+                },
 
-              observer.unobserve(
-                entry.target
-              );
+                {
+                    title:
+                        "Conheça melhor",
+
+                    strong:
+                        "os seus produtos agrícolas.",
+
+                    description:
+                        "Explore informações agrícolas organizadas e encontre produtos cadastrados na base de conhecimento do AgroIA Moxico."
+                },
+
+                {
+                    title:
+                        "Tecnologia ao serviço",
+
+                    strong:
+                        "da agricultura.",
+
+                    description:
+                        "O AgroIA Moxico aproxima ferramentas digitais dos agricultores, ajudando a transformar informação em apoio para decisões mais conscientes."
+                },
+
+                {
+                    title:
+                        "Uma nova forma",
+
+                    strong:
+                        "de olhar para a agricultura.",
+
+                    description:
+                        "Utilize recursos digitais e inteligência artificial para apoiar a análise de produtos agrícolas através de imagens."
+                }
+
+            ];
+
+
+            let currentSlide = 0;
+            let heroTimer = null;
+
+
+            function showSlide(index) {
+
+                if (!slides.length) {
+                    return;
+                }
+
+                if (index < 0) {
+                    index =
+                        slides.length - 1;
+                }
+
+                if (index >= slides.length) {
+                    index = 0;
+                }
+
+
+                slides.forEach(
+                    function (slide, i) {
+
+                        const active =
+                            i === index;
+
+                        slide.classList.toggle(
+                            "active",
+                            active
+                        );
+
+                        slide.setAttribute(
+                            "aria-hidden",
+                            active
+                                ? "false"
+                                : "true"
+                        );
+
+                    }
+                );
+
+
+                indicators.forEach(
+                    function (indicator, i) {
+
+                        indicator.classList.toggle(
+                            "active",
+                            i === index
+                        );
+
+                    }
+                );
+
+
+                const content =
+                    heroContent[index];
+
+
+                if (
+                    content &&
+                    heroTitle &&
+                    heroDescription
+                ) {
+
+                    heroTitle.innerHTML =
+                        content.title +
+                        "<strong>" +
+                        content.strong +
+                        "</strong>";
+
+                    heroDescription.textContent =
+                        content.description;
+
+                }
+
+
+                currentSlide =
+                    index;
 
             }
 
-          });
 
-        },
-        {
-          threshold: 0.15
+            function nextSlide() {
+
+                showSlide(
+                    currentSlide + 1
+                );
+
+            }
+
+
+            function stopSlider() {
+
+                if (heroTimer) {
+
+                    clearInterval(
+                        heroTimer
+                    );
+
+                    heroTimer = null;
+
+                }
+
+            }
+
+
+            function startSlider() {
+
+                stopSlider();
+
+                if (slides.length > 1) {
+
+                    heroTimer =
+                        setInterval(
+                            nextSlide,
+                            5500
+                        );
+
+                }
+
+            }
+
+
+            indicators.forEach(
+                function (indicator) {
+
+                    indicator.addEventListener(
+                        "click",
+                        function () {
+
+                            showSlide(
+                                Number(
+                                    indicator.dataset.slide
+                                )
+                            );
+
+                            startSlider();
+
+                        }
+                    );
+
+                }
+            );
+
+
+            if (hero) {
+
+                hero.addEventListener(
+                    "mouseenter",
+                    stopSlider
+                );
+
+                hero.addEventListener(
+                    "mouseleave",
+                    startSlider
+                );
+
+            }
+
+
+            if (slides.length > 1) {
+                startSlider();
+            }
+
+
+            /* =====================================================
+               ANIMAÇÕES
+            ===================================================== */
+
+            const animatedElements =
+                document.querySelectorAll(
+                    ".home-animate"
+                );
+
+
+            if (
+                "IntersectionObserver"
+                in window
+            ) {
+
+                const observer =
+                    new IntersectionObserver(
+                        function (
+                            entries,
+                            observerInstance
+                        ) {
+
+                            entries.forEach(
+                                function (entry) {
+
+                                    if (
+                                        entry.isIntersecting
+                                    ) {
+
+                                        entry.target.classList.add(
+                                            "visible"
+                                        );
+
+                                        observerInstance.unobserve(
+                                            entry.target
+                                        );
+
+                                    }
+
+                                }
+                            );
+
+                        },
+                        {
+                            threshold:
+                                .10
+                        }
+                    );
+
+
+                animatedElements.forEach(
+                    function (element) {
+
+                        observer.observe(
+                            element
+                        );
+
+                    }
+                );
+
+            } else {
+
+                animatedElements.forEach(
+                    function (element) {
+
+                        element.classList.add(
+                            "visible"
+                        );
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               CATÁLOGO
+            ===================================================== */
+
+            const grid =
+                document.getElementById(
+                    "homeProductsGrid"
+                );
+
+            const searchInput =
+                document.getElementById(
+                    "homeProductSearch"
+                );
+
+            const categoryFilter =
+                document.getElementById(
+                    "homeCategoryFilter"
+                );
+
+            const sortSelect =
+                document.getElementById(
+                    "homeSortProducts"
+                );
+
+            const counter =
+                document.getElementById(
+                    "homeProductCounter"
+                );
+
+            const pagination =
+                document.getElementById(
+                    "homePagination"
+                );
+
+            const paginationInfo =
+                document.getElementById(
+                    "homePaginationInfo"
+                );
+
+            const noResult =
+                document.getElementById(
+                    "homeNoResult"
+                );
+
+
+            if (
+                grid &&
+                searchInput &&
+                categoryFilter &&
+                sortSelect
+            ) {
+
+                const originalCards =
+                    Array.from(
+                        grid.querySelectorAll(
+                            ".home-product-card"
+                        )
+                    );
+
+
+                let filteredCards =
+                    [...originalCards];
+
+                let currentPage = 1;
+
+                const perPage = 12;
+
+
+                /* =================================================
+                   CATEGORIAS SEM DUPLICADOS
+                ================================================= */
+
+                const categoryValues =
+                    new Set();
+
+
+                originalCards.forEach(
+                    function (card) {
+
+                        const category =
+                            (
+                                card.dataset.productCategory ||
+                                ""
+                            ).trim();
+
+                        if (category) {
+                            categoryValues.add(
+                                category
+                            );
+                        }
+
+                    }
+                );
+
+
+                const seenOptions =
+                    new Set();
+
+
+                Array.from(
+                    categoryFilter.options
+                ).forEach(
+                    function (option, index) {
+
+                        if (index === 0) {
+                            return;
+                        }
+
+                        const value =
+                            option.value;
+
+
+                        if (
+                            !value ||
+                            !categoryValues.has(value) ||
+                            seenOptions.has(value)
+                        ) {
+
+                            option.remove();
+
+                        } else {
+
+                            seenOptions.add(
+                                value
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                /* =================================================
+                   ORDENAÇÃO
+                ================================================= */
+
+                function sortCards(cards) {
+
+                    const mode =
+                        sortSelect.value;
+
+                    const sorted =
+                        [...cards];
+
+
+                    if (mode === "az") {
+
+                        sorted.sort(
+                            function (a, b) {
+
+                                return (
+                                    a.dataset.productName ||
+                                    ""
+                                ).localeCompare(
+                                    b.dataset.productName ||
+                                    "",
+                                    "pt"
+                                );
+
+                            }
+                        );
+
+                    }
+
+
+                    if (mode === "za") {
+
+                        sorted.sort(
+                            function (a, b) {
+
+                                return (
+                                    b.dataset.productName ||
+                                    ""
+                                ).localeCompare(
+                                    a.dataset.productName ||
+                                    "",
+                                    "pt"
+                                );
+
+                            }
+                        );
+
+                    }
+
+
+                    if (mode === "diagnostic") {
+
+                        sorted.sort(
+                            function (a, b) {
+
+                                const aValue =
+                                    a.dataset.productDiagnostic ===
+                                        "true"
+                                        ? 1
+                                        : 0;
+
+                                const bValue =
+                                    b.dataset.productDiagnostic ===
+                                        "true"
+                                        ? 1
+                                        : 0;
+
+                                return bValue - aValue;
+
+                            }
+                        );
+
+                    }
+
+
+                    return sorted;
+
+                }
+
+
+                /* =================================================
+                   FILTRAGEM
+                ================================================= */
+
+                function applyFilters() {
+
+                    const search =
+                        searchInput.value
+                            .toLowerCase()
+                            .trim();
+
+                    const category =
+                        categoryFilter.value
+                            .toLowerCase()
+                            .trim();
+
+
+                    filteredCards =
+                        originalCards.filter(
+                            function (card) {
+
+                                const name =
+                                    (
+                                        card.dataset.productName ||
+                                        ""
+                                    ).toLowerCase();
+
+                                const cardCategory =
+                                    (
+                                        card.dataset.productCategory ||
+                                        ""
+                                    ).toLowerCase();
+
+                                const content =
+                                    card.textContent
+                                        .toLowerCase();
+
+
+                                const matchesSearch =
+                                    !search ||
+                                    name.includes(search) ||
+                                    cardCategory.includes(search) ||
+                                    content.includes(search);
+
+
+                                const matchesCategory =
+                                    !category ||
+                                    cardCategory === category;
+
+
+                                return (
+                                    matchesSearch &&
+                                    matchesCategory
+                                );
+
+                            }
+                        );
+
+
+                    filteredCards =
+                        sortCards(
+                            filteredCards
+                        );
+
+
+                    currentPage = 1;
+
+                    renderProducts();
+
+                }
+
+
+                /* =================================================
+                   RENDER
+                ================================================= */
+
+                function renderProducts() {
+
+                    originalCards.forEach(
+                        function (card) {
+
+                            card.style.display =
+                                "none";
+
+                        }
+                    );
+
+
+                    const total =
+                        filteredCards.length;
+
+
+                    const totalPages =
+                        Math.max(
+                            1,
+                            Math.ceil(
+                                total / perPage
+                            )
+                        );
+
+
+                    if (
+                        currentPage >
+                        totalPages
+                    ) {
+
+                        currentPage =
+                            totalPages;
+
+                    }
+
+
+                    const start =
+                        (currentPage - 1) *
+                        perPage;
+
+
+                    const end =
+                        start + perPage;
+
+
+                    const visibleCards =
+                        filteredCards.slice(
+                            start,
+                            end
+                        );
+
+
+                    visibleCards.forEach(
+                        function (card) {
+
+                            card.style.display =
+                                "flex";
+
+                        }
+                    );
+
+
+                    updateCounter(
+                        total
+                    );
+
+
+                    renderPagination(
+                        totalPages
+                    );
+
+
+                    if (noResult) {
+
+                        noResult.classList.toggle(
+                            "show",
+                            total === 0 &&
+                            originalCards.length > 0
+                        );
+
+                    }
+
+                }
+
+
+                /* =================================================
+                   CONTADOR
+                ================================================= */
+
+                function updateCounter(total) {
+
+                    if (!counter) {
+                        return;
+                    }
+
+
+                    if (total === 0) {
+
+                        counter.innerHTML =
+                            "<strong>0</strong> produtos encontrados";
+
+                        if (paginationInfo) {
+                            paginationInfo.textContent = "";
+                        }
+
+                        return;
+
+                    }
+
+
+                    const start =
+                        ((currentPage - 1) *
+                            perPage) + 1;
+
+
+                    const end =
+                        Math.min(
+                            currentPage * perPage,
+                            total
+                        );
+
+
+                    counter.innerHTML =
+                        "<strong>" +
+                        total +
+                        "</strong> produtos encontrados";
+
+
+                    if (paginationInfo) {
+
+                        paginationInfo.textContent =
+                            "A mostrar " +
+                            start +
+                            "–" +
+                            end +
+                            " de " +
+                            total +
+                            " produtos";
+
+                    }
+
+                }
+
+
+                /* =================================================
+                   PAGINAÇÃO
+                ================================================= */
+
+                function renderPagination(
+                    totalPages
+                ) {
+
+                    if (!pagination) {
+                        return;
+                    }
+
+
+                    pagination.innerHTML = "";
+
+
+                    if (
+                        filteredCards.length === 0 ||
+                        totalPages <= 1
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const previous =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    previous.type =
+                        "button";
+
+                    previous.className =
+                        "home-page-button";
+
+                    previous.textContent =
+                        "‹";
+
+                    previous.setAttribute(
+                        "aria-label",
+                        "Página anterior"
+                    );
+
+
+                    if (currentPage === 1) {
+
+                        previous.classList.add(
+                            "disabled"
+                        );
+
+                    }
+
+
+                    previous.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                currentPage >
+                                1
+                            ) {
+
+                                currentPage--;
+
+                                renderProducts();
+
+                                scrollToCatalog();
+
+                            }
+
+                        }
+                    );
+
+
+                    pagination.appendChild(
+                        previous
+                    );
+
+
+                    const maxButtons = 7;
+
+
+                    let startPage =
+                        Math.max(
+                            1,
+                            currentPage - 3
+                        );
+
+
+                    let endPage =
+                        Math.min(
+                            totalPages,
+                            startPage +
+                            maxButtons -
+                            1
+                        );
+
+
+                    if (
+                        endPage -
+                        startPage +
+                        1 <
+                        maxButtons
+                    ) {
+
+                        startPage =
+                            Math.max(
+                                1,
+                                endPage -
+                                maxButtons +
+                                1
+                            );
+
+                    }
+
+
+                    for (
+                        let page = startPage;
+                        page <= endPage;
+                        page++
+                    ) {
+
+                        const button =
+                            document.createElement(
+                                "button"
+                            );
+
+
+                        button.type =
+                            "button";
+
+                        button.className =
+                            "home-page-button";
+
+
+                        if (
+                            page === currentPage
+                        ) {
+
+                            button.classList.add(
+                                "active"
+                            );
+
+                        }
+
+
+                        button.textContent =
+                            page;
+
+
+                        button.setAttribute(
+                            "aria-label",
+                            "Página " + page
+                        );
+
+
+                        button.addEventListener(
+                            "click",
+                            function () {
+
+                                currentPage =
+                                    page;
+
+                                renderProducts();
+
+                                scrollToCatalog();
+
+                            }
+                        );
+
+
+                        pagination.appendChild(
+                            button
+                        );
+
+                    }
+
+
+                    const next =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    next.type =
+                        "button";
+
+                    next.className =
+                        "home-page-button";
+
+                    next.textContent =
+                        "›";
+
+                    next.setAttribute(
+                        "aria-label",
+                        "Próxima página"
+                    );
+
+
+                    if (
+                        currentPage ===
+                        totalPages
+                    ) {
+
+                        next.classList.add(
+                            "disabled"
+                        );
+
+                    }
+
+
+                    next.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                currentPage <
+                                totalPages
+                            ) {
+
+                                currentPage++;
+
+                                renderProducts();
+
+                                scrollToCatalog();
+
+                            }
+
+                        }
+                    );
+
+
+                    pagination.appendChild(
+                        next
+                    );
+
+                }
+
+
+                /* =================================================
+                   SCROLL
+                ================================================= */
+
+                function scrollToCatalog() {
+
+                    const catalog =
+                        document.getElementById(
+                            "produtos-agricolas"
+                        );
+
+
+                    if (!catalog) {
+                        return;
+                    }
+
+
+                    const offset =
+                        70;
+
+
+                    const position =
+                        catalog.getBoundingClientRect()
+                            .top +
+                        window.scrollY -
+                        offset;
+
+
+                    window.scrollTo({
+
+                        top:
+                            position,
+
+                        behavior:
+                            "smooth"
+
+                    });
+
+                }
+
+
+                /* =================================================
+                   EVENTOS
+                ================================================= */
+
+                searchInput.addEventListener(
+                    "input",
+                    applyFilters
+                );
+
+
+                categoryFilter.addEventListener(
+                    "change",
+                    applyFilters
+                );
+
+
+                sortSelect.addEventListener(
+                    "change",
+                    applyFilters
+                );
+
+
+                renderProducts();
+
+            }
+
+
+            /* =====================================================
+               MODAL DE DETALHES
+            ===================================================== */
+
+            const productModal =
+                document.getElementById(
+                    "homeProductModal"
+                );
+
+            const modalClose =
+                document.getElementById(
+                    "homeProductModalClose"
+                );
+
+            const modalImage =
+                document.getElementById(
+                    "homeModalImage"
+                );
+
+            const modalTitle =
+                document.getElementById(
+                    "homeModalTitle"
+                );
+
+            const modalCategory =
+                document.getElementById(
+                    "homeModalCategory"
+                );
+
+            const modalDescription =
+                document.getElementById(
+                    "homeModalDescription"
+                );
+
+            const modalStatus =
+                document.getElementById(
+                    "homeModalStatus"
+                );
+
+            const modalDiagnostic =
+                document.getElementById(
+                    "homeModalDiagnostic"
+                );
+
+            const modalProblems =
+                document.getElementById(
+                    "homeModalProblems"
+                );
+
+
+            function openProductModal(card) {
+
+                if (!productModal || !card) {
+                    return;
+                }
+
+
+                const title =
+                    card.dataset.productTitle ||
+                    "Produto agrícola";
+
+
+                const description =
+                    card.dataset.productDescription ||
+                    "Informação agrícola disponível no AgroIA Moxico.";
+
+
+                const category =
+                    card.dataset.productCategoryName ||
+                    "Sem categoria";
+
+
+                const active =
+                    card.dataset.productActive ||
+                    "Não informado";
+
+
+                const diagnostic =
+                    card.dataset.productDiagnostic ===
+                    "true";
+
+
+                const image =
+                    card.dataset.productImage ||
+                    "";
+
+
+                modalTitle.textContent =
+                    title;
+
+                modalCategory.textContent =
+                    category;
+
+                modalDescription.textContent =
+                    description;
+
+                modalStatus.textContent =
+                    active;
+
+                modalDiagnostic.textContent =
+                    diagnostic
+                        ? "Disponível através de IA"
+                        : "Informação disponível";
+
+
+                modalImage.innerHTML = "";
+
+
+                if (image) {
+
+                    const img =
+                        document.createElement(
+                            "img"
+                        );
+
+                    img.src =
+                        image;
+
+                    img.alt =
+                        "Imagem de " +
+                        title;
+
+                    modalImage.appendChild(
+                        img
+                    );
+
+                } else {
+
+                    const empty =
+                        document.createElement(
+                            "div"
+                        );
+
+                    empty.className =
+                        "home-no-image";
+
+                    empty.style.height =
+                        "100%";
+
+                    empty.innerHTML =
+                        `
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5">
+
+                        <rect x="3"
+                              y="3"
+                              width="18"
+                              height="18"
+                              rx="2"/>
+
+                        <circle cx="8.5"
+                                cy="8.5"
+                                r="1.5"/>
+
+                        <path d="m21 15-5-5L5 21"/>
+
+                    </svg>
+
+                    Sem imagem disponível
+                    `;
+
+                    modalImage.appendChild(
+                        empty
+                    );
+
+                }
+
+
+                modalProblems.innerHTML =
+                    "";
+
+
+                const rawProblems =
+                    card.dataset.productProblems ||
+                    "";
+
+
+                const problems =
+                    rawProblems
+                        .split("||")
+                        .map(
+                            item => item.trim()
+                        )
+                        .filter(
+                            Boolean
+                        );
+
+
+                if (problems.length) {
+
+                    problems.forEach(
+                        function (problem) {
+
+                            const item =
+                                document.createElement(
+                                    "span"
+                                );
+
+                            item.className =
+                                "home-modal-problem";
+
+                            item.textContent =
+                                problem;
+
+                            modalProblems.appendChild(
+                                item
+                            );
+
+                        }
+                    );
+
+                } else {
+
+                    const item =
+                        document.createElement(
+                            "span"
+                        );
+
+                    item.className =
+                        "home-modal-problem";
+
+                    item.textContent =
+                        "Sem problemas registados";
+
+                    modalProblems.appendChild(
+                        item
+                    );
+
+                }
+
+
+                productModal.classList.add(
+                    "active"
+                );
+
+                productModal.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+                document.body.style.overflow =
+                    "hidden";
+
+            }
+
+
+            function closeProductModal() {
+
+                if (!productModal) {
+                    return;
+                }
+
+                productModal.classList.remove(
+                    "active"
+                );
+
+                productModal.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                document.body.style.overflow =
+                    "";
+
+            }
+
+
+            document.querySelectorAll(
+                ".home-product-details"
+            ).forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            const card =
+                                button.closest(
+                                    ".home-product-card"
+                                );
+
+                            openProductModal(
+                                card
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+            if (modalClose) {
+
+                modalClose.addEventListener(
+                    "click",
+                    closeProductModal
+                );
+
+            }
+
+
+            if (productModal) {
+
+                productModal.addEventListener(
+                    "click",
+                    function (event) {
+
+                        if (
+                            event.target ===
+                            productModal
+                        ) {
+
+                            closeProductModal();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key ===
+                        "Escape"
+                    ) {
+
+                        closeProductModal();
+
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               ÂNCORAS SUAVES
+            ===================================================== */
+
+            document.querySelectorAll(
+                'a[href^="#"]'
+            ).forEach(
+                function (link) {
+
+                    link.addEventListener(
+                        "click",
+                        function (event) {
+
+                            const targetId =
+                                link.getAttribute(
+                                    "href"
+                                );
+
+
+                            if (
+                                !targetId ||
+                                targetId === "#"
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            const target =
+                                document.querySelector(
+                                    targetId
+                                );
+
+
+                            if (!target) {
+                                return;
+                            }
+
+
+                            event.preventDefault();
+
+
+                            target.scrollIntoView({
+
+                                behavior:
+                                    "smooth",
+
+                                block:
+                                    "start"
+
+                            });
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               TECLAS DO HERO
+            ===================================================== */
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key ===
+                        "ArrowRight"
+                    ) {
+
+                        nextSlide();
+
+                        startSlider();
+
+                    }
+
+
+                    if (
+                        event.key ===
+                        "ArrowLeft"
+                    ) {
+
+                        showSlide(
+                            currentSlide - 1
+                        );
+
+                        startSlider();
+
+                    }
+
+                }
+            );
+
         }
-      );
-
-
-    animatedElements.forEach(function (element) {
-
-      observer.observe(element);
-
-    });
-
-
-    /* =====================================================
-       SCROLL DO BOTÃO DO HERO
-    ===================================================== */
-
-    const scrollButton =
-      document.querySelector(".hero-scroll");
-
-
-    if (scrollButton) {
-
-      scrollButton.addEventListener(
-        "click",
-        function () {
-
-          const sobre =
-            document.querySelector("#sobre");
-
-          if (sobre) {
-
-            sobre.scrollIntoView({
-              behavior: "smooth"
-            });
-
-          }
-
-        }
-      );
-
-    }
-
-  });
+    );
 
 </script>
 

@@ -1,0 +1,1284 @@
+{% extends "base.html" %}
+
+{% block title %}
+Entrar | AgroIA Moxico
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+  /* ============================================================
+   AGROIA MOXICO — LOGIN INDEPENDENTE
+   Navbar e Footer ocultos nesta página
+============================================================ */
+
+  /* Ocultar navbar e footer somente nesta página */
+  body.login-page-body .navbar,
+  body.login-page-body nav,
+  body.login-page-body footer,
+  body.login-page-body .footer {
+    display: none !important;
+  }
+
+
+  /* ============================================================
+   RESET ESPECÍFICO
+============================================================ */
+
+  .login-page,
+  .login-page *,
+  .login-page *::before,
+  .login-page *::after {
+    box-sizing: border-box;
+  }
+
+
+  /* ============================================================
+   PÁGINA
+============================================================ */
+
+  .login-page {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100dvh;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px 20px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background:
+      radial-gradient(circle at 10% 10%,
+        rgba(23, 107, 69, .10),
+        transparent 30%),
+      radial-gradient(circle at 90% 85%,
+        rgba(217, 164, 65, .09),
+        transparent 28%),
+      linear-gradient(180deg,
+        #f3f8f5 0%,
+        #ffffff 50%,
+        #f5faf7 100%);
+  }
+
+
+  /* ============================================================
+   DECORAÇÕES
+============================================================ */
+
+  .login-page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 430px;
+    height: 430px;
+
+    top: -250px;
+    right: -170px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(23, 107, 69, .045);
+
+    pointer-events: none;
+  }
+
+
+  .login-page::after {
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    bottom: -220px;
+    left: -160px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(217, 164, 65, .045);
+
+    pointer-events: none;
+  }
+
+
+  /* ============================================================
+   CONTAINER
+============================================================ */
+
+  .login-container {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+    max-width: 470px;
+
+    margin: auto;
+  }
+
+
+  /* ============================================================
+   CARD
+============================================================ */
+
+  .login-card {
+    position: relative;
+
+    width: 100%;
+
+    padding: 38px;
+
+    border:
+      1px solid rgba(23, 107, 69, .09);
+
+    border-radius: 26px;
+
+    background:
+      rgba(255, 255, 255, .96);
+
+    box-shadow:
+      0 25px 70px rgba(23, 107, 69, .11);
+
+    backdrop-filter:
+      blur(14px);
+
+    -webkit-backdrop-filter:
+      blur(14px);
+
+    animation:
+      loginCardEnter .5s ease both;
+  }
+
+
+  .login-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 12%;
+    right: 12%;
+
+    height: 3px;
+
+    border-radius: 999px;
+
+    background:
+      linear-gradient(90deg,
+        transparent,
+        #176b45,
+        #d9a441,
+        #176b45,
+        transparent);
+
+    opacity: .8;
+  }
+
+
+  @keyframes loginCardEnter {
+
+    from {
+      opacity: 0;
+
+      transform:
+        translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+
+      transform:
+        translateY(0);
+    }
+  }
+
+
+  /* ============================================================
+   CABEÇALHO
+============================================================ */
+
+  .login-header {
+    text-align: center;
+
+    margin-bottom: 29px;
+  }
+
+
+  .login-icon {
+    width: 66px;
+    height: 66px;
+
+    margin:
+      0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 19px;
+
+    color:
+      #176b45;
+
+    background:
+      linear-gradient(135deg,
+        rgba(23, 107, 69, .13),
+        rgba(41, 156, 105, .06));
+
+    border:
+      1px solid rgba(23, 107, 69, .08);
+  }
+
+
+  .login-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+
+  .login-eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color:
+      #176b45;
+
+    font-size: .65rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: .13em;
+  }
+
+
+  .login-header h1 {
+    margin: 0;
+
+    color:
+      #1b2923;
+
+    font-size:
+      clamp(1.65rem, 4vw, 2rem);
+
+    line-height: 1.15;
+
+    font-weight: 900;
+
+    letter-spacing: -.045em;
+  }
+
+
+  .login-header p {
+    max-width: 370px;
+
+    margin:
+      10px auto 0;
+
+    color:
+      #718078;
+
+    font-size: .84rem;
+
+    line-height: 1.6;
+  }
+
+
+  /* ============================================================
+   MENSAGENS DJANGO
+============================================================ */
+
+  .login-messages {
+    margin-bottom: 20px;
+  }
+
+
+  .login-message {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding:
+      12px 14px;
+
+    margin-bottom: 9px;
+
+    border-radius: 12px;
+
+    font-size: .78rem;
+
+    line-height: 1.45;
+  }
+
+
+  .login-message:last-child {
+    margin-bottom: 0;
+  }
+
+
+  .login-message.error {
+    color: #8f3030;
+
+    background: #fff1f1;
+
+    border:
+      1px solid #f2cccc;
+  }
+
+
+  .login-message.success {
+    color: #286e48;
+
+    background: #eefaf2;
+
+    border:
+      1px solid #ccebd7;
+  }
+
+
+  .login-message.warning {
+    color: #80601e;
+
+    background: #fff9e8;
+
+    border:
+      1px solid #f1dfad;
+  }
+
+
+  .login-message.info {
+    color: #275d77;
+
+    background: #eef8fd;
+
+    border:
+      1px solid #cfe6f2;
+  }
+
+
+  /* ============================================================
+   FORMULÁRIO
+============================================================ */
+
+  .login-form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+  }
+
+
+  .login-field {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+  }
+
+
+  .login-field label {
+    color:
+      #1b2923;
+
+    font-size: .76rem;
+
+    font-weight: 800;
+  }
+
+
+  /* ============================================================
+   INPUT WRAPPER
+============================================================ */
+
+  .login-input-wrapper {
+    position: relative;
+  }
+
+
+  /* ============================================================
+   ÍCONE INPUT
+============================================================ */
+
+  .login-input-icon {
+    position: absolute;
+
+    left: 14px;
+    top: 50%;
+
+    width: 18px;
+    height: 18px;
+
+    transform:
+      translateY(-50%);
+
+    color:
+      #83918b;
+
+    pointer-events: none;
+  }
+
+
+  .login-input-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+
+  /* ============================================================
+   INPUT
+============================================================ */
+
+  .login-input {
+    width: 100%;
+
+    min-height: 49px;
+
+    padding:
+      0 14px 0 43px;
+
+    color:
+      #1b2923;
+
+    background:
+      #ffffff;
+
+    border:
+      1px solid #dce7e1;
+
+    border-radius: 12px;
+
+    outline: none;
+
+    font-family: inherit;
+
+    font-size: .84rem;
+
+    transition:
+      border-color .2s ease,
+      box-shadow .2s ease,
+      background .2s ease;
+  }
+
+
+  .login-input::placeholder {
+    color:
+      #a0aaa5;
+  }
+
+
+  .login-input:hover {
+    border-color:
+      #bfd2c8;
+  }
+
+
+  .login-input:focus {
+    border-color:
+      #176b45;
+
+    box-shadow:
+      0 0 0 4px rgba(23, 107, 69, .09);
+
+    background:
+      #ffffff;
+  }
+
+
+  /* ============================================================
+   ERRO DO CAMPO
+============================================================ */
+
+  .login-field-error {
+    color:
+      #a33b3b;
+
+    font-size: .69rem;
+
+    line-height: 1.4;
+  }
+
+
+  /* ============================================================
+   OPÇÕES
+============================================================ */
+
+  .login-options {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: -2px;
+  }
+
+
+  .login-remember {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color:
+      #718078;
+
+    font-size: .72rem;
+
+    cursor: pointer;
+  }
+
+
+  .login-remember input {
+    width: 15px;
+    height: 15px;
+
+    margin: 0;
+
+    accent-color:
+      #176b45;
+
+    cursor: pointer;
+  }
+
+
+  /* ============================================================
+   BOTÃO LOGIN
+============================================================ */
+
+  .login-submit {
+    width: 100%;
+
+    min-height: 51px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    margin-top: 2px;
+
+    border:
+      1px solid rgba(23, 107, 69, .15);
+
+    border-radius: 13px;
+
+    color:
+      #ffffff;
+
+    background:
+      linear-gradient(135deg,
+        #176b45,
+        #0d4d31);
+
+    box-shadow:
+      0 10px 25px rgba(23, 107, 69, .18);
+
+    font-family: inherit;
+
+    font-size: .84rem;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition:
+      transform .2s ease,
+      box-shadow .2s ease,
+      opacity .2s ease;
+  }
+
+
+  .login-submit:hover {
+    transform:
+      translateY(-2px);
+
+    box-shadow:
+      0 15px 32px rgba(23, 107, 69, .25);
+  }
+
+
+  .login-submit:active {
+    transform:
+      translateY(0);
+  }
+
+
+  .login-submit:disabled {
+    opacity: .7;
+
+    cursor: wait;
+
+    transform: none;
+  }
+
+
+  .login-submit svg {
+    width: 18px;
+    height: 18px;
+  }
+
+
+  /* ============================================================
+   SEPARADOR
+============================================================ */
+
+  .login-divider {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin:
+      24px 0;
+  }
+
+
+  .login-divider::before,
+  .login-divider::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background:
+      #e5ece8;
+  }
+
+
+  .login-divider span {
+    color:
+      #9aa7a1;
+
+    font-size: .66rem;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+  }
+
+
+  /* ============================================================
+   CADASTRO
+============================================================ */
+
+  .login-register {
+    text-align: center;
+
+    color:
+      #718078;
+
+    font-size: .76rem;
+
+    line-height: 1.5;
+  }
+
+
+  .login-register a {
+    color:
+      #176b45;
+
+    font-weight: 900;
+
+    text-decoration: none;
+  }
+
+
+  .login-register a:hover {
+    text-decoration:
+      underline;
+  }
+
+
+  /* ============================================================
+   SEGURANÇA
+============================================================ */
+
+  .login-security {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-top: 22px;
+
+    color:
+      #9aa7a1;
+
+    font-size: .65rem;
+
+    text-align: center;
+  }
+
+
+  .login-security svg {
+    width: 14px;
+    height: 14px;
+
+    flex: 0 0 auto;
+  }
+
+
+  /* ============================================================
+   LOADING
+============================================================ */
+
+  .login-spinner {
+    width: 17px;
+    height: 17px;
+
+    border:
+      2px solid rgba(255, 255, 255, .35);
+
+    border-top-color:
+      #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+      loginSpin .7s linear infinite;
+  }
+
+
+  @keyframes loginSpin {
+
+    to {
+      transform:
+        rotate(360deg);
+    }
+  }
+
+
+  /* ============================================================
+   RESPONSIVIDADE
+============================================================ */
+
+  @media (max-width: 600px) {
+
+    .login-page {
+      padding:
+        25px 15px;
+    }
+
+
+    .login-card {
+      padding:
+        30px 22px;
+
+      border-radius:
+        21px;
+    }
+
+  }
+
+
+  @media (max-width: 420px) {
+
+    .login-page {
+      padding:
+        20px 12px;
+    }
+
+
+    .login-card {
+      padding:
+        26px 18px;
+    }
+
+
+    .login-options {
+      align-items:
+        flex-start;
+
+      flex-direction:
+        column;
+
+      gap:
+        10px;
+    }
+
+
+    .login-header {
+      margin-bottom:
+        24px;
+    }
+
+
+    .login-header h1 {
+      font-size:
+        1.65rem;
+    }
+
+
+    .login-help {
+      align-self:
+        flex-end;
+    }
+
+
+    .login-security {
+      align-items:
+        flex-start;
+
+      line-height:
+        1.45;
+    }
+
+  }
+
+
+  /* ============================================================
+   ACESSIBILIDADE
+============================================================ */
+
+  .login-submit:focus-visible,
+  .login-register a:focus-visible,
+  .login-input:focus-visible {
+    outline:
+      3px solid rgba(23, 107, 69, .18);
+
+    outline-offset:
+      3px;
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+      animation-duration:
+        .01ms !important;
+
+      animation-iteration-count:
+        1 !important;
+
+      transition-duration:
+        .01ms !important;
+    }
+
+  }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- ============================================================
+     PÁGINA DE LOGIN
+============================================================ -->
+
+<section class="login-page" id="loginPage">
+
+  <div class="login-container">
+
+    <div class="login-card" id="loginCard">
+
+      <!-- ==================================================
+                 CABEÇALHO
+            =================================================== -->
+
+      <header class="login-header">
+
+        <div class="login-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+
+            <polyline points="10 17 15 12 10 7"></polyline>
+
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+
+          </svg>
+
+        </div>
+
+
+        <span class="login-eyebrow">
+          AGROIA MOXICO
+        </span>
+
+
+        <h1>
+          Bem-vindo de volta
+        </h1>
+
+
+        <p>
+          Entre na sua conta para continuar a utilizar
+          as funcionalidades do AgroIA Moxico.
+        </p>
+
+      </header>
+
+
+      <!-- ==================================================
+                 MENSAGENS DO DJANGO
+            =================================================== -->
+
+      {% if messages %}
+
+      <div class="login-messages">
+
+        {% for message in messages %}
+
+        <div class="login-message {{ message.tags }}" role="alert">
+          {{ message }}
+        </div>
+
+        {% endfor %}
+
+      </div>
+
+      {% endif %}
+
+
+      <!-- ==================================================
+                 FORMULÁRIO
+            =================================================== -->
+
+      <form method="post" action="{% url 'inicio:login' %}" class="login-form" id="loginForm" novalidate>
+
+        {% csrf_token %}
+
+
+        <!-- ==================================================
+                     NEXT
+                =================================================== -->
+
+        {% if request.GET.next %}
+
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+        {% endif %}
+
+
+        <!-- ==================================================
+                     UTILIZADOR
+                =================================================== -->
+
+        <div class="login-field">
+
+          <label for="id_username">
+            Nome de utilizador
+          </label>
+
+
+          <div class="login-input-wrapper">
+
+            <span class="login-input-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+
+                <circle cx="12" cy="8" r="4"></circle>
+
+                <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+
+              </svg>
+
+            </span>
+
+
+            <input type="text" id="id_username" name="username" class="login-input"
+              placeholder="Digite o seu nome de utilizador" value="{{ username_value|default:'' }}"
+              autocomplete="username" maxlength="150" required>
+
+          </div>
+
+
+          {% if username_error %}
+
+          <span class="login-field-error">
+            {{ username_error }}
+          </span>
+
+          {% endif %}
+
+        </div>
+
+
+        <!-- ==================================================
+                     PALAVRA-PASSE
+                =================================================== -->
+
+        <div class="login-field">
+
+          <label for="id_password">
+            Palavra-passe
+          </label>
+
+
+          <div class="login-input-wrapper">
+
+            <span class="login-input-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+
+              </svg>
+
+            </span>
+
+
+            <input type="password" id="id_password" name="password" class="login-input"
+              placeholder="Digite a sua palavra-passe" autocomplete="current-password" required>
+
+          </div>
+
+
+          {% if password_error %}
+
+          <span class="login-field-error">
+            {{ password_error }}
+          </span>
+
+          {% endif %}
+
+        </div>
+
+
+        <!-- ==================================================
+                     OPÇÕES
+                =================================================== -->
+
+        <div class="login-options">
+
+          <label class="login-remember">
+
+            <input type="checkbox" name="remember" value="1">
+
+            <span>
+              Lembrar sessão
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <!-- ==================================================
+                     BOTÃO
+                =================================================== -->
+
+        <button type="submit" class="login-submit" id="loginSubmit">
+
+          <svg id="loginSubmitIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+
+            <polyline points="10 17 15 12 10 7"></polyline>
+
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+
+          </svg>
+
+
+          <span id="loginSubmitText">
+            Entrar na minha conta
+          </span>
+
+        </button>
+
+      </form>
+
+
+      <!-- ==================================================
+                 SEPARADOR
+            =================================================== -->
+
+      <div class="login-divider">
+
+        <span>
+          AINDA NÃO TEM UMA CONTA?
+        </span>
+
+      </div>
+
+
+      <!-- ==================================================
+                 CADASTRO
+            =================================================== -->
+
+      <div class="login-register">
+
+        <span>
+          Crie a sua conta gratuitamente.
+        </span>
+
+        <a href="{% url 'inicio:cadastro' %}">
+          Criar conta
+        </a>
+
+      </div>
+
+
+      <!-- ==================================================
+                 SEGURANÇA
+            =================================================== -->
+
+      <div class="login-security">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+
+          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+
+        </svg>
+
+
+        <span>
+          A sua sessão é protegida pelo AgroIA Moxico.
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+
+<script>
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+      /* =====================================================
+         IDENTIFICAR A PÁGINA DE LOGIN
+
+         Adicionamos uma classe ao body para permitir
+         ocultar navbar/footer somente nesta página.
+      ===================================================== */
+
+      document.body.classList.add(
+        "login-page-body"
+      );
+
+
+      /* =====================================================
+         ELEMENTOS
+      ===================================================== */
+
+      const form =
+        document.getElementById(
+          "loginForm"
+        );
+
+      const button =
+        document.getElementById(
+          "loginSubmit"
+        );
+
+      const buttonText =
+        document.getElementById(
+          "loginSubmitText"
+        );
+
+      const buttonIcon =
+        document.getElementById(
+          "loginSubmitIcon"
+        );
+
+
+      /* =====================================================
+         VERIFICAÇÃO
+      ===================================================== */
+
+      if (!form || !button) {
+        return;
+      }
+
+
+      /* =====================================================
+         SUBMISSÃO
+
+         Não fazemos autenticação via JavaScript.
+
+         O formulário continua sendo enviado
+         normalmente para a view Django.
+      ===================================================== */
+
+      form.addEventListener(
+        "submit",
+        function () {
+
+          button.disabled = true;
+
+
+          if (buttonText) {
+
+            buttonText.textContent =
+              "A entrar...";
+
+          }
+
+
+          if (buttonIcon) {
+
+            buttonIcon.outerHTML = `
+                        <span
+                            class="login-spinner"
+                            aria-hidden="true"
+                        ></span>
+                    `;
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,976 @@
+{% extends "base.html" %}
+
+{% block title %}
+Terminar Sessão | AgroIA Moxico
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+  /* =========================================================
+   AGROIA MOXICO — PÁGINA DE LOGOUT
+========================================================= */
+
+  :root {
+    --logout-green: var(--primary, #176b45);
+    --logout-green-dark: var(--primary-dark, #0d4d31);
+    --logout-green-light: #299c69;
+    --logout-gold: #d9a441;
+
+    --logout-bg: #f4f8f5;
+    --logout-text: var(--text, #1b2923);
+    --logout-muted: var(--text-light, #718078);
+    --logout-border: var(--border, #e1ebe5);
+  }
+
+
+  /* =========================================================
+   PÁGINA
+========================================================= */
+
+  .logout-page {
+    min-height: calc(100vh - var(--nav-height, 68px));
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 55px 20px 75px;
+
+    position: relative;
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    background:
+      radial-gradient(circle at 10% 10%,
+        rgba(23, 107, 69, .10),
+        transparent 30%),
+
+      radial-gradient(circle at 90% 85%,
+        rgba(217, 164, 65, .09),
+        transparent 28%),
+
+      linear-gradient(180deg,
+        #f3f8f5 0%,
+        #ffffff 52%,
+        #f5faf7 100%);
+  }
+
+
+  /* =========================================================
+   DECORAÇÕES
+========================================================= */
+
+  .logout-page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 440px;
+    height: 440px;
+
+    top: -280px;
+    right: -170px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(23, 107, 69, .045);
+
+    pointer-events: none;
+  }
+
+
+  .logout-page::after {
+    content: "";
+
+    position: absolute;
+
+    width: 360px;
+    height: 360px;
+
+    left: -190px;
+    bottom: -230px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(217, 164, 65, .045);
+
+    pointer-events: none;
+  }
+
+
+  /* =========================================================
+   CARTÃO
+========================================================= */
+
+  .logout-card {
+    width: 100%;
+    max-width: 455px;
+
+    position: relative;
+    z-index: 2;
+
+    padding: 42px;
+
+    text-align: center;
+
+    background:
+      rgba(255, 255, 255, .96);
+
+    border:
+      1px solid rgba(23, 107, 69, .09);
+
+    border-radius: 27px;
+
+    box-shadow:
+      0 28px 80px rgba(23, 107, 69, .12);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    animation:
+      logoutAppear .5s ease both;
+
+    box-sizing: border-box;
+  }
+
+
+  /* =========================================================
+   LINHA SUPERIOR
+========================================================= */
+
+  .logout-card-top {
+    width: 55px;
+    height: 4px;
+
+    margin:
+      0 auto 27px;
+
+    border-radius: 20px;
+
+    background:
+      linear-gradient(90deg,
+        var(--logout-green),
+        var(--logout-green-light));
+  }
+
+
+  /* =========================================================
+   ÍCONE
+========================================================= */
+
+  .logout-icon {
+    width: 76px;
+    height: 76px;
+
+    margin:
+      0 auto 23px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border:
+      1px solid rgba(23, 107, 69, .08);
+
+    border-radius: 22px;
+
+    color:
+      var(--logout-green);
+
+    background:
+      linear-gradient(135deg,
+        rgba(23, 107, 69, .12),
+        rgba(41, 156, 105, .055));
+
+    box-shadow:
+      0 12px 28px rgba(23, 107, 69, .08);
+  }
+
+
+  .logout-icon svg {
+    width: 33px;
+    height: 33px;
+  }
+
+
+  /* =========================================================
+   TÍTULO
+========================================================= */
+
+  .logout-card h1 {
+    margin:
+      0 0 11px;
+
+    color:
+      var(--logout-text);
+
+    font-size:
+      clamp(1.55rem, 4vw, 1.9rem);
+
+    line-height: 1.15;
+
+    font-weight: 900;
+
+    letter-spacing:
+      -.04em;
+  }
+
+
+  /* =========================================================
+   TEXTO
+========================================================= */
+
+  .logout-card-description {
+    max-width: 370px;
+
+    margin:
+      0 auto 27px;
+
+    color:
+      var(--logout-muted);
+
+    font-size:
+      .88rem;
+
+    line-height:
+      1.7;
+  }
+
+
+  .logout-card-description strong {
+    color:
+      var(--logout-text);
+
+    font-weight:
+      800;
+  }
+
+
+  /* =========================================================
+   UTILIZADOR ATUAL
+========================================================= */
+
+  .logout-user {
+    display: inline-flex;
+
+    align-items: center;
+    gap: 9px;
+
+    max-width: 100%;
+
+    margin:
+      0 auto 26px;
+
+    padding:
+      8px 13px;
+
+    border:
+      1px solid rgba(23, 107, 69, .09);
+
+    border-radius:
+      30px;
+
+    color:
+      var(--logout-text);
+
+    background:
+      #f6faf8;
+
+    font-size:
+      .75rem;
+
+    font-weight:
+      800;
+  }
+
+
+  .logout-user-icon {
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius:
+      8px;
+
+    color:
+      #ffffff;
+
+    background:
+      linear-gradient(135deg,
+        var(--logout-green),
+        var(--logout-green-light));
+  }
+
+
+  .logout-user-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+
+  /* =========================================================
+   AÇÕES
+========================================================= */
+
+  .logout-actions {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 11px;
+
+    width: 100%;
+  }
+
+
+  /* =========================================================
+   BOTÕES
+========================================================= */
+
+  .logout-action {
+    min-height: 50px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding:
+      0 15px;
+
+    border-radius:
+      13px;
+
+    font-size:
+      .81rem;
+
+    font-weight:
+      800;
+
+    text-decoration:
+      none;
+
+    cursor:
+      pointer;
+
+    transition:
+      transform .2s ease,
+      box-shadow .2s ease,
+      background .2s ease,
+      border-color .2s ease;
+
+    box-sizing:
+      border-box;
+  }
+
+
+  /* =========================================================
+   CANCELAR
+========================================================= */
+
+  .logout-cancel {
+    color:
+      var(--logout-text);
+
+    background:
+      #ffffff;
+
+    border:
+      1px solid var(--logout-border);
+  }
+
+
+  .logout-cancel:hover {
+    color:
+      var(--logout-text);
+
+    background:
+      #f6faf8;
+
+    border-color:
+      rgba(23, 107, 69, .16);
+
+    transform:
+      translateY(-2px);
+
+    box-shadow:
+      0 8px 20px rgba(23, 107, 69, .07);
+  }
+
+
+  /* =========================================================
+   CONFIRMAR
+========================================================= */
+
+  .logout-confirm {
+    color:
+      #ffffff;
+
+    background:
+      linear-gradient(135deg,
+        var(--logout-green),
+        var(--logout-green-dark));
+
+    border:
+      1px solid transparent;
+
+    box-shadow:
+      0 9px 22px rgba(23, 107, 69, .18);
+  }
+
+
+  .logout-confirm:hover {
+    color:
+      #ffffff;
+
+    transform:
+      translateY(-2px);
+
+    box-shadow:
+      0 14px 29px rgba(23, 107, 69, .25);
+  }
+
+
+  .logout-confirm svg,
+  .logout-cancel svg {
+    width: 17px;
+    height: 17px;
+
+    flex-shrink: 0;
+  }
+
+
+  /* =========================================================
+   ÁREA DE PROCESSAMENTO
+========================================================= */
+
+  .logout-processing {
+    display: none;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 11px;
+
+    margin-top:
+      22px;
+
+    color:
+      var(--logout-muted);
+
+    font-size:
+      .78rem;
+
+    font-weight:
+      700;
+  }
+
+
+  .logout-card.processing .logout-processing {
+    display: flex;
+  }
+
+
+  .logout-card.processing .logout-actions {
+    display: none;
+  }
+
+
+  /* =========================================================
+   SPINNER
+========================================================= */
+
+  .logout-spinner {
+    width: 27px;
+    height: 27px;
+
+    border:
+      3px solid rgba(23, 107, 69, .13);
+
+    border-top-color:
+      var(--logout-green);
+
+    border-radius:
+      50%;
+
+    animation:
+      logoutSpin .75s linear infinite;
+  }
+
+
+  /* =========================================================
+   RODAPÉ DO CARTÃO
+========================================================= */
+
+  .logout-security-note {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-top:
+      24px;
+
+    color:
+      #9aa7a1;
+
+    font-size:
+      .66rem;
+
+    line-height:
+      1.4;
+  }
+
+
+  .logout-security-note svg {
+    width: 14px;
+    height: 14px;
+
+    flex-shrink: 0;
+  }
+
+
+  /* =========================================================
+   ANIMAÇÕES
+========================================================= */
+
+  @keyframes logoutAppear {
+
+    from {
+      opacity: 0;
+
+      transform:
+        translateY(18px) scale(.98);
+    }
+
+    to {
+      opacity: 1;
+
+      transform:
+        translateY(0) scale(1);
+    }
+  }
+
+
+  @keyframes logoutSpin {
+
+    to {
+      transform:
+        rotate(360deg);
+    }
+  }
+
+
+  /* =========================================================
+   FOCO
+========================================================= */
+
+  .logout-action:focus-visible {
+    outline:
+      3px solid rgba(23, 107, 69, .22);
+
+    outline-offset:
+      3px;
+  }
+
+
+  /* =========================================================
+   TABLET
+========================================================= */
+
+  @media (max-width: 700px) {
+
+    .logout-page {
+      padding:
+        40px 18px 60px;
+    }
+
+    .logout-card {
+      max-width:
+        430px;
+
+      padding:
+        36px 30px;
+    }
+  }
+
+
+  /* =========================================================
+   MOBILE
+========================================================= */
+
+  @media (max-width: 520px) {
+
+    .logout-page {
+      padding:
+        30px 15px 50px;
+    }
+
+    .logout-card {
+      padding:
+        31px 21px;
+
+      border-radius:
+        22px;
+    }
+
+    .logout-icon {
+      width:
+        68px;
+
+      height:
+        68px;
+
+      border-radius:
+        19px;
+    }
+
+    .logout-icon svg {
+      width:
+        29px;
+
+      height:
+        29px;
+    }
+
+    .logout-actions {
+      grid-template-columns:
+        1fr;
+    }
+
+    .logout-action {
+      width:
+        100%;
+    }
+  }
+
+
+  /* =========================================================
+   MOBILE PEQUENO
+========================================================= */
+
+  @media (max-width: 380px) {
+
+    .logout-card {
+      padding:
+        27px 17px;
+    }
+
+    .logout-card h1 {
+      font-size:
+        1.45rem;
+    }
+
+    .logout-card-description {
+      font-size:
+        .82rem;
+    }
+
+    .logout-user {
+      font-size:
+        .70rem;
+    }
+  }
+
+
+  /* =========================================================
+   REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration:
+        .01ms !important;
+
+      animation-iteration-count:
+        1 !important;
+
+      transition-duration:
+        .01ms !important;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<section class="logout-page">
+
+  <div class="logout-card" id="logoutCard" aria-labelledby="logoutTitle">
+
+    <div class="logout-card-top"></div>
+
+
+    <!-- =================================================
+             ÍCONE
+        ================================================== -->
+
+    <div class="logout-icon">
+
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+
+        <path d="M10 17l5-5-5-5"></path>
+
+        <path d="M15 12H3"></path>
+
+        <path d="M19 3h2v18h-2"></path>
+
+      </svg>
+
+    </div>
+
+
+    <!-- =================================================
+             TÍTULO
+        ================================================== -->
+
+    <h1 id="logoutTitle">
+      Terminar sessão?
+    </h1>
+
+
+    <!-- =================================================
+             DESCRIÇÃO
+        ================================================== -->
+
+    <p class="logout-card-description">
+
+      Tem a certeza de que deseja terminar a sua sessão
+      no <strong>AgroIA Moxico</strong>?
+
+      <br>
+
+      A sessão atual será encerrada com segurança.
+
+    </p>
+
+
+    <!-- =================================================
+             UTILIZADOR
+        ================================================== -->
+
+    {% if user.is_authenticated %}
+
+    <div class="logout-user">
+
+      <span class="logout-user-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+
+          <circle cx="12" cy="8" r="4"></circle>
+
+          <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+
+        </svg>
+
+      </span>
+
+
+      <span>
+
+        {% if user.get_full_name %}
+
+        {{ user.get_full_name }}
+
+        {% else %}
+
+        @{{ user.username }}
+
+        {% endif %}
+
+      </span>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =================================================
+             AÇÕES
+        ================================================== -->
+
+    <div class="logout-actions">
+
+      <!-- CANCELAR -->
+
+      <a href="{% url 'inicio:home' %}" class="logout-action logout-cancel" id="logoutCancel">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+
+          <path d="M6 6l12 12"></path>
+
+          <path d="M18 6L6 18"></path>
+
+        </svg>
+
+        <span>
+          Cancelar
+        </span>
+
+      </a>
+
+
+      <!-- =================================================
+                 FORMULÁRIO REAL DE LOGOUT
+            ================================================== -->
+
+      <form method="post" action="{% url 'inicio:logout' %}" id="logoutForm" style="margin:0; padding:0;">
+
+        {% csrf_token %}
+
+        <button type="submit" class="logout-action logout-confirm" id="logoutConfirm"
+          style="width:100%; font-family:inherit;">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+
+            <path d="M10 17l5-5-5-5"></path>
+
+            <path d="M15 12H3"></path>
+
+            <path d="M21 19V5a2 2 0 0 0-2-2h-6"></path>
+
+          </svg>
+
+          <span>
+            Terminar sessão
+          </span>
+
+        </button>
+
+      </form>
+
+    </div>
+
+
+    <!-- =================================================
+             PROCESSAMENTO
+        ================================================== -->
+
+    <div class="logout-processing" id="logoutProcessing" aria-live="polite">
+
+      <div class="logout-spinner" aria-hidden="true"></div>
+
+      <span>
+        A terminar sessão...
+      </span>
+
+    </div>
+
+
+    <!-- =================================================
+             NOTA DE SEGURANÇA
+        ================================================== -->
+
+    <div class="logout-security-note">
+
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+
+        <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+
+        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+
+        <path d="M12 14v2"></path>
+
+      </svg>
+
+      <span>
+        A sua sessão será encerrada com segurança.
+      </span>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const logoutCard =
+      document.getElementById("logoutCard");
+
+    const logoutForm =
+      document.getElementById("logoutForm");
+
+    const logoutConfirm =
+      document.getElementById("logoutConfirm");
+
+    const logoutCancel =
+      document.getElementById("logoutCancel");
+
+
+    /* =====================================================
+       ENVIO DO LOGOUT
+    ====================================================== */
+
+    if (logoutForm) {
+
+      logoutForm.addEventListener("submit", function () {
+
+        if (logoutCard) {
+
+          logoutCard.classList.add("processing");
+
+        }
+
+        if (logoutConfirm) {
+
+          logoutConfirm.disabled = true;
+
+          logoutConfirm.setAttribute(
+            "aria-disabled",
+            "true"
+          );
+
+        }
+
+        if (logoutCancel) {
+
+          logoutCancel.setAttribute(
+            "aria-disabled",
+            "true"
+          );
+
+          logoutCancel.style.pointerEvents =
+            "none";
+
+        }
+
+      });
+
+    }
+
+  });
+
+</script>
+
+{% endblock %}

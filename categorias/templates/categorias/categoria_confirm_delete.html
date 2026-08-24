@@ -1,0 +1,627 @@
+{% extends "base.html" %}
+
+{% block title %}
+Eliminar {{ categoria.nome }} | AgroIA Moxico
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+  /* ============================================================
+       AGROIA MOXICO
+       CONFIRMAÇÃO DE ELIMINAÇÃO DE CATEGORIA
+       ============================================================ */
+
+  .delete-category-page {
+
+    min-height: calc(100vh - 68px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 70px 20px;
+
+    background:
+      linear-gradient(180deg,
+        #f7faf8 0%,
+        #eef5f1 100%);
+
+    color: #173126;
+  }
+
+
+  /* ============================================================
+       CONTAINER
+       ============================================================ */
+
+  .delete-category-container {
+
+    width: min(100%, 600px);
+
+    margin: 0 auto;
+  }
+
+
+  /* ============================================================
+       CARD
+       ============================================================ */
+
+  .delete-card {
+
+    position: relative;
+
+    padding: 42px 38px;
+
+    text-align: center;
+
+    border: 1px solid #dce9e1;
+
+    border-radius: 24px;
+
+    background: #ffffff;
+
+    box-shadow:
+      0 25px 70px rgba(8, 45, 29, .10);
+
+    overflow: hidden;
+
+    animation:
+      deleteCardAppear .55s ease both;
+  }
+
+
+  .delete-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 4px;
+
+    background:
+      linear-gradient(90deg,
+        #176b45,
+        #d9a441);
+  }
+
+
+  @keyframes deleteCardAppear {
+
+    from {
+
+      opacity: 0;
+
+      transform:
+        translateY(20px) scale(.98);
+    }
+
+    to {
+
+      opacity: 1;
+
+      transform:
+        translateY(0) scale(1);
+    }
+  }
+
+
+  /* ============================================================
+       ÍCONE
+       ============================================================ */
+
+  .delete-icon {
+
+    width: 74px;
+
+    height: 74px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 auto 22px;
+
+    border-radius: 21px;
+
+    color: #b94a48;
+
+    background:
+      #fff1f1;
+
+    box-shadow:
+      0 10px 28px rgba(185, 74, 72, .10);
+  }
+
+
+  .delete-icon svg {
+
+    width: 32px;
+
+    height: 32px;
+  }
+
+
+  /* ============================================================
+       TÍTULO
+       ============================================================ */
+
+  .delete-card h1 {
+
+    margin: 0 0 12px;
+
+    color: #173126;
+
+    font-size:
+      clamp(1.55rem, 4vw, 2rem);
+
+    line-height: 1.15;
+
+    letter-spacing: -.045em;
+
+    font-weight: 900;
+  }
+
+
+  /* ============================================================
+       DESCRIÇÃO
+       ============================================================ */
+
+  .delete-card>p {
+
+    max-width: 470px;
+
+    margin: 0 auto 24px;
+
+    color: #718178;
+
+    font-size: .76rem;
+
+    line-height: 1.8;
+  }
+
+
+  .delete-card>p strong {
+
+    color: #173126;
+
+    font-weight: 900;
+  }
+
+
+  /* ============================================================
+       AVISO
+       ============================================================ */
+
+  .warning {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 11px;
+
+    margin: 0 auto 26px;
+
+    padding: 15px 16px;
+
+    text-align: left;
+
+    border: 1px solid #ead9ad;
+
+    border-radius: 13px;
+
+    color: #74591d;
+
+    background:
+      #fffaf0;
+
+    font-size: .66rem;
+
+    line-height: 1.65;
+  }
+
+
+  .warning svg {
+
+    width: 18px;
+
+    height: 18px;
+
+    flex-shrink: 0;
+
+    margin-top: 1px;
+  }
+
+
+  .warning strong {
+
+    font-weight: 900;
+  }
+
+
+  /* ============================================================
+       AÇÕES
+       ============================================================ */
+
+  .actions {
+
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 10px;
+  }
+
+
+  /* ============================================================
+       BOTÃO BASE
+       ============================================================ */
+
+  .actions a,
+  .actions button {
+
+    min-height: 46px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 16px;
+
+    border-radius: 11px;
+
+    font: inherit;
+
+    font-size: .63rem;
+
+    font-weight: 900;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+      transform .2s ease,
+      background .2s ease,
+      color .2s ease,
+      border-color .2s ease,
+      box-shadow .2s ease;
+  }
+
+
+  /* ============================================================
+       CANCELAR
+       ============================================================ */
+
+  .actions a {
+
+    color: #176b45;
+
+    border:
+      1px solid #d5e5dc;
+
+    background: #ffffff;
+  }
+
+
+  .actions a:hover {
+
+    color: #ffffff;
+
+    border-color: #176b45;
+
+    background: #176b45;
+
+    transform:
+      translateY(-2px);
+
+    box-shadow:
+      0 8px 20px rgba(23, 107, 69, .13);
+  }
+
+
+  /* ============================================================
+       ELIMINAR
+       ============================================================ */
+
+  .actions button {
+
+    color: #ffffff;
+
+    border:
+      1px solid #b94a48;
+
+    background: #b94a48;
+
+    box-shadow:
+      0 8px 20px rgba(185, 74, 72, .13);
+  }
+
+
+  .actions button:hover {
+
+    border-color: #963b39;
+
+    background: #963b39;
+
+    transform:
+      translateY(-2px);
+
+    box-shadow:
+      0 11px 25px rgba(185, 74, 72, .19);
+  }
+
+
+  /* ============================================================
+       ÍCONES DOS BOTÕES
+       ============================================================ */
+
+  .actions svg {
+
+    width: 15px;
+
+    height: 15px;
+
+    flex-shrink: 0;
+  }
+
+
+  /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+  @media (max-width: 600px) {
+
+    .delete-category-page {
+
+      padding:
+        50px 14px;
+    }
+
+
+    .delete-card {
+
+      padding:
+        34px 20px;
+
+      border-radius:
+        20px;
+    }
+
+
+    .actions {
+
+      grid-template-columns:
+        1fr;
+    }
+
+
+    .actions a,
+    .actions button {
+
+      width: 100%;
+    }
+  }
+
+
+  @media (max-width: 400px) {
+
+    .delete-card {
+
+      padding:
+        30px 16px;
+    }
+
+
+    .delete-icon {
+
+      width: 66px;
+
+      height: 66px;
+    }
+
+
+    .delete-card h1 {
+
+      font-size: 1.45rem;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="delete-category-page">
+
+  <div class="delete-category-container">
+
+    <div class="delete-card">
+
+
+      <!-- ====================================================
+                 ÍCONE DE ELIMINAÇÃO
+                 ==================================================== -->
+
+      <div class="delete-icon">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+
+          <polyline points="3 6 5 6 21 6">
+          </polyline>
+
+          <path d="M19 6l-1 14H6L5 6">
+          </path>
+
+          <path d="M10 11v6">
+          </path>
+
+          <path d="M14 11v6">
+          </path>
+
+          <path d="M9 6V4h6v2">
+          </path>
+
+        </svg>
+
+      </div>
+
+
+      <!-- ====================================================
+                 TÍTULO
+                 ==================================================== -->
+
+      <h1>
+        Eliminar categoria?
+      </h1>
+
+
+      <!-- ====================================================
+                 MENSAGEM
+                 ==================================================== -->
+
+      <p>
+
+        Tem certeza de que deseja eliminar a categoria
+
+        <strong>
+          {{ categoria.nome }}
+        </strong>
+
+        do catálogo agrícola do AgroIA Moxico?
+
+      </p>
+
+
+      <!-- ====================================================
+                 AVISO SOBRE PRODUTOS ASSOCIADOS
+                 ==================================================== -->
+
+      {% if produtos_associados > 0 %}
+
+      <div class="warning">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+          <path d="M10.3 2.9 1.8 17a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 2.9a2 2 0 0 0-3.4 0Z">
+          </path>
+
+          <path d="M12 9v4">
+          </path>
+
+          <path d="M12 17h.01">
+          </path>
+
+        </svg>
+
+        <div>
+
+          Esta categoria está associada a
+
+          <strong>
+            {{ produtos_associados }}
+          </strong>
+
+          produto{{ produtos_associados|pluralize }}.
+
+          A associação será removida,
+          mas os produtos não serão eliminados.
+
+        </div>
+
+      </div>
+
+      {% endif %}
+
+
+      <!-- ====================================================
+                 CONFIRMAÇÃO
+                 ==================================================== -->
+
+      <form method="post">
+
+        {% csrf_token %}
+
+
+        <div class="actions">
+
+
+          <!-- =================================================
+                         CANCELAR
+                         ================================================= -->
+
+          <a href="{% url 'categorias:categoria_detalhes' categoria.pk %}">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <path d="M19 12H5">
+              </path>
+
+              <path d="m12 19-7-7 7-7">
+              </path>
+
+            </svg>
+
+            Cancelar
+
+          </a>
+
+
+          <!-- =================================================
+                         ELIMINAR
+                         ================================================= -->
+
+          <button type="submit">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+
+              <polyline points="3 6 5 6 21 6">
+              </polyline>
+
+              <path d="M19 6l-1 14H6L5 6">
+              </path>
+
+              <path d="M10 11v6">
+              </path>
+
+              <path d="M14 11v6">
+              </path>
+
+              <path d="M9 6V4h6v2">
+              </path>
+
+            </svg>
+
+            Eliminar categoria
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock %}

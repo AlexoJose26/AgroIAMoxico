@@ -1,0 +1,2717 @@
+{% extends "base.html" %}
+
+{% block title %}
+Criar Conta | AgroIA Moxico
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+  /* ============================================================
+   AGROIA MOXICO — PÁGINA DE CADASTRO
+   SEM NAVBAR E SEM FOOTER
+============================================================ */
+
+
+  /* ============================================================
+   OCULTAR NAVBAR E FOOTER DO BASE.HTML
+============================================================ */
+
+  /*
+   O :has() permite identificar que estamos na página
+   de cadastro através da existência de .register-page.
+
+   Assim não precisamos alterar o base.html.
+*/
+
+  body:has(.register-page) nav,
+  body:has(.register-page) footer,
+  body:has(.register-page) .navbar,
+  body:has(.register-page) .site-navbar,
+  body:has(.register-page) .main-navbar,
+  body:has(.register-page) .site-footer,
+  body:has(.register-page) .main-footer {
+    display: none !important;
+  }
+
+
+  /*
+   Remove possíveis espaços reservados pela navbar/footer.
+*/
+
+  body:has(.register-page) {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+
+  /* ============================================================
+   PÁGINA
+============================================================ */
+
+  .register-page {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    min-height: 100dvh;
+
+    padding:
+      55px 20px 70px;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
+    background:
+
+      radial-gradient(circle at 8% 12%,
+        rgba(23, 107, 69, .10),
+        transparent 28%),
+
+      radial-gradient(circle at 92% 85%,
+        rgba(217, 164, 65, .10),
+        transparent 27%),
+
+      linear-gradient(145deg,
+        #f8fcf9,
+        #f1f8f4);
+  }
+
+
+  /* ============================================================
+   DECORAÇÕES
+============================================================ */
+
+  .register-decoration {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    opacity: .7;
+
+    filter: blur(.2px);
+
+    animation:
+      floatCircle 9s ease-in-out infinite;
+  }
+
+
+  .register-decoration.one {
+
+    width: 320px;
+    height: 320px;
+
+    top: -150px;
+    left: -120px;
+
+    border:
+      1px solid rgba(23, 107, 69, .10);
+
+    background:
+      radial-gradient(circle,
+        rgba(23, 107, 69, .06),
+        transparent 68%);
+  }
+
+
+  .register-decoration.two {
+
+    width: 240px;
+    height: 240px;
+
+    right: -90px;
+    top: 180px;
+
+    border:
+      1px solid rgba(217, 164, 65, .14);
+
+    background:
+      radial-gradient(circle,
+        rgba(217, 164, 65, .07),
+        transparent 68%);
+
+    animation-delay: -3s;
+  }
+
+
+  .register-decoration.three {
+
+    width: 180px;
+    height: 180px;
+
+    left: 12%;
+    bottom: -100px;
+
+    border:
+      1px solid rgba(23, 107, 69, .08);
+
+    animation-delay: -6s;
+  }
+
+
+  @keyframes floatCircle {
+
+    0%,
+    100% {
+
+      transform:
+        translate3d(0, 0, 0) scale(1);
+    }
+
+    50% {
+
+      transform:
+        translate3d(0, -18px, 0) scale(1.04);
+    }
+  }
+
+
+  /* ============================================================
+   CONTAINER
+============================================================ */
+
+  .register-container {
+
+    position: relative;
+
+    z-index: 5;
+
+    width:
+      min(760px,
+        100%);
+
+    margin:
+      0 auto;
+  }
+
+
+  /* ============================================================
+   CABEÇALHO
+============================================================ */
+
+  .register-heading {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+  }
+
+
+  .register-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding:
+      8px 15px;
+
+    border-radius: 999px;
+
+    background:
+      rgba(232,
+        245,
+        237,
+        .92);
+
+    border:
+      1px solid rgba(23,
+        107,
+        69,
+        .08);
+
+    color:
+      #176b45;
+
+    font-size:
+      .80rem;
+
+    font-weight:
+      800;
+
+    box-shadow:
+      0 8px 25px rgba(23,
+        107,
+        69,
+        .06);
+  }
+
+
+  .register-heading h1 {
+
+    margin:
+      16px 0 0;
+
+    color:
+      #123c29;
+
+    font-size:
+      clamp(2rem,
+        5vw,
+        2.9rem);
+
+    font-weight:
+      850;
+
+    letter-spacing:
+      -.045em;
+  }
+
+
+  .register-heading p {
+
+    max-width:
+      620px;
+
+    margin:
+      10px auto 0;
+
+    color:
+      #6a7b72;
+
+    line-height:
+      1.65;
+
+    font-size:
+      .94rem;
+  }
+
+
+  /* ============================================================
+   CARD
+============================================================ */
+
+  .register-card {
+
+    position: relative;
+
+    padding:
+      38px;
+
+    border-radius:
+      28px;
+
+    background:
+      rgba(255,
+        255,
+        255,
+        .94);
+
+    border:
+      1px solid rgba(219,
+        232,
+        224,
+        .95);
+
+    box-shadow:
+      0 25px 70px rgba(23,
+        67,
+        47,
+        .11);
+
+    backdrop-filter:
+      blur(14px);
+
+    -webkit-backdrop-filter:
+      blur(14px);
+  }
+
+
+  .register-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 12%;
+    right: 12%;
+
+    top: 0;
+
+    height: 3px;
+
+    border-radius:
+      999px;
+
+    background:
+      linear-gradient(90deg,
+        transparent,
+        #176b45,
+        #d9a441,
+        #176b45,
+        transparent);
+
+    opacity:
+      .8;
+  }
+
+
+  /* ============================================================
+   CABEÇALHO DO FORMULÁRIO
+============================================================ */
+
+  .form-header {
+
+    text-align:
+      center;
+
+    margin-bottom:
+      28px;
+  }
+
+
+  .form-header h2 {
+
+    margin:
+      0;
+
+    color:
+      #173f2d;
+
+    font-size:
+      1.55rem;
+
+    font-weight:
+      800;
+  }
+
+
+  .form-header p {
+
+    margin:
+      8px 0 0;
+
+    color:
+      #7a8981;
+
+    font-size:
+      .88rem;
+  }
+
+
+  /* ============================================================
+   MENSAGENS DJANGO
+============================================================ */
+
+  .form-messages {
+
+    margin-bottom:
+      22px;
+  }
+
+
+  .form-message {
+
+    padding:
+      13px 15px;
+
+    border-radius:
+      13px;
+
+    margin-bottom:
+      9px;
+
+    font-size:
+      .85rem;
+
+    line-height:
+      1.5;
+  }
+
+
+  .form-message.error {
+
+    color:
+      #8a2929;
+
+    background:
+      #fff1f1;
+
+    border:
+      1px solid #ffd4d4;
+  }
+
+
+  .form-message.success {
+
+    color:
+      #176b45;
+
+    background:
+      #edf9f1;
+
+    border:
+      1px solid #ccebd7;
+  }
+
+
+  .form-message.info {
+
+    color:
+      #315c72;
+
+    background:
+      #eef8fc;
+
+    border:
+      1px solid #d1eaf3;
+  }
+
+
+  .form-message.warning {
+
+    color:
+      #785b16;
+
+    background:
+      #fff9e8;
+
+    border:
+      1px solid #f2e2a9;
+  }
+
+
+  /* ============================================================
+   ERROS DJANGO
+============================================================ */
+
+  .non-field-errors {
+
+    margin-bottom:
+      18px;
+  }
+
+
+  .non-field-error {
+
+    padding:
+      13px 15px;
+
+    border-radius:
+      13px;
+
+    color:
+      #8a2929;
+
+    background:
+      #fff1f1;
+
+    border:
+      1px solid #ffd4d4;
+
+    font-size:
+      .84rem;
+
+    line-height:
+      1.5;
+  }
+
+
+  /* ============================================================
+   GRID
+============================================================ */
+
+  .form-grid {
+
+    display:
+      grid;
+
+    grid-template-columns:
+      repeat(2,
+        minmax(0,
+          1fr));
+
+    gap:
+      18px;
+  }
+
+
+  .form-group {
+
+    min-width:
+      0;
+  }
+
+
+  .form-group.full {
+
+    grid-column:
+      1 / -1;
+  }
+
+
+  /* ============================================================
+   TÍTULOS DAS SEÇÕES
+============================================================ */
+
+  .form-section-title {
+
+    grid-column:
+      1 / -1;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      12px;
+
+    margin-top:
+      8px;
+
+    margin-bottom:
+      2px;
+  }
+
+
+  .form-section-title::after {
+
+    content:
+      "";
+
+    flex:
+      1;
+
+    height:
+      1px;
+
+    background:
+      #e5ede8;
+  }
+
+
+  .form-section-title span {
+
+    color:
+      #176b45;
+
+    font-size:
+      .72rem;
+
+    font-weight:
+      850;
+
+    text-transform:
+      uppercase;
+
+    letter-spacing:
+      .10em;
+
+    white-space:
+      nowrap;
+  }
+
+
+  /* ============================================================
+   LABEL
+============================================================ */
+
+  .form-label {
+
+    display:
+      block;
+
+    margin-bottom:
+      7px;
+
+    color:
+      #29483a;
+
+    font-size:
+      .83rem;
+
+    font-weight:
+      750;
+  }
+
+
+  .required {
+
+    color:
+      #c44747;
+  }
+
+
+  /* ============================================================
+   INPUTS
+============================================================ */
+
+  .form-control,
+  .form-select {
+
+    width:
+      100%;
+
+    min-height:
+      49px;
+
+    padding:
+      12px 14px;
+
+    box-sizing:
+      border-box;
+
+    border:
+      1px solid #d8e5dd;
+
+    border-radius:
+      13px;
+
+    background:
+      #fbfdfc;
+
+    color:
+      #203c2f;
+
+    font-family:
+      inherit;
+
+    font-size:
+      .90rem;
+
+    outline:
+      none;
+
+    transition:
+      border-color .2s ease,
+      box-shadow .2s ease,
+      background .2s ease,
+      transform .2s ease;
+  }
+
+
+  .form-control:hover,
+  .form-select:hover {
+
+    border-color:
+      #c8dbd0;
+  }
+
+
+  .form-control:focus,
+  .form-select:focus {
+
+    border-color:
+      #176b45;
+
+    background:
+      #fff;
+
+    box-shadow:
+      0 0 0 4px rgba(23,
+        107,
+        69,
+        .09);
+  }
+
+
+  .form-control::placeholder {
+
+    color:
+      #9ba9a2;
+  }
+
+
+  textarea.form-control {
+
+    min-height:
+      100px;
+
+    resize:
+      vertical;
+  }
+
+
+  /* ============================================================
+   INPUT COM ERRO
+============================================================ */
+
+  .form-control.has-error,
+  .form-select.has-error {
+
+    border-color:
+      #dc7777;
+
+    background:
+      #fffafa;
+  }
+
+
+  .form-control.has-error:focus,
+  .form-select.has-error:focus {
+
+    border-color:
+      #c44747;
+
+    box-shadow:
+      0 0 0 4px rgba(196,
+        71,
+        71,
+        .09);
+  }
+
+
+  .field-error {
+
+    display:
+      flex;
+
+    align-items:
+      flex-start;
+
+    gap:
+      6px;
+
+    margin-top:
+      6px;
+
+    color:
+      #b83232;
+
+    font-size:
+      .75rem;
+
+    line-height:
+      1.45;
+  }
+
+
+  /* ============================================================
+   SENHAS
+============================================================ */
+
+  .password-wrapper {
+
+    position:
+      relative;
+  }
+
+
+  .password-wrapper .form-control {
+
+    padding-right:
+      50px;
+  }
+
+
+  .toggle-password {
+
+    position:
+      absolute;
+
+    top:
+      50%;
+
+    right:
+      8px;
+
+    transform:
+      translateY(-50%);
+
+    width:
+      36px;
+
+    height:
+      36px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    border:
+      0;
+
+    border-radius:
+      9px;
+
+    background:
+      transparent;
+
+    color:
+      #718078;
+
+    cursor:
+      pointer;
+
+    font-size:
+      1rem;
+
+    transition:
+      background .2s ease,
+      color .2s ease;
+  }
+
+
+  .toggle-password:hover {
+
+    background:
+      #edf5f0;
+
+    color:
+      #176b45;
+  }
+
+
+  /* ============================================================
+   TERMOS
+============================================================ */
+
+  .terms {
+
+    display:
+      flex;
+
+    gap:
+      10px;
+
+    align-items:
+      flex-start;
+
+    margin-top:
+      23px;
+
+    color:
+      #6b7972;
+
+    font-size:
+      .80rem;
+
+    line-height:
+      1.55;
+
+    cursor:
+      pointer;
+  }
+
+
+  .terms input {
+
+    flex:
+      0 0 auto;
+
+    width:
+      16px;
+
+    height:
+      16px;
+
+    margin-top:
+      2px;
+
+    accent-color:
+      #176b45;
+
+    cursor:
+      pointer;
+  }
+
+
+  .terms.has-error {
+
+    color:
+      #b83232;
+  }
+
+
+  /* ============================================================
+   BOTÃO
+============================================================ */
+
+  .register-button {
+
+    position:
+      relative;
+
+    width:
+      100%;
+
+    min-height:
+      54px;
+
+    margin-top:
+      22px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    gap:
+      10px;
+
+    border:
+      0;
+
+    border-radius:
+      14px;
+
+    background:
+      linear-gradient(135deg,
+        #176b45,
+        #0d4d31);
+
+    color:
+      white;
+
+    font-family:
+      inherit;
+
+    font-size:
+      .94rem;
+
+    font-weight:
+      800;
+
+    cursor:
+      pointer;
+
+    overflow:
+      hidden;
+
+    box-shadow:
+      0 12px 28px rgba(23,
+        107,
+        69,
+        .22);
+
+    transition:
+      transform .2s ease,
+      box-shadow .2s ease,
+      opacity .2s ease;
+  }
+
+
+  .register-button::before {
+
+    content:
+      "";
+
+    position:
+      absolute;
+
+    top:
+      0;
+
+    left:
+      -100%;
+
+    width:
+      60%;
+
+    height:
+      100%;
+
+    background:
+      linear-gradient(90deg,
+        transparent,
+        rgba(255,
+          255,
+          255,
+          .18),
+        transparent);
+
+    transform:
+      skewX(-20deg);
+
+    transition:
+      left .7s ease;
+  }
+
+
+  .register-button:hover::before {
+
+    left:
+      140%;
+  }
+
+
+  .register-button:hover {
+
+    transform:
+      translateY(-2px);
+
+    box-shadow:
+      0 16px 34px rgba(23,
+        107,
+        69,
+        .27);
+  }
+
+
+  .register-button:active {
+
+    transform:
+      translateY(0);
+  }
+
+
+  .register-button:disabled {
+
+    opacity:
+      .78;
+
+    cursor:
+      wait;
+
+    transform:
+      none;
+  }
+
+
+  /* ============================================================
+   SPINNER DO BOTÃO
+============================================================ */
+
+  .button-spinner {
+
+    display:
+      none;
+
+    width:
+      19px;
+
+    height:
+      19px;
+
+    border:
+      2px solid rgba(255,
+        255,
+        255,
+        .35);
+
+    border-top-color:
+      white;
+
+    border-radius:
+      50%;
+
+    animation:
+      spin .7s linear infinite;
+  }
+
+
+  .register-button.loading .button-spinner {
+
+    display:
+      block;
+  }
+
+
+  .register-button.loading .button-text {
+
+    opacity:
+      .9;
+  }
+
+
+  @keyframes spin {
+
+    to {
+
+      transform:
+        rotate(360deg);
+    }
+  }
+
+
+  /* ============================================================
+   LOGIN
+============================================================ */
+
+  .login-link {
+
+    text-align:
+      center;
+
+    margin-top:
+      20px;
+
+    color:
+      #718078;
+
+    font-size:
+      .86rem;
+  }
+
+
+  .login-link a {
+
+    color:
+      #176b45;
+
+    font-weight:
+      800;
+
+    text-decoration:
+      none;
+  }
+
+
+  .login-link a:hover {
+
+    text-decoration:
+      underline;
+  }
+
+
+  /* ============================================================
+   SPLASH
+============================================================ */
+
+  .register-splash {
+
+    position:
+      fixed;
+
+    inset:
+      0;
+
+    z-index:
+      99999;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    background:
+      rgba(248,
+        252,
+        249,
+        .92);
+
+    backdrop-filter:
+      blur(9px);
+
+    -webkit-backdrop-filter:
+      blur(9px);
+
+    opacity:
+      0;
+
+    visibility:
+      hidden;
+
+    pointer-events:
+      none;
+
+    transition:
+      opacity .25s ease,
+      visibility .25s ease;
+  }
+
+
+  .register-splash.active {
+
+    opacity:
+      1;
+
+    visibility:
+      visible;
+
+    pointer-events:
+      auto;
+  }
+
+
+  .splash-circle {
+
+    position:
+      relative;
+
+    width:
+      112px;
+
+    height:
+      112px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    border-radius:
+      50%;
+
+    background:
+      linear-gradient(145deg,
+        #176b45,
+        #0d4d31);
+
+    box-shadow:
+      0 25px 65px rgba(13,
+        77,
+        49,
+        .28);
+
+    animation:
+      splashPulse 1.7s ease-in-out infinite;
+  }
+
+
+  .splash-circle::before {
+
+    content:
+      "";
+
+    position:
+      absolute;
+
+    inset:
+      -13px;
+
+    border-radius:
+      50%;
+
+    border:
+      2px solid rgba(23,
+        107,
+        69,
+        .16);
+
+    animation:
+      splashRing 1.7s ease-out infinite;
+  }
+
+
+  .splash-circle::after {
+
+    content:
+      "";
+
+    position:
+      absolute;
+
+    inset:
+      -28px;
+
+    border-radius:
+      50%;
+
+    border:
+      1px solid rgba(23,
+        107,
+        69,
+        .08);
+
+    animation:
+      splashRing 1.7s .35s ease-out infinite;
+  }
+
+
+  .splash-spinner {
+
+    width:
+      42px;
+
+    height:
+      42px;
+
+    border-radius:
+      50%;
+
+    border:
+      3px solid rgba(255,
+        255,
+        255,
+        .28);
+
+    border-top-color:
+      white;
+
+    animation:
+      spin .8s linear infinite;
+  }
+
+
+  .splash-text {
+
+    position:
+      absolute;
+
+    top:
+      calc(50% + 92px);
+
+    width:
+      100%;
+
+    text-align:
+      center;
+
+    color:
+      #173f2d;
+
+    font-size:
+      .90rem;
+
+    font-weight:
+      800;
+
+    letter-spacing:
+      .01em;
+  }
+
+
+  @keyframes splashPulse {
+
+    0%,
+    100% {
+
+      transform:
+        scale(1);
+    }
+
+    50% {
+
+      transform:
+        scale(1.05);
+    }
+  }
+
+
+  @keyframes splashRing {
+
+    0% {
+
+      transform:
+        scale(.75);
+
+      opacity:
+        .8;
+    }
+
+    100% {
+
+      transform:
+        scale(1.25);
+
+      opacity:
+        0;
+    }
+  }
+
+
+  /* ============================================================
+   RESPONSIVO
+============================================================ */
+
+  @media (max-width: 700px) {
+
+    .register-page {
+
+      padding:
+        35px 14px 60px;
+    }
+
+
+    .register-card {
+
+      padding:
+        28px 20px;
+
+      border-radius:
+        22px;
+    }
+
+
+    .form-grid {
+
+      grid-template-columns:
+        1fr;
+    }
+
+
+    .form-section-title {
+
+      grid-column:
+        auto;
+    }
+
+
+    .register-heading {
+
+      margin-bottom:
+        24px;
+    }
+
+
+    .register-heading h1 {
+
+      font-size:
+        2rem;
+    }
+
+
+    .register-heading p {
+
+      font-size:
+        .88rem;
+    }
+  }
+
+
+  @media (max-width: 420px) {
+
+    .register-page {
+
+      padding:
+        25px 10px 45px;
+    }
+
+
+    .register-card {
+
+      padding:
+        24px 16px;
+
+      border-radius:
+        20px;
+    }
+
+
+    .form-grid {
+
+      gap:
+        15px;
+    }
+
+
+    .form-section-title span {
+
+      font-size:
+        .67rem;
+    }
+
+
+    .register-heading h1 {
+
+      font-size:
+        1.8rem;
+    }
+  }
+
+
+  /* ============================================================
+   ACESSIBILIDADE
+============================================================ */
+
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+      animation-duration:
+        .01ms !important;
+
+      animation-iteration-count:
+        1 !important;
+
+      transition-duration:
+        .01ms !important;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="register-page">
+
+  <!-- =====================================================
+         DECORAÇÕES
+    ====================================================== -->
+
+  <div class="register-decoration one"></div>
+  <div class="register-decoration two"></div>
+  <div class="register-decoration three"></div>
+
+
+  <div class="register-container">
+
+    <!-- =================================================
+             CABEÇALHO
+        ================================================== -->
+
+    <header class="register-heading">
+
+      <div class="register-badge">
+
+        <span>🌱</span>
+
+        <span>
+          AgroIA Moxico
+        </span>
+
+      </div>
+
+
+      <h1>
+        Crie a sua conta
+      </h1>
+
+
+      <p>
+        Crie o seu acesso à plataforma e
+        acompanhe os seus recursos e atividades
+        agrícolas num único lugar.
+      </p>
+
+    </header>
+
+
+    <!-- =================================================
+             CARD
+        ================================================== -->
+
+    <div class="register-card">
+
+      <div class="form-header">
+
+        <h2>
+          Criar nova conta
+        </h2>
+
+        <p>
+          Preencha os dados abaixo para começar.
+        </p>
+
+      </div>
+
+
+      <!-- =================================================
+                 MENSAGENS DJANGO
+            ================================================== -->
+
+      {% if messages %}
+
+      <div class="form-messages">
+
+        {% for message in messages %}
+
+        <div class="form-message {{ message.tags }}">
+          {{ message }}
+        </div>
+
+        {% endfor %}
+
+      </div>
+
+      {% endif %}
+
+
+      <!-- =================================================
+                 FORMULÁRIO
+            ================================================== -->
+
+      <form method="POST" action="{% url 'inicio:cadastro' %}" id="registerForm" novalidate>
+
+        {% csrf_token %}
+
+
+        <!-- =================================================
+                     ERROS GERAIS
+                ================================================== -->
+
+        {% if form.non_field_errors %}
+
+        <div class="non-field-errors">
+
+          {% for error in form.non_field_errors %}
+
+          <div class="non-field-error">
+            {{ error }}
+          </div>
+
+          {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <div class="form-grid">
+
+
+          <!-- =================================================
+                         CONTA
+                    ================================================== -->
+
+          <div class="form-section-title">
+
+            <span>
+              Conta
+            </span>
+
+          </div>
+
+
+          <!-- =================================================
+                         UTILIZADOR
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="username">
+
+              Nome de utilizador
+
+              <span class="required">
+                *
+              </span>
+
+            </label>
+
+
+            <input type="text" id="username" name="username"
+              class="form-control {% if form.username.errors %}has-error{% endif %}" placeholder="Ex.: joao123"
+              value="{{ request.POST.username|default:'' }}" autocomplete="username" required>
+
+
+            {% if form.username.errors %}
+
+            {% for error in form.username.errors %}
+
+            <div class="field-error">
+              ⚠ {{ error }}
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- =================================================
+                         EMAIL
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="email">
+
+              E-mail
+
+            </label>
+
+
+            <input type="email" id="email" name="email"
+              class="form-control {% if form.email.errors %}has-error{% endif %}" placeholder="seuemail@exemplo.com"
+              value="{{ request.POST.email|default:'' }}" autocomplete="email">
+
+
+            {% if form.email.errors %}
+
+            {% for error in form.email.errors %}
+
+            <div class="field-error">
+              ⚠ {{ error }}
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- =================================================
+                         SENHA
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="password">
+
+              Palavra-passe
+
+              <span class="required">
+                *
+              </span>
+
+            </label>
+
+
+            <div class="password-wrapper">
+
+              <input type="password" id="password" name="password"
+                class="form-control {% if form.password.errors %}has-error{% endif %}"
+                placeholder="Digite a sua palavra-passe" autocomplete="new-password" required>
+
+
+              <button type="button" class="toggle-password" data-target="password" aria-label="Mostrar palavra-passe"
+                title="Mostrar palavra-passe">
+                👁
+              </button>
+
+            </div>
+
+
+            {% if form.password.errors %}
+
+            {% for error in form.password.errors %}
+
+            <div class="field-error">
+              ⚠ {{ error }}
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- =================================================
+                         CONFIRMAR SENHA
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="password_confirm">
+
+              Confirmar palavra-passe
+
+              <span class="required">
+                *
+              </span>
+
+            </label>
+
+
+            <div class="password-wrapper">
+
+              <input type="password" id="password_confirm" name="password_confirm"
+                class="form-control {% if form.password_confirm.errors %}has-error{% endif %}"
+                placeholder="Repita a palavra-passe" autocomplete="new-password" required>
+
+
+              <button type="button" class="toggle-password" data-target="password_confirm"
+                aria-label="Mostrar palavra-passe" title="Mostrar palavra-passe">
+                👁
+              </button>
+
+            </div>
+
+
+            {% if form.password_confirm.errors %}
+
+            {% for error in form.password_confirm.errors %}
+
+            <div class="field-error">
+              ⚠ {{ error }}
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- =================================================
+                         DADOS PESSOAIS
+                    ================================================== -->
+
+          <div class="form-section-title">
+
+            <span>
+              Informações pessoais
+            </span>
+
+          </div>
+
+
+          <!-- =================================================
+                         PRIMEIRO NOME
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="first_name">
+
+              Primeiro nome
+
+            </label>
+
+
+            <input type="text" id="first_name" name="first_name" class="form-control" placeholder="Ex.: João"
+              value="{{ request.POST.first_name|default:'' }}" autocomplete="given-name">
+
+          </div>
+
+
+          <!-- =================================================
+                         APELIDO
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="last_name">
+
+              Apelido
+
+            </label>
+
+
+            <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Ex.: António"
+              value="{{ request.POST.last_name|default:'' }}" autocomplete="family-name">
+
+          </div>
+
+
+          <!-- =================================================
+                         TELEFONE
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="telefone">
+
+              Telefone
+
+            </label>
+
+
+            <input type="tel" id="telefone" name="telefone" class="form-control" placeholder="Ex.: 923 000 000"
+              value="{{ request.POST.telefone|default:'' }}" autocomplete="tel">
+
+          </div>
+
+
+          <!-- =================================================
+                         TIPO DE UTILIZADOR
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="tipo_utilizador">
+
+              Tipo de utilizador
+
+            </label>
+
+
+            <select id="tipo_utilizador" name="tipo_utilizador" class="form-select"
+              data-current-value="{{ request.POST.tipo_utilizador|default:'outro' }}">
+
+              <option value="outro">
+                Outro
+              </option>
+
+              <option value="agricultor">
+                Agricultor
+              </option>
+
+              <option value="tecnico">
+                Técnico Agrícola
+              </option>
+
+              <option value="estudante">
+                Estudante
+              </option>
+
+              <option value="investigador">
+                Investigador
+              </option>
+
+              <option value="administrador">
+                Administrador
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- =================================================
+                         LOCALIZAÇÃO
+                    ================================================== -->
+
+          <div class="form-section-title">
+
+            <span>
+              Localização
+            </span>
+
+          </div>
+
+
+          <!-- =================================================
+                         LOCALIZAÇÃO
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="localizacao">
+
+              Localização
+
+            </label>
+
+
+            <input type="text" id="localizacao" name="localizacao" class="form-control"
+              placeholder="Ex.: Bairro ou comuna" value="{{ request.POST.localizacao|default:'' }}">
+
+          </div>
+
+
+          <!-- =================================================
+                         MUNICÍPIO
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="municipio">
+
+              Município
+
+            </label>
+
+
+            <input type="text" id="municipio" name="municipio" class="form-control" placeholder="Ex.: Luena"
+              value="{{ request.POST.municipio|default:'' }}">
+
+          </div>
+
+
+          <!-- =================================================
+                         PROVÍNCIA
+                    ================================================== -->
+
+          <div class="form-group">
+
+            <label class="form-label" for="provincia">
+
+              Província
+
+            </label>
+
+
+            <input type="text" id="provincia" name="provincia" class="form-control"
+              value="{{ request.POST.provincia|default:'Moxico' }}">
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+                     TERMOS
+                ================================================== -->
+
+        <label class="terms" id="termsLabel">
+
+          <input type="checkbox" id="terms" name="terms" value="1" required>
+
+          <span>
+
+            Confirmo que as informações fornecidas
+            são verdadeiras e concordo com a utilização
+            dos dados necessários para o funcionamento
+            da minha conta no AgroIA Moxico.
+
+          </span>
+
+        </label>
+
+
+        <!-- =================================================
+                     BOTÃO
+                ================================================== -->
+
+        <button type="submit" class="register-button" id="registerButton">
+
+          <span class="button-spinner" aria-hidden="true"></span>
+
+          <span class="button-text">
+            Criar minha conta
+          </span>
+
+        </button>
+
+
+        <!-- =================================================
+                     LOGIN
+                ================================================== -->
+
+        <div class="login-link">
+
+          Já possui uma conta?
+
+          <a href="{% url 'inicio:login' %}">
+            Entrar agora
+          </a>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     SPLASH DE PROCESSAMENTO
+============================================================ -->
+
+<div class="register-splash" id="registerSplash" aria-hidden="true">
+
+  <div class="splash-circle">
+
+    <div class="splash-spinner" aria-hidden="true"></div>
+
+  </div>
+
+  <div class="splash-text">
+    Criando a sua conta...
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =========================================================
+       OCULTAR NAVBAR E FOOTER
+
+       Esta parte é uma segurança adicional caso o base.html
+       utilize classes diferentes.
+    ========================================================= */
+
+    const elementsToHide = document.querySelectorAll(
+      "nav, footer, .navbar, .site-navbar, .main-navbar, .site-footer, .main-footer"
+    );
+
+
+    elementsToHide.forEach(function (element) {
+
+      /*
+       * Não esconder elementos que estejam dentro do
+       * próprio formulário, caso existam.
+       */
+
+      if (!element.closest(".register-page")) {
+
+        element.style.display = "none";
+
+      }
+
+    });
+
+
+    /* =========================================================
+       MOSTRAR / OCULTAR SENHA
+    ========================================================= */
+
+    const toggleButtons =
+      document.querySelectorAll(
+        ".toggle-password"
+      );
+
+
+    toggleButtons.forEach(function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          const targetId =
+            button.getAttribute(
+              "data-target"
+            );
+
+
+          const input =
+            document.getElementById(
+              targetId
+            );
+
+
+          if (!input) {
+            return;
+          }
+
+
+          if (
+            input.type ===
+            "password"
+          ) {
+
+            input.type =
+              "text";
+
+
+            button.textContent =
+              "🙈";
+
+
+            button.setAttribute(
+              "aria-label",
+              "Ocultar palavra-passe"
+            );
+
+
+            button.setAttribute(
+              "title",
+              "Ocultar palavra-passe"
+            );
+
+          }
+
+          else {
+
+            input.type =
+              "password";
+
+
+            button.textContent =
+              "👁";
+
+
+            button.setAttribute(
+              "aria-label",
+              "Mostrar palavra-passe"
+            );
+
+
+            button.setAttribute(
+              "title",
+              "Mostrar palavra-passe"
+            );
+
+          }
+
+        }
+      );
+
+    });
+
+
+    /* =========================================================
+       ELEMENTOS DO FORMULÁRIO
+    ========================================================= */
+
+    const form =
+      document.getElementById(
+        "registerForm"
+      );
+
+
+    const password =
+      document.getElementById(
+        "password"
+      );
+
+
+    const passwordConfirm =
+      document.getElementById(
+        "password_confirm"
+      );
+
+
+    const terms =
+      document.getElementById(
+        "terms"
+      );
+
+
+    const termsLabel =
+      document.getElementById(
+        "termsLabel"
+      );
+
+
+    const button =
+      document.getElementById(
+        "registerButton"
+      );
+
+
+    const splash =
+      document.getElementById(
+        "registerSplash"
+      );
+
+
+    const tipoUtilizador =
+      document.getElementById(
+        "tipo_utilizador"
+      );
+
+
+    const provincia =
+      document.getElementById(
+        "provincia"
+      );
+
+
+    /* =========================================================
+       SE NÃO EXISTIR FORMULÁRIO
+    ========================================================= */
+
+    if (!form) {
+      return;
+    }
+
+
+    /* =========================================================
+       RESTAURAR TIPO DE UTILIZADOR
+
+       Não utilizamos comparações Django complexas dentro
+       do HTML.
+
+       O valor é enviado através de data-current-value.
+    ========================================================= */
+
+    if (tipoUtilizador) {
+
+      const currentValue =
+        tipoUtilizador.getAttribute(
+          "data-current-value"
+        );
+
+
+      if (currentValue) {
+
+        const optionExists =
+          Array.from(
+            tipoUtilizador.options
+          ).some(
+            function (option) {
+
+              return (
+                option.value ===
+                currentValue
+              );
+
+            }
+          );
+
+
+        if (optionExists) {
+
+          tipoUtilizador.value =
+            currentValue;
+
+        }
+
+        else {
+
+          tipoUtilizador.value =
+            "outro";
+
+        }
+
+      }
+
+    }
+
+
+    /* =========================================================
+       PROVÍNCIA PADRÃO
+    ========================================================= */
+
+    if (
+      provincia &&
+      !provincia.value.trim()
+    ) {
+
+      provincia.value =
+        "Moxico";
+
+    }
+
+
+    /* =========================================================
+       REMOVER ERRO DOS TERMOS
+    ========================================================= */
+
+    if (terms) {
+
+      terms.addEventListener(
+        "change",
+        function () {
+
+          if (terms.checked) {
+
+            if (termsLabel) {
+
+              termsLabel.classList.remove(
+                "has-error"
+              );
+
+            }
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =========================================================
+       REMOVER ERRO DA CONFIRMAÇÃO
+    ========================================================= */
+
+    if (passwordConfirm) {
+
+      passwordConfirm.addEventListener(
+        "input",
+        function () {
+
+          passwordConfirm.classList.remove(
+            "has-error"
+          );
+
+
+          if (
+            password &&
+            password.value ===
+            passwordConfirm.value
+          ) {
+
+            passwordConfirm.classList.remove(
+              "has-error"
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =========================================================
+       VALIDAR SENHA ENQUANTO DIGITA
+    ========================================================= */
+
+    if (password) {
+
+      password.addEventListener(
+        "input",
+        function () {
+
+          if (
+            passwordConfirm &&
+            password.value ===
+            passwordConfirm.value
+          ) {
+
+            passwordConfirm.classList.remove(
+              "has-error"
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =========================================================
+       SUBMISSÃO
+    ========================================================= */
+
+    form.addEventListener(
+      "submit",
+      function (event) {
+
+        let valid = true;
+
+
+        /* =================================================
+           LIMPAR ESTADOS ANTERIORES
+        ================================================= */
+
+        if (passwordConfirm) {
+
+          passwordConfirm.classList.remove(
+            "has-error"
+          );
+
+        }
+
+
+        if (termsLabel) {
+
+          termsLabel.classList.remove(
+            "has-error"
+          );
+
+        }
+
+
+        /* =================================================
+           VALIDAR PALAVRA-PASSE
+        ================================================= */
+
+        if (
+          password &&
+          passwordConfirm &&
+          password.value !==
+          passwordConfirm.value
+        ) {
+
+          event.preventDefault();
+
+
+          passwordConfirm.classList.add(
+            "has-error"
+          );
+
+
+          passwordConfirm.focus();
+
+
+          alert(
+            "As palavras-passe não coincidem."
+          );
+
+
+          valid = false;
+
+        }
+
+
+        /* =================================================
+           VALIDAR TERMOS
+        ================================================= */
+
+        if (
+          valid &&
+          terms &&
+          !terms.checked
+        ) {
+
+          event.preventDefault();
+
+
+          if (termsLabel) {
+
+            termsLabel.classList.add(
+              "has-error"
+            );
+
+          }
+
+
+          terms.focus();
+
+
+          alert(
+            "Confirme os termos para continuar."
+          );
+
+
+          valid = false;
+
+        }
+
+
+        /* =================================================
+           PARAR SE EXISTIR ERRO
+        ================================================= */
+
+        if (!valid) {
+          return;
+        }
+
+
+        /* =================================================
+           BLOQUEAR BOTÃO
+        ================================================= */
+
+        if (button) {
+
+          button.disabled =
+            true;
+
+
+          button.classList.add(
+            "loading"
+          );
+
+
+          const text =
+            button.querySelector(
+              ".button-text"
+            );
+
+
+          if (text) {
+
+            text.textContent =
+              "A criar conta...";
+
+          }
+
+        }
+
+
+        /* =================================================
+           MOSTRAR SPLASH
+
+           O formulário continua sendo enviado
+           normalmente para o Django.
+        ================================================= */
+
+        if (splash) {
+
+          splash.classList.add(
+            "active"
+          );
+
+
+          splash.setAttribute(
+            "aria-hidden",
+            "false"
+          );
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       EVITAR DUPLO ENVIO
+    ========================================================= */
+
+    let submitted = false;
+
+
+    form.addEventListener(
+      "submit",
+      function () {
+
+        if (submitted) {
+
+          return;
+
+        }
+
+
+        submitted = true;
+
+      }
+    );
+
+
+    /* =========================================================
+       ESCOLA / TIPO DE UTILIZADOR
+    ========================================================= */
+
+    if (tipoUtilizador) {
+
+      tipoUtilizador.addEventListener(
+        "change",
+        function () {
+
+          tipoUtilizador.classList.remove(
+            "has-error"
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =========================================================
+       LIMPAR ERROS DOS CAMPOS AO DIGITAR
+    ========================================================= */
+
+    const fields =
+      form.querySelectorAll(
+        ".form-control, .form-select"
+      );
+
+
+    fields.forEach(
+      function (field) {
+
+        field.addEventListener(
+          "input",
+          function () {
+
+            field.classList.remove(
+              "has-error"
+            );
+
+          }
+        );
+
+
+        field.addEventListener(
+          "change",
+          function () {
+
+            field.classList.remove(
+              "has-error"
+            );
+
+          }
+        );
+
+      }
+    );
+
+  });
+
+</script>
+
+{% endblock %}

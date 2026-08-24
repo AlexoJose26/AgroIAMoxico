@@ -1,0 +1,1561 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ produto.nome }} | AgroIA Moxico
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+  /* ============================================================
+   AGROIA MOXICO
+   DETALHES DO PRODUTO AGRÍCOLA
+   ============================================================ */
+
+  .product-details-page {
+    min-height: 100vh;
+
+    padding: 55px 0 90px;
+
+    background:
+      linear-gradient(180deg,
+        #f7faf8 0%,
+        #eef5f1 100%);
+
+    color: #173126;
+  }
+
+
+  .product-details-page *,
+  .product-details-page *::before,
+  .product-details-page *::after {
+    box-sizing: border-box;
+  }
+
+
+  .product-details-container {
+    width: min(calc(100% - 40px), 1180px);
+
+    margin: 0 auto;
+  }
+
+
+  /* ============================================================
+   VOLTAR
+   ============================================================ */
+
+  .product-back {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 24px;
+
+    color: #176b45;
+
+    text-decoration: none;
+
+    font-size: .68rem;
+
+    font-weight: 900;
+
+    transition:
+      color .25s ease,
+      transform .25s ease;
+  }
+
+
+  .product-back:hover {
+    color: #0d4d31;
+
+    transform:
+      translateX(-3px);
+  }
+
+
+  .product-back svg {
+    width: 16px;
+    height: 16px;
+  }
+
+
+  /* ============================================================
+   HERO
+   ============================================================ */
+
+  .product-details-hero {
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 42px;
+
+    margin-bottom: 38px;
+
+    border-radius: 25px;
+
+    color: white;
+
+    background:
+      linear-gradient(135deg,
+        rgba(7, 59, 37, .98),
+        rgba(13, 77, 49, .94));
+
+    box-shadow:
+      0 25px 65px rgba(8, 45, 29, .14);
+  }
+
+
+  .product-details-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 330px;
+    height: 330px;
+
+    right: -150px;
+    top: -170px;
+
+    border:
+      1px solid rgba(255, 255, 255, .13);
+
+    border-radius: 50%;
+
+    animation:
+      productFloat 8s ease-in-out infinite;
+  }
+
+
+  .product-details-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    right: 80px;
+    bottom: -210px;
+
+    border-radius: 50%;
+
+    background:
+      radial-gradient(circle,
+        rgba(217, 164, 65, .20),
+        transparent 70%);
+
+    filter: blur(8px);
+  }
+
+
+  @keyframes productFloat {
+
+    0%,
+    100% {
+      transform:
+        translateY(0) rotate(0deg);
+    }
+
+    50% {
+      transform:
+        translateY(18px) rotate(5deg);
+    }
+  }
+
+
+  .product-details-hero-content {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 900px;
+  }
+
+
+  /* ============================================================
+   BADGE
+   ============================================================ */
+
+  .product-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 13px;
+
+    margin-bottom: 18px;
+
+    border:
+      1px solid rgba(255, 255, 255, .15);
+
+    border-radius: 50px;
+
+    background:
+      rgba(255, 255, 255, .07);
+
+    backdrop-filter:
+      blur(12px);
+
+    color:
+      rgba(255, 255, 255, .88);
+
+    font-size: .62rem;
+
+    font-weight: 900;
+
+    letter-spacing: .06em;
+
+    text-transform: uppercase;
+  }
+
+
+  .product-badge-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #d9a441;
+
+    box-shadow:
+      0 0 0 5px rgba(217, 164, 65, .12);
+  }
+
+
+  /* ============================================================
+   TÍTULO
+   ============================================================ */
+
+  .product-details-hero h1 {
+    margin: 0 0 15px;
+
+    color: white;
+
+    font-size:
+      clamp(2.2rem, 5vw, 4rem);
+
+    line-height: 1.05;
+
+    letter-spacing: -.055em;
+
+    font-weight: 900;
+  }
+
+
+  .product-details-description {
+    max-width: 760px;
+
+    margin: 0;
+
+    color:
+      rgba(255, 255, 255, .72);
+
+    font-size: .82rem;
+
+    line-height: 1.8;
+  }
+
+
+  /* ============================================================
+   META
+   ============================================================ */
+
+  .product-meta {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 25px;
+  }
+
+
+  .product-meta-item {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 13px;
+
+    border:
+      1px solid rgba(255, 255, 255, .13);
+
+    border-radius: 10px;
+
+    background:
+      rgba(255, 255, 255, .07);
+
+    color:
+      rgba(255, 255, 255, .78);
+
+    font-size: .62rem;
+
+    font-weight: 800;
+  }
+
+
+  .product-meta-item svg {
+    width: 15px;
+    height: 15px;
+
+    color: #d9a441;
+  }
+
+
+  .product-meta-item strong {
+    color: white;
+  }
+
+
+  /* ============================================================
+   ÁREA PRINCIPAL
+   ============================================================ */
+
+  .product-main-content {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1.05fr) minmax(0, .95fr);
+
+    gap: 25px;
+
+    align-items: stretch;
+
+    margin-bottom: 35px;
+  }
+
+
+  /* ============================================================
+   IMAGEM
+   ============================================================ */
+
+  .product-image-card {
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 430px;
+
+    border:
+      1px solid #dce9e1;
+
+    border-radius: 22px;
+
+    background:
+      linear-gradient(135deg,
+        #eaf5ee,
+        #dfeee5);
+
+    box-shadow:
+      0 15px 45px rgba(8, 45, 29, .07);
+  }
+
+
+  .product-image-card img {
+    width: 100%;
+    height: 100%;
+
+    min-height: 430px;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition:
+      transform .6s ease;
+  }
+
+
+  .product-image-card:hover img {
+    transform:
+      scale(1.035);
+  }
+
+
+  .product-image-placeholder {
+    min-height: 430px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #8aaa98;
+  }
+
+
+  .product-image-placeholder svg {
+    width: 80px;
+    height: 80px;
+  }
+
+
+  /* ============================================================
+   STATUS DA IMAGEM
+   ============================================================ */
+
+  .product-image-status {
+    position: absolute;
+
+    top: 17px;
+    left: 17px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 8px 12px;
+
+    border-radius: 30px;
+
+    color: #176b45;
+
+    background:
+      rgba(255, 255, 255, .94);
+
+    backdrop-filter:
+      blur(10px);
+
+    font-size: .56rem;
+
+    font-weight: 900;
+
+    box-shadow:
+      0 7px 20px rgba(0, 0, 0, .10);
+  }
+
+
+  .product-status-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #176b45;
+  }
+
+
+  .product-status-dot.inactive {
+    background: #b35a45;
+  }
+
+
+  /* ============================================================
+   INFORMAÇÕES
+   ============================================================ */
+
+  .product-info-card {
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 29px;
+
+    border:
+      1px solid #dce9e1;
+
+    border-radius: 22px;
+
+    background: white;
+
+    box-shadow:
+      0 15px 45px rgba(8, 45, 29, .07);
+  }
+
+
+  .product-info-eyebrow {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-bottom: 8px;
+
+    color: #176b45;
+
+    font-size: .60rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: .10em;
+  }
+
+
+  .product-info-eyebrow::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #d9a441;
+  }
+
+
+  .product-info-card h2 {
+    margin: 0 0 19px;
+
+    color: #173126;
+
+    font-size:
+      clamp(1.6rem, 3vw, 2.35rem);
+
+    line-height: 1.1;
+
+    letter-spacing: -.045em;
+
+    font-weight: 900;
+  }
+
+
+  .product-info-description {
+    margin: 0 0 25px;
+
+    color: #718178;
+
+    font-size: .72rem;
+
+    line-height: 1.8;
+  }
+
+
+  /* ============================================================
+   DADOS
+   ============================================================ */
+
+  .product-data-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+  }
+
+
+  .product-data-item {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 13px 14px;
+
+    border:
+      1px solid #e1ebe5;
+
+    border-radius: 11px;
+
+    background: #f8fbf9;
+  }
+
+
+  .product-data-label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #718178;
+
+    font-size: .60rem;
+
+    font-weight: 800;
+  }
+
+
+  .product-data-label svg {
+    width: 15px;
+    height: 15px;
+
+    color: #176b45;
+  }
+
+
+  .product-data-value {
+    text-align: right;
+
+    color: #173126;
+
+    font-size: .61rem;
+
+    font-weight: 900;
+  }
+
+
+  /* ============================================================
+   CATEGORIAS
+   ============================================================ */
+
+  .product-categories {
+    margin-top: auto;
+
+    padding-top: 20px;
+
+    border-top:
+      1px solid #e3ece7;
+  }
+
+
+  .product-categories-title {
+    margin-bottom: 10px;
+
+    color: #173126;
+
+    font-size: .62rem;
+
+    font-weight: 900;
+  }
+
+
+  .product-category-list {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+  }
+
+
+  .product-category-tag {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 7px 10px;
+
+    border-radius: 8px;
+
+    color: #176b45;
+
+    background: #eaf7ef;
+
+    font-size: .54rem;
+
+    font-weight: 900;
+  }
+
+
+  .product-no-category {
+    color: #8a9890;
+
+    font-size: .59rem;
+  }
+
+
+  /* ============================================================
+   AÇÕES
+   ============================================================ */
+
+  .product-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 9px;
+
+    margin-top: 23px;
+  }
+
+
+  .product-action {
+    min-height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 14px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-size: .58rem;
+
+    font-weight: 900;
+
+    transition:
+      transform .25s ease,
+      background .25s ease,
+      color .25s ease,
+      border-color .25s ease,
+      box-shadow .25s ease;
+  }
+
+
+  .product-action svg {
+    width: 15px;
+    height: 15px;
+  }
+
+
+  .product-action-primary {
+    color: white;
+
+    background: #176b45;
+
+    box-shadow:
+      0 9px 24px rgba(23, 107, 69, .14);
+  }
+
+
+  .product-action-primary:hover {
+    color: white;
+
+    background: #0d4d31;
+
+    transform:
+      translateY(-2px);
+
+    box-shadow:
+      0 13px 30px rgba(23, 107, 69, .20);
+  }
+
+
+  .product-action-secondary {
+    color: #176b45;
+
+    border:
+      1px solid #d5e5dc;
+
+    background: white;
+  }
+
+
+  .product-action-secondary:hover {
+    color: white;
+
+    border-color: #176b45;
+
+    background: #176b45;
+
+    transform:
+      translateY(-2px);
+  }
+
+
+  /* ============================================================
+   SECÇÃO INFORMAÇÕES
+   ============================================================ */
+
+  .product-section {
+    margin-top: 10px;
+  }
+
+
+  .product-section-header {
+    margin-bottom: 20px;
+  }
+
+
+  .product-eyebrow {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #176b45;
+
+    font-size: .62rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: .10em;
+  }
+
+
+  .product-eyebrow::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #d9a441;
+  }
+
+
+  .product-section-header h2 {
+    margin: 9px 0 0;
+
+    color: #173126;
+
+    font-size:
+      clamp(1.7rem, 3vw, 2.45rem);
+
+    line-height: 1.08;
+
+    letter-spacing: -.05em;
+
+    font-weight: 900;
+  }
+
+
+  /* ============================================================
+   CARD INFORMATIVO
+   ============================================================ */
+
+  .product-description-card {
+    padding: 28px;
+
+    border:
+      1px solid #dce9e1;
+
+    border-radius: 20px;
+
+    background: white;
+
+    box-shadow:
+      0 12px 35px rgba(8, 45, 29, .055);
+  }
+
+
+  .product-description-card p {
+    margin: 0;
+
+    color: #66776e;
+
+    font-size: .72rem;
+
+    line-height: 1.9;
+
+    white-space: pre-line;
+  }
+
+
+  /* ============================================================
+   ANIMAÇÃO
+   ============================================================ */
+
+  .product-animate {
+    opacity: 0;
+
+    transform:
+      translateY(22px);
+
+    transition:
+      opacity .7s ease,
+      transform .7s ease;
+  }
+
+
+  .product-animate.visible {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+
+
+  /* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+  @media (max-width: 900px) {
+
+    .product-main-content {
+      grid-template-columns: 1fr;
+    }
+
+
+    .product-image-card,
+    .product-image-placeholder {
+      min-height: 390px;
+    }
+
+
+    .product-image-card img {
+      min-height: 390px;
+    }
+  }
+
+
+  @media (max-width: 600px) {
+
+    .product-details-page {
+      padding: 35px 0 70px;
+    }
+
+
+    .product-details-container {
+      width:
+        min(calc(100% - 28px), 1180px);
+    }
+
+
+    .product-details-hero {
+      padding: 27px 22px;
+
+      border-radius: 20px;
+    }
+
+
+    .product-details-hero h1 {
+      font-size: 2.35rem;
+    }
+
+
+    .product-meta {
+      flex-direction: column;
+
+      align-items: flex-start;
+    }
+
+
+    .product-info-card {
+      padding: 22px;
+    }
+
+
+    .product-image-card,
+    .product-image-placeholder {
+      min-height: 300px;
+    }
+
+
+    .product-image-card img {
+      min-height: 300px;
+    }
+
+
+    .product-actions {
+      flex-direction: column;
+    }
+
+
+    .product-action {
+      width: 100%;
+    }
+  }
+
+
+  @media (max-width: 450px) {
+
+    .product-details-hero {
+      padding:
+        25px 19px;
+    }
+
+
+    .product-details-hero h1 {
+      font-size: 2rem;
+    }
+
+
+    .product-info-card,
+    .product-description-card {
+      padding: 19px;
+    }
+
+
+    .product-data-item {
+      align-items: flex-start;
+
+      flex-direction: column;
+
+      gap: 5px;
+    }
+
+
+    .product-data-value {
+      text-align: left;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="product-details-page">
+
+  <div class="product-details-container">
+
+
+    <!-- ==================================================
+             VOLTAR PARA PRODUTOS
+             ================================================== -->
+
+    <a href="{% url 'culturas:produtos' %}" class="product-back">
+
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5"></path>
+        <path d="m12 19-7-7 7-7"></path>
+      </svg>
+
+      Voltar aos produtos
+
+    </a>
+
+
+    <!-- ==================================================
+             HERO
+             ================================================== -->
+
+    <div class="product-details-hero product-animate">
+
+      <div class="product-details-hero-content">
+
+
+        <div class="product-badge">
+
+          <span class="product-badge-dot"></span>
+
+          AgroIA Moxico · Produto agrícola
+
+        </div>
+
+
+        <h1>
+          {{ produto.nome }}
+        </h1>
+
+
+        <p class="product-details-description">
+
+          {% if produto.descricao %}
+
+          {{ produto.descricao|truncatechars:300 }}
+
+          {% else %}
+
+          Produto agrícola cadastrado
+          no catálogo do AgroIA Moxico.
+
+          {% endif %}
+
+        </p>
+
+
+        <div class="product-meta">
+
+
+          <!-- STATUS -->
+
+          <div class="product-meta-item">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <circle cx="12" cy="12" r="9"></circle>
+
+              <path d="m8 12 2.5 2.5L16 9"></path>
+
+            </svg>
+
+
+            {% if produto.ativo %}
+
+            <span>
+              Produto
+              <strong>ativo</strong>
+            </span>
+
+            {% else %}
+
+            <span>
+              Produto
+              <strong>inativo</strong>
+            </span>
+
+            {% endif %}
+
+          </div>
+
+
+          <!-- CATEGORIAS -->
+
+          <div class="product-meta-item">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <path d="M20 13.5V7a2 2 0 0 0-2-2h-6.5L4 12.5a2 2 0 0 0 0 3L8.5 20a2 2 0 0 0 3 0L20 11.5"></path>
+
+              <circle cx="16" cy="8" r="1"></circle>
+
+            </svg>
+
+
+            <span>
+
+              <strong>
+                {{ categorias|length }}
+              </strong>
+
+              categoria{{ categorias|length|pluralize }}
+
+            </span>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================================================
+             CONTEÚDO PRINCIPAL
+             ================================================== -->
+
+    <div class="product-main-content">
+
+
+      <!-- ==================================================
+                 IMAGEM DO PRODUTO
+                 ================================================== -->
+
+      <div class="product-image-card product-animate">
+
+
+        {% if produto.imagem %}
+
+        <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+
+        {% else %}
+
+        <div class="product-image-placeholder">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+
+            <path d="m21 15-5-5L5 21"></path>
+
+          </svg>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- STATUS -->
+
+        <div class="product-image-status">
+
+          {% if produto.ativo %}
+
+          <span class="product-status-dot"></span>
+
+          Produto disponível
+
+          {% else %}
+
+          <span class="product-status-dot inactive"></span>
+
+          Produto indisponível
+
+          {% endif %}
+
+        </div>
+
+
+      </div>
+
+
+      <!-- ==================================================
+                 INFORMAÇÕES
+                 ================================================== -->
+
+      <div class="product-info-card product-animate">
+
+
+        <span class="product-info-eyebrow">
+
+          Informações do produto
+
+        </span>
+
+
+        <h2>
+          {{ produto.nome }}
+        </h2>
+
+
+        <p class="product-info-description">
+
+          {% if produto.descricao %}
+
+          {{ produto.descricao|truncatechars:500 }}
+
+          {% else %}
+
+          Não foi cadastrada uma descrição
+          específica para este produto.
+
+          {% endif %}
+
+        </p>
+
+
+        <!-- DADOS -->
+
+        <div class="product-data-list">
+
+
+          <!-- STATUS -->
+
+          <div class="product-data-item">
+
+            <span class="product-data-label">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                <circle cx="12" cy="12" r="9"></circle>
+
+                <path d="m8 12 2.5 2.5L16 9"></path>
+
+              </svg>
+
+              Estado
+
+            </span>
+
+
+            <span class="product-data-value">
+
+              {% if produto.ativo %}
+
+              Ativo
+
+              {% else %}
+
+              Inativo
+
+              {% endif %}
+
+            </span>
+
+          </div>
+
+
+          <!-- CATEGORIAS -->
+
+          <div class="product-data-item">
+
+            <span class="product-data-label">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                <path d="M20 13.5V7a2 2 0 0 0-2-2h-6.5L4 12.5a2 2 0 0 0 0 3L8.5 20a2 2 0 0 0 3 0L20 11.5"></path>
+
+                <circle cx="16" cy="8" r="1"></circle>
+
+              </svg>
+
+              Categorias
+
+            </span>
+
+
+            <span class="product-data-value">
+
+              {{ categorias|length }}
+
+              categoria{{ categorias|length|pluralize }}
+
+            </span>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- ==================================================
+                     CATEGORIAS DO PRODUTO
+                     ================================================== -->
+
+        <div class="product-categories">
+
+          <div class="product-categories-title">
+
+            Categorias associadas
+
+          </div>
+
+
+          {% if categorias %}
+
+          <div class="product-category-list">
+
+            {% for categoria in categorias %}
+
+            <a href="{% url 'categorias:categoria_detalhes' categoria.pk %}" class="product-category-tag">
+
+              {{ categoria.nome }}
+
+            </a>
+
+            {% endfor %}
+
+          </div>
+
+          {% else %}
+
+          <span class="product-no-category">
+
+            Este produto ainda não está associado
+            a nenhuma categoria.
+
+          </span>
+
+          {% endif %}
+
+        </div>
+
+
+        <!-- ==================================================
+                     AÇÕES
+                     ================================================== -->
+
+        <div class="product-actions">
+
+
+          {% if user.is_authenticated %}
+
+          <a href="{% url 'culturas:editar_produto' produto.pk %}" class="product-action product-action-primary">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <path d="M12 20h9"></path>
+
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+
+            </svg>
+
+            Editar produto
+
+          </a>
+
+
+          <a href="{% url 'culturas:eliminar_produto' produto.pk %}" class="product-action product-action-secondary">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <path d="M3 6h18"></path>
+
+              <path d="M8 6V4h8v2"></path>
+
+              <path d="M19 6l-1 14H6L5 6"></path>
+
+              <path d="M10 11v5"></path>
+
+              <path d="M14 11v5"></path>
+
+            </svg>
+
+            Eliminar
+
+          </a>
+
+          {% endif %}
+
+
+          <a href="{% url 'culturas:produtos' %}" class="product-action product-action-secondary">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <path d="M19 12H5"></path>
+
+              <path d="m12 19-7-7 7-7"></path>
+
+            </svg>
+
+            Ver todos os produtos
+
+          </a>
+
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================================================
+             DESCRIÇÃO COMPLETA
+             ================================================== -->
+
+    <section class="product-section product-animate">
+
+
+      <div class="product-section-header">
+
+        <span class="product-eyebrow">
+
+          Descrição
+
+        </span>
+
+
+        <h2>
+          Sobre este produto
+        </h2>
+
+      </div>
+
+
+      <div class="product-description-card">
+
+        {% if produto.descricao %}
+
+        <p>
+          {{ produto.descricao }}
+        </p>
+
+        {% else %}
+
+        <p>
+          Não existe uma descrição cadastrada
+          para este produto agrícola.
+        </p>
+
+        {% endif %}
+
+      </div>
+
+
+    </section>
+
+
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+
+<script>
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+      const animatedElements =
+        document.querySelectorAll(
+          ".product-animate"
+        );
+
+
+      /* ========================================================
+         ANIMAÇÕES
+         ======================================================== */
+
+      if (
+        "IntersectionObserver"
+        in window
+      ) {
+
+
+        const observer =
+          new IntersectionObserver(
+            function (
+              entries,
+              observerInstance
+            ) {
+
+
+              entries.forEach(
+                function (entry) {
+
+
+                  if (
+                    entry.isIntersecting
+                  ) {
+
+
+                    entry.target
+                      .classList
+                      .add(
+                        "visible"
+                      );
+
+
+                    observerInstance
+                      .unobserve(
+                        entry.target
+                      );
+
+                  }
+
+                }
+              );
+
+            },
+            {
+              threshold: .10
+            }
+          );
+
+
+        animatedElements.forEach(
+          function (element) {
+
+            observer.observe(
+              element
+            );
+
+          }
+        );
+
+
+      } else {
+
+
+        animatedElements.forEach(
+          function (element) {
+
+            element.classList.add(
+              "visible"
+            );
+
+          }
+        );
+
+      }
+
+    }
+  );
+
+</script>
+
+{% endblock %}

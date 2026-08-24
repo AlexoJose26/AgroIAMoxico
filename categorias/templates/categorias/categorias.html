@@ -1,0 +1,1267 @@
+{% extends "base.html" %}
+
+{% block title %}
+Categorias Agrícolas | AgroIA Moxico
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+  /* ============================================================
+     AGROIA MOXICO
+     GESTÃO DE CATEGORIAS AGRÍCOLAS
+  ============================================================ */
+
+  .categories-page {
+    min-height: 100vh;
+    padding: 95px 0 90px;
+
+    background:
+      radial-gradient(circle at 5% 5%,
+        rgba(23, 107, 69, .09),
+        transparent 30%),
+      radial-gradient(circle at 95% 85%,
+        rgba(217, 164, 65, .08),
+        transparent 28%),
+      linear-gradient(180deg,
+        #f8fbf9 0%,
+        #f5f9f6 100%);
+  }
+
+
+  /* ============================================================
+     CONTAINER
+  ============================================================ */
+
+  .categories-container {
+    width: min(1180px, calc(100% - 30px));
+    margin: 0 auto;
+  }
+
+
+  /* ============================================================
+     BOTÃO VOLTAR
+  ============================================================ */
+
+  .categories-back-wrapper {
+    margin-bottom: 28px;
+  }
+
+  .categories-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    min-height: 42px;
+    padding: 10px 15px;
+
+    background: rgba(255, 255, 255, .88);
+
+    border: 1px solid rgba(13, 77, 49, .10);
+    border-radius: 12px;
+
+    color: #52665c;
+
+    text-decoration: none;
+
+    font-size: .84rem;
+    font-weight: 800;
+
+    box-shadow:
+      0 6px 20px rgba(13, 77, 49, .05);
+
+    transition:
+      transform .22s ease,
+      color .22s ease,
+      background .22s ease,
+      box-shadow .22s ease,
+      border-color .22s ease;
+  }
+
+  .categories-back-btn i {
+    color: #176b45;
+
+    transition:
+      transform .22s ease;
+  }
+
+  .categories-back-btn:hover {
+    color: #176b45;
+
+    background: #fff;
+
+    border-color:
+      rgba(23, 107, 69, .18);
+
+    transform: translateX(-3px);
+
+    box-shadow:
+      0 10px 26px rgba(13, 77, 49, .08);
+  }
+
+  .categories-back-btn:hover i {
+    transform: translateX(-3px);
+  }
+
+
+  /* ============================================================
+     CABEÇALHO
+  ============================================================ */
+
+  .categories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    gap: 35px;
+
+    margin-bottom: 34px;
+  }
+
+  .categories-title {
+    min-width: 0;
+  }
+
+  .categories-title small {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 11px;
+
+    color: #176b45;
+
+    font-size: .78rem;
+    font-weight: 850;
+
+    text-transform: uppercase;
+    letter-spacing: .09em;
+  }
+
+  .categories-title small i {
+    font-size: .88rem;
+  }
+
+  .categories-title h1 {
+    margin: 0;
+
+    color: #0d4d31;
+
+    font-size: clamp(2rem, 4vw, 3.15rem);
+    line-height: 1.08;
+
+    font-weight: 900;
+
+    letter-spacing: -.04em;
+  }
+
+  .categories-title p {
+    max-width: 700px;
+
+    margin: 13px 0 0;
+
+    color: #68776f;
+
+    font-size: .96rem;
+    line-height: 1.75;
+  }
+
+
+  /* ============================================================
+     BOTÃO NOVA CATEGORIA
+  ============================================================ */
+
+  .category-create-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    min-height: 47px;
+
+    padding: 12px 20px;
+
+    border-radius: 14px;
+
+    background:
+      linear-gradient(135deg,
+        #176b45,
+        #0d4d31);
+
+    color: #fff;
+
+    text-decoration: none;
+
+    font-size: .87rem;
+    font-weight: 850;
+
+    white-space: nowrap;
+
+    box-shadow:
+      0 10px 26px rgba(23, 107, 69, .18);
+
+    transition:
+      transform .25s ease,
+      box-shadow .25s ease,
+      filter .25s ease;
+  }
+
+  .category-create-btn:hover {
+    color: #fff;
+
+    transform: translateY(-3px);
+
+    filter: brightness(1.05);
+
+    box-shadow:
+      0 16px 34px rgba(23, 107, 69, .25);
+  }
+
+
+  /* ============================================================
+     ESTATÍSTICAS
+  ============================================================ */
+
+  .categories-stats {
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 17px;
+
+    margin-bottom: 30px;
+  }
+
+  .category-stat {
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 118px;
+
+    padding: 22px 24px;
+
+    background:
+      linear-gradient(145deg,
+        rgba(255, 255, 255, .98),
+        rgba(248, 252, 249, .94));
+
+    border: 1px solid rgba(13, 77, 49, .08);
+
+    border-radius: 20px;
+
+    box-shadow:
+      0 9px 30px rgba(13, 77, 49, .055);
+
+    transition:
+      transform .25s ease,
+      box-shadow .25s ease;
+  }
+
+  .category-stat::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 55px;
+    height: 4px;
+
+    border-radius: 0 0 8px 0;
+
+    background:
+      linear-gradient(90deg,
+        #176b45,
+        #49a877);
+  }
+
+  .category-stat::after {
+    content: "";
+
+    position: absolute;
+
+    width: 100px;
+    height: 100px;
+
+    right: -42px;
+    bottom: -48px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(23, 107, 69, .045);
+  }
+
+  .category-stat:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+      0 16px 40px rgba(13, 77, 49, .09);
+  }
+
+  .category-stat span {
+    position: relative;
+
+    z-index: 1;
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #78877f;
+
+    font-size: .82rem;
+    font-weight: 700;
+  }
+
+  .category-stat strong {
+    position: relative;
+
+    z-index: 1;
+
+    display: block;
+
+    color: #0d4d31;
+
+    font-size: 2rem;
+    line-height: 1;
+
+    font-weight: 900;
+  }
+
+
+  /* ============================================================
+     CABEÇALHO DA LISTAGEM
+  ============================================================ */
+
+  .categories-list-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin: 8px 0 17px;
+  }
+
+  .categories-list-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+  }
+
+  .categories-list-title-icon {
+    width: 35px;
+    height: 35px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eaf7ef;
+
+    color: #176b45;
+
+    font-size: .85rem;
+  }
+
+  .categories-list-title h2 {
+    margin: 0;
+
+    color: #163e2d;
+
+    font-size: 1.05rem;
+
+    font-weight: 850;
+  }
+
+  .categories-count {
+    color: #84918b;
+
+    font-size: .78rem;
+
+    font-weight: 700;
+  }
+
+
+  /* ============================================================
+     GRELHA
+  ============================================================ */
+
+  .categories-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(auto-fill,
+        minmax(275px, 1fr));
+
+    gap: 20px;
+  }
+
+
+  /* ============================================================
+     CARD
+  ============================================================ */
+
+  .category-card {
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 24px;
+
+    background: rgba(255, 255, 255, .97);
+
+    border: 1px solid rgba(13, 77, 49, .08);
+
+    border-radius: 22px;
+
+    box-shadow:
+      0 12px 35px rgba(13, 77, 49, .065);
+
+    transition:
+      transform .3s ease,
+      box-shadow .3s ease,
+      border-color .3s ease;
+  }
+
+  .category-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 4px;
+
+    background:
+      linear-gradient(90deg,
+        #176b45,
+        #49a877,
+        #d9a441);
+
+    transform:
+      scaleX(0);
+
+    transform-origin: left;
+
+    transition:
+      transform .3s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-6px);
+
+    border-color:
+      rgba(23, 107, 69, .15);
+
+    box-shadow:
+      0 20px 48px rgba(13, 77, 49, .12);
+  }
+
+  .category-card:hover::before {
+    transform: scaleX(1);
+  }
+
+
+  /* ============================================================
+     TOPO DO CARD
+  ============================================================ */
+
+  .category-card-top {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 17px;
+  }
+
+  .category-icon {
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    background:
+      linear-gradient(135deg,
+        #eaf7ef,
+        #dff2e7);
+
+    color: #176b45;
+
+    font-size: 1.35rem;
+
+    box-shadow:
+      inset 0 0 0 1px rgba(23, 107, 69, .06);
+  }
+
+
+  /* ============================================================
+     ESTADO
+  ============================================================ */
+
+  .category-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: .66rem;
+
+    font-weight: 850;
+
+    white-space: nowrap;
+  }
+
+  .category-status.active {
+    background: #e8f7ee;
+
+    color: #176b45;
+  }
+
+  .category-status.inactive {
+    background: #f1f2f2;
+
+    color: #777;
+  }
+
+
+  /* ============================================================
+     CONTEÚDO
+  ============================================================ */
+
+  .category-card h3 {
+    margin: 0 0 9px;
+
+    color: #123e2c;
+
+    font-size: 1.18rem;
+
+    line-height: 1.3;
+
+    font-weight: 850;
+  }
+
+  .category-card p {
+    min-height: 56px;
+
+    margin: 0 0 20px;
+
+    color: #68766f;
+
+    font-size: .87rem;
+
+    line-height: 1.65;
+  }
+
+
+  /* ============================================================
+     PRODUTOS
+  ============================================================ */
+
+  .category-products {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 13px 0 17px;
+
+    border-top:
+      1px solid #edf2ef;
+
+    border-bottom:
+      1px solid #edf2ef;
+
+    color: #176b45;
+
+    font-size: .83rem;
+
+    font-weight: 800;
+  }
+
+  .category-products i {
+    width: 29px;
+    height: 29px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #eaf7ef;
+
+    font-size: .73rem;
+  }
+
+
+  /* ============================================================
+     AÇÕES
+  ============================================================ */
+
+  .category-actions {
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 9px;
+
+    margin-top: 18px;
+  }
+
+  .category-action {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    min-height: 40px;
+
+    padding: 9px 10px;
+
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    font-size: .78rem;
+
+    font-weight: 800;
+
+    transition:
+      transform .2s ease,
+      filter .2s ease,
+      box-shadow .2s ease;
+  }
+
+  .category-action:hover {
+    transform: translateY(-2px);
+
+    filter: brightness(.98);
+  }
+
+  .category-action.view {
+    background: #eaf7ef;
+
+    color: #176b45;
+  }
+
+  .category-action.view:hover {
+    box-shadow:
+      0 7px 16px rgba(23, 107, 69, .10);
+  }
+
+
+  /* ============================================================
+     EDITAR
+  ============================================================ */
+
+  .category-action.edit {
+    background: #f5f2e9;
+
+    color: #876b1c;
+  }
+
+  .category-action.edit:hover {
+    background: #f1ecdc;
+  }
+
+
+  /* ============================================================
+     DIAGNÓSTICO
+  ============================================================ */
+
+  .category-action.diagnose {
+    grid-column: 1 / -1;
+
+    background:
+      linear-gradient(135deg,
+        #176b45,
+        #0d4d31);
+
+    color: #fff;
+
+    box-shadow:
+      0 7px 18px rgba(23, 107, 69, .14);
+  }
+
+  .category-action.diagnose:hover {
+    color: #fff;
+
+    filter: brightness(1.05);
+
+    box-shadow:
+      0 11px 25px rgba(23, 107, 69, .20);
+  }
+
+
+  /* ============================================================
+     ELIMINAR
+  ============================================================ */
+
+  .category-action.delete {
+    grid-column: 1 / -1;
+
+    background: #fff0f0;
+
+    color: #b33b3b;
+  }
+
+  .category-action.delete:hover {
+    background: #ffe7e7;
+  }
+
+
+  /* ============================================================
+     ESTADO VAZIO
+  ============================================================ */
+
+  .categories-empty {
+    display: flex;
+
+    align-items: center;
+
+    flex-direction: column;
+
+    padding: 75px 25px;
+
+    text-align: center;
+
+    background:
+      rgba(255, 255, 255, .94);
+
+    border: 1px dashed #cbd9d1;
+
+    border-radius: 24px;
+
+    box-shadow:
+      0 10px 30px rgba(13, 77, 49, .04);
+  }
+
+  .categories-empty-icon {
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 18px;
+
+    border-radius: 22px;
+
+    background: #eaf7ef;
+
+    color: #176b45;
+
+    font-size: 2rem;
+  }
+
+  .categories-empty h3 {
+    margin: 0 0 8px;
+
+    color: #0d4d31;
+
+    font-size: 1.3rem;
+
+    font-weight: 850;
+  }
+
+  .categories-empty p {
+    max-width: 480px;
+
+    margin: 0 0 24px;
+
+    color: #718078;
+
+    line-height: 1.65;
+  }
+
+
+  /* ============================================================
+     RESPONSIVIDADE
+  ============================================================ */
+
+  @media (max-width: 900px) {
+
+    .categories-header {
+      align-items: flex-start;
+
+      flex-direction: column;
+    }
+
+    .category-create-btn {
+      width: 100%;
+    }
+  }
+
+
+  @media (max-width: 768px) {
+
+    .categories-page {
+      padding-top: 85px;
+    }
+
+    .categories-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .categories-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .categories-list-header {
+      align-items: flex-start;
+
+      flex-direction: column;
+
+      gap: 8px;
+    }
+  }
+
+
+  @media (max-width: 480px) {
+
+    .categories-container {
+      width: min(100%,
+          calc(100% - 20px));
+    }
+
+    .categories-page {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .categories-title h1 {
+      font-size: 2rem;
+    }
+
+    .category-card {
+      padding: 20px;
+    }
+
+    .category-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .category-action.diagnose,
+    .category-action.delete {
+      grid-column: auto;
+    }
+
+    .categories-back-btn {
+      width: 100%;
+
+      justify-content: center;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="categories-page">
+
+  <div class="categories-container">
+
+
+    <!-- ========================================================
+         VOLTAR PARA PRODUTOS
+    ========================================================= -->
+
+    <div class="categories-back-wrapper">
+
+      <a href="{% url 'culturas:produtos' %}" class="categories-back-btn">
+
+        <i class="fas fa-arrow-left"></i>
+
+        Voltar para Produtos
+
+      </a>
+
+    </div>
+
+
+    <!-- ========================================================
+         CABEÇALHO
+    ========================================================= -->
+
+    <div class="categories-header">
+
+      <div class="categories-title">
+
+        <small>
+
+          <i class="fas fa-layer-group"></i>
+
+          Gestão agrícola
+
+        </small>
+
+        <h1>
+
+          Categorias Agrícolas
+
+        </h1>
+
+        <p>
+
+          Organize os produtos agrícolas do
+          AgroIA Moxico através de categorias
+          claras, inteligentes e fáceis de gerir.
+
+        </p>
+
+      </div>
+
+
+      <!-- NOVA CATEGORIA -->
+
+      <a href="{% url 'categoria_criar' %}" class="category-create-btn">
+
+        <i class="fas fa-plus"></i>
+
+        Nova categoria
+
+      </a>
+
+    </div>
+
+
+    <!-- ========================================================
+         ESTATÍSTICAS
+    ========================================================= -->
+
+    <div class="categories-stats">
+
+      <div class="category-stat">
+
+        <span>
+          Total de categorias
+        </span>
+
+        <strong>
+          {{ total_categorias }}
+        </strong>
+
+      </div>
+
+
+      <div class="category-stat">
+
+        <span>
+          Categorias ativas
+        </span>
+
+        <strong>
+          {{ categorias_ativas }}
+        </strong>
+
+      </div>
+
+
+      <div class="category-stat">
+
+        <span>
+          Produtos classificados
+        </span>
+
+        <strong>
+          {{ total_produtos_classificados }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         LISTAGEM
+    ========================================================= -->
+
+    {% if categorias %}
+
+    <div class="categories-list-header">
+
+      <div class="categories-list-title">
+
+        <span class="categories-list-title-icon">
+
+          <i class="fas fa-th-large"></i>
+
+        </span>
+
+        <h2>
+          Categorias disponíveis
+        </h2>
+
+      </div>
+
+
+      <span class="categories-count">
+
+        {{ total_categorias }}
+
+        {% if total_categorias == 1 %}
+
+        categoria
+
+        {% else %}
+
+        categorias
+
+        {% endif %}
+
+      </span>
+
+    </div>
+
+
+    <!-- ========================================================
+         GRELHA
+    ========================================================= -->
+
+    <div class="categories-grid">
+
+      {% for categoria in categorias %}
+
+      <article class="category-card">
+
+
+        <!-- ====================================================
+             TOPO DO CARD
+        ===================================================== -->
+
+        <div class="category-card-top">
+
+          <div class="category-icon">
+
+            <i class="fas fa-seedling"></i>
+
+          </div>
+
+
+          {% if categoria.ativo %}
+
+          <span class="category-status active">
+
+            <i class="fas fa-check-circle"></i>
+
+            Ativa
+
+          </span>
+
+          {% else %}
+
+          <span class="category-status inactive">
+
+            <i class="fas fa-pause-circle"></i>
+
+            Inativa
+
+          </span>
+
+          {% endif %}
+
+        </div>
+
+
+        <!-- ====================================================
+             NOME
+        ===================================================== -->
+
+        <h3>
+
+          {{ categoria.nome }}
+
+        </h3>
+
+
+        <!-- ====================================================
+             DESCRIÇÃO
+        ===================================================== -->
+
+        <p>
+
+          {% if categoria.descricao %}
+
+          {{ categoria.descricao|truncatechars:120 }}
+
+          {% else %}
+
+          Nenhuma descrição adicionada.
+
+          {% endif %}
+
+        </p>
+
+
+        <!-- ====================================================
+             PRODUTOS
+        ===================================================== -->
+
+        <div class="category-products">
+
+          <i class="fas fa-box-open"></i>
+
+          {% if categoria.total_produtos == 0 %}
+
+          Nenhum produto
+
+          {% elif categoria.total_produtos == 1 %}
+
+          1 produto
+
+          {% else %}
+
+          {{ categoria.total_produtos }}
+          produtos
+
+          {% endif %}
+
+        </div>
+
+
+        <!-- ====================================================
+             AÇÕES
+        ===================================================== -->
+
+        <div class="category-actions">
+
+
+          <!-- VER -->
+
+          <a href="{% url 'categoria_detalhes' categoria.id %}" class="category-action view">
+
+            <i class="fas fa-eye"></i>
+
+            Ver detalhes
+
+          </a>
+
+
+          <!-- EDITAR -->
+
+          <a href="{% url 'categoria_editar' categoria.id %}" class="category-action edit">
+
+            <i class="fas fa-pen"></i>
+
+            Editar
+
+          </a>
+
+
+          <!-- DIAGNÓSTICO -->
+
+          {% if categoria.ativo %}
+
+          <a href="{% url 'diagnostico' %}?categoria={{ categoria.id }}" class="category-action diagnose">
+
+            <i class="fas fa-microscope"></i>
+
+            Diagnosticar esta categoria
+
+          </a>
+
+          {% endif %}
+
+
+          <!-- ELIMINAR -->
+
+          <a href="{% url 'categoria_eliminar' categoria.id %}" class="category-action delete">
+
+            <i class="fas fa-trash"></i>
+
+            Eliminar
+
+          </a>
+
+        </div>
+
+      </article>
+
+      {% endfor %}
+
+    </div>
+
+
+    <!-- ========================================================
+         ESTADO VAZIO
+    ========================================================= -->
+
+    {% else %}
+
+    <div class="categories-empty">
+
+      <div class="categories-empty-icon">
+
+        <i class="fas fa-layer-group"></i>
+
+      </div>
+
+      <h3>
+
+        Nenhuma categoria cadastrada
+
+      </h3>
+
+      <p>
+
+        Comece criando a primeira categoria agrícola
+        do AgroIA Moxico para organizar os seus produtos.
+
+      </p>
+
+
+      <a href="{% url 'categoria_criar' %}" class="category-create-btn">
+
+        <i class="fas fa-plus"></i>
+
+        Criar primeira categoria
+
+      </a>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+{% endblock %}

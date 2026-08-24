@@ -1,0 +1,2049 @@
+{% extends "base.html" %}
+
+{% block title %}
+Editar Perfil | AgroIA Moxico
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+  /* =========================================================
+   AGROIA MOXICO — EDITAR PERFIL
+========================================================= */
+
+  :root {
+    --edit-green: var(--primary, #176b45);
+    --edit-green-dark: #0d4d31;
+    --edit-green-light: #299c69;
+    --edit-gold: #d9a441;
+    --edit-text: var(--text, #1b2923);
+    --edit-muted: var(--text-light, #718078);
+    --edit-border: rgba(23, 107, 69, .10);
+  }
+
+
+  /* =========================================================
+   PÁGINA
+========================================================= */
+
+  .edit-profile-page {
+
+    position: relative;
+
+    min-height: calc(100vh - var(--nav-height));
+
+    padding: 45px 0 80px;
+
+    overflow: hidden;
+
+    background:
+      radial-gradient(circle at 5% 10%,
+        rgba(37, 151, 101, .12),
+        transparent 28%),
+
+      radial-gradient(circle at 95% 90%,
+        rgba(217, 164, 65, .10),
+        transparent 25%),
+
+      linear-gradient(180deg,
+        #f4f8f5 0%,
+        #ffffff 48%,
+        #f6faf7 100%);
+  }
+
+
+  /* decoração */
+
+  .edit-profile-page::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 430px;
+    height: 430px;
+
+    top: -260px;
+    right: -170px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(23, 107, 69, .045);
+
+    pointer-events: none;
+  }
+
+
+  .edit-profile-page::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 320px;
+    height: 320px;
+
+    left: -140px;
+    bottom: -210px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(217, 164, 65, .045);
+
+    pointer-events: none;
+  }
+
+
+  /* =========================================================
+   CONTAINER
+========================================================= */
+
+  .edit-profile-container {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: min(1080px, calc(100% - 30px));
+
+    margin: 0 auto;
+  }
+
+
+  /* =========================================================
+   CABEÇALHO
+========================================================= */
+
+  .edit-profile-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 25px;
+
+    margin-bottom: 28px;
+  }
+
+
+  .edit-profile-heading {
+
+    min-width: 0;
+  }
+
+
+  .edit-profile-eyebrow {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 9px;
+
+    color: var(--edit-green);
+
+    font-size: .68rem;
+
+    font-weight: 900;
+
+    letter-spacing: .13em;
+
+    text-transform: uppercase;
+  }
+
+
+  .edit-profile-eyebrow::before {
+
+    content: "";
+
+    width: 22px;
+    height: 3px;
+
+    border-radius: 20px;
+
+    background:
+      linear-gradient(90deg,
+        var(--edit-green),
+        var(--edit-green-light));
+  }
+
+
+  .edit-profile-header h1 {
+
+    margin: 0;
+
+    color: var(--edit-text);
+
+    font-size: clamp(1.8rem,
+        3vw,
+        2.45rem);
+
+    line-height: 1.1;
+
+    font-weight: 900;
+
+    letter-spacing: -.055em;
+  }
+
+
+  .edit-profile-header p {
+
+    max-width: 680px;
+
+    margin: 9px 0 0;
+
+    color: var(--edit-muted);
+
+    font-size: .9rem;
+
+    line-height: 1.65;
+  }
+
+
+  /* =========================================================
+   BOTÃO VOLTAR
+========================================================= */
+
+  .back-profile-button {
+
+    min-height: 48px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 0 16px;
+
+    flex-shrink: 0;
+
+    color: var(--edit-green);
+
+    background:
+      rgba(255, 255, 255, .88);
+
+    border:
+      1px solid rgba(23, 107, 69, .10);
+
+    border-radius: 13px;
+
+    box-shadow:
+      0 8px 22px rgba(23, 107, 69, .06);
+
+    font-size: .82rem;
+
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+      transform .2s ease,
+      background .2s ease,
+      box-shadow .2s ease;
+  }
+
+
+  .back-profile-button:hover {
+
+    color: var(--edit-green);
+
+    transform:
+      translateY(-3px);
+
+    background:
+      #ffffff;
+
+    box-shadow:
+      0 14px 30px rgba(23, 107, 69, .11);
+  }
+
+
+  .back-profile-button svg {
+
+    width: 17px;
+    height: 17px;
+  }
+
+
+  /* =========================================================
+   MENSAGENS
+========================================================= */
+
+  .edit-message {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 11px;
+
+    margin-bottom: 18px;
+
+    padding: 14px 16px;
+
+    border-radius: 15px;
+
+    font-size: .82rem;
+
+    line-height: 1.5;
+
+    animation:
+      editMessageEnter .35s ease both;
+  }
+
+
+  @keyframes editMessageEnter {
+
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+  .edit-message svg {
+
+    width: 19px;
+    height: 19px;
+
+    flex-shrink: 0;
+
+    margin-top: 1px;
+  }
+
+
+  .edit-message.success {
+
+    color: #216b46;
+
+    background:
+      linear-gradient(135deg,
+        #effaf3,
+        #f7fcf8);
+
+    border:
+      1px solid #ccebd8;
+  }
+
+
+  .edit-message.error {
+
+    color: #a33b3b;
+
+    background:
+      linear-gradient(135deg,
+        #fff5f5,
+        #fffafa);
+
+    border:
+      1px solid #f0cccc;
+  }
+
+
+  /* =========================================================
+   CARTÃO
+========================================================= */
+
+  .edit-profile-card {
+
+    overflow: hidden;
+
+    border:
+      1px solid rgba(23, 107, 69, .09);
+
+    border-radius: 27px;
+
+    background:
+      rgba(255, 255, 255, .94);
+
+    box-shadow:
+      0 25px 70px rgba(23, 107, 69, .09);
+
+    backdrop-filter:
+      blur(16px);
+
+    -webkit-backdrop-filter:
+      blur(16px);
+
+    animation:
+      editCardEnter .55s ease both;
+  }
+
+
+  @keyframes editCardEnter {
+
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+  /* =========================================================
+   CABEÇALHO DO CARTÃO
+========================================================= */
+
+  .form-card-header {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 25px 30px;
+
+    overflow: hidden;
+
+    color: white;
+
+    background:
+      linear-gradient(125deg,
+        #0d4d31 0%,
+        #176b45 48%,
+        #299c69 100%);
+  }
+
+
+  .form-card-header::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    right: -100px;
+    top: -180px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(255, 255, 255, .07);
+  }
+
+
+  .form-card-header::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 160px;
+    height: 160px;
+
+    left: 45%;
+    bottom: -130px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(217, 164, 65, .10);
+  }
+
+
+  .form-card-icon {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 49px;
+    height: 49px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border:
+      1px solid rgba(255, 255, 255, .17);
+
+    border-radius: 14px;
+
+    color: white;
+
+    background:
+      rgba(255, 255, 255, .12);
+
+    backdrop-filter:
+      blur(10px);
+  }
+
+
+  .form-card-icon svg {
+
+    width: 23px;
+    height: 23px;
+  }
+
+
+  .form-card-header>div:last-child {
+
+    position: relative;
+
+    z-index: 2;
+  }
+
+
+  .form-card-header h2 {
+
+    margin: 0 0 4px;
+
+    color: #ffffff;
+
+    font-size: 1.05rem;
+
+    font-weight: 900;
+  }
+
+
+  .form-card-header p {
+
+    margin: 0;
+
+    color:
+      rgba(255, 255, 255, .70);
+
+    font-size: .76rem;
+  }
+
+
+  /* =========================================================
+   CORPO
+========================================================= */
+
+  .form-card-body {
+
+    padding: 31px;
+  }
+
+
+  /* =========================================================
+   SEÇÕES
+========================================================= */
+
+  .form-section {
+
+    margin-bottom: 32px;
+  }
+
+
+  .form-section:last-child {
+
+    margin-bottom: 0;
+  }
+
+
+  .form-section-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+  }
+
+
+  .form-section-heading-icon {
+
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border:
+      1px solid rgba(23, 107, 69, .08);
+
+    border-radius: 13px;
+
+    color: var(--edit-green);
+
+    background:
+      linear-gradient(135deg,
+        rgba(23, 107, 69, .12),
+        rgba(41, 156, 105, .05));
+  }
+
+
+  .form-section-heading-icon svg {
+
+    width: 20px;
+    height: 20px;
+  }
+
+
+  .form-section-heading h3 {
+
+    margin: 0 0 3px;
+
+    color: var(--edit-text);
+
+    font-size: .95rem;
+
+    font-weight: 900;
+  }
+
+
+  .form-section-heading span {
+
+    color: var(--edit-muted);
+
+    font-size: .73rem;
+  }
+
+
+  /* =========================================================
+   GRID
+========================================================= */
+
+  .edit-form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(2,
+        minmax(0, 1fr));
+
+    gap: 19px;
+  }
+
+
+  .edit-form-field {
+
+    min-width: 0;
+  }
+
+
+  .edit-form-field.full {
+
+    grid-column: 1 / -1;
+  }
+
+
+  /* =========================================================
+   LABEL
+========================================================= */
+
+  .edit-form-label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 8px;
+
+    color: var(--edit-text);
+
+    font-size: .76rem;
+
+    font-weight: 850;
+  }
+
+
+  .edit-form-label .required {
+
+    color: #c55353;
+  }
+
+
+  /* =========================================================
+   CAMPOS
+========================================================= */
+
+  .edit-form-field input:not([type="checkbox"]):not([type="file"]),
+  .edit-form-field select,
+  .edit-form-field textarea {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    padding: 12px 14px;
+
+    border:
+      1px solid rgba(23, 107, 69, .11);
+
+    border-radius: 12px;
+
+    outline: none;
+
+    color: var(--edit-text);
+
+    background:
+      linear-gradient(145deg,
+        #ffffff,
+        #f9fcfa);
+
+    font-family: inherit;
+
+    font-size: .85rem;
+
+    transition:
+      border-color .2s ease,
+      box-shadow .2s ease,
+      background .2s ease,
+      transform .2s ease;
+  }
+
+
+  .edit-form-field textarea {
+
+    min-height: 120px;
+
+    resize: vertical;
+
+    line-height: 1.55;
+  }
+
+
+  .edit-form-field select {
+
+    cursor: pointer;
+  }
+
+
+  .edit-form-field input:not([type="checkbox"]):not([type="file"]):focus,
+  .edit-form-field select:focus,
+  .edit-form-field textarea:focus {
+
+    border-color:
+      var(--edit-green);
+
+    background:
+      #ffffff;
+
+    box-shadow:
+      0 0 0 4px rgba(23, 107, 69, .075);
+  }
+
+
+  /* =========================================================
+   FOTO — ÁREA PRINCIPAL
+========================================================= */
+
+  .photo-field {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 20px;
+
+    overflow: hidden;
+
+    border:
+      1px solid rgba(23, 107, 69, .10);
+
+    border-radius: 18px;
+
+    background:
+      linear-gradient(145deg,
+        #ffffff,
+        #f6faf8);
+
+    transition:
+      border-color .2s ease,
+      box-shadow .2s ease;
+  }
+
+
+  .photo-field:hover {
+
+    border-color:
+      rgba(23, 107, 69, .18);
+
+    box-shadow:
+      0 12px 30px rgba(23, 107, 69, .07);
+  }
+
+
+  /* =========================================================
+   AVATAR DE EDIÇÃO
+========================================================= */
+
+  .profile-photo-preview {
+
+    position: relative;
+
+    width: 108px;
+    height: 108px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+
+    border:
+      4px solid #ffffff;
+
+    border-radius: 29px;
+
+    color: white;
+
+    background:
+      linear-gradient(135deg,
+        var(--edit-green-light),
+        var(--edit-green-dark));
+
+    box-shadow:
+      0 12px 28px rgba(23, 107, 69, .18);
+  }
+
+
+  .profile-photo-preview img {
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    object-position: center;
+  }
+
+
+  .profile-photo-placeholder {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    color: white;
+
+    font-size: 2.1rem;
+
+    font-weight: 900;
+  }
+
+
+  .profile-photo-preview svg {
+
+    width: 42px;
+    height: 42px;
+  }
+
+
+  /* =========================================================
+   CONTEÚDO DA FOTO
+========================================================= */
+
+  .photo-content {
+
+    min-width: 0;
+
+    flex: 1;
+  }
+
+
+  .photo-title {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--edit-text);
+
+    font-size: .88rem;
+
+    font-weight: 900;
+  }
+
+
+  .photo-description {
+
+    display: block;
+
+    margin-bottom: 13px;
+
+    max-width: 520px;
+
+    color: var(--edit-muted);
+
+    font-size: .74rem;
+
+    line-height: 1.5;
+  }
+
+
+  /* =========================================================
+   INPUT FILE
+========================================================= */
+
+  .photo-input {
+
+    width: 100%;
+
+    color: var(--edit-muted);
+
+    font-size: .76rem;
+  }
+
+
+  .photo-input input[type="file"] {
+
+    width: 100%;
+
+    max-width: 430px;
+  }
+
+
+  .photo-input input[type="file"]::file-selector-button {
+
+    margin-right: 10px;
+
+    padding: 9px 13px;
+
+    border:
+      1px solid rgba(23, 107, 69, .10);
+
+    border-radius: 9px;
+
+    color: var(--edit-green);
+
+    background:
+      var(--primary-light, #eaf7ef);
+
+    font-family: inherit;
+
+    font-size: .74rem;
+
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+      background .2s ease,
+      transform .2s ease;
+  }
+
+
+  .photo-input input[type="file"]::file-selector-button:hover {
+
+    background:
+      #dff3e7;
+
+    transform:
+      translateY(-1px);
+  }
+
+
+  /* =========================================================
+   DIVISOR
+========================================================= */
+
+  .form-divider {
+
+    height: 1px;
+
+    margin: 7px 0 31px;
+
+    background:
+      rgba(23, 107, 69, .09);
+  }
+
+
+  /* =========================================================
+   HELP
+========================================================= */
+
+  .form-help {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color: #8b9992;
+
+    font-size: .69rem;
+
+    line-height: 1.4;
+  }
+
+
+  .field-errors {
+
+    margin-top: 6px;
+
+    color: #a33b3b;
+
+    font-size: .72rem;
+
+    line-height: 1.45;
+  }
+
+
+  .field-errors ul {
+
+    margin: 0;
+
+    padding-left: 17px;
+  }
+
+
+  /* =========================================================
+   AÇÕES
+========================================================= */
+
+  .form-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 21px 30px;
+
+    border-top:
+      1px solid rgba(23, 107, 69, .08);
+
+    background:
+      linear-gradient(180deg,
+        #fbfdfc,
+        #f7faf8);
+  }
+
+
+  .form-actions-info {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--edit-muted);
+
+    font-size: .71rem;
+  }
+
+
+  .form-actions-info svg {
+
+    width: 16px;
+    height: 16px;
+
+    flex-shrink: 0;
+
+    color: var(--edit-green);
+  }
+
+
+  .form-actions-buttons {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+  }
+
+
+  /* =========================================================
+   CANCELAR
+========================================================= */
+
+  .profile-cancel-button {
+
+    min-height: 46px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 17px;
+
+    border:
+      1px solid rgba(23, 107, 69, .10);
+
+    border-radius: 12px;
+
+    color: var(--edit-muted);
+
+    background: #ffffff;
+
+    font-size: .8rem;
+
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+      transform .2s ease,
+      color .2s ease,
+      border-color .2s ease,
+      box-shadow .2s ease;
+  }
+
+
+  .profile-cancel-button svg {
+
+    width: 17px;
+    height: 17px;
+  }
+
+
+  .profile-cancel-button:hover {
+
+    color: var(--edit-text);
+
+    transform:
+      translateY(-2px);
+
+    border-color:
+      rgba(23, 107, 69, .18);
+
+    box-shadow:
+      0 8px 20px rgba(23, 107, 69, .07);
+  }
+
+
+  /* =========================================================
+   GUARDAR
+========================================================= */
+
+  .profile-save-button {
+
+    min-height: 46px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 19px;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    color: white;
+
+    background:
+      linear-gradient(135deg,
+        var(--edit-green),
+        var(--edit-green-light));
+
+    font-family: inherit;
+
+    font-size: .8rem;
+
+    font-weight: 850;
+
+    cursor: pointer;
+
+    box-shadow:
+      0 9px 22px rgba(23, 107, 69, .18);
+
+    transition:
+      transform .2s ease,
+      box-shadow .2s ease,
+      filter .2s ease;
+  }
+
+
+  .profile-save-button svg {
+
+    width: 17px;
+    height: 17px;
+  }
+
+
+  .profile-save-button:hover {
+
+    transform:
+      translateY(-3px);
+
+    filter:
+      brightness(1.03);
+
+    box-shadow:
+      0 14px 30px rgba(23, 107, 69, .25);
+  }
+
+
+  .profile-save-button:active {
+
+    transform:
+      translateY(0);
+  }
+
+
+  /* =========================================================
+   ACESSIBILIDADE
+========================================================= */
+
+  .edit-form-field input:focus-visible,
+  .edit-form-field select:focus-visible,
+  .edit-form-field textarea:focus-visible,
+  .profile-save-button:focus-visible,
+  .profile-cancel-button:focus-visible,
+  .back-profile-button:focus-visible {
+
+    outline:
+      3px solid rgba(23, 107, 69, .14);
+
+    outline-offset: 2px;
+  }
+
+
+  /* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+  @media (max-width: 850px) {
+
+    .edit-profile-page {
+
+      padding:
+        32px 0 60px;
+    }
+
+    .edit-profile-header {
+
+      align-items:
+        flex-start;
+    }
+
+    .form-card-body {
+
+      padding: 25px;
+    }
+
+    .form-actions {
+
+      padding:
+        20px 25px;
+    }
+  }
+
+
+  @media (max-width: 700px) {
+
+    .edit-form-grid {
+
+      grid-template-columns:
+        1fr;
+    }
+
+    .edit-form-field.full {
+
+      grid-column:
+        auto;
+    }
+
+    .form-actions {
+
+      align-items:
+        stretch;
+
+      flex-direction:
+        column;
+    }
+
+    .form-actions-info {
+
+      justify-content:
+        center;
+    }
+
+    .form-actions-buttons {
+
+      width:
+        100%;
+    }
+
+    .profile-cancel-button,
+    .profile-save-button {
+
+      flex:
+        1;
+    }
+  }
+
+
+  @media (max-width: 600px) {
+
+    .edit-profile-container {
+
+      width:
+        min(100% - 24px,
+          1080px);
+    }
+
+    .edit-profile-header {
+
+      flex-direction:
+        column;
+
+      align-items:
+        stretch;
+    }
+
+    .back-profile-button {
+
+      width:
+        100%;
+    }
+
+    .edit-profile-card {
+
+      border-radius:
+        20px;
+    }
+
+    .form-card-header {
+
+      padding:
+        21px;
+    }
+
+    .form-card-body {
+
+      padding:
+        20px;
+    }
+
+    .photo-field {
+
+      flex-direction:
+        column;
+
+      text-align:
+        center;
+    }
+
+    .photo-content {
+
+      width:
+        100%;
+    }
+
+    .photo-description {
+
+      margin-left:
+        auto;
+
+      margin-right:
+        auto;
+    }
+
+    .photo-input {
+
+      text-align:
+        left;
+    }
+
+    .form-actions {
+
+      padding:
+        18px 20px;
+    }
+  }
+
+
+  @media (max-width: 420px) {
+
+    .form-actions-buttons {
+
+      flex-direction:
+        column;
+    }
+
+    .profile-cancel-button,
+    .profile-save-button {
+
+      width:
+        100%;
+    }
+
+    .form-card-header {
+
+      align-items:
+        flex-start;
+    }
+
+    .form-card-icon {
+
+      width:
+        43px;
+
+      height:
+        43px;
+    }
+
+    .profile-photo-preview {
+
+      width:
+        95px;
+
+      height:
+        95px;
+    }
+  }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="edit-profile-page">
+
+  <div class="edit-profile-container">
+
+    <!-- =================================================
+             CABEÇALHO
+        ================================================== -->
+
+    <header class="edit-profile-header">
+
+      <div class="edit-profile-heading">
+
+        <span class="edit-profile-eyebrow">
+          MINHA CONTA
+        </span>
+
+        <h1>
+          Editar perfil
+        </h1>
+
+        <p>
+          Atualize os seus dados pessoais, localização,
+          tipo de utilizador e foto de perfil.
+        </p>
+
+      </div>
+
+
+      <a href="{% url 'inicio:perfil' %}" class="back-profile-button">
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M19 12H5"></path>
+          <path d="m12 19-7-7 7-7"></path>
+        </svg>
+
+        Voltar ao perfil
+
+      </a>
+
+    </header>
+
+
+    <!-- =================================================
+             MENSAGENS
+        ================================================== -->
+
+    {% if messages %}
+
+    {% for message in messages %}
+
+    <div class="edit-message
+                    {% if message.tags == 'success' %}
+                        success
+                    {% else %}
+                        error
+                    {% endif %}">
+
+      {% if message.tags == 'success' %}
+
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M20 6 9 17l-5-5"></path>
+      </svg>
+
+      {% else %}
+
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 8v4"></path>
+        <path d="M12 16h.01"></path>
+      </svg>
+
+      {% endif %}
+
+      <span>
+        {{ message }}
+      </span>
+
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+
+    <!-- =================================================
+             CARTÃO
+        ================================================== -->
+
+    <section class="edit-profile-card">
+
+
+      <!-- =================================================
+                 CABEÇALHO
+            ================================================== -->
+
+      <div class="form-card-header">
+
+        <div class="form-card-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+            <path d="M18 14v5"></path>
+            <path d="M15.5 16.5h5"></path>
+          </svg>
+
+        </div>
+
+        <div>
+
+          <h2>
+            Personalizar o meu perfil
+          </h2>
+
+          <p>
+            As alterações serão refletidas no seu perfil.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+                 FORM
+            ================================================== -->
+
+      <form method="POST" enctype="multipart/form-data" novalidate>
+
+        {% csrf_token %}
+
+
+        <div class="form-card-body">
+
+
+          <!-- =================================================
+                         ERROS
+                    ================================================== -->
+
+          {% if user_form.non_field_errors %}
+
+          <div class="edit-message error">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 8v4"></path>
+              <path d="M12 16h.01"></path>
+            </svg>
+
+            <span>
+              {{ user_form.non_field_errors }}
+            </span>
+
+          </div>
+
+          {% endif %}
+
+
+          {% if perfil_form.non_field_errors %}
+
+          <div class="edit-message error">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 8v4"></path>
+              <path d="M12 16v.01"></path>
+            </svg>
+
+            <span>
+              {{ perfil_form.non_field_errors }}
+            </span>
+
+          </div>
+
+          {% endif %}
+
+
+          <!-- =================================================
+                         CONTA
+                    ================================================== -->
+
+          <section class="form-section">
+
+            <div class="form-section-heading">
+
+              <div class="form-section-heading-icon">
+
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="8" r="4"></circle>
+                  <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"></path>
+                </svg>
+
+              </div>
+
+              <div>
+
+                <h3>
+                  Informações da conta
+                </h3>
+
+                <span>
+                  Dados básicos da sua conta.
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="edit-form-grid">
+
+              {% for field in user_form %}
+
+              <div class="
+                                        edit-form-field
+                                        {% if field.name == 'email' %}
+                                            full
+                                        {% endif %}
+                                    ">
+
+                <label class="edit-form-label" for="{{ field.id_for_label }}">
+
+                  {{ field.label }}
+
+                  {% if field.field.required %}
+                  <span class="required">*</span>
+                  {% endif %}
+
+                </label>
+
+
+                {{ field }}
+
+
+                {% if field.help_text %}
+
+                <small class="form-help">
+                  {{ field.help_text|safe }}
+                </small>
+
+                {% endif %}
+
+
+                {% if field.errors %}
+
+                <div class="field-errors">
+                  {{ field.errors }}
+                </div>
+
+                {% endif %}
+
+              </div>
+
+              {% endfor %}
+
+            </div>
+
+          </section>
+
+
+          <div class="form-divider"></div>
+
+
+          <!-- =================================================
+                         PERFIL
+                    ================================================== -->
+
+          <section class="form-section">
+
+            <div class="form-section-heading">
+
+              <div class="form-section-heading-icon">
+
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                  <circle cx="12" cy="10" r="2.5"></circle>
+                </svg>
+
+              </div>
+
+              <div>
+
+                <h3>
+                  Informações pessoais
+                </h3>
+
+                <span>
+                  Personalize a sua experiência no AgroIA Moxico.
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="edit-form-grid">
+
+              {% for field in perfil_form %}
+
+              <div class="
+                                        edit-form-field
+
+                                        {% if field.name == 'foto' or field.name == 'biografia' %}
+                                            full
+                                        {% endif %}
+                                    ">
+
+                <label class="edit-form-label" for="{{ field.id_for_label }}">
+
+                  {{ field.label }}
+
+                  {% if field.field.required %}
+                  <span class="required">*</span>
+                  {% endif %}
+
+                </label>
+
+
+                {% if field.name == 'foto' %}
+
+
+                <!-- =================================
+                                             FOTO
+                                        ================================== -->
+
+                <div class="photo-field">
+
+
+                  <div class="profile-photo-preview" id="profilePhotoPreview">
+
+                    {% if perfil and perfil.foto %}
+
+                    <img src="{{ perfil.foto.url }}" alt="Foto atual de {{ user.username }}" id="profilePhotoImage">
+
+                    {% else %}
+
+                    <span class="profile-photo-placeholder" id="profilePhotoPlaceholder">
+
+                      {% if user.first_name %}
+                      {{ user.first_name|first|upper }}
+                      {% else %}
+                      {{ user.username|first|upper }}
+                      {% endif %}
+
+                    </span>
+
+                    {% endif %}
+
+                  </div>
+
+
+                  <div class="photo-content">
+
+                    <span class="photo-title">
+                      Foto de perfil
+                    </span>
+
+                    <span class="photo-description">
+                      Escolha uma imagem para personalizar
+                      o seu perfil. A nova imagem será
+                      mostrada imediatamente.
+                    </span>
+
+
+                    <div class="photo-input">
+
+                      {{ field }}
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                {% else %}
+
+                {{ field }}
+
+                {% endif %}
+
+
+                {% if field.help_text %}
+
+                <small class="form-help">
+                  {{ field.help_text|safe }}
+                </small>
+
+                {% endif %}
+
+
+                {% if field.errors %}
+
+                <div class="field-errors">
+                  {{ field.errors }}
+                </div>
+
+                {% endif %}
+
+              </div>
+
+              {% endfor %}
+
+            </div>
+
+          </section>
+
+        </div>
+
+
+        <!-- =================================================
+                     AÇÕES
+                ================================================== -->
+
+        <div class="form-actions">
+
+
+          <div class="form-actions-info">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 11v5"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+
+            <span>
+              As alterações serão guardadas na sua conta.
+            </span>
+
+          </div>
+
+
+          <div class="form-actions-buttons">
+
+
+            <a href="{% url 'inicio:perfil' %}" class="profile-cancel-button">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+
+              Cancelar
+
+            </a>
+
+
+            <button type="submit" class="profile-save-button" id="saveProfileButton">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"></path>
+                <path d="M17 21v-8H7v8"></path>
+                <path d="M7 3v5h8"></path>
+              </svg>
+
+              <span>
+                Guardar alterações
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     PREVIEW DA FOTO
+========================================================= -->
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const photoInput = document.querySelector(
+      '#id_foto'
+    );
+
+    const preview = document.querySelector(
+      '#profilePhotoPreview'
+    );
+
+    const saveButton = document.querySelector(
+      '#saveProfileButton'
+    );
+
+
+    /* =============================================
+       PREVIEW DA FOTO
+    ============================================== */
+
+    if (photoInput && preview) {
+
+      photoInput.addEventListener(
+        "change",
+        function () {
+
+          const file =
+            this.files &&
+            this.files[0];
+
+
+          if (!file) {
+            return;
+          }
+
+
+          if (!file.type.startsWith("image/")) {
+
+            this.value = "";
+
+            return;
+          }
+
+
+          const reader =
+            new FileReader();
+
+
+          reader.onload =
+            function (event) {
+
+              preview.innerHTML = `
+                            <img
+                                src="${event.target.result}"
+                                alt="Pré-visualização da nova foto"
+                                style="
+                                    width:100%;
+                                    height:100%;
+                                    object-fit:cover;
+                                    object-position:center;
+                                    display:block;
+                                "
+                            >
+                        `;
+
+            };
+
+
+          reader.readAsDataURL(file);
+
+        }
+      );
+
+    }
+
+
+    /* =============================================
+       ESTADO DO BOTÃO AO GUARDAR
+    ============================================== */
+
+    const form =
+      document.querySelector(
+        '.edit-profile-card form'
+      );
+
+
+    if (form && saveButton) {
+
+      form.addEventListener(
+        "submit",
+        function () {
+
+          saveButton.disabled = true;
+
+          saveButton.style.opacity = ".75";
+
+          saveButton.style.cursor =
+            "wait";
+
+          const text =
+            saveButton.querySelector("span");
+
+
+          if (text) {
+
+            text.textContent =
+              "A guardar...";
+
+          }
+
+        }
+      );
+
+    }
+
+  });
+
+</script>
+
+{% endblock %}
