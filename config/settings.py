@@ -2,34 +2,15 @@ from pathlib import Path
 import os
 
 
-# ============================================================
-# BASE DO PROJETO
-# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# ============================================================
-# SEGURANÇA
-# ============================================================
-
-# Em produção, configure DJANGO_SECRET_KEY na Vercel.
-# Em desenvolvimento, utiliza a chave abaixo como fallback.
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "django-insecure-dev-key-change-this"
 )
 
 
-# ============================================================
-# DEBUG
-# ============================================================
-
-# Localmente:
-# DEBUG=True
-#
-# Na Vercel:
-# DEBUG=False
 
 DEBUG = os.environ.get(
     "DEBUG",
@@ -37,18 +18,6 @@ DEBUG = os.environ.get(
 ).lower() == "true"
 
 
-# ============================================================
-# HOSTS PERMITIDOS
-# ============================================================
-
-# Desenvolvimento:
-# 127.0.0.1,localhost
-#
-# Produção:
-# agroia-moxico.vercel.app
-#
-# A variável ALLOWED_HOSTS na Vercel pode conter vários hosts
-# separados por vírgula.
 
 ALLOWED_HOSTS = [
     host.strip()
@@ -59,16 +28,7 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
-
-# ============================================================
-# CONFIGURAÇÃO DO DJANGO
-# ============================================================
-
 INSTALLED_APPS = [
-
-    # --------------------------------------------------------
-    # Django
-    # --------------------------------------------------------
 
     "django.contrib.admin",
     "django.contrib.auth",
@@ -77,20 +37,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # --------------------------------------------------------
-    # AgroIA Moxico
-    # --------------------------------------------------------
-
     "inicio",
     "produtos",
     "categorias",
     "diagnostico",
 ]
 
-
-# ============================================================
-# MIDDLEWARE
-# ============================================================
 
 MIDDLEWARE = [
 
@@ -110,33 +62,21 @@ MIDDLEWARE = [
 ]
 
 
-# ============================================================
-# CONFIGURAÇÃO PRINCIPAL DE URLS
-# ============================================================
-
 ROOT_URLCONF = "config.urls"
 
 
-# ============================================================
-# TEMPLATES
-# ============================================================
 
 TEMPLATES = [
 
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
 
-        # ----------------------------------------------------
-        # Templates globais
-        # ----------------------------------------------------
 
         "DIRS": [
             BASE_DIR / "templates",
         ],
 
-        # ----------------------------------------------------
-        # Permite procurar templates dentro das aplicações
-        # ----------------------------------------------------
+
 
         "APP_DIRS": True,
 
@@ -156,33 +96,8 @@ TEMPLATES = [
 ]
 
 
-# ============================================================
-# WSGI
-# ============================================================
-
 WSGI_APPLICATION = "config.wsgi.application"
 
-
-# ============================================================
-# BASE DE DADOS
-# ============================================================
-
-# O projeto utiliza SQLite localmente.
-#
-# Quando DATABASE_URL estiver configurada, utiliza PostgreSQL.
-#
-# Isto permite:
-#
-# Desenvolvimento:
-#     SQLite
-#
-# Produção:
-#     PostgreSQL
-#
-# Para PostgreSQL será necessário instalar:
-#
-#     dj-database-url
-#     psycopg[binary]
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -218,11 +133,6 @@ else:
         }
     }
 
-
-# ============================================================
-# VALIDAÇÃO DE PASSWORD
-# ============================================================
-
 AUTH_PASSWORD_VALIDATORS = [
 
     {
@@ -251,58 +161,27 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# ============================================================
-# IDIOMA
-# ============================================================
-
 LANGUAGE_CODE = "pt-pt"
 
-
-# ============================================================
-# FUSO HORÁRIO
-# ============================================================
 
 TIME_ZONE = "Africa/Luanda"
 
 
-# ============================================================
-# INTERNACIONALIZAÇÃO
-# ============================================================
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# ============================================================
-# FICHEIROS ESTÁTICOS
-# ============================================================
-
 STATIC_URL = "/static/"
 
-
-# ------------------------------------------------------------
-# Diretório de arquivos estáticos durante o desenvolvimento.
-# ------------------------------------------------------------
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-
-# ------------------------------------------------------------
-# Diretório utilizado pelo collectstatic.
-# ------------------------------------------------------------
-
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
-# ------------------------------------------------------------
-# ManifestStaticFilesStorage
-#
-# Em produção, o Django pode utilizar o manifesto dos
-# arquivos estáticos.
-# ------------------------------------------------------------
 
 if not DEBUG:
 
@@ -321,18 +200,9 @@ if not DEBUG:
     }
 
 
-# ============================================================
-# FICHEIROS MEDIA
-# ============================================================
-
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = BASE_DIR / "media"
-
-
-# ============================================================
-# AUTENTICAÇÃO
-# ============================================================
 
 LOGIN_URL = "/login/"
 
@@ -341,40 +211,16 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 
-# ============================================================
-# E-MAIL
-# ============================================================
-
-# ------------------------------------------------------------
-# Desenvolvimento
-# ------------------------------------------------------------
-#
-# Os e-mails são apresentados no terminal.
-#
-# Em produção, podemos posteriormente configurar SMTP ou outro
-# serviço de e-mail através de variáveis de ambiente.
-# ------------------------------------------------------------
-
 EMAIL_BACKEND = (
     "django.core.mail.backends.console.EmailBackend"
 )
 
 
-# ============================================================
-# SESSÕES
-# ============================================================
-
-# 2 semanas
 SESSION_COOKIE_AGE = 1209600
 
 
-# Mantém a sessão mesmo depois de fechar o navegador.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-
-# ============================================================
-# COOKIES DE SESSÃO
-# ============================================================
 
 if not DEBUG:
 
@@ -385,24 +231,8 @@ if not DEBUG:
     SESSION_COOKIE_SAMESITE = "Lax"
 
 
-# ============================================================
-# CSRF
-# ============================================================
-
 CSRF_COOKIE_HTTPONLY = False
 
-
-# ------------------------------------------------------------
-# Em produção, configure:
-#
-# CSRF_TRUSTED_ORIGINS
-#
-# através da variável:
-#
-# CSRF_TRUSTED_ORIGINS=https://agroia-moxico.vercel.app
-#
-# Vários endereços podem ser separados por vírgula.
-# ------------------------------------------------------------
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
@@ -414,11 +244,6 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-# ============================================================
-# SEGURANÇA HTTPS
-# ============================================================
-
-# Na Vercel o HTTPS é utilizado em produção.
 
 if not DEBUG:
 
@@ -436,29 +261,14 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = False
 
 
-# ============================================================
-# SEGURANÇA DO NAVEGADOR
-# ============================================================
 
 X_FRAME_OPTIONS = "DENY"
 
 
-# ============================================================
-# CONTENT TYPE
-# ============================================================
-
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 
-# ============================================================
-# REFERRER POLICY
-# ============================================================
-
 SECURE_REFERRER_POLICY = "same-origin"
 
-
-# ============================================================
-# CHAVE PRIMÁRIA PADRÃO
-# ============================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
