@@ -1,91 +1,193 @@
 {% extends "base.html" %}
 
 {% block title %}
-Resultado do Diagnóstico | AgroIA Moxico
+Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
 {% endblock %}
-
 
 {% block extra_css %}
 
 <style>
-
+  /* ============================================================
+   AGROIA MOXICO
+   DETALHES DO DIAGNÓSTICO
+   ============================================================ */
 
   :root {
     --ai-green: #176b45;
     --ai-green-dark: #0d4d31;
     --ai-green-light: #eaf7ef;
+    --ai-green-soft: #f5fbf7;
     --ai-gold: #d9a441;
+    --ai-blue: #2874a6;
     --ai-danger: #c0392b;
     --ai-warning: #d68910;
-    --ai-blue: #2874a6;
     --ai-text: #1f2937;
     --ai-muted: #6b7280;
     --ai-border: #e5e7eb;
-    --ai-bg: #f5f7f6;
+    --ai-bg: #f4f7f5;
     --ai-white: #ffffff;
-    --ai-radius: 18px;
-    --ai-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+    --ai-radius: 20px;
+    --ai-shadow: 0 14px 40px rgba(0, 0, 0, .07);
   }
 
 
+  /* ============================================================
+   PÁGINA
+   ============================================================ */
+
   .diagnostico-detalhe {
-    background: var(--ai-bg);
     min-height: calc(100vh - 68px);
-    padding: 30px 20px 70px;
+    padding: 30px 20px 90px;
+
+    background:
+      radial-gradient(circle at 8% 0%,
+        rgba(23, 107, 69, .09),
+        transparent 28%),
+      radial-gradient(circle at 95% 8%,
+        rgba(217, 164, 65, .08),
+        transparent 25%),
+      linear-gradient(180deg,
+        #f8fbf9 0%,
+        #f3f7f5 100%);
   }
 
   .diagnostico-container {
-    max-width: 1180px;
+    width: 100%;
+    max-width: 1240px;
     margin: 0 auto;
   }
 
 
+  /* ============================================================
+   ANIMAÇÕES
+   ============================================================ */
 
-  .back-navigation {
-    margin-bottom: 22px;
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  .btn-back {
+  @keyframes fadeRight {
+    from {
+      opacity: 0;
+      transform: translateX(-18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pulseGreen {
+
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(23, 107, 69, .18);
+    }
+
+    50% {
+      box-shadow: 0 0 0 9px rgba(23, 107, 69, 0);
+    }
+  }
+
+  @keyframes floatIcon {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes scanLine {
+    0% {
+      top: 0%;
+      opacity: 0;
+    }
+
+    15% {
+      opacity: .7;
+    }
+
+    85% {
+      opacity: .7;
+    }
+
+    100% {
+      top: 100%;
+      opacity: 0;
+    }
+  }
+
+  @keyframes confidenceGrow {
+    from {
+      width: 0;
+    }
+  }
+
+  .fade-up {
+    animation: fadeUp .65s ease both;
+  }
+
+  .fade-right {
+    animation: fadeRight .6s ease both;
+  }
+
+
+  /* ============================================================
+   VOLTAR
+   ============================================================ */
+
+  .back-wrapper {
+    margin-bottom: 20px;
+  }
+
+  .back-button {
     display: inline-flex;
     align-items: center;
     gap: 9px;
 
-    padding: 10px 16px;
+    min-height: 42px;
+    padding: 0 15px;
 
-    background: var(--ai-white);
     color: var(--ai-green-dark);
+    background: rgba(255, 255, 255, .94);
 
     border: 1px solid var(--ai-border);
-    border-radius: 11px;
+    border-radius: 12px;
 
     text-decoration: none;
 
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: .85rem;
+    font-weight: 800;
 
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .05);
 
-    cursor: pointer;
-
-    transition:
-      transform 0.2s ease,
-      background 0.2s ease,
-      color 0.2s ease,
-      box-shadow 0.2s ease;
+    transition: .25s ease;
   }
 
-  .btn-back i {
-    font-size: 0.85rem;
-  }
-
-  .btn-back:hover {
-    transform: translateX(-3px);
-    background: var(--ai-green-light);
+  .back-button:hover {
+    transform: translateX(-4px);
     color: var(--ai-green);
-    box-shadow: 0 7px 18px rgba(23, 107, 69, 0.10);
+    background: var(--ai-green-light);
+    border-color: #cde4d6;
   }
 
 
+  /* ============================================================
+   CABEÇALHO
+   ============================================================ */
 
   .page-header {
     display: flex;
@@ -93,7 +195,7 @@ Resultado do Diagnóstico | AgroIA Moxico
     justify-content: space-between;
 
     gap: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 
     flex-wrap: wrap;
   }
@@ -102,24 +204,36 @@ Resultado do Diagnóstico | AgroIA Moxico
     display: flex;
     align-items: center;
     gap: 15px;
+
+    min-width: 0;
   }
 
   .header-icon {
-    width: 54px;
-    height: 54px;
-
-    flex-shrink: 0;
-
-    border-radius: 16px;
+    width: 58px;
+    height: 58px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: var(--ai-green-light);
-    color: var(--ai-green);
+    flex-shrink: 0;
 
-    font-size: 24px;
+    border-radius: 17px;
+
+    color: white;
+
+    background:
+      linear-gradient(135deg,
+        var(--ai-green),
+        var(--ai-green-dark));
+
+    font-size: 23px;
+
+    box-shadow:
+      0 10px 25px rgba(23, 107, 69, .20);
+
+    animation:
+      floatIcon 3s ease-in-out infinite;
   }
 
   .page-header h1 {
@@ -127,8 +241,12 @@ Resultado do Diagnóstico | AgroIA Moxico
 
     color: var(--ai-green-dark);
 
-    font-size: clamp(1.7rem, 3vw, 2.3rem);
-    font-weight: 800;
+    font-size:
+      clamp(1.65rem, 3vw, 2.3rem);
+
+    font-weight: 900;
+
+    letter-spacing: -.035em;
   }
 
   .page-header p {
@@ -136,14 +254,19 @@ Resultado do Diagnóstico | AgroIA Moxico
 
     color: var(--ai-muted);
 
-    font-size: 0.95rem;
+    font-size: .9rem;
   }
 
 
+  /* ============================================================
+   AÇÕES
+   ============================================================ */
 
   .header-actions {
     display: flex;
-    gap: 10px;
+    align-items: center;
+    gap: 9px;
+
     flex-wrap: wrap;
   }
 
@@ -154,23 +277,20 @@ Resultado do Diagnóstico | AgroIA Moxico
 
     gap: 8px;
 
-    padding: 11px 17px;
+    min-height: 42px;
+    padding: 0 15px;
 
-    border-radius: 11px;
+    border-radius: 12px;
 
     text-decoration: none;
 
-    border: 1px solid transparent;
-
-    font-size: 0.9rem;
-    font-weight: 700;
-
-    cursor: pointer;
+    font-size: .83rem;
+    font-weight: 850;
 
     transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease,
-      background 0.2s ease;
+      transform .2s ease,
+      box-shadow .2s ease,
+      background .2s ease;
   }
 
   .btn:hover {
@@ -178,54 +298,279 @@ Resultado do Diagnóstico | AgroIA Moxico
   }
 
   .btn-primary {
-    background: var(--ai-green);
     color: white;
 
-    box-shadow: 0 6px 18px rgba(23, 107, 69, 0.18);
+    background: var(--ai-green);
+
+    box-shadow:
+      0 8px 20px rgba(23, 107, 69, .18);
   }
 
   .btn-primary:hover {
+    color: white;
     background: var(--ai-green-dark);
   }
 
   .btn-secondary {
-    background: white;
     color: var(--ai-green-dark);
 
-    border-color: var(--ai-border);
+    background: white;
+
+    border: 1px solid var(--ai-border);
   }
 
   .btn-secondary:hover {
+    color: var(--ai-green-dark);
     background: var(--ai-green-light);
   }
 
 
+  /* ============================================================
+   HERO DO PRODUTO
+   ============================================================ */
 
-  .result-card {
-    background: var(--ai-white);
-
-    border: 1px solid var(--ai-border);
-    border-radius: var(--ai-radius);
-
-    box-shadow: var(--ai-shadow);
-
+  .product-hero {
+    position: relative;
     overflow: hidden;
 
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap: 25px;
+
+    padding: 24px 27px;
+
     margin-bottom: 25px;
+
+    border-radius: 22px;
+
+    background:
+      linear-gradient(135deg,
+        #ffffff,
+        #f1faf4);
+
+    border: 1px solid #dcebe2;
+
+    box-shadow: var(--ai-shadow);
   }
 
-  .result-card-header {
-    padding: 22px 25px;
+  .product-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    right: -90px;
+    top: -110px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(23, 107, 69, .07);
+
+    pointer-events: none;
+  }
+
+  .product-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    left: 45%;
+    bottom: -110px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(217, 164, 65, .06);
+
+    pointer-events: none;
+  }
+
+  .product-hero-left {
+    position: relative;
+    z-index: 1;
 
     display: flex;
-    justify-content: space-between;
     align-items: center;
 
     gap: 15px;
 
-    flex-wrap: wrap;
+    min-width: 0;
+  }
 
-    border-bottom: 1px solid var(--ai-border);
+  .product-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 17px;
+
+    color: var(--ai-green);
+
+    background:
+      var(--ai-green-light);
+
+    font-size: 24px;
+  }
+
+  .product-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--ai-muted);
+
+    font-size: .67rem;
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: .08em;
+  }
+
+  .product-name {
+    display: block;
+
+    color: var(--ai-green-dark);
+
+    font-size:
+      clamp(1.1rem, 2vw, 1.4rem);
+
+    font-weight: 900;
+
+    word-break: break-word;
+  }
+
+  .product-description {
+    margin-top: 4px;
+
+    color: var(--ai-muted);
+
+    font-size: .8rem;
+  }
+
+  .product-hero-stats {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    flex-wrap: wrap;
+  }
+
+  .product-stat {
+    min-width: 105px;
+
+    padding: 11px 13px;
+
+    text-align: center;
+
+    background:
+      rgba(255, 255, 255, .75);
+
+    border: 1px solid var(--ai-border);
+
+    border-radius: 13px;
+  }
+
+  .product-stat strong {
+    display: block;
+
+    color: var(--ai-green-dark);
+
+    font-size: 1.05rem;
+    font-weight: 900;
+  }
+
+  .product-stat span {
+    color: var(--ai-muted);
+
+    font-size: .65rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+  }
+
+
+  /* ============================================================
+   CARD PRINCIPAL
+   ============================================================ */
+
+  .result-card {
+    overflow: hidden;
+
+    margin-bottom: 35px;
+
+    background: white;
+
+    border: 1px solid var(--ai-border);
+
+    border-radius: var(--ai-radius);
+
+    box-shadow: var(--ai-shadow);
+
+    animation:
+      fadeUp .7s ease both;
+  }
+
+  .result-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 19px 23px;
+
+    border-bottom:
+      1px solid var(--ai-border);
+
+    background:
+      linear-gradient(180deg,
+        #ffffff,
+        #fbfdfc);
+
+    flex-wrap: wrap;
+  }
+
+  .result-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .result-title-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    color: var(--ai-green);
+
+    background:
+      var(--ai-green-light);
   }
 
   .result-card-header h2 {
@@ -233,185 +578,381 @@ Resultado do Diagnóstico | AgroIA Moxico
 
     color: var(--ai-green-dark);
 
-    font-size: 1.2rem;
+    font-size: 1.05rem;
+    font-weight: 900;
   }
 
 
+  /* ============================================================
+   STATUS
+   ============================================================ */
 
   .status {
     display: inline-flex;
     align-items: center;
 
-    gap: 7px;
+    gap: 6px;
 
-    padding: 7px 12px;
+    padding: 7px 11px;
 
     border-radius: 999px;
 
-    font-size: 0.78rem;
-    font-weight: 800;
+    font-size: .72rem;
+    font-weight: 900;
   }
 
   .status-concluido {
-    background: #e8f7ee;
     color: #167143;
+    background: #e8f7ee;
   }
 
   .status-erro {
-    background: #fdecea;
     color: #a93226;
+    background: #fdecea;
   }
 
   .status-processando {
-    background: #fff5df;
     color: #9a6700;
+    background: #fff5df;
   }
 
   .status-pendente {
-    background: #eef2f7;
     color: #52606d;
+    background: #eef2f7;
   }
 
 
+  /* ============================================================
+   GRID PRINCIPAL
+   ============================================================ */
 
   .result-grid {
     display: grid;
 
-    grid-template-columns: 390px 1fr;
-
-    gap: 0;
+    grid-template-columns:
+      390px minmax(0, 1fr);
   }
 
 
-
+  /* ============================================================
+   IMAGEM
+   ============================================================ */
 
   .image-panel {
-    padding: 25px;
+    padding: 23px;
 
-    background: #f8faf9;
+    background:
+      linear-gradient(180deg,
+        #f8fbf9,
+        #f1f6f3);
 
-    border-right: 1px solid var(--ai-border);
+    border-right:
+      1px solid var(--ai-border);
+  }
+
+  .image-wrapper {
+    position: relative;
+    overflow: hidden;
+
+    border-radius: 17px;
+
+    background: #e8efeb;
+
+    border: 1px solid var(--ai-border);
+
+    box-shadow:
+      0 10px 25px rgba(0, 0, 0, .07);
   }
 
   .diagnostico-image {
+    display: block;
+
     width: 100%;
-    height: 390px;
+    height: 350px;
 
     object-fit: cover;
 
-    border-radius: 15px;
+    transition:
+      transform .5s ease;
+  }
 
-    display: block;
+  .image-wrapper:hover .diagnostico-image {
+    transform: scale(1.045);
+  }
 
-    border: 1px solid var(--ai-border);
+  .image-scan {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    height: 2px;
+
+    background:
+      linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, .9),
+        transparent);
+
+    animation:
+      scanLine 3.2s ease-in-out infinite;
+
+    pointer-events: none;
+  }
+
+  .image-overlay {
+    position: absolute;
+
+    left: 12px;
+    bottom: 12px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 10px;
+
+    color: white;
+
+    background:
+      rgba(13, 77, 49, .88);
+
+    border-radius: 9px;
+
+    font-size: .7rem;
+    font-weight: 850;
+
+    backdrop-filter:
+      blur(8px);
   }
 
   .image-caption {
-    margin-top: 12px;
+    margin-top: 11px;
 
     color: var(--ai-muted);
 
-    font-size: 0.82rem;
-    line-height: 1.5;
+    font-size: .75rem;
+
+    line-height: 1.55;
+  }
+
+  .image-empty {
+    min-height: 350px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    text-align: center;
+
+    background: #f8faf9;
+
+    border: 1px dashed #ccd9d1;
+
+    border-radius: 17px;
+
+    color: var(--ai-muted);
+  }
+
+  .image-empty i {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: var(--ai-green);
+
+    font-size: 32px;
+  }
+
+  .image-empty strong {
+    display: block;
+
+    color: var(--ai-green-dark);
+
+    margin-bottom: 5px;
+  }
+
+  .image-empty p {
+    margin: 0;
+
+    font-size: .78rem;
   }
 
 
+  /* ============================================================
+   PAINEL DE INFORMAÇÕES
+   ============================================================ */
 
   .info-panel {
-    padding: 28px;
+    padding: 27px;
+
+    min-width: 0;
   }
+
+
+  /* ============================================================
+   RESULTADO PRINCIPAL
+   ============================================================ */
+
+  .diagnosis-main {
+    position: relative;
+    overflow: hidden;
+
+    padding: 20px;
+
+    margin-bottom: 20px;
+
+    background:
+      linear-gradient(135deg,
+        #eaf7ef,
+        #f7fcf9);
+
+    border: 1px solid #cfe8d9;
+
+    border-radius: 15px;
+  }
+
+  .diagnosis-main::after {
+    content: "";
+
+    position: absolute;
+
+    width: 120px;
+    height: 120px;
+
+    right: -45px;
+    top: -55px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(23, 107, 69, .06);
+  }
+
+  .diagnosis-main-label {
+    position: relative;
+    z-index: 1;
+
+    margin-bottom: 6px;
+
+    color: var(--ai-green);
+
+    font-size: .68rem;
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: .08em;
+  }
+
+  .diagnosis-main h3 {
+    position: relative;
+    z-index: 1;
+
+    margin: 0;
+
+    color: var(--ai-green-dark);
+
+    font-size:
+      clamp(1.15rem, 2vw, 1.45rem);
+
+    font-weight: 900;
+
+    line-height: 1.35;
+  }
+
+
+  /* ============================================================
+   INFORMAÇÕES
+   ============================================================ */
 
   .info-grid {
     display: grid;
 
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
 
-    gap: 15px;
+    gap: 11px;
 
-    margin-bottom: 25px;
+    margin-bottom: 21px;
   }
 
   .info-item {
-    padding: 17px;
+    padding: 14px;
 
     background: #f8faf9;
+
+    border: 1px solid var(--ai-border);
+
+    border-radius: 12px;
+
+    transition:
+      transform .2s ease,
+      border-color .2s ease,
+      box-shadow .2s ease;
+  }
+
+  .info-item:hover {
+    transform: translateY(-2px);
+
+    border-color: #cfe3d7;
+
+    box-shadow:
+      0 7px 18px rgba(23, 107, 69, .06);
+  }
+
+  .info-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--ai-muted);
+
+    font-size: .65rem;
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: .06em;
+  }
+
+  .info-value {
+    display: block;
+
+    color: var(--ai-text);
+
+    font-size: .86rem;
+    font-weight: 800;
+
+    word-break: break-word;
+  }
+
+
+  /* ============================================================
+   CONFIANÇA
+   ============================================================ */
+
+  .confidence-box {
+    padding: 16px;
+
+    margin-bottom: 20px;
+
+    background: #fbfcfb;
 
     border: 1px solid var(--ai-border);
 
     border-radius: 13px;
   }
 
-  .info-label {
-    display: block;
-
-    color: var(--ai-muted);
-
-    font-size: 0.75rem;
-    font-weight: 700;
-
-    margin-bottom: 6px;
-
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
-  .info-value {
-    color: var(--ai-text);
-
-    font-size: 0.98rem;
-    font-weight: 700;
-
-    word-break: break-word;
-  }
-
-
-
-  .diagnosis-main {
-    padding: 20px;
-
-    border-radius: 15px;
-
-    background: var(--ai-green-light);
-
-    border: 1px solid #cfe8d9;
-
-    margin-bottom: 20px;
-  }
-
-  .diagnosis-main-label {
-    color: var(--ai-green);
-
-    font-size: 0.75rem;
-    font-weight: 800;
-
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-
-    margin-bottom: 7px;
-  }
-
-  .diagnosis-main h3 {
-    margin: 0;
-
-    color: var(--ai-green-dark);
-
-    font-size: 1.45rem;
-  }
-
-
-
-
-  .confidence-box {
-    margin-bottom: 25px;
-  }
-
   .confidence-top {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
-    gap: 10px;
+    gap: 15px;
 
     margin-bottom: 8px;
   }
@@ -419,56 +960,65 @@ Resultado do Diagnóstico | AgroIA Moxico
   .confidence-top span:first-child {
     color: var(--ai-text);
 
-    font-weight: 700;
-
-    font-size: 0.9rem;
+    font-size: .78rem;
+    font-weight: 800;
   }
 
   .confidence-value {
     color: var(--ai-green);
 
+    font-size: .86rem;
     font-weight: 900;
   }
 
   .confidence-bar {
     width: 100%;
-
-    height: 11px;
-
-    background: #e8ecea;
-
-    border-radius: 999px;
+    height: 9px;
 
     overflow: hidden;
+
+    background: #e5ebe7;
+
+    border-radius: 999px;
   }
 
   .confidence-fill {
     height: 100%;
 
-    background: var(--ai-green);
+    width: 0;
+
+    background:
+      linear-gradient(90deg,
+        var(--ai-green-dark),
+        var(--ai-green));
 
     border-radius: inherit;
 
-    transition: width 0.8s ease;
+    animation:
+      confidenceGrow 1.2s ease forwards;
   }
 
 
+  /* ============================================================
+   SEÇÕES DE TEXTO
+   ============================================================ */
 
   .content-section {
-    margin-top: 25px;
+    margin-top: 20px;
   }
 
   .content-section h3 {
     display: flex;
     align-items: center;
 
-    gap: 9px;
+    gap: 8px;
 
-    margin: 0 0 10px;
+    margin: 0 0 8px;
 
     color: var(--ai-green-dark);
 
-    font-size: 1.05rem;
+    font-size: .95rem;
+    font-weight: 900;
   }
 
   .content-section h3 i {
@@ -480,69 +1030,61 @@ Resultado do Diagnóstico | AgroIA Moxico
 
     color: #4b5563;
 
-    line-height: 1.75;
+    font-size: .86rem;
 
-    font-size: 0.95rem;
+    line-height: 1.75;
 
     white-space: pre-line;
   }
 
 
+  /* ============================================================
+   ALERTAS
+   ============================================================ */
 
   .alert {
-    padding: 16px 18px;
+    padding: 14px 16px;
 
-    border-radius: 13px;
+    margin-top: 18px;
 
-    margin-top: 20px;
+    border-radius: 12px;
 
-    font-size: 0.9rem;
+    font-size: .83rem;
 
     line-height: 1.6;
   }
 
   .alert-warning {
+    color: #7a5700;
+
     background: #fff8e8;
 
     border: 1px solid #f2d28a;
-
-    color: #7a5700;
   }
-
-  .alert-danger {
-    background: #fdf0ef;
-
-    border: 1px solid #efc0bb;
-
-    color: #8e2f25;
-  }
-
-  .alert-success {
-    background: #edf9f1;
-
-    border: 1px solid #c7e7d2;
-
-    color: #176b45;
-  }
-
-
 
   .error-card {
-    margin-top: 20px;
+    margin-top: 18px;
 
-    padding: 20px;
+    padding: 17px;
 
     background: #fff4f3;
 
     border: 1px solid #f0c7c3;
 
-    border-radius: 14px;
+    border-radius: 13px;
   }
 
   .error-card h3 {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 0 0 7px;
+
     color: var(--ai-danger);
 
-    margin: 0 0 8px;
+    font-size: .93rem;
   }
 
   .error-card p {
@@ -550,14 +1092,538 @@ Resultado do Diagnóstico | AgroIA Moxico
 
     color: #7f2d24;
 
+    font-size: .83rem;
+
     line-height: 1.6;
 
     white-space: pre-line;
   }
 
 
+  /* ============================================================
+   PROCESSAMENTO
+   ============================================================ */
 
-  @media (max-width: 900px) {
+  .processing-card {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 17px;
+
+    margin-bottom: 20px;
+
+    color: #805d00;
+
+    background:
+      linear-gradient(135deg,
+        #fff9e9,
+        #fffdf7);
+
+    border: 1px solid #f0d99b;
+
+    border-radius: 14px;
+  }
+
+  .processing-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    color: #9a6700;
+
+    background: #fff0c7;
+  }
+
+  .processing-card strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #795900;
+
+    font-size: .86rem;
+  }
+
+  .processing-card p {
+    margin: 0;
+
+    color: #927329;
+
+    font-size: .76rem;
+  }
+
+
+  /* ============================================================
+   PENDENTE
+   ============================================================ */
+
+  .pending-card {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 17px;
+
+    margin-bottom: 20px;
+
+    color: #52606d;
+
+    background: #f5f7fa;
+
+    border: 1px solid #dfe4ea;
+
+    border-radius: 14px;
+  }
+
+  .pending-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    color: #52606d;
+
+    background: #e9edf2;
+  }
+
+  .pending-card strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #374151;
+
+    font-size: .86rem;
+  }
+
+  .pending-card p {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: .76rem;
+  }
+
+
+  /* ============================================================
+   HISTÓRICO
+   ============================================================ */
+
+  .history-section {
+    margin-top: 35px;
+
+    animation:
+      fadeUp .75s ease both;
+  }
+
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 18px;
+
+    flex-wrap: wrap;
+  }
+
+  .history-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+  }
+
+  .history-heading-icon {
+    width: 47px;
+    height: 47px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    color: white;
+
+    background:
+      linear-gradient(135deg,
+        var(--ai-green),
+        var(--ai-green-dark));
+
+    animation:
+      pulseGreen 2.8s infinite;
+  }
+
+  .history-header h2 {
+    margin: 0 0 3px;
+
+    color: var(--ai-green-dark);
+
+    font-size: 1.25rem;
+    font-weight: 900;
+  }
+
+  .history-header p {
+    margin: 0;
+
+    color: var(--ai-muted);
+
+    font-size: .79rem;
+  }
+
+
+  /* ============================================================
+   CARD HISTÓRICO
+   ============================================================ */
+
+  .history-card {
+    padding: 22px;
+
+    background: white;
+
+    border: 1px solid var(--ai-border);
+
+    border-radius: var(--ai-radius);
+
+    box-shadow: var(--ai-shadow);
+  }
+
+
+  /* ============================================================
+   TIMELINE
+   ============================================================ */
+
+  .timeline {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline::before {
+    content: "";
+
+    position: absolute;
+
+    left: 19px;
+
+    top: 20px;
+    bottom: 20px;
+
+    width: 2px;
+
+    background:
+      linear-gradient(to bottom,
+        #bcdcc9,
+        #e8efeb);
+  }
+
+  .history-item {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+      40px minmax(0, 1fr);
+
+    gap: 14px;
+
+    padding-bottom: 18px;
+  }
+
+  .history-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: relative;
+    z-index: 2;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: var(--ai-green);
+
+    background: white;
+
+    border:
+      3px solid #dceee3;
+
+    font-size: .72rem;
+
+    transition: .25s ease;
+  }
+
+  .history-item:hover .timeline-dot {
+    transform: scale(1.08);
+  }
+
+  .history-item.current .timeline-dot {
+    color: white;
+
+    background: var(--ai-green);
+
+    border-color: var(--ai-green);
+
+    box-shadow:
+      0 0 0 5px rgba(23, 107, 69, .08);
+
+    animation:
+      pulseGreen 2.5s infinite;
+  }
+
+
+  /* ============================================================
+   CONTEÚDO HISTÓRICO
+   ============================================================ */
+
+  .history-content {
+    min-width: 0;
+
+    padding: 16px 17px;
+
+    background: #fbfcfb;
+
+    border: 1px solid var(--ai-border);
+
+    border-radius: 14px;
+
+    transition:
+      transform .25s ease,
+      box-shadow .25s ease,
+      border-color .25s ease;
+  }
+
+  .history-content:hover {
+    transform: translateY(-3px);
+
+    border-color: #cfe3d7;
+
+    box-shadow:
+      0 10px 25px rgba(0, 0, 0, .06);
+  }
+
+  .history-item.current .history-content {
+    background:
+      linear-gradient(135deg,
+        #eff9f3,
+        #fbfdfc);
+
+    border-color:
+      #c9e5d3;
+  }
+
+  .history-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 8px;
+
+    flex-wrap: wrap;
+  }
+
+  .history-title {
+    color: var(--ai-green-dark);
+
+    font-size: .9rem;
+    font-weight: 900;
+  }
+
+  .history-date {
+    color: var(--ai-muted);
+
+    font-size: .7rem;
+    font-weight: 700;
+  }
+
+  .history-current {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-left: 6px;
+
+    padding: 4px 8px;
+
+    color: var(--ai-green);
+
+    background:
+      var(--ai-green-light);
+
+    border-radius: 999px;
+
+    font-size: .62rem;
+    font-weight: 900;
+  }
+
+  .history-result {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 7px;
+
+    margin-bottom: 10px;
+
+    flex-wrap: wrap;
+  }
+
+  .history-result-label {
+    color: var(--ai-muted);
+
+    font-size: .68rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+  }
+
+  .history-result-value {
+    color: var(--ai-text);
+
+    font-size: .81rem;
+    font-weight: 900;
+  }
+
+  .history-meta {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+  }
+
+  .history-meta-item {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: var(--ai-muted);
+
+    font-size: .69rem;
+    font-weight: 700;
+  }
+
+  .history-meta-item i {
+    color: var(--ai-green);
+  }
+
+  .history-view {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 11px;
+
+    color: var(--ai-green);
+
+    text-decoration: none;
+
+    font-size: .7rem;
+    font-weight: 900;
+
+    transition:
+      transform .2s ease;
+  }
+
+  .history-view:hover {
+    transform: translateX(3px);
+
+    color: var(--ai-green-dark);
+  }
+
+
+  /* ============================================================
+   HISTÓRICO VAZIO
+   ============================================================ */
+
+  .empty-history {
+    padding: 40px 20px;
+
+    text-align: center;
+
+    background: #fafcfb;
+
+    border: 1px dashed #cedbd3;
+
+    border-radius: 15px;
+  }
+
+  .empty-history-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 12px;
+
+    border-radius: 17px;
+
+    color: var(--ai-green);
+
+    background:
+      var(--ai-green-light);
+
+    font-size: 23px;
+  }
+
+  .empty-history h3 {
+    margin: 0 0 6px;
+
+    color: var(--ai-green-dark);
+
+    font-size: 1rem;
+  }
+
+  .empty-history p {
+    max-width: 500px;
+
+    margin: 0 auto;
+
+    color: var(--ai-muted);
+
+    font-size: .8rem;
+
+    line-height: 1.6;
+  }
+
+
+  /* ============================================================
+   RESPONSIVO
+   ============================================================ */
+
+  @media (max-width: 950px) {
 
     .result-grid {
       grid-template-columns: 1fr;
@@ -566,27 +1632,29 @@ Resultado do Diagnóstico | AgroIA Moxico
     .image-panel {
       border-right: none;
 
-      border-bottom: 1px solid var(--ai-border);
+      border-bottom:
+        1px solid var(--ai-border);
     }
 
     .diagnostico-image {
-      height: 330px;
+      height: 340px;
+    }
+
+    .product-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .product-hero-stats {
+      justify-content: flex-start;
     }
   }
 
 
-  @media (max-width: 600px) {
+  @media (max-width: 700px) {
 
     .diagnostico-detalhe {
-      padding: 25px 13px 50px;
-    }
-
-    .back-navigation {
-      margin-bottom: 18px;
-    }
-
-    .btn-back {
-      width: 100%;
+      padding:
+        23px 13px 60px;
     }
 
     .page-header {
@@ -601,12 +1669,20 @@ Resultado do Diagnóstico | AgroIA Moxico
       width: 100%;
     }
 
-    .btn {
+    .header-actions .btn {
       flex: 1;
     }
 
-    .info-grid {
-      grid-template-columns: 1fr;
+    .product-hero {
+      padding: 19px;
+    }
+
+    .product-hero-stats {
+      width: 100%;
+    }
+
+    .product-stat {
+      flex: 1;
     }
 
     .info-panel {
@@ -617,16 +1693,89 @@ Resultado do Diagnóstico | AgroIA Moxico
       padding: 18px;
     }
 
+    .result-card-header {
+      padding:
+        17px 18px;
+    }
+
+    .history-card {
+      padding: 15px;
+    }
+
+    .history-item {
+      grid-template-columns:
+        34px minmax(0, 1fr);
+
+      gap: 10px;
+    }
+
+    .timeline::before {
+      left: 16px;
+    }
+
+    .timeline-dot {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+
+  @media (max-width: 480px) {
+
+    .header-icon {
+      width: 49px;
+      height: 49px;
+
+      border-radius: 14px;
+
+      font-size: 20px;
+    }
+
+    .page-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .page-header p {
+      font-size: .8rem;
+    }
+
+    .header-actions .btn {
+      width: 100%;
+      flex: none;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
     .diagnostico-image {
       height: 270px;
     }
 
-    .result-card-header {
-      padding: 18px;
+    .image-empty {
+      min-height: 270px;
     }
 
-    .page-header h1 {
-      font-size: 1.65rem;
+    .history-top {
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .product-hero-left {
+      align-items: flex-start;
+    }
+
+    .product-hero-stats {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      width: 100%;
+    }
+
+    .confidence-top {
+      align-items: flex-start;
     }
   }
 </style>
@@ -641,32 +1790,34 @@ Resultado do Diagnóstico | AgroIA Moxico
   <div class="diagnostico-container">
 
 
+    <!-- =====================================================
+             VOLTAR
+             ===================================================== -->
 
-    <div class="back-navigation">
+    <div class="back-wrapper fade-right">
 
-      <a
-        href="javascript:void(0);"
-        class="btn-back"
-        onclick="voltarPaginaAnterior();"
-        aria-label="Voltar para a página anterior"
-      >
+      <a href="javascript:void(0);" class="back-button" onclick="voltarPaginaAnterior();">
 
         <i class="fas fa-arrow-left"></i>
 
-        <span>Voltar</span>
+        Voltar
 
       </a>
 
     </div>
 
 
-    <div class="page-header">
+    <!-- =====================================================
+             CABEÇALHO
+             ===================================================== -->
+
+    <header class="page-header fade-up">
 
       <div class="page-header-left">
 
         <div class="header-icon">
 
-          <i class="fas fa-file-medical"></i>
+          <i class="fas fa-microscope"></i>
 
         </div>
 
@@ -677,8 +1828,7 @@ Resultado do Diagnóstico | AgroIA Moxico
           </h1>
 
           <p>
-            Análise realizada através da inteligência
-            artificial do AgroIA Moxico.
+            Análise inteligente realizada pelo AgroIA Moxico.
           </p>
 
         </div>
@@ -686,26 +1836,35 @@ Resultado do Diagnóstico | AgroIA Moxico
       </div>
 
 
+      <!-- =================================================
+                 AÇÕES
+                 ================================================= -->
+
       <div class="header-actions">
 
         {% if diagnostico.produto %}
 
-        <a
-          href="{% url 'diagnostico:diagnostico' diagnostico.produto.id %}"
-          class="btn btn-primary"
-        >
+        {% if pode_novo_diagnostico %}
 
-          <i class="fas fa-redo"></i>
+        <!--
+                            ROTA CORRETA:
+                            diagnostico/produto/<produto_id>/
+                        -->
+
+        <a href="{% url 'diagnostico:diagnostico_produto' diagnostico.produto.id %}" class="btn btn-primary">
+
+          <i class="fas fa-plus-circle"></i>
 
           Novo diagnóstico
 
         </a>
 
+        {% endif %}
 
-        <a
-          href="{% url 'diagnostico:historico_produto' diagnostico.produto.id %}"
-          class="btn btn-secondary"
-        >
+
+        {% if pode_ver_historico %}
+
+        <a href="{% url 'diagnostico:historico_produto' diagnostico.produto.id %}" class="btn btn-secondary">
 
           <i class="fas fa-history"></i>
 
@@ -715,21 +1874,127 @@ Resultado do Diagnóstico | AgroIA Moxico
 
         {% endif %}
 
+        {% endif %}
+
       </div>
 
-    </div>
+    </header>
 
 
+    <!-- =====================================================
+             PRODUTO ANALISADO
+             ===================================================== -->
+
+    {% if diagnostico.produto %}
+
+    <section class="product-hero fade-up">
+
+      <div class="product-hero-left">
+
+        <div class="product-icon">
+
+          <i class="fas fa-seedling"></i>
+
+        </div>
+
+        <div>
+
+          <span class="product-label">
+            Produto agrícola analisado
+          </span>
+
+          <span class="product-name">
+            {{ diagnostico.produto.nome }}
+          </span>
+
+          {% if diagnostico.produto.descricao %}
+
+          <div class="product-description">
+
+            {{ diagnostico.produto.descricao|truncatechars:150 }}
+
+          </div>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+
+      <div class="product-hero-stats">
+
+        <div class="product-stat">
+
+          <strong>
+
+            {% if total_diagnosticos %}
+
+            {{ total_diagnosticos }}
+
+            {% elif historico %}
+
+            {{ historico|length }}
+
+            {% else %}
+
+            1
+
+            {% endif %}
+
+          </strong>
+
+          <span>
+            Diagnósticos
+          </span>
+
+        </div>
+
+
+        <div class="product-stat">
+
+          <strong>
+            {{ diagnostico.data_criacao|date:"d/m/Y" }}
+          </strong>
+
+          <span>
+            Data
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+             RESULTADO ATUAL
+             ===================================================== -->
 
     <section class="result-card">
 
 
       <div class="result-card-header">
 
-        <h2>
-          Diagnóstico #{{ diagnostico.id }}
-        </h2>
+        <div class="result-title">
 
+          <div class="result-title-icon">
+
+            <i class="fas fa-file-medical"></i>
+
+          </div>
+
+          <h2>
+            Diagnóstico #{{ diagnostico.id }}
+          </h2>
+
+        </div>
+
+
+        <!-- STATUS -->
 
         {% if diagnostico.status == "concluido" %}
 
@@ -741,7 +2006,6 @@ Resultado do Diagnóstico | AgroIA Moxico
 
         </span>
 
-
         {% elif diagnostico.status == "erro" %}
 
         <span class="status status-erro">
@@ -752,17 +2016,15 @@ Resultado do Diagnóstico | AgroIA Moxico
 
         </span>
 
-
         {% elif diagnostico.status == "processando" %}
 
         <span class="status status-processando">
 
-          <i class="fas fa-spinner"></i>
+          <i class="fas fa-spinner fa-spin"></i>
 
           Processando
 
         </span>
-
 
         {% else %}
 
@@ -779,53 +2041,66 @@ Resultado do Diagnóstico | AgroIA Moxico
       </div>
 
 
-
-
       <div class="result-grid">
 
 
+        <!-- =================================================
+                     IMAGEM ANALISADA
+                     ================================================= -->
 
         <div class="image-panel">
 
           {% if diagnostico.imagem %}
 
-          <img
-            src="{{ diagnostico.imagem.url }}"
-            alt="Imagem analisada"
-            class="diagnostico-image"
-          >
+          <div class="image-wrapper">
 
-          <div class="image-caption">
+            <img src="{{ diagnostico.imagem.url }}" alt="Imagem analisada no diagnóstico #{{ diagnostico.id }}"
+              class="diagnostico-image" loading="lazy">
 
-            Imagem utilizada pela inteligência
-            artificial neste diagnóstico.
+            {% if diagnostico.status == "processando" %}
 
-          </div>
+            <div class="image-scan"></div>
 
+            {% endif %}
 
-          {% elif diagnostico.produto and diagnostico.produto.imagem %}
+            <div class="image-overlay">
 
-          <img
-            src="{{ diagnostico.produto.imagem.url }}"
-            alt="{{ diagnostico.produto.nome }}"
-            class="diagnostico-image"
-          >
+              <i class="fas fa-camera"></i>
 
-          <div class="image-caption">
+              Imagem analisada
 
-            Imagem do produto analisado.
+            </div>
 
           </div>
 
+
+          <div class="image-caption">
+
+            <i class="fas fa-robot"></i>
+
+            Imagem enviada para análise pela
+            inteligência artificial.
+
+          </div>
 
           {% else %}
 
-          <div class="alert alert-warning">
+          <div class="image-empty">
 
-            <i class="fas fa-image"></i>
+            <div>
 
-            A imagem deste diagnóstico não está
-            disponível.
+              <i class="fas fa-image"></i>
+
+              <strong>
+                Imagem não disponível
+              </strong>
+
+              <p>
+                Não existe uma imagem associada
+                a este diagnóstico.
+              </p>
+
+            </div>
 
           </div>
 
@@ -834,19 +2109,79 @@ Resultado do Diagnóstico | AgroIA Moxico
         </div>
 
 
+        <!-- =================================================
+                     INFORMAÇÕES
+                     ================================================= -->
 
         <div class="info-panel">
 
 
+          <!-- PROCESSANDO -->
+
+          {% if diagnostico.status == "processando" %}
+
+          <div class="processing-card">
+
+            <div class="processing-icon">
+
+              <i class="fas fa-spinner fa-spin"></i>
+
+            </div>
+
+            <div>
+
+              <strong>
+                A inteligência artificial está analisando
+              </strong>
+
+              <p>
+                Aguarde enquanto o AgroIA processa a imagem.
+              </p>
+
+            </div>
+
+          </div>
+
+          {% endif %}
+
+
+          <!-- PENDENTE -->
+
+          {% if diagnostico.status == "pendente" %}
+
+          <div class="pending-card">
+
+            <div class="pending-icon">
+
+              <i class="fas fa-clock"></i>
+
+            </div>
+
+            <div>
+
+              <strong>
+                Diagnóstico aguardando processamento
+              </strong>
+
+              <p>
+                A análise ainda não foi concluída.
+              </p>
+
+            </div>
+
+          </div>
+
+          {% endif %}
+
+
+          <!-- RESULTADO PRINCIPAL -->
 
           {% if diagnostico.status == "concluido" %}
 
           <div class="diagnosis-main">
 
             <div class="diagnosis-main-label">
-
               Resultado identificado
-
             </div>
 
             <h3>
@@ -855,9 +2190,13 @@ Resultado do Diagnóstico | AgroIA Moxico
 
               {{ diagnostico.doenca_identificada }}
 
+              {% elif diagnostico.resultado %}
+
+              {{ diagnostico.resultado }}
+
               {% else %}
 
-              {{ diagnostico.resultado_legivel }}
+              Resultado não identificado
 
               {% endif %}
 
@@ -868,14 +2207,17 @@ Resultado do Diagnóstico | AgroIA Moxico
           {% endif %}
 
 
+          <!-- DADOS PRINCIPAIS -->
 
           <div class="info-grid">
 
 
+            <!-- PRODUTO -->
+
             <div class="info-item">
 
               <span class="info-label">
-                Produto
+                Produto agrícola
               </span>
 
               <span class="info-value">
@@ -895,35 +2237,36 @@ Resultado do Diagnóstico | AgroIA Moxico
             </div>
 
 
+            <!-- RESULTADO -->
+
             <div class="info-item">
 
               <span class="info-label">
-                Classe da IA
+                Resultado
               </span>
 
               <span class="info-value">
 
-                {{ diagnostico.classe_identificada|default:"Não identificada" }}
+                {% if diagnostico.doenca_identificada %}
+
+                {{ diagnostico.doenca_identificada }}
+
+                {% elif diagnostico.resultado %}
+
+                {{ diagnostico.resultado }}
+
+                {% else %}
+
+                Não identificado
+
+                {% endif %}
 
               </span>
 
             </div>
 
 
-            <div class="info-item">
-
-              <span class="info-label">
-                Tipo de resultado
-              </span>
-
-              <span class="info-value">
-
-                {{ diagnostico.resultado_legivel }}
-
-              </span>
-
-            </div>
-
+            <!-- CONFIANÇA -->
 
             <div class="info-item">
 
@@ -933,17 +2276,27 @@ Resultado do Diagnóstico | AgroIA Moxico
 
               <span class="info-value">
 
-                {{ diagnostico.confianca_formatada }}
+                {% if diagnostico.confianca %}
+
+                {{ diagnostico.confianca }}%
+
+                {% else %}
+
+                Não disponível
+
+                {% endif %}
 
               </span>
 
             </div>
 
 
+            <!-- DATA CRIAÇÃO -->
+
             <div class="info-item">
 
               <span class="info-label">
-                Data
+                Realizado em
               </span>
 
               <span class="info-value">
@@ -955,10 +2308,12 @@ Resultado do Diagnóstico | AgroIA Moxico
             </div>
 
 
+            <!-- DATA ATUALIZAÇÃO -->
+
             <div class="info-item">
 
               <span class="info-label">
-                Atualizado
+                Última atualização
               </span>
 
               <span class="info-value">
@@ -969,10 +2324,47 @@ Resultado do Diagnóstico | AgroIA Moxico
 
             </div>
 
+
+            <!-- STATUS -->
+
+            <div class="info-item">
+
+              <span class="info-label">
+                Estado
+              </span>
+
+              <span class="info-value">
+
+                {% if diagnostico.status == "concluido" %}
+
+                Concluído
+
+                {% elif diagnostico.status == "processando" %}
+
+                Processando
+
+                {% elif diagnostico.status == "erro" %}
+
+                Erro
+
+                {% else %}
+
+                Pendente
+
+                {% endif %}
+
+              </span>
+
+            </div>
+
           </div>
 
 
-          {% if diagnostico.status == "concluido" %}
+          <!-- =================================================
+                         BARRA DE CONFIANÇA
+                         ================================================= -->
+
+          {% if diagnostico.status == "concluido" and diagnostico.confianca %}
 
           <div class="confidence-box">
 
@@ -983,20 +2375,14 @@ Resultado do Diagnóstico | AgroIA Moxico
               </span>
 
               <span class="confidence-value">
-
-                {{ diagnostico.confianca_formatada }}
-
+                {{ diagnostico.confianca }}%
               </span>
 
             </div>
 
-
             <div class="confidence-bar">
 
-              <div
-                class="confidence-fill"
-                style="width: {{ diagnostico.confianca }}%;"
-              ></div>
+              <div class="confidence-fill" style="width: {{ diagnostico.confianca }}%;"></div>
 
             </div>
 
@@ -1005,6 +2391,7 @@ Resultado do Diagnóstico | AgroIA Moxico
           {% endif %}
 
 
+          <!-- DESCRIÇÃO -->
 
           {% if diagnostico.descricao_resultado %}
 
@@ -1014,7 +2401,7 @@ Resultado do Diagnóstico | AgroIA Moxico
 
               <i class="fas fa-info-circle"></i>
 
-              Descrição
+              Descrição do resultado
 
             </h3>
 
@@ -1027,7 +2414,7 @@ Resultado do Diagnóstico | AgroIA Moxico
           {% endif %}
 
 
-
+          <!-- RECOMENDAÇÕES -->
 
           {% if diagnostico.recomendacoes %}
 
@@ -1050,6 +2437,8 @@ Resultado do Diagnóstico | AgroIA Moxico
           {% endif %}
 
 
+          <!-- OBSERVAÇÕES -->
+
           {% if diagnostico.observacoes %}
 
           <div class="alert alert-warning">
@@ -1062,7 +2451,7 @@ Resultado do Diagnóstico | AgroIA Moxico
 
             </strong>
 
-            <div style="margin-top: 7px;">
+            <div style="margin-top:7px;">
 
               {{ diagnostico.observacoes }}
 
@@ -1073,7 +2462,9 @@ Resultado do Diagnóstico | AgroIA Moxico
           {% endif %}
 
 
-          {% if diagnostico.status == "erro" and diagnostico.erro %}
+          <!-- ERRO -->
+
+          {% if diagnostico.status == "erro" %}
 
           <div class="error-card">
 
@@ -1087,7 +2478,16 @@ Resultado do Diagnóstico | AgroIA Moxico
 
             <p>
 
+              {% if diagnostico.erro %}
+
               {{ diagnostico.erro }}
+
+              {% else %}
+
+              Ocorreu um erro durante o processamento
+              deste diagnóstico.
+
+              {% endif %}
 
             </p>
 
@@ -1101,16 +2501,299 @@ Resultado do Diagnóstico | AgroIA Moxico
 
     </section>
 
+
+    <!-- =====================================================
+             HISTÓRICO DO PRODUTO
+             ===================================================== -->
+
+    {% if diagnostico.produto %}
+
+    <section class="history-section">
+
+
+      <div class="history-header">
+
+        <div class="history-heading">
+
+          <div class="history-heading-icon">
+
+            <i class="fas fa-history"></i>
+
+          </div>
+
+          <div>
+
+            <h2>
+              Histórico deste produto
+            </h2>
+
+            <p>
+              Diagnósticos realizados para
+              {{ diagnostico.produto.nome }}.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        {% if pode_ver_historico %}
+
+        <a href="{% url 'diagnostico:historico_produto' diagnostico.produto.id %}" class="btn btn-secondary">
+
+          <i class="fas fa-list"></i>
+
+          Ver histórico completo
+
+        </a>
+
+        {% endif %}
+
+      </div>
+
+
+      <div class="history-card">
+
+        {% if historico %}
+
+        <div class="timeline">
+
+          {% for item in historico %}
+
+          <article class="history-item {% if item.id == diagnostico.id %}current{% endif %}">
+
+
+            <!-- PONTO -->
+
+            <div class="timeline-dot">
+
+              {% if item.status == "concluido" %}
+
+              <i class="fas fa-check"></i>
+
+              {% elif item.status == "erro" %}
+
+              <i class="fas fa-times"></i>
+
+              {% elif item.status == "processando" %}
+
+              <i class="fas fa-spinner fa-spin"></i>
+
+              {% else %}
+
+              <i class="fas fa-clock"></i>
+
+              {% endif %}
+
+            </div>
+
+
+            <!-- CONTEÚDO -->
+
+            <div class="history-content">
+
+
+              <div class="history-top">
+
+                <div>
+
+                  <div class="history-title">
+
+                    Diagnóstico #{{ item.id }}
+
+                    {% if item.id == diagnostico.id %}
+
+                    <span class="history-current">
+
+                      <i class="fas fa-eye"></i>
+
+                      Atual
+
+                    </span>
+
+                    {% endif %}
+
+                  </div>
+
+                </div>
+
+
+                <span class="history-date">
+
+                  {{ item.data_criacao|date:"d/m/Y H:i" }}
+
+                </span>
+
+              </div>
+
+
+              <!-- RESULTADO -->
+
+              <div class="history-result">
+
+                <span class="history-result-label">
+                  Resultado:
+                </span>
+
+                <span class="history-result-value">
+
+                  {% if item.doenca_identificada %}
+
+                  {{ item.doenca_identificada }}
+
+                  {% elif item.resultado %}
+
+                  {{ item.resultado }}
+
+                  {% else %}
+
+                  Não identificado
+
+                  {% endif %}
+
+                </span>
+
+              </div>
+
+
+              <!-- METADADOS -->
+
+              <div class="history-meta">
+
+
+                <!-- STATUS -->
+
+                <span class="history-meta-item">
+
+                  {% if item.status == "concluido" %}
+
+                  <i class="fas fa-check-circle"></i>
+                  Concluído
+
+                  {% elif item.status == "erro" %}
+
+                  <i class="fas fa-times-circle"></i>
+                  Erro
+
+                  {% elif item.status == "processando" %}
+
+                  <i class="fas fa-spinner fa-spin"></i>
+                  Processando
+
+                  {% else %}
+
+                  <i class="fas fa-clock"></i>
+                  Pendente
+
+                  {% endif %}
+
+                </span>
+
+
+                <!-- CONFIANÇA -->
+
+                {% if item.confianca %}
+
+                <span class="history-meta-item">
+
+                  <i class="fas fa-chart-line"></i>
+
+                  {{ item.confianca }}%
+
+                </span>
+
+                {% endif %}
+
+
+                <!-- RESULTADO -->
+
+                {% if item.resultado %}
+
+                <span class="history-meta-item">
+
+                  <i class="fas fa-tag"></i>
+
+                  {{ item.resultado }}
+
+                </span>
+
+                {% endif %}
+
+              </div>
+
+
+              <!-- =================================================
+                                             VER DIAGNÓSTICO
+                                             ROTA CORRETA:
+                                             diagnostico/detalhe/<diagnostico_id>/
+                                             ================================================= -->
+
+              {% if item.id != diagnostico.id %}
+
+              <a href="{% url 'diagnostico:detalhe' item.id %}" class="history-view">
+
+                Ver diagnóstico
+
+                <i class="fas fa-arrow-right"></i>
+
+              </a>
+
+              {% endif %}
+
+            </div>
+
+          </article>
+
+          {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-history">
+
+          <div class="empty-history-icon">
+
+            <i class="fas fa-history"></i>
+
+          </div>
+
+          <h3>
+            Nenhum histórico disponível
+          </h3>
+
+          <p>
+            Os diagnósticos realizados neste produto
+            aparecerão automaticamente nesta área.
+          </p>
+
+        </div>
+
+        {% endif %}
+
+      </div>
+
+    </section>
+
+    {% endif %}
+
   </div>
 
 </main>
 
+{% endblock %}
 
+
+{% block extra_js %}
 
 <script>
 
-  function voltarPaginaAnterior() {
+  /* ============================================================
+     VOLTAR
+     ============================================================ */
 
+  function voltarPaginaAnterior() {
 
     if (window.history.length > 1) {
 
@@ -1118,12 +2801,36 @@ Resultado do Diagnóstico | AgroIA Moxico
 
     } else {
 
-
-      window.location.href = "{% url 'diagnostico:historico' %}";
+      window.location.href =
+        "{% url 'inicio:home' %}";
 
     }
 
   }
+
+
+  /* ============================================================
+     ANIMAÇÃO DO HISTÓRICO
+     ============================================================ */
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+      const items =
+        document.querySelectorAll(".history-item");
+
+      items.forEach(
+        function (item, index) {
+
+          item.style.animation =
+            `fadeRight .55s ease ${index * 0.08}s both`;
+
+        }
+      );
+
+    }
+  );
 
 </script>
 

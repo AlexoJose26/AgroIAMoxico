@@ -7,27 +7,14 @@ app_name = "produtos"
 
 
 urlpatterns = [
-
     # ============================================================
-    # PÁGINA PRINCIPAL DOS PRODUTOS
+    # LISTA DE PRODUTOS
     # URL: /produtos/
     # ============================================================
     path(
         "",
         views.produtos,
         name="produtos",
-    ),
-
-    # ============================================================
-    # PÁGINA DE PRODUTOS — ALIAS
-    # URL: /produtos/produtos/
-    #
-    # Mantido para compatibilidade com links antigos.
-    # ============================================================
-    path(
-        "produtos/",
-        views.produtos,
-        name="produtos_agricolas",
     ),
 
     # ============================================================
@@ -42,7 +29,7 @@ urlpatterns = [
 
     # ============================================================
     # DETALHES DO PRODUTO
-    # URL: /produtos/<id>/
+    # URL: /produtos/2/
     # ============================================================
     path(
         "<int:pk>/",
@@ -52,7 +39,7 @@ urlpatterns = [
 
     # ============================================================
     # EDITAR PRODUTO
-    # URL: /produtos/<id>/editar/
+    # URL: /produtos/2/editar/
     # ============================================================
     path(
         "<int:pk>/editar/",
@@ -62,7 +49,7 @@ urlpatterns = [
 
     # ============================================================
     # ELIMINAR PRODUTO
-    # URL: /produtos/<id>/eliminar/
+    # URL: /produtos/2/eliminar/
     # ============================================================
     path(
         "<int:pk>/eliminar/",

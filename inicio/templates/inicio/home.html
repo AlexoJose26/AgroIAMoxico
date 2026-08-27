@@ -4467,7 +4467,7 @@ AgroIA Moxico | Agricultura Inteligente
 
 
 
-                 
+
 
                         <div class="home-product-actions">
 
@@ -4501,7 +4501,7 @@ AgroIA Moxico | Agricultura Inteligente
                             {% if produto.analise_por_imagem %}
 
 
-                            <a href="{% url 'diagnostico:diagnostico' produto.pk %}"
+                            <a href="{% url 'diagnostico:diagnostico_produto' produto_id=produto.pk %}"
                                 class="home-product-action home-analysis-button">
 
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -4521,7 +4521,7 @@ AgroIA Moxico | Agricultura Inteligente
                             {% else %}
 
 
-                            <a href="{% url 'diagnostico:diagnostico' produto.pk %}"
+                            <a href="{% url 'diagnostico:diagnostico_produto' produto_id=produto.pk %}"
                                 class="home-product-action home-analysis-button">
 
                                 Diagnóstico

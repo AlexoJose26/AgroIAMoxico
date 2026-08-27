@@ -1,90 +1,161 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CategoriaForm
 from .models import Categoria
 
 
-
 @login_required
-def categoria_criar(request):
+def categorias(request):
+    """
+    Lista todas as categorias cadastradas.
 
-    if request.method == "POST":
+    Também calcula:
+    - total de categorias;
+    - categorias ativas;
+    - produtos classificados;
+    - produtos ativos por categoria.
+    """
 
-        form = CategoriaForm(request.POST)
+    categorias_qs = (
+        Categoria.objects
+        .annotate(
+            produtos_count=Count(
+                "produtos",
+                distinct=True
+            ),
+            produtos_ativos_count=Count(
+                "produtos",
+                filter=Q(produtos__ativo=True),
+                distinct=True
+            ),
+        )
+        .order_by("nome")
+    )
 
-        if form.is_valid():
+    total_categorias = categorias_qs.count()
 
-            categoria = form.save()
+    categorias_ativas = categorias_qs.filter(
+        ativo=True
+    ).count()
 
-            messages.success(
-                request,
-                f'A categoria "{categoria.nome}" foi criada com sucesso.'
+    total_produtos_classificados = (
+        categorias_qs
+        .aggregate(
+            total=Count(
+                "produtos",
+                distinct=True
             )
+        )
+        .get("total", 0)
+    )
 
-            return redirect("produtos:produtos")
-
-    else:
-
-        form = CategoriaForm()
-
-    context = {
-        "form": form,
-        "titulo": "Cadastrar Categoria",
-        "modo": "criar",
+    contexto = {
+        "categorias": categorias_qs,
+        "total_categorias": total_categorias,
+        "categorias_ativas": categorias_ativas,
+        "total_produtos_classificados": total_produtos_classificados,
     }
 
     return render(
         request,
-        "categorias/categoria_form.html",
-        context,
+        "categorias/categorias.html",
+        contexto
     )
 
 
+@login_required
+def categoria_criar(request):
+    """
+    Cria uma nova categoria.
+    """
 
+    if request.method == "POST":
+        form = CategoriaForm(request.POST)
+
+        if form.is_valid():
+            categoria = form.save()
+
+            messages.success(
+                request,
+                f'A categoria "{categoria.nome}" foi cadastrada com sucesso.'
+            )
+
+            return redirect("categorias:categorias")
+
+    else:
+        form = CategoriaForm()
+
+    return render(
+        request,
+        "categorias/categoria_form.html",
+        {
+            "form": form,
+            "modo": "criar",
+            "titulo": "Nova categoria",
+            "subtitulo": (
+                "Cadastre uma nova categoria agrícola "
+                "para organizar os produtos."
+            ),
+        }
+    )
+
+
+@login_required
 def categoria_detalhes(request, pk):
+    """
+    Exibe os detalhes de uma categoria.
+    """
 
     categoria = get_object_or_404(
-        Categoria.objects.prefetch_related("produtos"),
-        pk=pk,
+        Categoria,
+        pk=pk
     )
 
-    produtos = categoria.produtos.all()
+    produtos = (
+        categoria.produtos
+        .all()
+        .order_by("nome")
+    )
 
-    context = {
+    produtos_ativos = produtos.filter(
+        ativo=True
+    ).count()
+
+    contexto = {
         "categoria": categoria,
         "produtos": produtos,
         "total_produtos": produtos.count(),
+        "produtos_ativos": produtos_ativos,
     }
 
     return render(
         request,
         "categorias/categoria_detalhes.html",
-        context,
+        contexto
     )
-
 
 
 @login_required
 def categoria_editar(request, pk):
-
+    """
+    Edita uma categoria existente.
+    """
 
     categoria = get_object_or_404(
         Categoria,
-        pk=pk,
+        pk=pk
     )
 
     if request.method == "POST":
-
         form = CategoriaForm(
             request.POST,
-            instance=categoria,
+            instance=categoria
         )
 
         if form.is_valid():
-
             categoria = form.save()
 
             messages.success(
@@ -92,62 +163,60 @@ def categoria_editar(request, pk):
                 f'A categoria "{categoria.nome}" foi atualizada com sucesso.'
             )
 
-            return redirect("produtos:produtos")
+            return redirect(
+                "categorias:categorias"
+            )
 
     else:
-
         form = CategoriaForm(
-            instance=categoria,
+            instance=categoria
         )
-
-    context = {
-        "form": form,
-        "categoria": categoria,
-        "titulo": "Editar Categoria",
-        "modo": "editar",
-    }
 
     return render(
         request,
         "categorias/categoria_form.html",
-        context,
+        {
+            "form": form,
+            "modo": "editar",
+            "categoria": categoria,
+            "titulo": "Editar categoria",
+            "subtitulo": (
+                "Atualize as informações desta "
+                "categoria agrícola."
+            ),
+        }
     )
-
 
 
 @login_required
 def categoria_eliminar(request, pk):
-
+    """
+    Elimina uma categoria.
+    """
 
     categoria = get_object_or_404(
         Categoria,
-        pk=pk,
+        pk=pk
     )
 
-    produtos_associados = categoria.produtos.count()
-
     if request.method == "POST":
-
         nome = categoria.nome
 
-        with transaction.atomic():
-
-            categoria.delete()
+        categoria.delete()
 
         messages.success(
             request,
             f'A categoria "{nome}" foi eliminada com sucesso.'
         )
 
-        return redirect("produtos:produtos")
-
-    context = {
-        "categoria": categoria,
-        "produtos_associados": produtos_associados,
-    }
+        return redirect(
+            "categorias:categorias"
+        )
 
     return render(
         request,
         "categorias/categoria_confirm_delete.html",
-        context,
+        {
+            "categoria": categoria,
+        }
     )

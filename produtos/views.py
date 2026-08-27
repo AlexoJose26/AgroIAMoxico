@@ -1,350 +1,328 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 
 from categorias.models import Categoria
-
 from .forms import ProdutoForm
 from .models import ProdutoAgricola
+
+
+# ============================================================
+# IMPORTAÇÃO OPCIONAL DO DIAGNÓSTICO
+# ============================================================
+
+try:
+    from diagnostico.models import Diagnostico
+except (ImportError, ModuleNotFoundError):
+    Diagnostico = None
 
 
 # ============================================================
 # LISTAGEM DE PRODUTOS
 # ============================================================
 
+@login_required
 def produtos(request):
     """
     Página principal dos produtos agrícolas.
 
-    Mostra:
-    - Produtos ativos;
-    - Categorias cadastradas;
-    - Total de produtos;
-    - Total de categorias;
-    - Total de produtos disponíveis;
-    - Quantidade de produtos por categoria;
-    - Filtro de produtos por categoria;
-    - Quantidade de produtos do utilizador autenticado.
+    Indicadores apresentados no Hero:
 
-    A página é pública.
+    - total_produtos:
+        Todos os produtos cadastrados.
+
+    - total_disponiveis:
+        Produtos com ativo=True.
+
+    - total_categorias_associadas:
+        Categorias que possuem pelo menos um produto associado.
+
+    - total_diagnosticos:
+        Total de diagnósticos associados aos produtos.
     """
 
-    # ========================================================
-    # CATEGORIAS
-    # ========================================================
+    # --------------------------------------------------------
+    # PRODUTOS
+    # --------------------------------------------------------
 
-    categorias_queryset = (
-        Categoria.objects
-        .all()
+    produtos_qs = (
+        ProdutoAgricola.objects
+        .prefetch_related("categorias")
         .order_by("nome")
     )
 
-    # ========================================================
-    # PRODUTOS ATIVOS
-    # ========================================================
+    # --------------------------------------------------------
+    # 1. TOTAL DE PRODUTOS CADASTRADOS
+    # --------------------------------------------------------
 
-    produtos_queryset = (
-        ProdutoAgricola.objects
-        .filter(
-            ativo=True
-        )
-        .select_related("usuario")
-        .prefetch_related("categorias")
-        .order_by("-criado_em")
-    )
+    total_produtos = ProdutoAgricola.objects.count()
 
-    # ========================================================
-    # FILTRO POR CATEGORIA
-    # ========================================================
-
-    categoria_id = request.GET.get("categoria")
-
-    categoria_selecionada = None
-
-    if categoria_id:
-
-        try:
-
-            categoria_selecionada = get_object_or_404(
-                Categoria,
-                pk=int(categoria_id),
-            )
-
-            produtos_queryset = (
-                produtos_queryset
-                .filter(
-                    categorias=categoria_selecionada
-                )
-                .distinct()
-            )
-
-        except (
-            ValueError,
-            TypeError,
-        ):
-
-            categoria_selecionada = None
-
-
-    total_produtos = (
-        ProdutoAgricola.objects
-        .filter(
-            ativo=True
-        )
-        .count()
-    )
-
-    total_categorias = (
-        Categoria.objects
-        .count()
-    )
+    # --------------------------------------------------------
+    # 2. TOTAL DE PRODUTOS DISPONÍVEIS
+    # --------------------------------------------------------
 
     total_disponiveis = (
         ProdutoAgricola.objects
-        .filter(
-            ativo=True
-        )
+        .filter(ativo=True)
         .count()
     )
 
+    # --------------------------------------------------------
+    # 3. TOTAL DE CATEGORIAS ASSOCIADAS
+    # --------------------------------------------------------
 
-
-    total_produtos_analise = (
-        ProdutoAgricola.objects
-        .filter(
-            ativo=True,
-            analise_por_imagem=True,
-        )
+    total_categorias_associadas = (
+        Categoria.objects
+        .filter(produtos__isnull=False)
+        .distinct()
         .count()
     )
 
+    # --------------------------------------------------------
+    # 4. TOTAL DE DIAGNÓSTICOS
+    # --------------------------------------------------------
 
+    total_diagnosticos = 0
 
-    produtos_para_contagem = (
-        ProdutoAgricola.objects
-        .filter(
-            ativo=True
-        )
-        .prefetch_related("categorias")
-    )
-
-    categoria_quantidades = {
-        categoria.pk: 0
-        for categoria in categorias_queryset
-    }
-
-    for produto in produtos_para_contagem:
-
-        for categoria in produto.categorias.all():
-
-            if categoria.pk in categoria_quantidades:
-
-                categoria_quantidades[categoria.pk] += 1
-
-
-
-    meus_produtos = 0
-
-    if request.user.is_authenticated:
-
-        meus_produtos = (
-            ProdutoAgricola.objects
-            .filter(
-                usuario=request.user,
-                ativo=True,
-            )
+    if Diagnostico is not None:
+        total_diagnosticos = (
+            Diagnostico.objects
+            .filter(produto__isnull=False)
             .count()
         )
 
-    # ========================================================
+    # --------------------------------------------------------
+    # DIAGNÓSTICOS POR PRODUTO
+    # --------------------------------------------------------
+
+    diagnosticos_por_produto = {}
+
+    if Diagnostico is not None:
+
+        registros = (
+            Diagnostico.objects
+            .filter(produto__isnull=False)
+            .values("produto_id")
+            .annotate(quantidade=Count("id"))
+        )
+
+        diagnosticos_por_produto = {
+            item["produto_id"]: item["quantidade"]
+            for item in registros
+        }
+
+    # --------------------------------------------------------
+    # CATEGORIAS E DIAGNÓSTICOS POR PRODUTO
+    # --------------------------------------------------------
+
+    produtos_lista = []
+
+    for produto in produtos_qs:
+
+        produto.total_categorias_produto = (
+            produto.categorias.count()
+        )
+
+        produto.total_diagnosticos_produto = (
+            diagnosticos_por_produto.get(
+                produto.pk,
+                0
+            )
+        )
+
+        produtos_lista.append(produto)
+
+    # --------------------------------------------------------
     # CONTEXTO
-    # ========================================================
+    # --------------------------------------------------------
 
-    context = {
-        "produtos": produtos_queryset,
-        "categorias": categorias_queryset,
-        "categoria_selecionada": categoria_selecionada,
+    contexto = {
+        "produtos": produtos_lista,
 
+        # HERO
         "total_produtos": total_produtos,
-        "total_categorias": total_categorias,
         "total_disponiveis": total_disponiveis,
-        "total_produtos_analise": total_produtos_analise,
-
-        "categoria_quantidades": categoria_quantidades,
-        "meus_produtos": meus_produtos,
+        "total_categorias_associadas": total_categorias_associadas,
+        "total_diagnosticos": total_diagnosticos,
     }
-
-
 
     return render(
         request,
         "produtos/produtos.html",
-        context,
+        contexto
     )
 
 
+# ============================================================
+# CRIAR PRODUTO
+# ============================================================
 
 @login_required
-@transaction.atomic
 def criar_produto(request):
-
-
-    categorias = (
-        Categoria.objects
-        .all()
-        .order_by("nome")
-    )
-
-
 
     if request.method == "POST":
 
         form = ProdutoForm(
             request.POST,
-            request.FILES,
+            request.FILES
         )
 
         if form.is_valid():
 
+            try:
 
-            produto = form.save(
-                commit=False
-            )
+                with transaction.atomic():
 
+                    produto = form.save(commit=False)
 
-            produto.usuario = request.user
+                    if hasattr(produto, "usuario_id"):
+                        produto.usuario = request.user
 
-            produto.save()
+                    produto.save()
 
+                    form.save_m2m()
 
+                messages.success(
+                    request,
+                    f'O produto "{produto.nome}" '
+                    "foi cadastrado com sucesso."
+                )
 
-            form.save_m2m()
+                return redirect(
+                    "produtos:produtos"
+                )
 
-            messages.success(
-                request,
-                f'O produto "{produto.nome}" '
-                f'foi cadastrado com sucesso.',
-            )
+            except Exception as exc:
 
-            return redirect(
-                "produtos:detalhe_produto",
-                pk=produto.pk,
-            )
-
+                messages.error(
+                    request,
+                    "Não foi possível cadastrar "
+                    f"o produto. Erro: {exc}"
+                )
 
     else:
 
         form = ProdutoForm()
 
-
-        categoria_id = request.GET.get(
-            "categoria"
-        )
-
-        if categoria_id:
-
-            try:
-
-                categoria = Categoria.objects.get(
-                    pk=int(categoria_id)
-                )
-
-                form.fields[
-                    "categorias"
-                ].initial = [
-                    categoria.pk
-                ]
-
-            except (
-                Categoria.DoesNotExist,
-                ValueError,
-                TypeError,
-            ):
-
-                pass
-
-
-
-    context = {
+    contexto = {
         "form": form,
-        "categorias": categorias,
-        "titulo": "Cadastrar Produto Agrícola",
+        "titulo": "Cadastrar Produto",
         "modo": "criar",
+        "categorias": (
+            Categoria.objects
+            .filter(ativo=True)
+            .order_by("nome")
+        ),
     }
 
     return render(
         request,
         "produtos/criar_produto.html",
-        context,
+        contexto
     )
 
 
-@login_required
-@transaction.atomic
-def editar_produto(request, pk):
+# ============================================================
+# DETALHES
+# ============================================================
 
+@login_required
+def detalhe_produto(request, pk):
 
     produto = get_object_or_404(
         ProdutoAgricola.objects.prefetch_related(
             "categorias"
         ),
-        pk=pk,
+        pk=pk
     )
 
-    if produto.usuario_id != request.user.id:
-
-        messages.error(
-            request,
-            "Você não tem permissão para editar "
-            "este produto.",
-        )
-
-        return redirect(
-            "produtos:detalhe_produto",
-            pk=produto.pk,
-        )
-
-
-    categorias = (
-        Categoria.objects
+    categorias_produto = (
+        produto.categorias
         .all()
         .order_by("nome")
     )
 
+    total_diagnosticos = 0
+
+    if Diagnostico is not None:
+
+        total_diagnosticos = (
+            Diagnostico.objects
+            .filter(produto=produto)
+            .count()
+        )
+
+    contexto = {
+        "produto": produto,
+        "categorias_produto": categorias_produto,
+        "total_categorias": categorias_produto.count(),
+        "total_diagnosticos": total_diagnosticos,
+    }
+
+    return render(
+        request,
+        "produtos/produto_detalhes.html",
+        contexto
+    )
+
+
+# ============================================================
+# EDITAR PRODUTO
+# ============================================================
+
+@login_required
+def editar_produto(request, pk):
+
+    produto = get_object_or_404(
+        ProdutoAgricola,
+        pk=pk
+    )
 
     if request.method == "POST":
 
         form = ProdutoForm(
             request.POST,
             request.FILES,
-            instance=produto,
+            instance=produto
         )
 
         if form.is_valid():
 
-            produto_atualizado = form.save(
-                commit=False
-            )
+            try:
 
+                with transaction.atomic():
 
+                    produto = form.save(commit=False)
 
-            produto_atualizado.usuario = request.user
+                    if (
+                        hasattr(produto, "usuario_id")
+                        and not produto.usuario_id
+                    ):
+                        produto.usuario = request.user
 
-            produto_atualizado.save()
+                    produto.save()
 
-            form.save_m2m()
+                    form.save_m2m()
 
-            messages.success(
-                request,
-                f'O produto "{produto_atualizado.nome}" '
-                f'foi atualizado com sucesso.',
-            )
+                messages.success(
+                    request,
+                    f'O produto "{produto.nome}" '
+                    "foi atualizado com sucesso."
+                )
 
-            return redirect(
-                "produtos:detalhe_produto",
-                pk=produto_atualizado.pk,
-            )
+                return redirect(
+                    "produtos:produtos"
+                )
+
+            except Exception as exc:
+
+                messages.error(
+                    request,
+                    "Não foi possível atualizar "
+                    f"o produto. Erro: {exc}"
+                )
 
     else:
 
@@ -352,108 +330,73 @@ def editar_produto(request, pk):
             instance=produto
         )
 
-    context = {
+    contexto = {
         "form": form,
         "produto": produto,
-        "categorias": categorias,
-        "titulo": "Editar Produto Agrícola",
+        "categorias_produto": (
+            produto.categorias
+            .all()
+            .order_by("nome")
+        ),
+        "categorias_disponiveis": (
+            Categoria.objects
+            .filter(ativo=True)
+            .order_by("nome")
+        ),
+        "titulo": "Editar Produto",
         "modo": "editar",
     }
 
     return render(
         request,
         "produtos/editar_produto.html",
-        context,
+        contexto
     )
 
 
-def detalhe_produto(request, pk):
-
-    produto = get_object_or_404(
-        ProdutoAgricola.objects
-        .select_related("usuario")
-        .prefetch_related("categorias"),
-        pk=pk,
-        ativo=True,
-    )
-
-    categorias = produto.categorias.all()
-
-    sou_dono = False
-
-    if request.user.is_authenticated:
-
-        sou_dono = (
-            produto.usuario_id == request.user.id
-        )
-
-    context = {
-        "produto": produto,
-        "categorias": categorias,
-        "sou_dono": sou_dono,
-    }
-
-    return render(
-        request,
-        "produtos/detalhe_produto.html",
-        context,
-    )
-
+# ============================================================
+# ELIMINAR PRODUTO
+# ============================================================
 
 @login_required
-@transaction.atomic
 def eliminar_produto(request, pk):
 
     produto = get_object_or_404(
         ProdutoAgricola,
-        pk=pk,
+        pk=pk
     )
-
-    if produto.usuario_id != request.user.id:
-
-        messages.error(
-            request,
-            "Você não tem permissão para eliminar "
-            "este produto.",
-        )
-
-        return redirect(
-            "produtos:detalhe_produto",
-            pk=produto.pk,
-        )
-
 
     if request.method == "POST":
 
         nome = produto.nome
 
+        try:
 
-        if produto.imagem:
+            with transaction.atomic():
+                produto.delete()
 
-            produto.imagem.delete(
-                save=False
+            messages.success(
+                request,
+                f'O produto "{nome}" '
+                "foi eliminado com sucesso."
             )
 
+        except Exception as exc:
 
-        produto.delete()
-
-        messages.success(
-            request,
-            f'O produto "{nome}" '
-            f'foi eliminado com sucesso.',
-        )
+            messages.error(
+                request,
+                "Não foi possível eliminar "
+                f"o produto. Erro: {exc}"
+            )
 
         return redirect(
             "produtos:produtos"
         )
 
-    context = {
-        "produto": produto,
-    }
-
     return render(
         request,
         "produtos/eliminar_produto.html",
-        context,
+        {
+            "produto": produto
+        }
     )
-

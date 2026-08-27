@@ -6,10 +6,6 @@ from .models import ProdutoAgricola
 @admin.register(ProdutoAgricola)
 class ProdutoAgricolaAdmin(admin.ModelAdmin):
 
-    # ============================================================
-    # LISTAGEM
-    # ============================================================
-
     list_display = (
         "nome",
         "categorias_display",
@@ -19,10 +15,6 @@ class ProdutoAgricolaAdmin(admin.ModelAdmin):
         "atualizado_em",
     )
 
-    # ============================================================
-    # FILTROS
-    # ============================================================
-
     list_filter = (
         "ativo",
         "analise_por_imagem",
@@ -31,9 +23,6 @@ class ProdutoAgricolaAdmin(admin.ModelAdmin):
         "atualizado_em",
     )
 
-    # ============================================================
-    # PESQUISA
-    # ============================================================
 
     search_fields = (
         "nome",
@@ -42,33 +31,18 @@ class ProdutoAgricolaAdmin(admin.ModelAdmin):
         "categorias__nome",
     )
 
-    # ============================================================
-    # CAMPOS SOMENTE LEITURA
-    # ============================================================
 
     readonly_fields = (
         "criado_em",
         "atualizado_em",
     )
 
-    # ============================================================
-    # ORDENAÇÃO
-    # ============================================================
-
     ordering = (
         "-criado_em",
         "nome",
     )
 
-    # ============================================================
-    # PAGINAÇÃO
-    # ============================================================
-
     list_per_page = 25
-
-    # ============================================================
-    # CAMPOS DO FORMULÁRIO
-    # ============================================================
 
     fieldsets = (
         (
@@ -113,9 +87,6 @@ class ProdutoAgricolaAdmin(admin.ModelAdmin):
         ),
     )
 
-    # ============================================================
-    # CATEGORIAS
-    # ============================================================
 
     @admin.display(
         description="Categorias"

@@ -9,34 +9,32 @@ Produtos Agrícolas | AgroIA Moxico
 <style>
   /* ============================================================
    AGROIA MOXICO
-   PRODUTOS AGRÍCOLAS
+   CATÁLOGO DE PRODUTOS AGRÍCOLAS
 ============================================================ */
 
   :root {
     --products-green: #176b45;
     --products-green-dark: #0d4d31;
-    --products-green-deep: #073b25;
+    --products-green-deep: #073b27;
     --products-green-light: #eaf7ef;
-    --products-green-soft: #f4faf6;
+    --products-green-soft: #f5faf7;
 
     --products-gold: #d9a441;
-    --products-gold-light: #f6e8bd;
+    --products-gold-light: #f4d17d;
 
-    --products-text: #173126;
-    --products-muted: #718178;
-    --products-border: #dce9e1;
-
+    --products-text: #17352a;
+    --products-muted: #718078;
     --products-white: #ffffff;
 
-    --products-danger: #c0392b;
-    --products-danger-dark: #962d22;
-    --products-danger-light: #fceceb;
+    --products-border: rgba(23, 107, 69, .12);
+
+    --products-radius: 20px;
 
     --products-shadow:
-      0 18px 50px rgba(8, 45, 29, .09);
+      0 12px 35px rgba(13, 77, 49, .07);
 
     --products-shadow-hover:
-      0 25px 65px rgba(8, 45, 29, .15);
+      0 22px 48px rgba(13, 77, 49, .14);
   }
 
 
@@ -45,14 +43,23 @@ Produtos Agrícolas | AgroIA Moxico
 ============================================================ */
 
   .products-page {
+    width: 100%;
     min-height: 100vh;
 
-    background:
-      linear-gradient(180deg,
-        #f7faf8 0%,
-        #eef5f1 100%);
+    display: flex;
+    flex-direction: column;
 
     color: var(--products-text);
+
+    background:
+      radial-gradient(circle at 5% 10%,
+        rgba(23, 107, 69, .055),
+        transparent 27%),
+      linear-gradient(180deg,
+        #f3faf6 0%,
+        #ffffff 25%,
+        #ffffff 75%,
+        #f5faf7 100%);
   }
 
 
@@ -63,204 +70,92 @@ Produtos Agrícolas | AgroIA Moxico
   .products-hero {
     position: relative;
 
-    min-height: 620px;
+    min-height: 475px;
 
     display: flex;
     align-items: center;
 
     overflow: hidden;
 
-    color: white;
-
-    background:
-      var(--products-green-deep);
-  }
-
-
-  /* ============================================================
-   SLIDES
-============================================================ */
-
-  .products-hero-slides {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
-
-  .products-hero-slide {
-    position: absolute;
-    inset: 0;
-
-    opacity: 0;
-
-    background-position: center;
-    background-size: cover;
-
-    transform: scale(1);
-
-    transition:
-      opacity 1.2s ease,
-      transform 7s ease;
-  }
-
-  .products-hero-slide.active {
-    opacity: 1;
-    transform: scale(1.06);
-  }
-
-  .products-hero-slide::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
     background:
       linear-gradient(90deg,
-        rgba(2, 25, 16, .97) 0%,
-        rgba(4, 50, 31, .91) 38%,
-        rgba(4, 50, 31, .64) 68%,
-        rgba(4, 50, 31, .28) 100%);
+        rgba(3, 35, 22, .98) 0%,
+        rgba(7, 59, 38, .94) 42%,
+        rgba(13, 77, 49, .78) 72%,
+        rgba(13, 77, 49, .62) 100%),
+      url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=88") center center / cover no-repeat;
   }
 
 
-  /* ============================================================
-   IMAGENS
-============================================================ */
-
-  .products-slide-1 {
-    background-image:
-      url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=90");
-  }
-
-  .products-slide-2 {
-    background-image:
-      url("https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=2200&q=90");
-  }
-
-  .products-slide-3 {
-    background-image:
-      url("https://images.unsplash.com/photo-1523742813662-36c65e0a7e6f?auto=format&fit=crop&w=2200&q=90");
-  }
-
-  .products-slide-4 {
-    background-image:
-      url("https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=2200&q=90");
-  }
-
-
-  /* ============================================================
-   ELEMENTOS DECORATIVOS
-============================================================ */
-
-  .products-hero-circle {
-    position: absolute;
-
-    width: 430px;
-    height: 430px;
-
-    right: -190px;
-    top: -190px;
-
-    z-index: 2;
-
-    border:
-      1px solid rgba(255, 255, 255, .12);
-
-    border-radius: 50%;
-
-    animation:
-      productsFloat 8s ease-in-out infinite;
-  }
-
-  .products-hero-circle::before {
+  .products-hero::before {
     content: "";
 
     position: absolute;
-    inset: 45px;
-
-    border:
-      1px solid rgba(229, 181, 77, .16);
-
-    border-radius: 50%;
-  }
-
-  .products-hero-circle::after {
-    content: "";
-
-    position: absolute;
-    inset: 95px;
-
-    border:
-      1px dashed rgba(255, 255, 255, .10);
-
-    border-radius: 50%;
-  }
-
-  .products-hero-glow {
-    position: absolute;
-
-    width: 420px;
-    height: 420px;
-
-    right: 4%;
-    bottom: -260px;
-
-    z-index: 1;
-
-    border-radius: 50%;
+    inset: 0;
 
     background:
-      radial-gradient(circle,
-        rgba(217, 164, 65, .18),
-        transparent 68%);
+      radial-gradient(circle at 82% 20%,
+        rgba(217, 164, 65, .22),
+        transparent 25%),
+      radial-gradient(circle at 65% 100%,
+        rgba(255, 255, 255, .07),
+        transparent 30%);
 
-    filter: blur(10px);
+    pointer-events: none;
+
+    animation: heroGlow 8s ease-in-out infinite alternate;
   }
 
-  @keyframes productsFloat {
 
-    0%,
-    100% {
-      transform:
-        translateY(0) rotate(0deg);
+  .products-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 650px;
+    height: 650px;
+
+    right: -330px;
+    bottom: -440px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, .10);
+
+    box-shadow:
+      0 0 0 55px rgba(255, 255, 255, .025),
+      0 0 0 110px rgba(255, 255, 255, .018),
+      0 0 0 165px rgba(255, 255, 255, .012);
+
+    animation: heroCircle 15s linear infinite;
+
+    pointer-events: none;
+  }
+
+
+  @keyframes heroGlow {
+
+    from {
+      opacity: .72;
+      transform: scale(1);
     }
 
-    50% {
-      transform:
-        translateY(18px) rotate(5deg);
+    to {
+      opacity: 1;
+      transform: scale(1.07);
     }
   }
 
 
-  /* ============================================================
-   HERO CONTAINER
-============================================================ */
+  @keyframes heroCircle {
 
-  .products-hero-container {
-    position: relative;
+    from {
+      transform: rotate(0deg);
+    }
 
-    z-index: 5;
-
-    width:
-      min(calc(100% - 40px),
-        1180px);
-
-    margin: 0 auto;
-  }
-
-  .products-hero-layout {
-    min-height: 620px;
-
-    display: grid;
-
-    grid-template-columns:
-      minmax(0, 1fr) minmax(420px, 520px);
-
-    align-items: center;
-
-    gap: 60px;
-
-    padding: 80px 0;
+    to {
+      transform: rotate(360deg);
+    }
   }
 
 
@@ -269,835 +164,313 @@ Produtos Agrícolas | AgroIA Moxico
 ============================================================ */
 
   .products-hero-content {
-    max-width: 680px;
+
+    position: relative;
+    z-index: 3;
+
+    width: min(1200px, calc(100% - 40px));
+
+    min-height: 475px;
+
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 55px;
+
+    padding: 45px 0 38px;
   }
 
-  .products-hero-badge {
+
+  /* ============================================================
+   HERO MAIN
+============================================================ */
+
+  .hero-main-content {
+    flex: 1;
+
+    min-width: 0;
+
+    max-width: 790px;
+  }
+
+
+  .hero-label {
+
     display: inline-flex;
 
     align-items: center;
+
     gap: 9px;
 
-    padding:
-      8px 13px;
+    margin-bottom: 15px;
 
-    margin-bottom: 22px;
+    padding: 8px 14px;
 
-    border:
-      1px solid rgba(255, 255, 255, .17);
+    border: 1px solid rgba(255, 255, 255, .18);
 
-    border-radius: 50px;
+    border-radius: 999px;
 
-    background:
-      rgba(255, 255, 255, .07);
+    color: #ffffff;
 
-    backdrop-filter:
-      blur(12px);
+    background: rgba(255, 255, 255, .08);
 
-    color:
-      rgba(255, 255, 255, .90);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 
-    font-size: .67rem;
-    font-weight: 800;
+    font-size: .69rem;
 
-    letter-spacing: .06em;
+    font-weight: 900;
+
+    letter-spacing: .08em;
+
+    text-transform: uppercase;
   }
 
-  .products-hero-dot {
-    width: 7px;
-    height: 7px;
 
-    flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background:
-      var(--products-gold);
-
-    box-shadow:
-      0 0 0 5px rgba(217, 164, 65, .12);
-
-    animation:
-      productsPulse 2s infinite;
+  .hero-label i {
+    color: var(--products-gold-light);
   }
 
-  @keyframes productsPulse {
-
-    0%,
-    100% {
-      box-shadow:
-        0 0 0 4px rgba(217, 164, 65, .10);
-    }
-
-    50% {
-      box-shadow:
-        0 0 0 9px rgba(217, 164, 65, .03);
-    }
-  }
 
   .products-hero h1 {
-    margin:
-      0 0 20px;
+
+    max-width: 790px;
+
+    margin: 0 0 15px;
+
+    color: #ffffff;
+
+    font-size: clamp(2.35rem, 5vw, 3.85rem);
+
+    line-height: 1.04;
+
+    font-weight: 900;
+
+    letter-spacing: -.055em;
+  }
+
+
+  .products-hero h1 span {
+    color: var(--products-gold-light);
+  }
+
+
+  .products-hero-description {
 
     max-width: 720px;
 
-    font-size:
-      clamp(2.8rem,
-        5vw,
-        4.7rem);
-
-    line-height: 1.02;
-
-    letter-spacing: -.065em;
-
-    font-weight: 500;
-  }
-
-  .products-hero h1 strong {
-    display: block;
-
-    color:
-      var(--products-gold);
-
-    font-weight: 900;
-  }
-
-  .products-hero-description {
-    max-width: 620px;
-
     margin: 0;
 
-    color:
-      rgba(255, 255, 255, .72);
+    color: rgba(255, 255, 255, .82);
 
-    font-size: .94rem;
+    font-size: .91rem;
 
-    line-height: 1.85;
+    line-height: 1.72;
   }
 
 
   /* ============================================================
-   HERO BOTÕES
+   FRASES
 ============================================================ */
 
-  .products-hero-buttons {
-    display: flex;
+  .hero-phrase {
 
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin-top: 30px;
-  }
-
-  .products-secondary-button {
-    min-height: 48px;
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 9px;
-
-    padding:
-      0 18px;
-
-    border-radius: 12px;
-
-    text-decoration: none;
-
-    font-size: .68rem;
-    font-weight: 900;
-
-    color: white;
-
-    border:
-      1px solid rgba(255, 255, 255, .18);
-
-    background:
-      rgba(255, 255, 255, .07);
-
-    backdrop-filter:
-      blur(10px);
-
-    transition:
-      transform .25s ease,
-      box-shadow .25s ease,
-      background .25s ease;
-  }
-
-  .products-secondary-button:hover {
-    transform:
-      translateY(-3px);
-
-    background:
-      rgba(255, 255, 255, .13);
-
-    color: white;
-  }
-
-  .products-secondary-button svg {
-    width: 17px;
-    height: 17px;
-  }
-
-
-  /* ============================================================
-   HERO ESTATÍSTICAS
-============================================================ */
-
-  .products-hero-stats {
-    display: grid;
-
-    grid-template-columns:
-      repeat(3,
-        minmax(0, 1fr));
-
-    gap: 9px;
-
-    transform:
-      translateY(38px);
-  }
-
-  .products-stat-card {
     position: relative;
 
-    min-height: 145px;
+    min-height: 23px;
 
-    padding:
-      17px 15px;
+    margin-top: 15px;
+
+    color: rgba(255, 255, 255, .63);
+
+    font-size: .75rem;
+
+    font-weight: 700;
+  }
+
+
+  .hero-phrase span {
+
+    position: absolute;
+
+    left: 0;
+
+    opacity: 0;
+
+    transform: translateY(7px);
+
+    animation: phraseAnimation 15s infinite;
+  }
+
+
+  .hero-phrase span:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+
+  .hero-phrase span:nth-child(2) {
+    animation-delay: 5s;
+  }
+
+
+  .hero-phrase span:nth-child(3) {
+    animation-delay: 10s;
+  }
+
+
+  @keyframes phraseAnimation {
+
+    0% {
+      opacity: 0;
+      transform: translateY(7px);
+    }
+
+    7% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    27% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    34% {
+      opacity: 0;
+      transform: translateY(-7px);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(-7px);
+    }
+  }
+
+
+  /* ============================================================
+   CARD DA HERO
+============================================================ */
+
+  .hero-stats {
+
+    flex-shrink: 0;
+
+    width: 245px;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+  }
+
+
+  .hero-stat {
+
+    position: relative;
+
+    width: 245px;
+
+    min-height: 150px;
+
+    padding: 22px 21px;
+
+    overflow: hidden;
 
     display: flex;
 
     flex-direction: column;
 
-    justify-content: space-between;
-
-    border:
-      1px solid rgba(255, 255, 255, .13);
-
-    border-radius: 17px;
-
-    background:
-      rgba(255, 255, 255, .075);
-
-    backdrop-filter:
-      blur(18px);
-
-    box-shadow:
-      0 20px 50px rgba(0, 0, 0, .12);
-
-    overflow: hidden;
-
-    transition:
-      transform .3s ease,
-      background .3s ease;
-  }
-
-  .products-stat-card:hover {
-    transform:
-      translateY(-7px);
-
-    background:
-      rgba(255, 255, 255, .105);
-  }
-
-  .products-stat-card::after {
-    content: "";
-
-    position: absolute;
-
-    width: 85px;
-    height: 85px;
-
-    right: -35px;
-    bottom: -35px;
-
-    border-radius: 50%;
-
-    background:
-      rgba(217, 164, 65, .09);
-  }
-
-  .products-stat-icon {
-    width: 37px;
-    height: 37px;
-
-    display: flex;
-
-    align-items: center;
     justify-content: center;
 
-    border-radius: 11px;
-
-    color:
-      var(--products-gold);
-
-    background:
-      rgba(217, 164, 65, .12);
-  }
-
-  .products-stat-icon svg {
-    width: 19px;
-    height: 19px;
-  }
-
-  .products-stat-value {
-    display: block;
-
-    margin-top: 13px;
-
-    color: white;
-
-    font-size: 1.65rem;
-
-    line-height: 1;
-
-    font-weight: 900;
-
-    letter-spacing: -.04em;
-  }
-
-  .products-stat-label {
-    display: block;
-
-    margin-top: 6px;
-
-    color:
-      rgba(255, 255, 255, .60);
-
-    font-size: .56rem;
-
-    line-height: 1.45;
-  }
-
-
-  /* ============================================================
-   SEÇÕES
-============================================================ */
-
-  .products-section {
-    padding:
-      85px 0;
-  }
-
-  .products-container {
-    width:
-      min(calc(100% - 40px),
-        1180px);
-
-    margin: 0 auto;
-  }
-
-
-  /* ============================================================
-   SECTION HEADER
-============================================================ */
-
-  .products-section-header {
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: space-between;
-
-    gap: 25px;
-
-    margin-bottom: 28px;
-  }
-
-  .products-eyebrow {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    color:
-      var(--products-green);
-
-    font-size: .62rem;
-
-    font-weight: 900;
-
-    text-transform: uppercase;
-
-    letter-spacing: .10em;
-  }
-
-  .products-eyebrow::before {
-    content: "";
-
-    width: 6px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background:
-      var(--products-gold);
-  }
-
-  .products-section-header h2 {
-    margin:
-      10px 0 9px;
-
-    font-size:
-      clamp(1.9rem,
-        3vw,
-        2.7rem);
-
-    line-height: 1.08;
-
-    letter-spacing: -.055em;
-  }
-
-  .products-section-header p {
-    max-width: 620px;
-
-    margin: 0;
-
-    color:
-      var(--products-muted);
-
-    font-size: .78rem;
-
-    line-height: 1.75;
-  }
-
-
-  /* ============================================================
-   BOTÃO NOVO
-============================================================ */
-
-  .products-action-button {
-    flex-shrink: 0;
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 8px;
-
-    min-height: 44px;
-
-    padding:
-      0 15px;
-
-    border-radius: 11px;
-
-    color: white;
-
-    background:
-      var(--products-green);
-
-    text-decoration: none;
-
-    font-size: .64rem;
-
-    font-weight: 900;
-
-    box-shadow:
-      0 9px 24px rgba(23, 107, 69, .15);
-
-    transition:
-      transform .25s ease,
-      background .25s ease;
-  }
-
-  .products-action-button:hover {
-    transform:
-      translateY(-2px);
-
-    background:
-      var(--products-green-dark);
-
-    color: white;
-  }
-
-  .products-action-button svg {
-    width: 16px;
-    height: 16px;
-  }
-
-
-  /* ============================================================
-   CATEGORIAS
-============================================================ */
-
-  .products-categories-section {
-    background:
-      #ffffff;
-  }
-
-  .products-category-grid {
-    display: grid;
-
-    grid-template-columns:
-      repeat(auto-fill,
-        minmax(230px, 1fr));
-
-    gap: 16px;
-  }
-
-  .products-category-card {
-    position: relative;
-
-    padding: 21px;
-
-    border:
-      1px solid var(--products-border);
+    border: 1px solid rgba(255, 255, 255, .20);
 
     border-radius: 19px;
 
     background:
       linear-gradient(145deg,
-        #ffffff,
-        #f6fbf8);
+        rgba(255, 255, 255, .17),
+        rgba(255, 255, 255, .055));
 
     box-shadow:
-      0 10px 35px rgba(8, 45, 29, .045);
+      0 18px 42px rgba(0, 0, 0, .20);
 
-    overflow: hidden;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 
     transition:
       transform .3s ease,
-      box-shadow .3s ease,
-      border-color .3s ease;
-  }
-
-  .products-category-card:hover {
-    transform:
-      translateY(-6px);
-
-    border-color:
-      #c8dfd1;
-
-    box-shadow:
-      var(--products-shadow);
-  }
-
-  .products-category-top {
-    display: flex;
-
-    align-items: flex-start;
-
-    justify-content: space-between;
-
-    gap: 12px;
-  }
-
-  .products-category-icon {
-    width: 47px;
-    height: 47px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 14px;
-
-    color: white;
-
-    background:
-      linear-gradient(135deg,
-        var(--products-green),
-        #299c69);
-
-    box-shadow:
-      0 9px 20px rgba(23, 107, 69, .15);
-  }
-
-  .products-category-icon svg {
-    width: 21px;
-    height: 21px;
-  }
-
-  .products-category-count {
-    padding:
-      6px 9px;
-
-    border-radius: 30px;
-
-    color:
-      var(--products-green);
-
-    background:
-      var(--products-green-light);
-
-    font-size: .58rem;
-
-    font-weight: 900;
-  }
-
-  .products-category-card h3 {
-    margin:
-      18px 0 6px;
-
-    color:
-      var(--products-text);
-
-    font-size: .92rem;
-
-    font-weight: 900;
-  }
-
-  .products-category-card p {
-    min-height: 40px;
-
-    margin:
-      0 0 18px;
-
-    color:
-      var(--products-muted);
-
-    font-size: .65rem;
-
-    line-height: 1.6;
+      border-color .3s ease,
+      background .3s ease;
   }
 
 
-  /* ============================================================
-   BOTÕES DAS CATEGORIAS
-============================================================ */
+  .hero-stat::before {
 
-  .products-category-actions {
-    display: grid;
+    content: "";
 
-    grid-template-columns:
-      1fr 1fr;
-
-    gap: 7px;
-
-    margin-top: 4px;
-  }
-
-  .products-category-button {
-    width: 100%;
-
-    min-height: 38px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 6px;
-
-    border:
-      1px solid #d5e6dc;
-
-    border-radius: 10px;
-
-    color:
-      var(--products-green);
-
-    background:
-      white;
-
-    text-decoration: none;
-
-    font-size: .58rem;
-
-    font-weight: 900;
-
-    transition:
-      background .25s ease,
-      color .25s ease,
-      border-color .25s ease,
-      transform .2s ease;
-  }
-
-  .products-category-button:hover {
-    color: white;
-
-    background:
-      var(--products-green);
-
-    border-color:
-      var(--products-green);
-
-    transform:
-      translateY(-2px);
-  }
-
-  .products-category-button svg {
-    width: 14px;
-    height: 14px;
-  }
-
-
-  /* ============================================================
-   EDITAR
-============================================================ */
-
-  .products-category-edit {
-    color:
-      #7b5b13;
-
-    border-color:
-      #ead9a9;
-
-    background:
-      #fffdf6;
-  }
-
-  .products-category-edit:hover {
-    color: white;
-
-    background:
-      var(--products-gold);
-
-    border-color:
-      var(--products-gold);
-  }
-
-
-  /* ============================================================
-   ELIMINAR
-============================================================ */
-
-  .products-category-delete {
-    grid-column:
-      1 / -1;
-
-    color:
-      var(--products-danger);
-
-    border-color:
-      #f0ceca;
-
-    background:
-      var(--products-danger-light);
-  }
-
-  .products-category-delete:hover {
-    color: white;
-
-    background:
-      var(--products-danger);
-
-    border-color:
-      var(--products-danger);
-  }
-
-
-  /* ============================================================
-   PRODUTOS
-============================================================ */
-
-  .products-products-section {
-    background:
-      linear-gradient(180deg,
-        #f7faf8,
-        #eef5f1);
-  }
-
-
-  /* ============================================================
-   TOOLBAR
-============================================================ */
-
-  .products-toolbar {
-    display: grid;
-
-    grid-template-columns:
-      minmax(240px, 1fr) 220px;
-
-    gap: 10px;
-
-    margin-bottom: 25px;
-
-    padding: 10px;
-
-    border:
-      1px solid rgba(225, 235, 229, .95);
-
-    border-radius: 15px;
-
-    background:
-      rgba(255, 255, 255, .86);
-
-    box-shadow:
-      0 12px 35px rgba(8, 45, 29, .06);
-
-    backdrop-filter:
-      blur(16px);
-  }
-
-  .products-search {
-    position: relative;
-  }
-
-  .products-search svg {
     position: absolute;
 
-    left: 13px;
-    top: 50%;
+    width: 125px;
+    height: 125px;
 
-    width: 17px;
-    height: 17px;
+    right: -58px;
+    top: -68px;
 
-    transform:
-      translateY(-50%);
+    border-radius: 50%;
 
-    color:
-      #8a9991;
+    background: rgba(255, 255, 255, .055);
+
+    pointer-events: none;
   }
 
-  .products-search input,
-  .products-filter select {
-    width: 100%;
 
-    min-height: 43px;
+  .hero-stat::after {
 
-    box-sizing: border-box;
+    content: "";
 
-    padding:
-      0 13px 0 39px;
+    position: absolute;
 
-    border:
-      1px solid var(--products-border);
+    width: 90px;
+    height: 90px;
 
-    border-radius: 10px;
+    left: -48px;
+    bottom: -52px;
 
-    outline: none;
+    border-radius: 50%;
 
-    color:
-      var(--products-text);
+    background: rgba(217, 164, 65, .09);
+
+    pointer-events: none;
+  }
+
+
+  .hero-stat:hover {
+
+    transform: translateY(-6px);
+
+    border-color: rgba(255, 255, 255, .34);
 
     background:
-      #fbfdfc;
-
-    font: inherit;
-
-    font-size: .67rem;
-  }
-
-  .products-filter select {
-    padding:
-      0 12px;
-
-    cursor: pointer;
-  }
-
-  .products-search input:focus,
-  .products-filter select:focus {
-    border-color:
-      #9bc6ac;
-
-    box-shadow:
-      0 0 0 4px rgba(41, 156, 105, .08);
+      linear-gradient(145deg,
+        rgba(255, 255, 255, .22),
+        rgba(255, 255, 255, .075));
   }
 
 
   /* ============================================================
-   CONTADOR
+   STAT
 ============================================================ */
 
-  .products-results-info {
+  .hero-stat-top {
+
+    position: relative;
+
+    z-index: 2;
+
     display: flex;
 
     align-items: center;
@@ -1106,74 +479,498 @@ Produtos Agrícolas | AgroIA Moxico
 
     gap: 15px;
 
-    margin-bottom: 18px;
+    margin-bottom: 12px;
   }
 
-  .products-results-count {
-    color:
-      var(--products-muted);
+
+  .hero-stat-icon {
+
+    width: 43px;
+    height: 43px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    color: var(--products-gold-light);
+
+    background: rgba(255, 255, 255, .10);
+
+    border: 1px solid rgba(255, 255, 255, .10);
+
+    font-size: .95rem;
+  }
+
+
+  .hero-stat-number {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 2rem;
+
+    line-height: 1;
+
+    font-weight: 900;
+
+    letter-spacing: -.055em;
+
+    min-width: 30px;
+
+    text-align: right;
+  }
+
+
+  .hero-stat-label {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: block;
+
+    color: rgba(255, 255, 255, .78);
 
     font-size: .64rem;
+
+    line-height: 1.4;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: .055em;
   }
 
-  .products-results-count strong {
-    color:
-      var(--products-green);
+
+  /* ============================================================
+   CONTAINER
+============================================================ */
+
+  .products-container {
+
+    width: min(1200px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding: 58px 0 100px;
+
+    flex: 1 0 auto;
+  }
+
+
+  /* ============================================================
+   HEADER
+============================================================ */
+
+  .section-header {
+    margin-bottom: 24px;
+  }
+
+
+  .section-kicker {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 9px;
+
+    color: var(--products-green);
+
+    font-size: .69rem;
+
+    font-weight: 900;
+
+    letter-spacing: .11em;
+
+    text-transform: uppercase;
+  }
+
+
+  .section-kicker::before {
+
+    content: "";
+
+    width: 27px;
+    height: 3px;
+
+    border-radius: 20px;
+
+    background: var(--products-gold);
+  }
+
+
+  .section-heading h2 {
+
+    margin: 0;
+
+    color: var(--products-text);
+
+    font-size: clamp(1.80rem, 3vw, 2.45rem);
+
+    line-height: 1.1;
+
+    font-weight: 900;
+
+    letter-spacing: -.04em;
+  }
+
+
+  .section-heading p {
+
+    max-width: 790px;
+
+    margin: 11px 0 0;
+
+    color: var(--products-muted);
+
+    font-size: .87rem;
+
+    line-height: 1.72;
+  }
+
+
+  /* ============================================================
+   ÁREA SUPERIOR
+============================================================ */
+
+  .products-area-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+
+    margin-bottom: 16px;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(23, 107, 69, .10);
+
+    border-radius: 15px;
+
+    background:
+      linear-gradient(135deg,
+        rgba(234, 247, 239, .68),
+        #ffffff);
+
+    box-shadow:
+      0 8px 25px rgba(13, 77, 49, .04);
+  }
+
+
+  .products-area-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: var(--products-text);
+
+    font-size: .79rem;
 
     font-weight: 900;
   }
 
 
-  /* ============================================================
-   GRID PRODUTOS
-============================================================ */
-
-  .products-grid {
-    display: grid;
-
-    grid-template-columns:
-      repeat(4,
-        minmax(0, 1fr));
-
-    gap: 17px;
+  .products-area-title i {
+    color: var(--products-green);
   }
 
 
   /* ============================================================
-   CARD PRODUTO
+   BOTÃO CADASTRAR
 ============================================================ */
 
-  .products-product-card {
+  .add-button {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 39px;
+
+    padding: 0 15px;
+
+    flex-shrink: 0;
+
+    border: 0;
+
+    border-radius: 11px;
+
+    color: #ffffff;
+
+    background:
+      linear-gradient(135deg,
+        var(--products-green),
+        var(--products-green-dark));
+
+    text-decoration: none;
+
+    font-size: .69rem;
+
+    font-weight: 900;
+
+    box-shadow:
+      0 8px 20px rgba(23, 107, 69, .20);
+
+    transition:
+      transform .25s ease,
+      box-shadow .25s ease,
+      filter .25s ease;
+  }
+
+
+  .add-button:hover {
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    filter: brightness(1.05);
+
+    box-shadow:
+      0 12px 25px rgba(13, 77, 49, .25);
+  }
+
+
+  /* ============================================================
+   PESQUISA
+============================================================ */
+
+  .products-toolbar {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 23px;
+
+    padding: 10px 12px;
+
+    border: 1px solid rgba(23, 107, 69, .10);
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow:
+      0 7px 24px rgba(13, 77, 49, .04);
+  }
+
+
+  .search-wrapper {
+
+    position: relative;
+
+    flex: 1;
+
+    min-width: 0;
+  }
+
+
+  .search-icon {
+
+    position: absolute;
+
+    top: 50%;
+    left: 15px;
+
+    transform: translateY(-50%);
+
+    color: var(--products-green);
+
+    font-size: .80rem;
+
+    pointer-events: none;
+  }
+
+
+  .products-search {
+
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 0 43px;
+
+    border: 1px solid rgba(23, 107, 69, .12);
+
+    border-radius: 11px;
+
+    outline: none;
+
+    color: var(--products-text);
+
+    background: var(--products-green-soft);
+
+    font-family: inherit;
+
+    font-size: .77rem;
+
+    transition:
+      border-color .25s ease,
+      box-shadow .25s ease,
+      background .25s ease;
+  }
+
+
+  .products-search:focus {
+
+    background: #ffffff;
+
+    border-color: rgba(23, 107, 69, .38);
+
+    box-shadow:
+      0 0 0 4px rgba(23, 107, 69, .06);
+  }
+
+
+  .clear-search {
+
+    position: absolute;
+
+    top: 50%;
+    right: 8px;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 29px;
+    height: 29px;
+
+    transform: translateY(-50%);
+
+    border: 0;
+
+    border-radius: 8px;
+
+    color: var(--products-muted);
+
+    background: transparent;
+
+    cursor: pointer;
+  }
+
+
+  .clear-search:hover {
+
+    color: var(--products-green);
+
+    background: var(--products-green-light);
+  }
+
+
+  .search-result-info {
+
+    flex-shrink: 0;
+
+    min-width: 125px;
+
+    color: var(--products-muted);
+
+    font-size: .67rem;
+
+    font-weight: 700;
+
+    text-align: right;
+  }
+
+
+  .search-result-info strong {
+
+    color: var(--products-green);
+
+    font-size: .77rem;
+  }
+
+
+  /* ============================================================
+   GRID
+============================================================ */
+
+  .products-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+
+    gap: 20px;
+
+    align-items: stretch;
+
+    width: 100%;
+  }
+
+
+  /* ============================================================
+   CARD
+============================================================ */
+
+  .product-card {
+
+    min-width: 0;
+    min-height: 100%;
+
     display: flex;
 
     flex-direction: column;
 
-    min-width: 0;
-
     overflow: hidden;
 
-    border:
-      1px solid var(--products-border);
+    border: 1px solid var(--products-border);
 
-    border-radius: 18px;
+    border-radius: var(--products-radius);
 
-    background:
-      white;
+    background: #ffffff;
 
-    box-shadow:
-      0 9px 30px rgba(8, 45, 29, .055);
+    box-shadow: var(--products-shadow);
 
     transition:
       transform .3s ease,
-      box-shadow .3s ease;
+      box-shadow .3s ease,
+      border-color .3s ease;
   }
 
-  .products-product-card:hover {
-    transform:
-      translateY(-7px);
 
-    box-shadow:
-      var(--products-shadow-hover);
+  .product-card:hover {
+
+    transform: translateY(-6px);
+
+    border-color: rgba(23, 107, 69, .20);
+
+    box-shadow: var(--products-shadow-hover);
+  }
+
+
+  .product-card.hidden-by-search {
+    display: none;
   }
 
 
@@ -1181,37 +978,48 @@ Produtos Agrícolas | AgroIA Moxico
    IMAGEM
 ============================================================ */
 
-  .products-product-image {
+  .product-image-wrapper {
+
     position: relative;
 
-    height: 205px;
+    height: 195px;
+
+    flex-shrink: 0;
 
     overflow: hidden;
 
     background:
       linear-gradient(135deg,
-        #eaf5ee,
-        #dfeee5);
+        #eaf7ef,
+        #d9eee1);
   }
 
-  .products-product-image img {
-    width: 100%;
-    height: 100%;
+
+  .product-image {
 
     display: block;
+
+    width: 100%;
+    height: 100%;
 
     object-fit: cover;
 
     transition:
-      transform .55s ease;
+      transform .55s ease,
+      filter .35s ease;
   }
 
-  .products-product-card:hover .products-product-image img {
-    transform:
-      scale(1.07);
+
+  .product-card:hover .product-image {
+
+    transform: scale(1.06);
+
+    filter: saturate(1.05);
   }
 
-  .products-image-placeholder {
+
+  .product-image-placeholder {
+
     width: 100%;
     height: 100%;
 
@@ -1220,13 +1028,14 @@ Produtos Agrícolas | AgroIA Moxico
     align-items: center;
     justify-content: center;
 
-    color:
-      #8aaa98;
-  }
+    color: var(--products-green);
 
-  .products-image-placeholder svg {
-    width: 43px;
-    height: 43px;
+    background:
+      radial-gradient(circle at center,
+        rgba(23, 107, 69, .11),
+        transparent 55%);
+
+    font-size: 2.8rem;
   }
 
 
@@ -1234,199 +1043,305 @@ Produtos Agrícolas | AgroIA Moxico
    STATUS
 ============================================================ */
 
-  .products-status {
+  .product-status {
+
     position: absolute;
 
     top: 12px;
-    left: 12px;
+    right: 12px;
 
-    padding:
-      6px 9px;
+    display: inline-flex;
 
-    border-radius: 30px;
+    align-items: center;
 
-    color:
-      var(--products-green);
+    gap: 5px;
 
-    background:
-      rgba(255, 255, 255, .91);
+    padding: 6px 9px;
 
-    backdrop-filter:
-      blur(8px);
+    border-radius: 999px;
 
-    font-size: .55rem;
+    font-size: .59rem;
 
     font-weight: 900;
 
-    box-shadow:
-      0 5px 15px rgba(0, 0, 0, .08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+
+  .product-status.active {
+
+    color: #155d3d;
+
+    background: rgba(226, 247, 235, .94);
+  }
+
+
+  .product-status.inactive {
+
+    color: #765f1c;
+
+    background: rgba(255, 244, 205, .94);
   }
 
 
   /* ============================================================
-   CONTEÚDO
+   CORPO
 ============================================================ */
 
-  .products-product-content {
+  .product-body {
+
+    flex: 1;
+
     display: flex;
 
     flex-direction: column;
 
-    flex: 1;
-
     padding: 17px;
   }
 
-  .products-product-category {
-    display: inline-flex;
 
-    width: fit-content;
+  .product-name {
 
-    padding:
-      5px 8px;
+    display: -webkit-box;
 
-    margin-bottom: 9px;
+    margin: 0 0 7px;
 
-    border-radius: 7px;
+    overflow: hidden;
 
-    color:
-      var(--products-green);
+    color: var(--products-text);
 
-    background:
-      var(--products-green-light);
-
-    font-size: .53rem;
-
-    font-weight: 900;
-  }
-
-  .products-product-card h3 {
-    margin:
-      0 0 7px;
-
-    color:
-      var(--products-text);
-
-    font-size: .91rem;
+    font-size: 1.03rem;
 
     line-height: 1.3;
 
     font-weight: 900;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
   }
 
-  .products-product-description {
+
+  .product-description {
+
     display: -webkit-box;
 
-    min-height: 43px;
+    min-height: 58px;
 
-    margin:
-      0 0 17px;
+    margin: 0 0 14px;
 
     overflow: hidden;
 
-    color:
-      var(--products-muted);
+    color: var(--products-muted);
 
-    font-size: .63rem;
+    font-size: .77rem;
 
-    line-height: 1.6;
+    line-height: 1.58;
 
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
+
     -webkit-box-orient: vertical;
   }
 
 
   /* ============================================================
-   BOTÕES PRODUTO
+   CATEGORIAS
 ============================================================ */
 
-  .products-product-actions {
+  .product-categories {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    margin-bottom: 13px;
+  }
+
+
+  .product-category {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 5px 8px;
+
+    border-radius: 7px;
+
+    color: var(--products-green);
+
+    background: var(--products-green-light);
+
+    font-size: .57rem;
+
+    font-weight: 800;
+  }
+
+
+  .product-category i {
+    font-size: .52rem;
+  }
+
+
+  /* ============================================================
+   INFORMAÇÕES
+============================================================ */
+
+  .product-info {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 8px;
+
+    margin-top: auto;
+
+    margin-bottom: 14px;
+
+    padding-top: 12px;
+
+    border-top:
+      1px solid rgba(23, 107, 69, .08);
+  }
+
+
+  .product-info-item {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    min-width: 0;
+
+    color: var(--products-muted);
+
+    font-size: .61rem;
+
+    font-weight: 700;
+  }
+
+
+  .product-info-item i {
+
+    color: var(--products-green);
+
+    font-size: .68rem;
+  }
+
+
+  /* ============================================================
+   AÇÕES
+============================================================ */
+
+  .product-actions {
+
     display: grid;
 
     grid-template-columns:
       1fr 1fr;
 
     gap: 7px;
-
-    margin-top: auto;
   }
 
-  .products-product-button {
-    min-height: 37px;
+
+  .product-btn {
 
     display: inline-flex;
 
     align-items: center;
+
     justify-content: center;
 
     gap: 6px;
 
-    border-radius: 9px;
+    min-height: 38px;
+
+    padding: 0 8px;
+
+    border-radius: 10px;
 
     text-decoration: none;
 
-    font-size: .55rem;
+    font-size: .67rem;
 
     font-weight: 900;
 
     transition:
-      transform .2s ease,
-      background .2s ease,
-      border-color .2s ease;
+      transform .25s ease,
+      background .25s ease,
+      color .25s ease,
+      box-shadow .25s ease;
   }
 
-  .products-product-button:hover {
-    transform:
-      translateY(-2px);
+
+  .product-btn:hover {
+    transform: translateY(-2px);
   }
 
-  .products-product-details {
-    color:
-      var(--products-green);
+
+  .product-btn-details {
+
+    color: var(--products-green);
 
     border:
-      1px solid #d5e5dc;
+      1px solid rgba(23, 107, 69, .15);
 
-    background:
-      white;
+    background: #ffffff;
   }
 
-  .products-product-details:hover {
-    color:
-      white;
 
-    border-color:
-      var(--products-green);
+  .product-btn-details:hover {
 
-    background:
-      var(--products-green);
+    color: var(--products-green-dark);
+
+    background: var(--products-green-light);
   }
 
-  .products-product-analyze {
-    color:
-      white;
 
-    background:
-      var(--products-green);
+  .product-btn-analyze {
 
-    border:
-      1px solid var(--products-green);
+    color: #ffffff;
+
+    background: var(--products-green);
 
     box-shadow:
-      0 7px 17px rgba(23, 107, 69, .13);
+      0 7px 16px rgba(23, 107, 69, .16);
   }
 
-  .products-product-analyze:hover {
-    background:
-      var(--products-green-dark);
 
-    border-color:
-      var(--products-green-dark);
+  .product-btn-analyze:hover {
+
+    color: #ffffff;
+
+    background: var(--products-green-dark);
+
+    box-shadow:
+      0 10px 21px rgba(13, 77, 49, .23);
   }
 
-  .products-product-button svg {
-    width: 14px;
-    height: 14px;
+
+  .product-btn-disabled {
+
+    color: #8b9690;
+
+    border:
+      1px solid rgba(113, 128, 120, .16);
+
+    background: #f5f7f6;
+
+    cursor: not-allowed;
+
+    opacity: .65;
   }
 
 
@@ -1434,262 +1349,230 @@ Produtos Agrícolas | AgroIA Moxico
    VAZIO
 ============================================================ */
 
-  .products-empty {
-    padding:
-      70px 25px;
+  .empty-state {
+
+    padding: 60px 25px;
+
+    border:
+      1px dashed rgba(23, 107, 69, .22);
+
+    border-radius: var(--products-radius);
 
     text-align: center;
 
-    border:
-      1px dashed #cbdcd2;
-
-    border-radius: 18px;
-
     background:
-      rgba(255, 255, 255, .60);
+      linear-gradient(135deg,
+        rgba(234, 247, 239, .70),
+        rgba(255, 255, 255, .90));
   }
 
-  .products-empty-icon {
-    width: 58px;
-    height: 58px;
 
-    margin:
-      0 auto 15px;
+  .empty-icon {
+
+    width: 72px;
+    height: 72px;
+
+    margin: 0 auto 18px;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    border-radius: 17px;
+    border-radius: 21px;
 
-    color:
-      var(--products-green);
+    color: var(--products-green);
 
-    background:
-      var(--products-green-light);
+    background: var(--products-green-light);
+
+    font-size: 1.8rem;
   }
 
-  .products-empty-icon svg {
-    width: 27px;
-    height: 27px;
+
+  .empty-state h3 {
+
+    margin: 0 0 8px;
+
+    font-size: 1.2rem;
+
+    font-weight: 900;
   }
 
-  .products-empty h3 {
-    margin:
-      0 0 7px;
 
-    font-size: 1rem;
-  }
+  .empty-state p {
 
-  .products-empty p {
-    max-width: 450px;
+    max-width: 550px;
 
-    margin:
-      0 auto 18px;
+    margin: 0 auto 20px;
 
-    color:
-      var(--products-muted);
+    color: var(--products-muted);
 
-    font-size: .67rem;
+    font-size: .84rem;
 
     line-height: 1.7;
   }
 
 
   /* ============================================================
-   ANIMAÇÕES
+   RESPONSIVIDADE
 ============================================================ */
 
-  .products-animate {
-    opacity: 0;
+  @media (max-width: 950px) {
 
-    transform:
-      translateY(25px);
-
-    transition:
-      opacity .7s ease,
-      transform .7s ease;
-  }
-
-  .products-animate.visible {
-    opacity: 1;
-
-    transform:
-      translateY(0);
-  }
-
-
-  /* ============================================================
-   RESPONSIVE
-============================================================ */
-
-  @media (max-width: 1050px) {
-
-    .products-hero-layout {
-      grid-template-columns:
-        1fr 430px;
-
+    .products-hero-content {
       gap: 35px;
+    }
+
+    .hero-stats,
+    .hero-stat {
+      width: 220px;
     }
 
     .products-grid {
       grid-template-columns:
-        repeat(3,
-          minmax(0, 1fr));
+        repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (max-width: 900px) {
+
+  @media (max-width: 800px) {
 
     .products-hero {
       min-height: auto;
     }
 
-    .products-hero-layout {
-      grid-template-columns:
-        1fr;
+    .products-hero-content {
 
       min-height: auto;
 
-      padding:
-        85px 0 70px;
+      flex-direction: column;
+
+      align-items: stretch;
+
+      gap: 28px;
+
+      padding: 45px 0 35px;
     }
 
-    .products-hero-content {
-      max-width: 750px;
+    .hero-main-content {
+      max-width: none;
     }
 
-    .products-hero-stats {
-      max-width: 650px;
+    .hero-stats {
 
-      transform:
-        translateY(15px);
+      width: 100%;
+
+      justify-content: flex-start;
     }
 
-    .products-grid {
-      grid-template-columns:
-        repeat(2,
-          minmax(0, 1fr));
+    .hero-stat {
+
+      width: 245px;
+
+      min-height: 125px;
     }
   }
+
 
   @media (max-width: 650px) {
 
     .products-container,
-    .products-hero-container {
-      width:
-        min(calc(100% - 28px),
-          1180px);
-    }
+    .products-hero-content {
 
-    .products-hero-layout {
-      padding:
-        70px 0 60px;
+      width:
+        min(calc(100% - 28px), 1200px);
     }
 
     .products-hero h1 {
-      font-size:
-        2.65rem;
+      font-size: 2.20rem;
     }
 
-    .products-hero-stats {
-      grid-template-columns:
-        repeat(3,
-          minmax(0, 1fr));
-
-      gap: 7px;
-
-      transform:
-        translateY(10px);
-    }
-
-    .products-stat-card {
-      min-height: 115px;
-
-      padding:
-        12px 9px;
-    }
-
-    .products-stat-value {
-      font-size: 1.35rem;
-    }
-
-    .products-stat-label {
-      font-size: .49rem;
-    }
-
-    .products-stat-icon {
-      width: 32px;
-      height: 32px;
-
-      border-radius: 9px;
-    }
-
-    .products-section {
-      padding:
-        65px 0;
-    }
-
-    .products-section-header {
-      align-items: flex-start;
-
-      flex-direction: column;
-    }
-
-    .products-toolbar {
-      grid-template-columns:
-        1fr;
-    }
-
-    .products-grid {
-      grid-template-columns:
-        1fr 1fr;
-    }
-
-    .products-category-actions {
-      grid-template-columns:
-        1fr 1fr;
-    }
-  }
-
-  @media (max-width: 450px) {
-
-    .products-hero-buttons {
-      flex-direction: column;
-    }
-
-    .products-secondary-button {
+    .hero-stats {
       width: 100%;
     }
 
-    .products-hero-stats {
-      grid-template-columns:
-        1fr;
+    .hero-stat {
+
+      width: 100%;
+
+      max-width: 300px;
     }
 
-    .products-stat-card {
-      min-height: 90px;
+    .products-area-top {
 
-      flex-direction: row;
+      align-items: flex-start;
+    }
 
-      align-items: center;
+    .products-toolbar {
 
-      gap: 14px;
+      flex-direction: column;
+
+      align-items: stretch;
+    }
+
+    .search-result-info {
+
+      text-align: left;
     }
 
     .products-grid {
-      grid-template-columns:
-        1fr;
+      grid-template-columns: 1fr;
     }
 
-    .products-product-image {
+    .product-image-wrapper {
       height: 220px;
     }
+  }
 
-    .products-category-grid {
-      grid-template-columns:
-        1fr;
+
+  @media (max-width: 430px) {
+
+    .products-hero h1 {
+      font-size: 2rem;
+    }
+
+    .hero-stat {
+
+      min-height: 115px;
+
+      padding: 17px;
+    }
+
+    .hero-stat-number {
+      font-size: 1.65rem;
+    }
+
+    .products-area-top {
+
+      align-items: stretch;
+
+      flex-direction: column;
+    }
+
+    .add-button {
+      width: 100%;
+    }
+
+    .product-actions {
+      gap: 6px;
+    }
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+
+    .products-hero::before,
+    .products-hero::after,
+    .hero-phrase span,
+    .hero-stat,
+    .product-card,
+    .product-image,
+    .product-btn,
+    .add-button {
+
+      animation: none !important;
+
+      transition: none !important;
     }
   }
 </style>
@@ -1701,424 +1584,172 @@ Produtos Agrícolas | AgroIA Moxico
 
 <div class="products-page">
 
+  <!-- =====================================================
+         HERO
+    ====================================================== -->
 
   <section class="products-hero">
 
-    <div class="products-hero-slides">
+    <div class="products-hero-content">
 
-      <div class="products-hero-slide products-slide-1 active"></div>
-      <div class="products-hero-slide products-slide-2"></div>
-      <div class="products-hero-slide products-slide-3"></div>
-      <div class="products-hero-slide products-slide-4"></div>
+      <div class="hero-main-content">
 
-    </div>
+        <div class="hero-label">
 
+          <i class="fas fa-seedling"></i>
 
-    <div class="products-hero-circle"></div>
-    <div class="products-hero-glow"></div>
-
-
-    <div class="products-hero-container">
-
-      <div class="products-hero-layout">
-
-
-
-        <div class="products-hero-content products-animate">
-
-          <div class="products-hero-badge">
-
-            <span class="products-hero-dot"></span>
-
-            AgroIA Moxico · Catálogo Agrícola
-
-          </div>
-
-
-          <h1>
-
-            Produtos para uma
-
-            <strong>
-              agricultura inteligente.
-            </strong>
-
-          </h1>
-
-
-          <p class="products-hero-description">
-
-            Explore os produtos agrícolas cadastrados
-            no AgroIA Moxico, organize as categorias
-            e utilize a inteligência artificial para
-            analisar produtos através de imagens.
-
-          </p>
-
-
-          <div class="products-hero-buttons">
-
-            <a href="#produtos-cadastrados" class="products-secondary-button">
-
-              Explorar catálogo
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14"></path>
-                <path d="m19 12-7 7-7-7"></path>
-              </svg>
-
-            </a>
-
-          </div>
+          AgroIA Moxico · Catálogo agrícola
 
         </div>
 
 
-        <!-- ESTATÍSTICAS -->
+        <h1>
 
-        <div class="products-hero-stats products-animate">
+          Produtos agrícolas
 
-          <!-- PRODUTOS -->
-
-          <article class="products-stat-card">
-
-            <div class="products-stat-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path
-                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z">
-                </path>
-
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-
-                <line x1="12" y1="22.08" x2="12" y2="12"></line>
-              </svg>
-
-            </div>
-
-
-            <div>
-
-              <strong class="products-stat-value">
-                {{ total_produtos|default:"0" }}
-              </strong>
-
-              <span class="products-stat-label">
-                Produtos cadastrados
-              </span>
-
-            </div>
-
-          </article>
-
-
-          <!-- CATEGORIAS -->
-
-          <article class="products-stat-card">
-
-            <div class="products-stat-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 13V6a2 2 0 0 0-2-2h-7L4 11v7a2 2 0 0 0 2 2h7z"></path>
-
-                <path d="M8.5 8.5h.01"></path>
-
-                <path d="m12 12 7 7"></path>
-
-              </svg>
-
-            </div>
-
-
-            <div>
-
-              <strong class="products-stat-value">
-                {{ total_categorias|default:"0" }}
-              </strong>
-
-              <span class="products-stat-label">
-                Categorias cadastradas
-              </span>
-
-            </div>
-
-          </article>
-
-
-          <!-- DISPONÍVEIS -->
-
-          <article class="products-stat-card">
-
-            <div class="products-stat-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="9"></circle>
-
-                <path d="m8 12 2.5 2.5L16 9"></path>
-
-              </svg>
-
-            </div>
-
-
-            <div>
-
-              <strong class="products-stat-value">
-                {{ total_disponiveis|default:"0" }}
-              </strong>
-
-              <span class="products-stat-label">
-                Produtos disponíveis
-              </span>
-
-            </div>
-
-          </article>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-
-  <section class="products-section products-categories-section" id="categorias-cadastradas">
-
-    <div class="products-container">
-
-      <div class="products-section-header products-animate">
-
-        <div>
-
-          <span class="products-eyebrow">
-            Organização agrícola
+          <span>
+            para conhecer, cultivar e analisar.
           </span>
 
-          <h2>
-            Categorias cadastradas
-          </h2>
+        </h1>
 
-          <p>
-            Consulte as categorias disponíveis no
-            AgroIA Moxico, visualize os produtos
-            associados e gerencie o catálogo.
-          </p>
 
-        </div>
+        <p class="products-hero-description">
 
+          Explore os produtos agrícolas registados
+          no AgroIA Moxico, consulte as categorias
+          associadas e utilize a inteligência artificial
+          para apoiar o diagnóstico das culturas.
 
-        <a href="{% url 'categorias:categoria_criar' %}" class="products-action-button">
-
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 5v14"></path>
-            <path d="M5 12h14"></path>
-          </svg>
-
-          Nova categoria
-
-        </a>
-
-      </div>
-
-
-      {% if categorias %}
-
-      <div class="products-category-grid">
-
-        {% for categoria in categorias %}
-
-        <article class="products-category-card products-animate">
-
-          <div class="products-category-top">
-
-            <div class="products-category-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 13V6a2 2 0 0 0-2-2h-7L4 11v7a2 2 0 0 0 2 2h7z"></path>
-
-                <path d="M8.5 8.5h.01"></path>
-
-              </svg>
-
-            </div>
-
-
-            <span class="products-category-count">
-
-              {{ categoria.produtos.count }}
-              produto{{ categoria.produtos.count|pluralize }}
-
-            </span>
-
-          </div>
-
-
-          <h3>
-            {{ categoria.nome }}
-          </h3>
-
-
-          <p>
-
-            {% if categoria.descricao %}
-
-            {{ categoria.descricao|truncatechars:90 }}
-
-            {% else %}
-
-            Categoria agrícola cadastrada
-            no AgroIA Moxico.
-
-            {% endif %}
-
-          </p>
-
-
-          <div class="products-category-actions">
-
-
-
-            <a href="{% url 'categorias:categoria_detalhes' categoria.pk %}" class="products-category-button">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="9"></circle>
-
-                <path d="M12 10v6"></path>
-
-                <circle cx="12" cy="7" r=".5"></circle>
-
-              </svg>
-
-              Detalhes
-
-            </a>
-
-
-            {% url 'categorias:categoria_editar' categoria.pk as editar_categoria_url %}
-
-            {% if editar_categoria_url %}
-
-            <a href="{{ categoria_editar }}" class="products-category-button products-category-edit">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 20h9"></path>
-
-                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
-
-              </svg>
-
-              Editar
-
-            </a>
-
-            {% endif %}
-
-
-            <!-- ELIMINAR -->
-
-            <a href="{% url 'categorias:categoria_eliminar' categoria.pk %}"
-              class="products-category-button products-category-delete">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-
-                <path d="M19 6l-1 14H6L5 6"></path>
-
-                <path d="M10 11v6"></path>
-
-                <path d="M14 11v6"></path>
-
-                <path d="M9 6V4h6v2"></path>
-
-              </svg>
-
-              Eliminar
-
-            </a>
-
-          </div>
-
-        </article>
-
-        {% endfor %}
-
-      </div>
-
-
-      {% else %}
-
-      <div class="products-empty products-animate">
-
-        <div class="products-empty-icon">
-
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 13V6a2 2 0 0 0-2-2h-7L4 11v7a2 2 0 0 0 2 2h7z"></path>
-          </svg>
-
-        </div>
-
-
-        <h3>
-          Nenhuma categoria cadastrada
-        </h3>
-
-
-        <p>
-          Comece criando a primeira categoria
-          agrícola do catálogo.
         </p>
 
 
-        <a href="{% url 'categorias:categoria_criar' %}" class="products-action-button">
-          Criar categoria
-        </a>
+        <div class="hero-phrase" aria-hidden="true">
+
+          <span>
+            Conhecimento agrícola para decisões mais inteligentes.
+          </span>
+
+          <span>
+            Cada produto apresentado pertence ao catálogo registado.
+          </span>
+
+          <span>
+            Da cultura ao diagnóstico, tecnologia ao serviço do campo.
+          </span>
+
+        </div>
 
       </div>
 
-      {% endif %}
+
+      <!-- =================================================
+                 CARD ÚNICO
+            ================================================== -->
+
+      <div class="hero-stats">
+
+        <div class="hero-stat" title="Total de produtos cadastrados no banco de dados">
+
+          <div class="hero-stat-top">
+
+            <div class="hero-stat-icon">
+
+              <i class="fas fa-database"></i>
+
+            </div>
+
+
+            <strong class="hero-stat-number">
+
+              {{ total_produtos|default:"0" }}
+
+            </strong>
+
+          </div>
+
+
+          <span class="hero-stat-label">
+
+            Produtos cadastrados
+
+          </span>
+
+        </div>
+
+      </div>
 
     </div>
 
   </section>
 
 
+  <!-- =====================================================
+         CONTEÚDO
+    ====================================================== -->
 
+  <main class="products-container">
 
-  <section class="products-section products-products-section" id="produtos-cadastrados">
+    <section id="produtos" class="products-section">
 
-    <div class="products-container">
+      <div class="section-header">
 
-      <div class="products-section-header products-animate">
+        <div class="section-heading">
 
-        <div>
+          <div class="section-kicker">
 
-          <span class="products-eyebrow">
             Catálogo agrícola
-          </span>
+
+          </div>
+
 
           <h2>
-            Produtos cadastrados
+
+            Produtos agrícolas cadastrados
+
           </h2>
 
+
           <p>
-            Encontre rapidamente uma cultura agrícola,
-            consulte os seus detalhes ou envie-a
-            diretamente para o diagnóstico por IA.
+
+            Consulte os produtos efetivamente registados
+            no banco de dados do AgroIA Moxico. Cada produto
+            apresenta o seu estado, categorias associadas
+            e quantidade de diagnósticos realizados.
+
           </p>
 
         </div>
 
+      </div>
 
 
-        <a href="{% url 'produtos:criar_produto' %}" class="products-action-button">
+      {% if produtos %}
 
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 5v14"></path>
-            <path d="M5 12h14"></path>
-          </svg>
+      <!-- =================================================
+                 CABEÇALHO
+            ================================================== -->
+
+      <div class="products-area-top">
+
+        <div class="products-area-title">
+
+          <i class="fas fa-layer-group"></i>
+
+          <span>
+
+            {{ total_produtos }}
+            produto{{ total_produtos|pluralize }}
+            no catálogo
+
+          </span>
+
+        </div>
+
+
+        <a href="{% url 'produtos:criar_produto' %}" class="add-button">
+
+          <i class="fas fa-plus"></i>
 
           Cadastrar produto
 
@@ -2127,197 +1758,271 @@ Produtos Agrícolas | AgroIA Moxico
       </div>
 
 
-      <!-- FILTROS -->
+      <!-- =================================================
+                 PESQUISA
+            ================================================== -->
 
-      <div class="products-toolbar products-animate">
+      <div class="products-toolbar">
 
-        <div class="products-search">
+        <div class="search-wrapper">
 
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="7"></circle>
-
-            <path d="m20 20-4-4"></path>
-
-          </svg>
+          <i class="fas fa-search search-icon"></i>
 
 
-          <input type="search" id="productSearch" placeholder="Pesquisar produto..." autocomplete="off">
+          <input type="search" id="productSearch" class="products-search"
+            placeholder="Pesquisar produto, descrição ou categoria..." autocomplete="off"
+            aria-label="Pesquisar produtos agrícolas">
 
-        </div>
 
+          <button type="button" id="clearSearch" class="clear-search" aria-label="Limpar pesquisa"
+            title="Limpar pesquisa">
 
-        <div class="products-filter">
+            <i class="fas fa-times"></i>
 
-          <select id="productCategoryFilter">
-
-            <option value="">
-              Todas as categorias
-            </option>
-
-            {% for categoria in categorias %}
-
-            <option value="{{ categoria.pk }}">
-              {{ categoria.nome }}
-            </option>
-
-            {% endfor %}
-
-          </select>
+          </button>
 
         </div>
 
-      </div>
 
+        <div id="searchResultInfo" class="search-result-info">
 
-      <!-- CONTADOR -->
+          A apresentar
 
-      <div class="products-results-info">
-
-        <span class="products-results-count">
-
-          Mostrando
-
-          <strong id="productsVisibleCount">
+          <strong id="visibleProductsCount">
             {{ produtos|length }}
           </strong>
 
           produto{{ produtos|length|pluralize }}
 
-        </span>
+        </div>
 
       </div>
 
 
-      {% if produtos %}
+      <!-- =================================================
+                 GRID
+            ================================================== -->
 
-      <div class="products-grid" id="productsGrid">
+      <div id="productsGrid" class="products-grid">
 
         {% for produto in produtos %}
 
-        <article class="products-product-card products-animate" data-name="{{ produto.nome|lower }}"
-          data-category="{% for categoria in produto.categorias.all %}{{ categoria.pk }} {% endfor %}">
+        <article class="product-card" data-search="
+                        {{ produto.nome|default:''|lower }}
+                        {{ produto.descricao|default:''|lower }}
+                        {% for categoria in produto.categorias.all %}
+                            {{ categoria.nome|default:''|lower }}
+                            {{ categoria.descricao|default:''|lower }}
+                        {% endfor %}
+                    ">
 
           <!-- IMAGEM -->
 
-          <div class="products-product-image">
+          <div class="product-image-wrapper">
 
             {% if produto.imagem %}
 
-            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" loading="lazy">
+            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="product-image" loading="lazy">
 
             {% else %}
 
-            <div class="products-image-placeholder">
+            <div class="product-image-placeholder">
 
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-
-                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-
-                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-
-                <path d="m21 15-5-5L5 21"></path>
-
-              </svg>
+              <i class="fas fa-seedling"></i>
 
             </div>
 
             {% endif %}
 
 
-            <span class="products-status">
+            <!-- STATUS -->
 
-              {% if produto.ativo %}
-              ● Disponível
-              {% else %}
-              ● Indisponível
-              {% endif %}
+            {% if produto.ativo %}
+
+            <span class="product-status active">
+
+              <i class="fas fa-check-circle"></i>
+
+              Disponível
 
             </span>
+
+            {% else %}
+
+            <span class="product-status inactive">
+
+              <i class="fas fa-pause-circle"></i>
+
+              Indisponível
+
+            </span>
+
+            {% endif %}
 
           </div>
 
 
-          <!-- CONTEÚDO -->
+          <!-- CORPO -->
 
-          <div class="products-product-content">
+          <div class="product-body">
 
-            <div class="products-product-category">
+            <h3 class="product-name">
 
-              {% with primeira_categoria=produto.categorias.all|first %}
+              {{ produto.nome }}
 
-              {% if primeira_categoria %}
+            </h3>
 
-              {{ primeira_categoria.nome }}
 
-              {% else %}
+            {% if produto.descricao %}
 
-              Sem categoria
+            <p class="product-description">
 
-              {% endif %}
+              {{ produto.descricao }}
 
-              {% endwith %}
+            </p>
+
+            {% else %}
+
+            <p class="product-description">
+
+              Produto agrícola registado
+              no catálogo do AgroIA Moxico.
+
+            </p>
+
+            {% endif %}
+
+
+            <!-- CATEGORIAS -->
+
+            {% with categorias=produto.categorias.all %}
+
+            {% if categorias %}
+
+            <div class="product-categories">
+
+              {% for categoria in categorias %}
+
+              <span class="product-category" title="Categoria: {{ categoria.nome }}">
+
+                <i class="fas fa-tag"></i>
+
+                {{ categoria.nome }}
+
+              </span>
+
+              {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="product-categories">
+
+              <span class="product-category">
+
+                <i class="fas fa-tag"></i>
+
+                Sem categoria
+
+              </span>
+
+            </div>
+
+            {% endif %}
+
+            {% endwith %}
+
+
+            <!-- INFORMAÇÕES -->
+
+            <div class="product-info">
+
+              <div class="product-info-item">
+
+                {% if produto.ativo %}
+
+                <i class="fas fa-check-circle"></i>
+
+                <span>
+                  Disponível
+                </span>
+
+                {% else %}
+
+                <i class="fas fa-ban"></i>
+
+                <span>
+                  Indisponível
+                </span>
+
+                {% endif %}
+
+              </div>
+
+
+              <div class="product-info-item">
+
+                <i class="fas fa-microscope"></i>
+
+                <span>
+
+                  {{ produto.total_diagnosticos_produto|default:"0" }}
+
+                  diagnóstico{{ produto.total_diagnosticos_produto|default:"0"|pluralize }}
+
+                </span>
+
+              </div>
 
             </div>
 
 
-            <h3>
-              {{ produto.nome }}
-            </h3>
+            <!-- =================================================
+                             AÇÕES
+                        ================================================== -->
 
-
-            <p class="products-product-description">
-
-              {% if produto.descricao %}
-
-              {{ produto.descricao|truncatechars:120 }}
-
-              {% else %}
-
-              Produto agrícola cadastrado
-              no AgroIA Moxico.
-
-              {% endif %}
-
-            </p>
-
-
-            <div class="products-product-actions">
+            <div class="product-actions">
 
               <!-- DETALHES -->
 
-              <a href="{% url 'produtos:detalhe_produto' produto.pk %}"
-                class="products-product-button products-product-details">
+              <a href="{% url 'produtos:detalhe_produto' produto.pk %}" class="product-btn product-btn-details"
+                title="Ver detalhes de {{ produto.nome }}">
 
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="9"></circle>
+                <i class="fas fa-eye"></i>
 
-                  <path d="M12 10v6"></path>
-
-                  <circle cx="12" cy="7" r=".5"></circle>
-
-                </svg>
-
-                Detalhes
+                Ver detalhes
 
               </a>
 
 
-              <!-- DIAGNÓSTICO -->
+              <!-- =================================================
+                                 DIAGNÓSTICO
+                                 CORRIGIDO
+                            ================================================== -->
 
-              <a href="{% url 'diagnostico:diagnostico' produto.pk %}"
-                class="products-product-button products-product-analyze">
+              {% if produto.ativo %}
 
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <a href="{% url 'diagnostico:diagnostico_produto' produto_id=produto.pk %}"
+                class="product-btn product-btn-analyze" title="Realizar diagnóstico de {{ produto.nome }}">
 
-                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path>
-
-                  <circle cx="12" cy="13" r="3"></circle>
-
-                </svg>
+                <i class="fas fa-microscope"></i>
 
                 Analisar
 
               </a>
+
+              {% else %}
+
+              <span class="product-btn product-btn-disabled" title="Este produto está indisponível">
+
+                <i class="fas fa-ban"></i>
+
+                Indisponível
+
+              </span>
+
+              {% endif %}
 
             </div>
 
@@ -2330,322 +2035,310 @@ Produtos Agrícolas | AgroIA Moxico
       </div>
 
 
-      {% else %}
+      <!-- =================================================
+                 PESQUISA SEM RESULTADOS
+            ================================================== -->
 
-      <div class="products-empty products-animate">
+      <div id="searchEmpty" class="empty-state" style="display: none;">
 
-        <div class="products-empty-icon">
+        <div class="empty-icon">
 
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path
-              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z">
-            </path>
-          </svg>
+          <i class="fas fa-search"></i>
 
         </div>
 
 
         <h3>
-          Nenhum produto cadastrado
+
+          Nenhum produto encontrado
+
         </h3>
 
 
         <p>
-          Ainda não existem produtos agrícolas
-          disponíveis no catálogo.
+
+          Não encontramos nenhum produto correspondente
+          à sua pesquisa. Experimente procurar pelo nome,
+          descrição ou categoria.
+
         </p>
 
 
-        <!-- CORRIGIDO -->
+        <button type="button" class="add-button" id="clearSearchEmpty">
 
-        <a href="{% url 'produtos:criar_produto' %}" class="products-action-button">
+          <i class="fas fa-rotate-left"></i>
+
+          Limpar pesquisa
+
+        </button>
+
+      </div>
+
+
+      {% else %}
+
+      <!-- =================================================
+                 CATÁLOGO VAZIO
+            ================================================== -->
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+
+          <i class="fas fa-seedling"></i>
+
+        </div>
+
+
+        <h3>
+
+          O catálogo ainda está vazio
+
+        </h3>
+
+
+        <p>
+
+          Ainda não existem produtos agrícolas cadastrados
+          no AgroIA Moxico. Cadastre o primeiro produto para
+          começar a construir o catálogo agrícola.
+
+        </p>
+
+
+        <a href="{% url 'produtos:criar_produto' %}" class="add-button">
+
+          <i class="fas fa-plus"></i>
+
           Cadastrar primeiro produto
+
         </a>
 
       </div>
 
       {% endif %}
 
-    </div>
+    </section>
 
-  </section>
+  </main>
 
 </div>
 
 
-<!-- ============================================================
-     JAVASCRIPT
-============================================================ -->
+{% if produtos %}
 
 <script>
 
-  document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+  document.addEventListener("DOMContentLoaded", function () {
 
-      /* ========================================================
-         HERO SLIDER
-      ======================================================== */
+    const searchInput =
+      document.getElementById("productSearch");
 
-      const slides =
-        document.querySelectorAll(
-          ".products-hero-slide"
-        );
+    const clearButton =
+      document.getElementById("clearSearch");
 
-      let currentSlide = 0;
+    const clearSearchEmpty =
+      document.getElementById("clearSearchEmpty");
 
+    const productsGrid =
+      document.getElementById("productsGrid");
 
-      function changeSlide() {
+    const cards =
+      productsGrid
+        ? productsGrid.querySelectorAll(".product-card")
+        : [];
 
-        if (!slides.length) {
-          return;
-        }
+    const searchResultInfo =
+      document.getElementById("searchResultInfo");
 
-        slides.forEach(
-          function (slide) {
-
-            slide.classList.remove(
-              "active"
-            );
-
-          }
-        );
+    const searchEmpty =
+      document.getElementById("searchEmpty");
 
 
-        slides[currentSlide]
-          .classList.add(
-            "active"
+    /* =========================================================
+       NORMALIZAR TEXTO
+    ========================================================= */
+
+    function normalizeText(text) {
+
+      return String(text || "")
+        .toLocaleLowerCase("pt-BR")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    }
+
+
+    /* =========================================================
+       CONTADOR
+    ========================================================= */
+
+    function updateResultText(count) {
+
+      if (!searchResultInfo) {
+        return;
+      }
+
+      searchResultInfo.innerHTML =
+        "A apresentar " +
+        "<strong>" +
+        count +
+        "</strong> produto" +
+        (count === 1 ? "" : "s");
+
+    }
+
+
+    /* =========================================================
+       FILTRAR
+    ========================================================= */
+
+    function filterProducts() {
+
+      if (!searchInput) {
+        return;
+      }
+
+      const searchTerm =
+        normalizeText(searchInput.value);
+
+      let visibleProducts = 0;
+
+
+      cards.forEach(function (card) {
+
+        const searchableText =
+          normalizeText(
+            card.dataset.search || ""
           );
 
 
-        currentSlide =
-          (currentSlide + 1)
-          % slides.length;
+        const matches =
+          searchTerm === "" ||
+          searchableText.includes(searchTerm);
+
+
+        if (matches) {
+
+          card.classList.remove(
+            "hidden-by-search"
+          );
+
+          visibleProducts++;
+
+        } else {
+
+          card.classList.add(
+            "hidden-by-search"
+          );
+
+        }
+
+      });
+
+
+      updateResultText(
+        visibleProducts
+      );
+
+
+      /* BOTÃO LIMPAR */
+
+      if (clearButton) {
+
+        clearButton.style.display =
+          searchTerm !== ""
+            ? "flex"
+            : "none";
+
       }
 
 
-      if (slides.length > 1) {
-
-        setInterval(
-          changeSlide,
-          6000
-        );
-
-      }
-
-
-      /* ========================================================
-         ANIMAÇÕES
-      ======================================================== */
-
-      const animatedElements =
-        document.querySelectorAll(
-          ".products-animate"
-        );
-
+      /* ESTADO VAZIO */
 
       if (
-        "IntersectionObserver"
-        in window
+        searchEmpty &&
+        visibleProducts === 0 &&
+        searchTerm !== ""
       ) {
 
-        const observer =
-          new IntersectionObserver(
-            function (
-              entries,
-              observerInstance
-            ) {
+        searchEmpty.style.display =
+          "block";
 
-              entries.forEach(
-                function (entry) {
+      } else if (searchEmpty) {
 
-                  if (
-                    entry.isIntersecting
-                  ) {
-
-                    entry.target
-                      .classList
-                      .add(
-                        "visible"
-                      );
-
-
-                    observerInstance
-                      .unobserve(
-                        entry.target
-                      );
-
-                  }
-
-                }
-              );
-
-            },
-            {
-              threshold: .10
-            }
-          );
-
-
-        animatedElements.forEach(
-          function (element) {
-
-            observer.observe(
-              element
-            );
-
-          }
-        );
-
-      } else {
-
-        animatedElements.forEach(
-          function (element) {
-
-            element.classList.add(
-              "visible"
-            );
-
-          }
-        );
-
-      }
-
-
-      /* ========================================================
-         PESQUISA E FILTRO
-      ======================================================== */
-
-      const search =
-        document.getElementById(
-          "productSearch"
-        );
-
-
-      const categoryFilter =
-        document.getElementById(
-          "productCategoryFilter"
-        );
-
-
-      const cards =
-        Array.from(
-          document.querySelectorAll(
-            ".products-product-card"
-          )
-        );
-
-
-      const counter =
-        document.getElementById(
-          "productsVisibleCount"
-        );
-
-
-      function filterProducts() {
-
-        const searchValue =
-          search
-            ? search.value
-              .toLowerCase()
-              .trim()
-            : "";
-
-
-        const categoryValue =
-          categoryFilter
-            ? categoryFilter.value
-            : "";
-
-
-        let visible = 0;
-
-
-        cards.forEach(
-          function (card) {
-
-            const name =
-              card.dataset.name
-              || "";
-
-
-            const categories =
-              card.dataset.category
-              || "";
-
-
-            const matchesSearch =
-              !searchValue
-              ||
-              name.includes(
-                searchValue
-              );
-
-
-            const matchesCategory =
-              !categoryValue
-              ||
-              categories
-                .split(" ")
-                .includes(
-                  categoryValue
-                );
-
-
-            if (
-              matchesSearch
-              &&
-              matchesCategory
-            ) {
-
-              card.style.display =
-                "";
-
-              visible++;
-
-            } else {
-
-              card.style.display =
-                "none";
-
-            }
-
-          }
-        );
-
-
-        if (counter) {
-
-          counter.textContent =
-            visible;
-
-        }
-
-      }
-
-
-      if (search) {
-
-        search.addEventListener(
-          "input",
-          filterProducts
-        );
-
-      }
-
-
-      if (categoryFilter) {
-
-        categoryFilter.addEventListener(
-          "change",
-          filterProducts
-        );
+        searchEmpty.style.display =
+          "none";
 
       }
 
     }
-  );
+
+
+    /* =========================================================
+       LIMPAR PESQUISA
+    ========================================================= */
+
+    function clearSearch() {
+
+      if (!searchInput) {
+        return;
+      }
+
+      searchInput.value = "";
+
+      searchInput.focus();
+
+      filterProducts();
+
+    }
+
+
+    /* =========================================================
+       EVENTOS
+    ========================================================= */
+
+    if (searchInput) {
+
+      searchInput.addEventListener(
+        "input",
+        filterProducts
+      );
+
+    }
+
+
+    if (clearButton) {
+
+      clearButton.addEventListener(
+        "click",
+        clearSearch
+      );
+
+    }
+
+
+    if (clearSearchEmpty) {
+
+      clearSearchEmpty.addEventListener(
+        "click",
+        clearSearch
+      );
+
+    }
+
+
+    /* =========================================================
+       INICIALIZAÇÃO
+    ========================================================= */
+
+    filterProducts();
+
+  });
 
 </script>
+
+{% endif %}
 
 {% endblock %}

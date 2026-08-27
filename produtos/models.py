@@ -1,22 +1,24 @@
 from django.conf import settings
 from django.db import models
 
+from categorias.models import Categoria
+
 
 class ProdutoAgricola(models.Model):
-
     nome = models.CharField(
         max_length=150,
+        unique=True,
         verbose_name="Nome do produto",
     )
 
     descricao = models.TextField(
         blank=True,
-        null=True,
+        default="",
         verbose_name="Descrição",
     )
 
     categorias = models.ManyToManyField(
-        "categorias.Categoria",
+        Categoria,
         related_name="produtos",
         blank=True,
         verbose_name="Categorias",
@@ -31,23 +33,19 @@ class ProdutoAgricola(models.Model):
 
     problemas = models.TextField(
         blank=True,
-        null=True,
-        verbose_name="Problemas",
+        default="",
+        verbose_name="Problemas / doenças",
     )
 
     analise_por_imagem = models.BooleanField(
-        default=False,
-        verbose_name="Análise por imagem",
+        default=True,
+        verbose_name="Permitir análise por imagem",
     )
 
     ativo = models.BooleanField(
         default=True,
-        verbose_name="Produto ativo",
+        verbose_name="Disponível no catálogo",
     )
-
-    # ============================================================
-    # UTILIZADOR QUE CADASTROU O PRODUTO
-    # ============================================================
 
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -58,47 +56,20 @@ class ProdutoAgricola(models.Model):
         verbose_name="Utilizador",
     )
 
-    # ============================================================
-    # DATAS
-    # ============================================================
-
     criado_em = models.DateTimeField(
         auto_now_add=True,
-        verbose_name="Criado em",
+        verbose_name="Data de criação",
     )
 
     atualizado_em = models.DateTimeField(
         auto_now=True,
-        verbose_name="Atualizado em",
+        verbose_name="Última atualização",
     )
 
     class Meta:
-        ordering = ["-criado_em"]
+        ordering = ["nome"]
         verbose_name = "Produto agrícola"
         verbose_name_plural = "Produtos agrícolas"
 
-        indexes = [
-            models.Index(fields=["nome"]),
-            models.Index(fields=["ativo"]),
-            models.Index(fields=["analise_por_imagem"]),
-            models.Index(fields=["usuario"]),
-            models.Index(fields=["-criado_em"]),
-        ]
-
     def __str__(self):
         return self.nome
-
-    @property
-    def tem_imagem(self):
-        return bool(self.imagem)
-
-    @property
-    def pode_ser_analisado(self):
-        return self.ativo and self.analise_por_imagem
-
-    @property
-    def nome_categorias(self):
-        return ", ".join(
-            categoria.nome
-            for categoria in self.categorias.all()
-        )

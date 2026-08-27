@@ -1,9 +1,23 @@
 from django import forms
 
+from categorias.models import Categoria
 from .models import ProdutoAgricola
 
 
 class ProdutoForm(forms.ModelForm):
+
+    categorias = forms.ModelMultipleChoiceField(
+        queryset=Categoria.objects.filter(
+            ativo=True
+        ).order_by("nome"),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={
+                "class": "categoria-checkbox"
+            }
+        ),
+        label="Categorias",
+    )
 
     class Meta:
         model = ProdutoAgricola
@@ -19,60 +33,71 @@ class ProdutoForm(forms.ModelForm):
         ]
 
         widgets = {
-
             "nome": forms.TextInput(
                 attrs={
-                    "placeholder": "Ex.: Milho"
+                    "class": "form-control",
+                    "placeholder": "Ex.: Milho",
                 }
             ),
 
             "descricao": forms.Textarea(
                 attrs={
+                    "class": "form-control",
                     "placeholder": (
-                        "Descreva as principais características "
-                        "e informações agrícolas do produto..."
-                    ),
-                    "rows": 6,
-                    "maxlength": 1000,
-                }
-            ),
-
-            "categorias": forms.CheckboxSelectMultiple(),
-
-            "imagem": forms.ClearableFileInput(
-                attrs={
-                    "accept": "image/jpeg,image/png,image/webp"
-                }
-            ),
-
-            "problemas": forms.Textarea(
-                attrs={
-                    "placeholder": (
-                        "Ex.: doenças, pragas ou problemas "
-                        "agrícolas relacionados..."
+                        "Descreva o produto agrícola..."
                     ),
                     "rows": 5,
                 }
             ),
 
-            "analise_por_imagem": forms.CheckboxInput(),
+            "imagem": forms.ClearableFileInput(
+                attrs={
+                    "class": "form-control",
+                    "accept": "image/*",
+                }
+            ),
 
-            "ativo": forms.CheckboxInput(),
+            "problemas": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": (
+                        "Indique doenças, pragas ou problemas "
+                        "que podem afetar esta cultura..."
+                    ),
+                    "rows": 5,
+                }
+            ),
+
+            "analise_por_imagem": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                }
+            ),
+
+            "ativo": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                }
+            ),
         }
 
-    def __init__(self, *args, **kwargs):
+        labels = {
+            "nome": "Nome do produto",
+            "descricao": "Descrição",
+            "imagem": "Imagem",
+            "problemas": "Problemas / doenças",
+            "analise_por_imagem": "Permitir análise por imagem",
+            "ativo": "Disponível no catálogo",
+        }
 
-        super().__init__(*args, **kwargs)
-
-        self.fields["categorias"].queryset = (
-            self.fields["categorias"]
-            .queryset
-            .order_by("nome")
-        )
-
-        self.fields["categorias"].required = True
-        self.fields["descricao"].required = True
-        self.fields["imagem"].required = False
-        self.fields["problemas"].required = False
-        self.fields["analise_por_imagem"].required = False
-        self.fields["ativo"].required = False
+        help_texts = {
+            "categorias": (
+                "Selecione uma ou mais categorias para este produto."
+            ),
+            "analise_por_imagem": (
+                "Permite utilizar este produto no diagnóstico por imagem."
+            ),
+            "ativo": (
+                "Produtos ativos aparecem como disponíveis no catálogo."
+            ),
+        }

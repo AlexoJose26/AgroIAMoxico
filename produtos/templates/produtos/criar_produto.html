@@ -4,130 +4,79 @@
 Cadastrar Produto Agrícola | AgroIA Moxico
 {% endblock %}
 
-
 {% block extra_css %}
-
 <style>
   /* ============================================================
-   VARIÁVEIS
-============================================================ */
+   AGROIA MOXICO
+   CADASTRO DE PRODUTO AGRÍCOLA
+   ============================================================ */
 
   :root {
-
     --product-green: #176b45;
     --product-green-dark: #0d4d31;
     --product-green-light: #eaf7ef;
     --product-green-soft: #f4faf6;
-
     --product-green-2: #299c69;
-
     --product-gold: #d9a441;
-
     --product-text: #173127;
     --product-muted: #718078;
-
     --product-border: #dce9e1;
-    --product-border-dark: #c9ddd1;
-
     --product-danger: #c84f4f;
     --product-danger-bg: #fff4f4;
-
     --product-white: #ffffff;
-
-    --product-shadow:
-      0 25px 70px rgba(13, 77, 49, .10);
-
   }
-
 
   /* ============================================================
    PÁGINA
-============================================================ */
+   ============================================================ */
 
   .product-register-page {
-
-    min-height:
-      calc(100vh - var(--nav-height, 68px));
-
-    padding:
-      45px 0 90px;
+    min-height: calc(100vh - var(--nav-height, 68px));
+    padding: 45px 20px 90px;
 
     background:
-
       radial-gradient(circle at 5% 5%,
         rgba(41, 156, 105, .12),
         transparent 28%),
-
       radial-gradient(circle at 95% 12%,
         rgba(217, 164, 65, .10),
         transparent 25%),
-
       linear-gradient(180deg,
         #eef8f2 0%,
         #f8fbf9 45%,
         #ffffff 100%);
-
   }
-
-
-  /* ============================================================
-   WRAPPER
-============================================================ */
 
   .product-register-wrapper {
-
     width: 100%;
-
     max-width: 1180px;
-
     margin: 0 auto;
-
   }
-
 
   /* ============================================================
    TOPO
-============================================================ */
+   ============================================================ */
 
   .product-register-top {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     gap: 25px;
-
     margin-bottom: 25px;
-
   }
-
-
-  /* ============================================================
-   IDENTIDADE
-============================================================ */
 
   .product-register-brand {
-
     display: flex;
-
     align-items: center;
-
     gap: 13px;
-
   }
 
-
   .product-register-brand-icon {
-
     width: 50px;
     height: 50px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -145,145 +94,91 @@ Cadastrar Produto Agrícola | AgroIA Moxico
       0 12px 28px rgba(23, 107, 69, .20);
 
     font-size: 1.35rem;
-
   }
 
-
   .product-register-brand small {
-
     display: block;
-
     margin-bottom: 3px;
 
     color: var(--product-green);
 
     font-size: .62rem;
-
     font-weight: 900;
 
     text-transform: uppercase;
-
     letter-spacing: .13em;
-
   }
-
 
   .product-register-brand strong {
-
     color: var(--product-text);
-
     font-size: .90rem;
-
     font-weight: 900;
-
   }
 
-
-  /* ============================================================
-   BOTÃO VOLTAR
-============================================================ */
-
   .product-back-button {
-
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
     gap: 8px;
 
     min-height: 42px;
+    padding: 0 15px;
 
-    padding:
-      0 15px;
+    color: var(--product-green-dark);
 
-    color:
-      var(--product-green-dark);
+    background: rgba(255, 255, 255, .92);
 
-    background:
-      rgba(255, 255, 255, .92);
-
-    border:
-      1px solid #d6e7dd;
-
+    border: 1px solid #d6e7dd;
     border-radius: 11px;
 
     text-decoration: none;
 
     font-size: .68rem;
-
     font-weight: 900;
 
     box-shadow:
       0 7px 20px rgba(13, 77, 49, .06);
 
-    transition:
-      all .18s ease;
-
+    transition: .18s ease;
   }
-
 
   .product-back-button:hover {
-
     color: white;
+    background: var(--product-green);
+    border-color: var(--product-green);
 
-    background:
-      var(--product-green);
-
-    border-color:
-      var(--product-green);
-
-    transform:
-      translateY(-2px);
-
-    box-shadow:
-      0 10px 24px rgba(13, 77, 49, .16);
-
+    transform: translateY(-2px);
   }
-
 
   .product-back-button-icon {
-
     font-size: .95rem;
-
   }
 
-
   /* ============================================================
-   CARD PRINCIPAL
-============================================================ */
+   CARD
+   ============================================================ */
 
   .product-register-card {
-
     overflow: hidden;
 
-    background:
-      rgba(255, 255, 255, .98);
+    background: rgba(255, 255, 255, .98);
 
-    border:
-      1px solid rgba(23, 107, 69, .10);
-
+    border: 1px solid rgba(23, 107, 69, .10);
     border-radius: 28px;
 
     box-shadow:
-      var(--product-shadow);
-
+      0 25px 70px rgba(13, 77, 49, .10);
   }
 
-
   /* ============================================================
-   CABEÇALHO
-============================================================ */
+   HEADER
+   ============================================================ */
 
   .product-register-card-header {
-
     position: relative;
-
     overflow: hidden;
 
-    padding:
-      34px 38px;
+    padding: 34px 38px;
 
     color: white;
 
@@ -292,12 +187,9 @@ Cadastrar Produto Agrícola | AgroIA Moxico
         #0d4d31,
         #176b45 65%,
         #299c69);
-
   }
 
-
   .product-register-card-header::before {
-
     content: "";
 
     position: absolute;
@@ -312,97 +204,64 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
     background:
       rgba(255, 255, 255, .08);
-
   }
 
-
   .product-register-card-header-content {
-
     position: relative;
-
     z-index: 2;
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 25px;
-
   }
 
-
   .product-register-card-header h1 {
-
-    margin:
-      0 0 8px;
+    margin: 0 0 8px;
 
     color: white;
 
-    font-size:
-      clamp(1.55rem, 3vw, 2rem);
-
+    font-size: clamp(1.55rem, 3vw, 2rem);
     line-height: 1.15;
-
     font-weight: 900;
 
     letter-spacing: -.045em;
-
   }
 
-
   .product-register-card-header p {
-
     max-width: 720px;
 
     margin: 0;
 
-    color:
-      rgba(255, 255, 255, .80);
+    color: rgba(255, 255, 255, .80);
 
     font-size: .75rem;
-
     line-height: 1.75;
-
   }
 
-
   .product-register-header-badge {
-
     display: inline-flex;
-
     align-items: center;
-
     gap: 7px;
 
     flex-shrink: 0;
 
-    padding:
-      9px 13px;
+    padding: 9px 13px;
 
-    border:
-      1px solid rgba(255, 255, 255, .18);
-
+    border: 1px solid rgba(255, 255, 255, .18);
     border-radius: 100px;
 
     color: white;
+    background: rgba(255, 255, 255, .10);
 
-    background:
-      rgba(255, 255, 255, .10);
-
-    backdrop-filter:
-      blur(10px);
+    backdrop-filter: blur(10px);
 
     font-size: .62rem;
-
     font-weight: 800;
-
   }
 
-
   .product-register-header-badge::before {
-
     content: "";
 
     width: 7px;
@@ -411,29 +270,21 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     border-radius: 50%;
 
     background: #70d89d;
-
   }
-
 
   /* ============================================================
    PROGRESSO
-============================================================ */
+   ============================================================ */
 
   .product-register-progress {
-
     height: 4px;
-
     overflow: hidden;
 
     background: #e8f0eb;
-
   }
 
-
   .product-register-progress-bar {
-
-    width: 0%;
-
+    width: 0;
     height: 100%;
 
     background:
@@ -441,63 +292,39 @@ Cadastrar Produto Agrícola | AgroIA Moxico
         var(--product-green),
         #52bd82);
 
-    transition:
-      width .25s ease;
-
+    transition: width .25s ease;
   }
-
 
   /* ============================================================
    FORMULÁRIO
-============================================================ */
+   ============================================================ */
 
   .product-register-form {
-
     padding: 38px;
-
   }
-
 
   .product-form-section {
-
     margin-bottom: 38px;
-
   }
-
 
   .product-form-section:last-of-type {
-
     margin-bottom: 0;
-
   }
 
-
-  /* ============================================================
-   TÍTULOS
-============================================================ */
-
   .product-form-section-title {
-
     display: flex;
-
     align-items: center;
-
     gap: 12px;
 
     margin-bottom: 19px;
-
   }
 
-
   .product-form-section-number {
-
     width: 32px;
     height: 32px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -505,86 +332,57 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     border-radius: 10px;
 
     color: var(--product-green);
-
-    background:
-      var(--product-green-light);
+    background: var(--product-green-light);
 
     font-size: .68rem;
-
     font-weight: 900;
-
   }
 
-
   .product-form-section-title h2 {
-
     margin: 0;
 
     color: var(--product-text);
 
     font-size: .95rem;
-
     font-weight: 900;
-
   }
 
-
   .product-form-section-title p {
-
-    margin:
-      3px 0 0;
+    margin: 3px 0 0;
 
     color: #819087;
 
     font-size: .66rem;
-
   }
-
 
   /* ============================================================
    GRID
-============================================================ */
+   ============================================================ */
 
   .product-form-grid {
-
     display: grid;
 
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
 
     gap: 20px;
-
   }
-
-
-  /* ============================================================
-   GRUPOS
-============================================================ */
 
   .product-form-group {
-
     margin-bottom: 19px;
-
   }
-
 
   .product-form-grid .product-form-group {
-
     margin-bottom: 0;
-
   }
-
 
   /* ============================================================
    LABEL
-============================================================ */
+   ============================================================ */
 
   .product-form-label {
-
     display: flex;
-
     align-items: center;
-
     gap: 5px;
 
     margin-bottom: 7px;
@@ -592,23 +390,16 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     color: var(--product-text);
 
     font-size: .70rem;
-
     font-weight: 900;
-
   }
-
 
   .product-required {
-
-    color:
-      var(--product-danger);
-
+    color: var(--product-danger);
   }
-
 
   /* ============================================================
    INPUTS
-============================================================ */
+   ============================================================ */
 
   .product-register-form input[type="text"],
   .product-register-form input[type="email"],
@@ -616,81 +407,55 @@ Cadastrar Produto Agrícola | AgroIA Moxico
   .product-register-form input[type="url"],
   .product-register-form input[type="date"],
   .product-register-form textarea {
-
     width: 100%;
 
     min-height: 47px;
 
     box-sizing: border-box;
 
-    padding:
-      11px 13px;
+    padding: 11px 13px;
 
     outline: none;
 
-    border:
-      1px solid var(--product-border);
-
+    border: 1px solid var(--product-border);
     border-radius: 12px;
 
     color: var(--product-text);
-
-    background:
-      #f9fcfa;
+    background: #f9fcfa;
 
     font: inherit;
-
     font-size: .76rem;
 
     transition:
       border-color .2s ease,
       box-shadow .2s ease,
       background .2s ease;
-
   }
-
 
   .product-register-form input:hover,
   .product-register-form textarea:hover {
-
-    background:
-      white;
-
+    background: white;
   }
-
 
   .product-register-form input:focus,
   .product-register-form textarea:focus {
+    background: white;
 
-    background:
-      white;
-
-    border-color:
-      var(--product-green-2);
+    border-color: var(--product-green-2);
 
     box-shadow:
       0 0 0 4px rgba(41, 156, 105, .10);
-
   }
 
-
   .product-register-form textarea {
-
     min-height: 140px;
 
     resize: vertical;
 
     line-height: 1.65;
-
   }
 
-
-  /* ============================================================
-   HELP
-============================================================ */
-
   .product-form-help {
-
     display: block;
 
     margin-top: 6px;
@@ -698,18 +463,14 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     color: #8a9790;
 
     font-size: .62rem;
-
     line-height: 1.55;
-
   }
-
 
   /* ============================================================
    CATEGORIAS
-============================================================ */
+   ============================================================ */
 
   .product-category-box {
-
     position: relative;
 
     padding: 20px;
@@ -719,36 +480,24 @@ Cadastrar Produto Agrícola | AgroIA Moxico
         #f8fcfa,
         #f1f9f4);
 
-    border:
-      1px solid #dcece2;
-
+    border: 1px solid #dcece2;
     border-radius: 20px;
-
   }
 
-
   .product-category-header {
-
     display: flex;
-
     align-items: center;
-
     gap: 13px;
 
     margin-bottom: 16px;
-
   }
 
-
   .product-category-icon {
-
     width: 43px;
     height: 43px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -766,12 +515,9 @@ Cadastrar Produto Agrícola | AgroIA Moxico
       0 8px 18px rgba(23, 107, 69, .15);
 
     font-size: 1.05rem;
-
   }
 
-
   .product-category-title {
-
     display: block;
 
     margin-bottom: 4px;
@@ -779,127 +525,88 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     color: var(--product-text);
 
     font-size: .76rem;
-
     font-weight: 900;
-
   }
 
-
   .product-category-description {
-
     display: block;
 
     color: #7d8c84;
 
     font-size: .64rem;
-
     line-height: 1.55;
-
   }
-
 
   /* ============================================================
-   SELETOR
-============================================================ */
+   SELECTOR
+   ============================================================ */
 
   .product-category-selector {
-
     position: relative;
-
   }
 
-
   .product-category-trigger {
-
     width: 100%;
-
     min-height: 54px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 12px;
 
-    padding:
-      9px 13px;
+    padding: 9px 13px;
 
-    border:
-      1px solid #d2e3d9;
-
+    border: 1px solid #d2e3d9;
     border-radius: 13px;
 
     outline: none;
 
     color: var(--product-text);
-
     background: white;
-
-    font: inherit;
 
     cursor: pointer;
 
-    transition:
-      border-color .2s ease,
-      box-shadow .2s ease;
+    font: inherit;
 
+    transition: .2s ease;
   }
-
 
   .product-category-trigger:hover {
-
-    border-color:
-      #a9cdb8;
-
+    border-color: #a9cdb8;
   }
 
-
   .product-category-trigger.open {
-
-    border-color:
-      var(--product-green-2);
+    border-color: var(--product-green-2);
 
     box-shadow:
       0 0 0 4px rgba(41, 156, 105, .08);
-
   }
 
-
   .product-category-trigger-content {
-
     display: flex;
-
     align-items: center;
-
     flex-wrap: wrap;
 
     gap: 6px;
 
     min-width: 0;
 
+    text-align: left;
   }
 
-
   .product-category-placeholder {
-
     color: #8b9891;
 
     font-size: .72rem;
-
   }
 
-
   .product-category-arrow {
-
     width: 28px;
     height: 28px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -907,106 +614,72 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     border-radius: 8px;
 
     color: var(--product-green);
+    background: var(--product-green-light);
 
-    background:
-      var(--product-green-light);
-
-    transition:
-      transform .2s ease;
-
+    transition: transform .2s ease;
   }
-
 
   .product-category-trigger.open .product-category-arrow {
-
-    transform:
-      rotate(180deg);
-
+    transform: rotate(180deg);
   }
-
 
   /* ============================================================
    CHIPS
-============================================================ */
+   ============================================================ */
 
   .product-category-chip {
-
     display: inline-flex;
-
     align-items: center;
-
     gap: 5px;
 
     max-width: 180px;
 
-    padding:
-      6px 8px 6px 10px;
+    padding: 6px 8px 6px 10px;
 
     border-radius: 8px;
 
     color: var(--product-green-dark);
-
-    background:
-      #e8f6ed;
+    background: #e8f6ed;
 
     font-size: .61rem;
-
     font-weight: 800;
-
   }
 
-
-  .product-category-chip span:first-child {
-
+  .product-category-chip-name {
     overflow: hidden;
 
     text-overflow: ellipsis;
-
     white-space: nowrap;
-
   }
 
-
   .product-category-chip-remove {
-
     width: 17px;
     height: 17px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     border: none;
-
     border-radius: 5px;
 
     color: #46715b;
-
-    background:
-      rgba(23, 107, 69, .08);
+    background: rgba(23, 107, 69, .08);
 
     cursor: pointer;
-
-    font-size: .65rem;
-
   }
-
 
   /* ============================================================
    DROPDOWN
-============================================================ */
+   ============================================================ */
 
   .product-category-dropdown {
-
     position: absolute;
 
-    z-index: 50;
+    z-index: 100;
 
     left: 0;
     right: 0;
-
     top: calc(100% + 8px);
 
     display: none;
@@ -1015,201 +688,136 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
     background: white;
 
-    border:
-      1px solid #d8e8df;
-
+    border: 1px solid #d8e8df;
     border-radius: 15px;
 
     box-shadow:
       0 20px 45px rgba(13, 77, 49, .16);
-
   }
 
-
   .product-category-dropdown.open {
-
     display: block;
 
     animation:
       categoryDropdown .18s ease;
-
   }
 
-
   @keyframes categoryDropdown {
-
     from {
-
       opacity: 0;
-
-      transform:
-        translateY(-5px);
-
+      transform: translateY(-5px);
     }
 
     to {
-
       opacity: 1;
-
-      transform:
-        translateY(0);
-
+      transform: translateY(0);
     }
-
   }
-
 
   /* ============================================================
    PESQUISA
-============================================================ */
+   ============================================================ */
 
   .product-category-search-wrapper {
-
     position: relative;
 
     margin-bottom: 8px;
-
   }
 
-
   .product-category-search-icon {
-
     position: absolute;
 
     left: 12px;
     top: 50%;
 
-    transform:
-      translateY(-50%);
+    transform: translateY(-50%);
 
     color: #84938b;
 
     font-size: .75rem;
-
   }
 
-
   .product-category-search {
-
     width: 100%;
 
     min-height: 40px;
 
     box-sizing: border-box;
 
-    padding:
-      8px 12px 8px 33px;
+    padding: 8px 12px 8px 33px;
 
     outline: none;
 
-    border:
-      1px solid #dce9e1;
-
+    border: 1px solid #dce9e1;
     border-radius: 10px;
 
     color: var(--product-text);
-
-    background:
-      #f8fbf9;
+    background: #f8fbf9;
 
     font: inherit;
-
     font-size: .70rem;
-
   }
-
 
   .product-category-search:focus {
-
-    border-color:
-      var(--product-green-2);
-
-    background:
-      white;
-
+    border-color: var(--product-green-2);
+    background: white;
   }
-
 
   /* ============================================================
    OPÇÕES
-============================================================ */
+   ============================================================ */
 
   .product-category-options {
-
     max-height: 230px;
 
     overflow-y: auto;
 
     padding-right: 3px;
-
   }
-
 
   .product-category-options::-webkit-scrollbar {
-
     width: 5px;
-
   }
-
 
   .product-category-options::-webkit-scrollbar-thumb {
-
     border-radius: 10px;
-
-    background:
-      #c8ddd1;
-
+    background: #c8ddd1;
   }
 
-
   .product-category-option {
-
     display: flex;
-
     align-items: center;
 
     gap: 10px;
 
-    padding:
-      9px 10px;
+    padding: 10px;
 
     border-radius: 9px;
 
     cursor: pointer;
 
-    transition:
-      background .15s ease;
-
+    transition: background .15s ease;
   }
-
 
   .product-category-option:hover {
-
-    background:
-      #f0f8f3;
-
+    background: #f0f8f3;
   }
-
 
   .product-category-option.hidden {
-
     display: none;
-
   }
 
-
   .product-category-checkbox {
-
     width: 17px;
     height: 17px;
 
     margin: 0;
 
+    flex-shrink: 0;
+
     appearance: none;
 
-    border:
-      1.5px solid #bfd5c7;
-
+    border: 1.5px solid #bfd5c7;
     border-radius: 5px;
 
     background: white;
@@ -1217,25 +825,14 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     cursor: pointer;
 
     position: relative;
-
-    flex-shrink: 0;
-
   }
-
 
   .product-category-checkbox:checked {
-
-    border-color:
-      var(--product-green);
-
-    background:
-      var(--product-green);
-
+    border-color: var(--product-green);
+    background: var(--product-green);
   }
 
-
   .product-category-checkbox:checked::after {
-
     content: "✓";
 
     position: absolute;
@@ -1249,34 +846,23 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     color: white;
 
     font-size: .65rem;
-
     font-weight: 900;
-
   }
-
 
   .product-category-option-text {
-
     min-width: 0;
-
   }
 
-
   .product-category-option-name {
-
     display: block;
 
     color: var(--product-text);
 
     font-size: .70rem;
-
     font-weight: 800;
-
   }
 
-
   .product-category-option-description {
-
     display: block;
 
     margin-top: 2px;
@@ -1284,16 +870,23 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     color: #8a9790;
 
     font-size: .58rem;
-
   }
-
 
   /* ============================================================
    SEM RESULTADO
-============================================================ */
+   ============================================================ */
+
+  .product-category-empty {
+    padding: 20px;
+
+    color: #7c8b83;
+
+    text-align: center;
+
+    font-size: .68rem;
+  }
 
   .product-category-no-results {
-
     display: none;
 
     padding: 18px;
@@ -1303,20 +896,15 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     text-align: center;
 
     font-size: .65rem;
-
   }
 
-
   /* ============================================================
-   RODAPÉ CATEGORIAS
-============================================================ */
+   FOOTER
+   ============================================================ */
 
   .product-category-dropdown-footer {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 10px;
@@ -1328,104 +916,73 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
     border-top:
       1px solid #edf2ee;
-
   }
 
-
   .product-category-footer-count {
-
     color: #74847b;
 
     font-size: .60rem;
-
   }
 
-
   .product-category-clear {
-
-    padding:
-      5px 8px;
+    padding: 5px 8px;
 
     border: none;
-
     border-radius: 7px;
 
     color: #a04e4e;
-
-    background:
-      #fff3f3;
+    background: #fff3f3;
 
     font-size: .58rem;
-
     font-weight: 800;
 
     cursor: pointer;
-
   }
-
 
   /* ============================================================
    CONTADOR
-============================================================ */
+   ============================================================ */
 
   .product-category-selection-info {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 15px;
 
     margin-top: 10px;
-
   }
 
-
   .product-category-count {
-
     display: inline-flex;
-
     align-items: center;
 
     gap: 6px;
 
-    padding:
-      6px 10px;
+    padding: 6px 10px;
 
     border-radius: 30px;
 
     color: var(--product-green);
-
-    background:
-      #e3f4e9;
+    background: #e3f4e9;
 
     font-size: .62rem;
-
     font-weight: 900;
-
   }
 
-
   .product-category-tip {
-
-    color:
-      #819087;
+    color: #819087;
 
     font-size: .61rem;
 
     text-align: right;
-
   }
-
 
   /* ============================================================
    IMAGEM
-============================================================ */
+   ============================================================ */
 
   .product-image-upload {
-
     display: grid;
 
     grid-template-columns:
@@ -1437,19 +994,15 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
     padding: 17px;
 
-    background:
-      #f8fcfa;
+    background: #f8fcfa;
 
     border:
       1px dashed #b8d7c4;
 
     border-radius: 18px;
-
   }
 
-
   .product-image-preview {
-
     width: 190px;
     height: 145px;
 
@@ -1458,9 +1011,7 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     overflow: hidden;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     border-radius: 14px;
@@ -1469,53 +1020,37 @@ Cadastrar Produto Agrícola | AgroIA Moxico
       linear-gradient(135deg,
         #eaf7ef,
         #f7fbf8);
-
   }
 
-
   .product-image-preview img {
-
     width: 100%;
     height: 100%;
 
     display: none;
 
     object-fit: cover;
-
   }
 
-
   .product-image-placeholder {
-
     color: #7b8c83;
 
     text-align: center;
-
   }
 
-
   .product-image-placeholder-icon {
-
     display: block;
 
     margin-bottom: 6px;
 
     font-size: 1.7rem;
-
   }
-
 
   .product-image-placeholder span {
-
     font-size: .62rem;
-
     font-weight: 700;
-
   }
 
-
   .product-image-overlay {
-
     position: absolute;
 
     left: 8px;
@@ -1535,22 +1070,16 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     background:
       rgba(13, 77, 49, .82);
 
-    backdrop-filter:
-      blur(8px);
+    backdrop-filter: blur(8px);
 
     font-size: .58rem;
-
     font-weight: 700;
 
     text-overflow: ellipsis;
-
     white-space: nowrap;
-
   }
 
-
   .product-form-file {
-
     width: 100%;
 
     box-sizing: border-box;
@@ -1558,21 +1087,15 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     padding: 11px;
 
     color: #718078;
-
     background: white;
 
-    border:
-      1px solid #dce9e1;
-
+    border: 1px solid #dce9e1;
     border-radius: 11px;
 
     font-size: .70rem;
-
   }
 
-
   .product-image-remove {
-
     display: none;
 
     margin-top: 8px;
@@ -1580,72 +1103,52 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     padding: 7px 10px;
 
     border: none;
-
     border-radius: 8px;
 
     color: #a34747;
-
     background: #fff0f0;
 
     font-size: .61rem;
-
     font-weight: 800;
 
     cursor: pointer;
-
   }
 
-
   /* ============================================================
-   DISPONIBILIDADE
-============================================================ */
+   ATIVO
+   ============================================================ */
 
   .product-active-card {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 20px;
 
-    padding:
-      17px 19px;
+    padding: 17px 19px;
 
     background:
       linear-gradient(135deg,
         #f3faf6,
         #eaf7ef);
 
-    border:
-      1px solid #d7eadf;
-
+    border: 1px solid #d7eadf;
     border-radius: 16px;
-
   }
 
-
   .product-active-info {
-
     display: flex;
-
     align-items: center;
 
     gap: 12px;
-
   }
 
-
   .product-active-icon {
-
     width: 39px;
     height: 39px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -1653,14 +1156,10 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     border-radius: 11px;
 
     color: var(--product-green);
-
     background: white;
-
   }
 
-
   .product-active-info strong {
-
     display: block;
 
     margin-bottom: 3px;
@@ -1668,40 +1167,20 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     color: var(--product-text);
 
     font-size: .70rem;
-
     font-weight: 900;
-
   }
 
-
   .product-active-info span {
-
     color: #7c8d84;
 
     font-size: .62rem;
-
   }
-
 
   /* ============================================================
-   SWITCH
-============================================================ */
+   CHECKBOX ATIVO
+   ============================================================ */
 
-  .product-form-check {
-
-    position: relative;
-
-    width: 48px;
-    height: 26px;
-
-    flex-shrink: 0;
-
-  }
-
-
-  .product-form-checkbox,
   .product-form-check input[type="checkbox"] {
-
     width: 48px;
     height: 26px;
 
@@ -1709,25 +1188,21 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
     appearance: none;
 
-    cursor: pointer;
-
     border: none;
-
     border-radius: 30px;
 
     outline: none;
 
     background: #ccd9d1;
 
-    transition:
-      background .2s ease;
+    cursor: pointer;
 
+    position: relative;
+
+    transition: background .2s ease;
   }
 
-
-  .product-form-checkbox::after,
   .product-form-check input[type="checkbox"]::after {
-
     content: "";
 
     position: absolute;
@@ -1747,77 +1222,52 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
     transition:
       transform .2s ease;
-
   }
 
-
-  .product-form-checkbox:checked,
   .product-form-check input[type="checkbox"]:checked {
-
-    background:
-      var(--product-green);
-
+    background: var(--product-green);
   }
 
-
-  .product-form-checkbox:checked::after,
   .product-form-check input[type="checkbox"]:checked::after {
-
-    transform:
-      translateX(22px);
-
+    transform: translateX(22px);
   }
-
 
   /* ============================================================
    ERROS
-============================================================ */
+   ============================================================ */
 
   .product-form-errors {
-
     margin-bottom: 28px;
 
-    padding:
-      15px 17px;
+    padding: 15px 17px;
 
-    color:
-      #913f3f;
+    color: #913f3f;
 
-    background:
-      var(--product-danger-bg);
+    background: var(--product-danger-bg);
 
-    border:
-      1px solid #efcccc;
-
+    border: 1px solid #efcccc;
     border-radius: 13px;
 
     font-size: .70rem;
 
     line-height: 1.6;
-
   }
 
+  .product-form-errors ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+  }
 
   .product-field-errors {
-
     margin-top: 6px;
 
-    color:
-      var(--product-danger);
+    color: var(--product-danger);
 
     font-size: .62rem;
-
   }
 
-
-  /* ============================================================
-   CONTADOR DESCRIÇÃO
-============================================================ */
-
   .product-description-counter {
-
     display: flex;
-
     justify-content: flex-end;
 
     margin-top: 5px;
@@ -1825,34 +1275,23 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     color: #8a9790;
 
     font-size: .58rem;
-
   }
-
 
   .product-description-counter.warning {
-
     color: #b47727;
-
   }
-
 
   .product-description-counter.danger {
-
     color: var(--product-danger);
-
   }
-
 
   /* ============================================================
    AÇÕES
-============================================================ */
+   ============================================================ */
 
   .product-form-actions {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 15px;
@@ -1863,51 +1302,37 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
     border-top:
       1px solid #e5eee8;
-
   }
 
-
   .product-form-actions-info {
-
     color: #8a9790;
 
     font-size: .63rem;
-
   }
 
-
   .product-form-buttons {
-
     display: flex;
 
     gap: 10px;
-
   }
 
-
   .product-form-btn {
-
     min-height: 47px;
 
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
     gap: 8px;
 
-    padding:
-      0 19px;
+    padding: 0 19px;
 
     border: none;
-
     border-radius: 12px;
 
     text-decoration: none;
 
     font-size: .70rem;
-
     font-weight: 900;
 
     cursor: pointer;
@@ -1915,30 +1340,18 @@ Cadastrar Produto Agrícola | AgroIA Moxico
     transition:
       transform .18s ease,
       box-shadow .18s ease;
-
   }
-
 
   .product-form-btn:hover {
-
-    transform:
-      translateY(-2px);
-
+    transform: translateY(-2px);
   }
-
 
   .product-form-btn-cancel {
-
     color: #62736a;
-
-    background:
-      #edf3ef;
-
+    background: #edf3ef;
   }
 
-
   .product-form-btn-save {
-
     color: white;
 
     background:
@@ -1948,734 +1361,400 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
     box-shadow:
       0 9px 20px rgba(13, 77, 49, .18);
-
   }
-
 
   .product-form-btn-save:hover {
-
     box-shadow:
       0 13px 25px rgba(13, 77, 49, .24);
-
   }
-
 
   /* ============================================================
    LOADING
-============================================================ */
+   ============================================================ */
 
   .product-save-loading {
-
     display: none;
 
     align-items: center;
 
     gap: 7px;
-
   }
 
-
   .product-save-spinner {
-
     width: 14px;
     height: 14px;
 
     border:
       2px solid rgba(255, 255, 255, .4);
 
-    border-top-color:
-      white;
+    border-top-color: white;
 
     border-radius: 50%;
 
     animation:
       productSpin .7s linear infinite;
-
   }
-
 
   @keyframes productSpin {
-
     to {
-
-      transform:
-        rotate(360deg);
-
+      transform: rotate(360deg);
     }
-
   }
 
-
   /* ============================================================
-   RESPONSIVIDADE
-============================================================ */
+   RESPONSIVO
+   ============================================================ */
 
   @media (max-width: 850px) {
 
     .product-register-card-header-content {
-
       align-items: flex-start;
 
       flex-direction: column;
-
     }
-
 
     .product-register-header-badge {
-
       display: none;
-
     }
-
 
     .product-form-grid {
-
       grid-template-columns: 1fr;
-
     }
-
 
     .product-form-grid .product-form-group {
-
       margin-bottom: 19px;
-
     }
-
   }
-
 
   @media (max-width: 700px) {
 
     .product-register-page {
-
-      padding:
-        25px 0 55px;
-
+      padding: 25px 12px 55px;
     }
 
-
     .product-register-top {
-
       align-items: flex-start;
 
       flex-direction: column;
 
       margin-bottom: 20px;
-
     }
-
 
     .product-register-card-header {
-
-      padding:
-        27px 22px;
-
+      padding: 27px 22px;
     }
-
 
     .product-register-form {
-
-      padding:
-        25px 20px;
-
+      padding: 25px 20px;
     }
-
 
     .product-image-upload {
-
       grid-template-columns: 1fr;
-
     }
-
 
     .product-image-preview {
-
       width: 100%;
-
       height: 190px;
-
     }
 
-
     .product-category-selection-info {
-
       align-items: flex-start;
 
       flex-direction: column;
-
     }
-
 
     .product-category-tip {
-
       text-align: left;
-
     }
 
-
     .product-form-actions {
-
       align-items: stretch;
 
       flex-direction: column;
-
     }
 
-
     .product-form-buttons {
-
       width: 100%;
 
       flex-direction: column;
-
     }
-
 
     .product-form-btn {
-
       width: 100%;
-
     }
-
 
     .product-back-button {
-
       width: 100%;
-
     }
-
   }
-
 
   @media (max-width: 480px) {
 
     .product-register-brand-icon {
-
       width: 43px;
       height: 43px;
-
     }
-
 
     .product-register-brand strong {
-
       font-size: .82rem;
-
     }
-
 
     .product-register-card {
-
       border-radius: 20px;
-
     }
-
 
     .product-register-card-header h1 {
-
       font-size: 1.42rem;
-
     }
-
 
     .product-category-box {
-
-      padding:
-        15px;
-
+      padding: 15px;
     }
-
 
     .product-active-card {
-
       align-items: flex-start;
-
     }
-
   }
 </style>
-
 {% endblock %}
-
 
 
 {% block content %}
 
 <section class="product-register-page">
 
-  <div class="container">
+  <div class="product-register-wrapper">
 
-    <div class="product-register-wrapper">
+    <div class="product-register-top">
 
+      <div class="product-register-brand">
 
-
-      <div class="product-register-top">
-
-
-
-        <div class="product-register-brand">
-
-          <div class="product-register-brand-icon">
-            🌱
-          </div>
-
-          <div>
-
-            <small>
-              AgroIA Moxico
-            </small>
-
-            <strong>
-              Gestão de Produtos Agrícolas
-            </strong>
-
-          </div>
-
+        <div class="product-register-brand-icon">
+          🌱
         </div>
 
+        <div>
 
-        <a href="{% url 'produtos:produtos_agricolas' %}" class="product-back-button">
+          <small>
+            AgroIA Moxico
+          </small>
 
-          <span class="product-back-button-icon">
-            ←
-          </span>
+          <strong>
+            Gestão de Produtos Agrícolas
+          </strong>
 
-          Voltar para Produtos
-
-        </a>
-
+        </div>
 
       </div>
 
 
+      <a href="{% url 'produtos:produtos' %}" class="product-back-button">
+
+        <span class="product-back-button-icon">
+          ←
+        </span>
+
+        Voltar para Produtos
+
+      </a>
+
+    </div>
+
+    <div class="product-register-card">
+
+      <div class="product-register-card-header">
+
+        <div class="product-register-card-header-content">
+
+          <div>
+
+            <h1>
+              Cadastrar produto agrícola
+            </h1>
+
+            <p>
+              Registe produtos agrícolas no catálogo
+              do AgroIA Moxico. Associe o produto às
+              categorias cadastradas, adicione uma
+              imagem e defina a sua disponibilidade.
+            </p>
+
+          </div>
+
+          <span class="product-register-header-badge">
+            Cadastro seguro
+          </span>
+
+        </div>
+
+      </div>
 
 
-      <div class="product-register-card">
+      <div class="product-register-progress">
 
+        <div class="product-register-progress-bar" id="productProgressBar"></div>
 
+      </div>
 
-        <div class="product-register-card-header">
+      <form method="POST" enctype="multipart/form-data" class="product-register-form" id="productRegisterForm"
+        novalidate>
 
-          <div class="product-register-card-header-content">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+
+        <div class="product-form-errors">
+
+          <strong>
+            Não foi possível cadastrar o produto.
+          </strong>
+
+          <ul>
+            {% for error in form.non_field_errors %}
+            <li>
+              {{ error }}
+            </li>
+            {% endfor %}
+          </ul>
+
+        </div>
+
+        {% endif %}
+
+        {% if form.errors %}
+
+        <div class="product-form-errors">
+
+          <strong>
+            Existem campos que precisam de correção.
+          </strong>
+
+          <ul>
+
+            {% for field in form %}
+
+            {% if field.errors %}
+
+            {% for error in field.errors %}
+
+            <li>
+              {{ field.label }}:
+              {{ error }}
+            </li>
+
+            {% endfor %}
+
+            {% endif %}
+
+            {% endfor %}
+
+          </ul>
+
+        </div>
+
+        {% endif %}
+
+        <div class="product-form-section">
+
+          <div class="product-form-section-title">
+
+            <div class="product-form-section-number">
+              01
+            </div>
 
             <div>
 
-              <h1>
-                Cadastrar produto agrícola
-              </h1>
+              <h2>
+                Informações do produto
+              </h2>
 
               <p>
-                Registe produtos agrícolas no catálogo
-                do AgroIA Moxico. Adicione categorias,
-                imagem, descrição e disponibilidade.
+                Identificação e descrição agrícola
               </p>
 
             </div>
 
-
-            <span class="product-register-header-badge">
-
-              Cadastro seguro
-
-            </span>
-
-          </div>
-
-        </div>
-
-
-
-        <div class="product-register-progress">
-
-          <div class="product-register-progress-bar" id="productProgressBar">
-          </div>
-
-        </div>
-
-
-
-
-        <form method="POST" enctype="multipart/form-data" class="product-register-form" id="productRegisterForm"
-          novalidate>
-
-          {% csrf_token %}
-
-
-
-
-          {% if form.non_field_errors or form.errors %}
-
-          <div class="product-form-errors">
-
-            <strong>
-              Não foi possível cadastrar o produto.
-            </strong>
-
-            <p>
-              Verifique os campos destacados e corrija
-              os dados antes de continuar.
-            </p>
-
-            {% if form.non_field_errors %}
-            {{ form.non_field_errors }}
-            {% endif %}
-
-          </div>
-
-          {% endif %}
-
-
-
-
-          <div class="product-form-section">
-
-            <div class="product-form-section-title">
-
-              <div class="product-form-section-number">
-                01
-              </div>
-
-              <div>
-
-                <h2>
-                  Informações do produto
-                </h2>
-
-                <p>
-                  Identificação e descrição agrícola
-                </p>
-
-              </div>
-
-            </div>
-
-
-
-            <div class="product-form-grid">
-
-
-
-              <div class="product-form-group">
-
-                <label class="product-form-label" for="{{ form.nome.id_for_label }}">
-
-                  Nome do produto
-
-                  <span class="product-required">
-                    *
-                  </span>
-
-                </label>
-
-
-                {{ form.nome }}
-
-
-                {% if form.nome.errors %}
-
-                <div class="product-field-errors">
-                  {{ form.nome.errors }}
-                </div>
-
-                {% endif %}
-
-
-                <span class="product-form-help">
-
-                  Ex.: Milho, Feijão, Mandioca,
-                  Tomate ou Soja.
-
-                </span>
-
-              </div>
-
-
-
-
-
-              <div class="product-form-group">
-
-                <label class="product-form-label" for="{{ form.descricao.id_for_label }}">
-
-                  Descrição
-
-                  <span class="product-required">
-                    *
-                  </span>
-
-                </label>
-
-
-                {{ form.descricao }}
-
-
-                {% if form.descricao.errors %}
-
-                <div class="product-field-errors">
-                  {{ form.descricao.errors }}
-                </div>
-
-                {% endif %}
-
-
-                <div class="product-description-counter" id="descriptionCounter">
-
-                  <span id="descriptionCount">
-                    0
-                  </span>
-
-                  &nbsp;/&nbsp;
-
-                  <span>
-                    1000 caracteres
-                  </span>
-
-                </div>
-
-
-                <span class="product-form-help">
-
-                  Descreva as principais características,
-                  utilização e informações agrícolas
-                  relevantes.
-
-                </span>
-
-              </div>
-
-            </div>
-
           </div>
 
 
+          <div class="product-form-grid">
 
+            <div class="product-form-group">
 
-          <div class="product-form-section">
+              <label class="product-form-label" for="{{ form.nome.id_for_label }}">
 
-            <div class="product-form-section-title">
+                Nome do produto
 
-              <div class="product-form-section-number">
-                02
-              </div>
-
-              <div>
-
-                <h2>
-                  Categorias agrícolas
-                </h2>
-
-                <p>
-                  Organize o produto no catálogo
-                </p>
-
-              </div>
-
-            </div>
-
-
-
-            <div class="product-category-box">
-
-
-              <div class="product-category-header">
-
-                <div class="product-category-icon">
-                  🌾
-                </div>
-
-                <div>
-
-                  <span class="product-category-title">
-
-                    Categorias do produto
-
-                    <span class="product-required">
-                      *
-                    </span>
-
-                  </span>
-
-                  <span class="product-category-description">
-
-                    Selecione uma ou várias categorias
-                    agrícolas para este produto.
-
-                  </span>
-
-                </div>
-
-              </div>
-
-
-
-
-              <div class="product-category-selector" id="productCategorySelector">
-
-
-                <button type="button" class="product-category-trigger" id="categoryTrigger" aria-expanded="false">
-
-                  <span class="product-category-trigger-content" id="categoryTriggerContent">
-
-                    <span class="product-category-placeholder" id="categoryPlaceholder">
-
-                      Selecionar categorias...
-
-                    </span>
-
-                  </span>
-
-
-                  <span class="product-category-arrow">
-                    ▼
-                  </span>
-
-                </button>
-
-
-
-
-                <div class="product-category-dropdown" id="categoryDropdown">
-
-
-
-
-                  <div class="product-category-search-wrapper">
-
-                    <span class="product-category-search-icon">
-                      🔎
-                    </span>
-
-                    <input type="search" id="categorySearch" class="product-category-search"
-                      placeholder="Pesquisar categoria..." autocomplete="off">
-
-                  </div>
-
-
-
-
-
-                  <div class="product-category-options" id="categoryOptions">
-
-
-                    {% if categorias %}
-
-                    {% for categoria in categorias %}
-
-                    <label class="product-category-option" data-category-name="{{ categoria.nome|lower }}">
-
-                      <input type="checkbox" class="product-category-checkbox" name="categorias"
-                        value="{{ categoria.pk }}">
-
-                      <span class="product-category-option-text">
-
-                        <span class="product-category-option-name">
-                          {{ categoria.nome }}
-                        </span>
-
-                        {% if categoria.descricao %}
-
-                        <span class="product-category-option-description">
-
-                          {{ categoria.descricao|truncatechars:65 }}
-
-                        </span>
-
-                        {% endif %}
-
-                      </span>
-
-                    </label>
-
-                    {% endfor %}
-
-                    {% else %}
-
-                    <div class="product-category-no-results" style="display:block;">
-
-                      Nenhuma categoria cadastrada.
-
-                    </div>
-
-                    {% endif %}
-
-                  </div>
-
-
-
-                  <div class="product-category-no-results" id="categoryNoResults">
-
-                    Nenhuma categoria encontrada.
-
-                  </div>
-
-
-
-
-
-                  <div class="product-category-dropdown-footer">
-
-                    <span class="product-category-footer-count" id="categoryFooterCount">
-
-                      0 selecionadas
-
-                    </span>
-
-
-                    <button type="button" class="product-category-clear" id="clearCategories">
-
-                      Limpar seleção
-
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-
-
-
-              <div class="product-category-selection-info">
-
-                <span class="product-category-count">
-
-                  ✓
-
-                  <span id="categoriesCounterText">
-
-                    0 categorias selecionadas
-
-                  </span>
-
+                <span class="product-required">
+                  *
                 </span>
 
+              </label>
 
-                <span class="product-category-tip">
+              {{ form.nome }}
 
-                  Selecione pelo menos uma categoria.
-
-                </span>
-
-              </div>
-
-
-
-              {% if form.categorias.errors %}
+              {% if form.nome.errors %}
 
               <div class="product-field-errors">
 
-                {{ form.categorias.errors }}
+                {{ form.nome.errors }}
 
               </div>
 
               {% endif %}
 
+              <span class="product-form-help">
+
+                Ex.: Milho, Feijão, Mandioca,
+                Tomate ou Soja.
+
+              </span>
+
+            </div>
+
+            <div class="product-form-group">
+
+              <label class="product-form-label" for="{{ form.descricao.id_for_label }}">
+
+                Descrição
+
+                <span class="product-required">
+                  *
+                </span>
+
+              </label>
+
+              {{ form.descricao }}
+
+              {% if form.descricao.errors %}
+
+              <div class="product-field-errors">
+
+                {{ form.descricao.errors }}
+
+              </div>
+
+              {% endif %}
+
+              <div class="product-description-counter" id="descriptionCounter">
+
+                <span id="descriptionCount">
+                  0
+                </span>
+
+                &nbsp;/&nbsp;
+
+                <span>
+                  1000 caracteres
+                </span>
+
+              </div>
 
               <span class="product-form-help">
 
-                Exemplo:
-                Milho → Cereais + Culturas Alimentares.
+                Descreva as principais características,
+                utilização e informações agrícolas
+                relevantes.
 
               </span>
 
@@ -2683,92 +1762,57 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
           </div>
 
+        </div>
 
+        <div class="product-form-section">
 
+          <div class="product-form-section-title">
 
-          <div class="product-form-section">
+            <div class="product-form-section-number">
+              02
+            </div>
 
-            <div class="product-form-section-title">
+            <div>
 
-              <div class="product-form-section-number">
-                03
-              </div>
+              <h2>
+                Categoria agrícola
+              </h2>
 
-              <div>
-
-                <h2>
-                  Imagem do produto
-                </h2>
-
-                <p>
-                  Adicione uma fotografia representativa
-                </p>
-
-              </div>
+              <p>
+                Associe o produto a uma categoria
+                cadastrada no sistema
+              </p>
 
             </div>
 
+          </div>
 
 
-            <div class="product-image-upload">
+          <div class="product-category-box">
 
+            <div class="product-category-header">
 
-
-              <div class="product-image-preview" id="productImagePreview">
-
-                <img id="productPreviewImage" alt="Pré-visualização do produto">
-
-                <div class="product-image-placeholder" id="productImagePlaceholder">
-
-                  <span class="product-image-placeholder-icon">
-                  </span>
-
-                  <span>
-                    Pré-visualização
-                  </span>
-
-                </div>
-
-                <div class="product-image-overlay" id="productImageOverlay">
-                </div>
-
+              <div class="product-category-icon">
+                🌾
               </div>
-
-
-
 
               <div>
 
-                <label class="product-form-label" for="{{ form.imagem.id_for_label }}">
+                <span class="product-category-title">
 
-                  Fotografia do produto
+                  Categorias do produto
 
-                </label>
+                  <span class="product-required">
+                    *
+                  </span>
 
+                </span>
 
-                {{ form.imagem }}
+                <span class="product-category-description">
 
-
-                {% if form.imagem.errors %}
-
-                <div class="product-field-errors">
-                  {{ form.imagem.errors }}
-                </div>
-
-                {% endif %}
-
-
-                <button type="button" class="product-image-remove" id="removeProductImage">
-
-                  ✕ Remover imagem
-
-                </button>
-
-
-                <span class="product-form-help">
-
-                  JPG, PNG ou WEBP.
-                  Tamanho máximo recomendado: 5 MB.
+                  Selecione uma ou várias categorias
+                  que já foram cadastradas na página
+                  de categorias.
 
                 </span>
 
@@ -2776,123 +1820,346 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 
             </div>
 
-          </div>
+            <div class="product-category-selector" id="productCategorySelector">
 
+              <button type="button" class="product-category-trigger" id="categoryTrigger" aria-expanded="false">
 
+                <span class="product-category-trigger-content" id="categoryTriggerContent">
 
-
-          <div class="product-form-section">
-
-            <div class="product-form-section-title">
-
-              <div class="product-form-section-number">
-                04
-              </div>
-
-              <div>
-
-                <h2>
-                  Disponibilidade
-                </h2>
-
-                <p>
-                  Controle a apresentação no catálogo
-                </p>
-
-              </div>
-
-            </div>
-
-
-
-            <div class="product-active-card">
-
-              <div class="product-active-info">
-
-                <div class="product-active-icon">
-                  ✓
-                </div>
-
-                <div>
-
-                  <strong>
-                    Produto disponível
-                  </strong>
-
-                  <span>
-                    Produtos ativos podem aparecer
-                    no catálogo agrícola.
+                  <span class="product-category-placeholder" id="categoryPlaceholder">
+                    Selecionar categorias...
                   </span>
-
-                </div>
-
-              </div>
-
-
-              <div class="product-form-check">
-
-                {{ form.ativo }}
-
-              </div>
-
-            </div>
-
-
-            {% if form.ativo.errors %}
-
-            <div class="product-field-errors">
-              {{ form.ativo.errors }}
-            </div>
-
-            {% endif %}
-
-          </div>
-
-
-
-
-          <div class="product-form-actions">
-
-
-            <div class="product-form-actions-info">
-
-              <strong>*</strong>
-
-              Campos obrigatórios
-
-            </div>
-
-
-            <div class="product-form-buttons">
-
-
-
-
-              <button type="submit" class="product-form-btn product-form-btn-save" id="productSaveButton">
-
-                <span id="productSaveNormal">
-
-                  Cadastrar produto
 
                 </span>
 
-                <span class="product-save-loading" id="productSaveLoading">
 
-                  <span class="product-save-spinner"></span>
-
-                  A cadastrar...
-
+                <span class="product-category-arrow">
+                  ▼
                 </span>
 
               </button>
 
+              <div class="product-category-dropdown" id="categoryDropdown">
+
+                <div class="product-category-search-wrapper">
+
+                  <span class="product-category-search-icon">
+
+                  </span>
+
+                  <input type="search" id="categorySearch" class="product-category-search"
+                    placeholder="Pesquisar categoria..." autocomplete="off">
+
+                </div>
+
+
+                <div class="product-category-options" id="categoryOptions">
+
+                  {% for categoria in form.categorias.field.queryset %}
+
+                  <label class="product-category-option" data-category-name="{{ categoria.nome|lower }}">
+
+                    <input type="checkbox" class="product-category-checkbox" name="categorias"
+                      value="{{ categoria.pk }}" {% if categoria.pk in form.categorias.value %} checked {% endif %}>
+
+
+                    <span class="product-category-option-text">
+
+                      <span class="product-category-option-name">
+                        {{ categoria.nome }}
+                      </span>
+
+                      {% if categoria.descricao %}
+
+                      <span class="product-category-option-description">
+                        {{ categoria.descricao|truncatechars:70 }}
+                      </span>
+
+                      {% endif %}
+
+                    </span>
+
+                  </label>
+
+                  {% endfor %}
+
+
+                  {% if not form.categorias.field.queryset %}
+
+                  <div class="product-category-empty">
+
+                    <strong>
+                      Nenhuma categoria cadastrada.
+                    </strong>
+
+                    <br>
+
+                    Cadastre uma categoria antes
+                    de cadastrar o produto.
+
+                  </div>
+
+                  {% endif %}
+
+                </div>
+
+
+                <div class="product-category-no-results" id="categoryNoResults">
+                  Nenhuma categoria encontrada.
+                </div>
+
+
+                <div class="product-category-dropdown-footer">
+
+                  <span class="product-category-footer-count" id="categoryFooterCount">
+                    0 selecionadas
+                  </span>
+
+
+                  <button type="button" class="product-category-clear" id="clearCategories">
+                    Limpar seleção
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="product-category-selection-info">
+
+              <span class="product-category-count">
+
+                ✓
+
+                <span id="categoriesCounterText">
+                  0 categorias selecionadas
+                </span>
+
+              </span>
+
+
+              <span class="product-category-tip">
+
+                Selecione pelo menos uma categoria.
+
+              </span>
+
+            </div>
+
+
+            {% if form.categorias.errors %}
+
+            <div class="product-field-errors">
+
+              {{ form.categorias.errors }}
+
+            </div>
+
+            {% endif %}
+
+
+            <span class="product-form-help">
+
+              As categorias apresentadas acima são
+              carregadas diretamente do cadastro de
+              categorias.
+
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="product-form-section">
+
+          <div class="product-form-section-title">
+
+            <div class="product-form-section-number">
+              03
+            </div>
+
+            <div>
+
+              <h2>
+                Imagem do produto
+              </h2>
+
+              <p>
+                Adicione uma fotografia representativa
+              </p>
+
             </div>
 
           </div>
 
-        </form>
 
-      </div>
+          <div class="product-image-upload">
+
+            <div class="product-image-preview" id="productImagePreview">
+
+              <img id="productPreviewImage" alt="Pré-visualização do produto">
+
+
+              <div class="product-image-placeholder" id="productImagePlaceholder">
+                <span>
+                  Pré-visualização
+                </span>
+
+              </div>
+
+
+              <div class="product-image-overlay" id="productImageOverlay"></div>
+
+            </div>
+
+
+            <div>
+
+              <label class="product-form-label" for="{{ form.imagem.id_for_label }}">
+
+                Fotografia do produto
+
+              </label>
+
+              {{ form.imagem }}
+
+              {% if form.imagem.errors %}
+
+              <div class="product-field-errors">
+                {{ form.imagem.errors }}
+              </div>
+
+              {% endif %}
+
+
+              <button type="button" class="product-image-remove" id="removeProductImage">
+                ✕ Remover imagem
+              </button>
+
+
+              <span class="product-form-help">
+
+                JPG, PNG ou WEBP.
+                Tamanho máximo recomendado:
+                5 MB.
+
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="product-form-section">
+
+          <div class="product-form-section-title">
+
+            <div class="product-form-section-number">
+              04
+            </div>
+
+            <div>
+
+              <h2>
+                Disponibilidade
+              </h2>
+
+              <p>
+                Controle a apresentação no catálogo
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="product-active-card">
+
+            <div class="product-active-info">
+
+              <div class="product-active-icon">
+                ✓
+              </div>
+
+              <div>
+
+                <strong>
+                  Produto disponível
+                </strong>
+
+                <span>
+                  Produtos ativos podem aparecer
+                  no catálogo agrícola.
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="product-form-check">
+
+              {{ form.ativo }}
+
+            </div>
+
+          </div>
+
+
+          {% if form.ativo.errors %}
+
+          <div class="product-field-errors">
+            {{ form.ativo.errors }}
+          </div>
+
+          {% endif %}
+
+        </div>
+
+        <div class="product-form-actions">
+
+          <div class="product-form-actions-info">
+
+            <strong>
+              *
+            </strong>
+
+            Campos obrigatórios
+
+          </div>
+
+
+          <div class="product-form-buttons">
+
+            <a href="{% url 'produtos:produtos' %}" class="product-form-btn product-form-btn-cancel">
+              Cancelar
+            </a>
+
+
+            <button type="submit" class="product-form-btn product-form-btn-save" id="productSaveButton">
+
+              <span id="productSaveNormal">
+                Cadastrar produto
+              </span>
+
+
+              <span class="product-save-loading" id="productSaveLoading">
+
+                <span class="product-save-spinner"></span>
+
+                A cadastrar...
+
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </form>
 
     </div>
 
@@ -2903,449 +2170,319 @@ Cadastrar Produto Agrícola | AgroIA Moxico
 {% endblock %}
 
 
-
 {% block extra_js %}
 
 <script>
+  document.addEventListener("DOMContentLoaded", function () {
 
-  document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+    const form = document.getElementById(
+      "productRegisterForm"
+    );
 
+    const categoryTrigger = document.getElementById(
+      "categoryTrigger"
+    );
 
+    const categoryDropdown = document.getElementById(
+      "categoryDropdown"
+    );
 
-      const form =
-        document.getElementById(
-          "productRegisterForm"
-        );
+    const categorySearch = document.getElementById(
+      "categorySearch"
+    );
 
+    const categoryOptions = document.getElementById(
+      "categoryOptions"
+    );
 
-      const categoryTrigger =
-        document.getElementById(
-          "categoryTrigger"
-        );
+    const categoryNoResults = document.getElementById(
+      "categoryNoResults"
+    );
 
+    const categoryTriggerContent =
+      document.getElementById(
+        "categoryTriggerContent"
+      );
 
-      const categoryDropdown =
-        document.getElementById(
-          "categoryDropdown"
-        );
+    const categoryPlaceholder =
+      document.getElementById(
+        "categoryPlaceholder"
+      );
 
+    const counterText =
+      document.getElementById(
+        "categoriesCounterText"
+      );
 
-      const categorySearch =
-        document.getElementById(
-          "categorySearch"
-        );
+    const footerCount =
+      document.getElementById(
+        "categoryFooterCount"
+      );
 
+    const clearCategories =
+      document.getElementById(
+        "clearCategories"
+      );
 
-      const categoryOptions =
-        document.getElementById(
-          "categoryOptions"
-        );
+    const progressBar =
+      document.getElementById(
+        "productProgressBar"
+      );
 
+    const imageInput =
+      document.getElementById(
+        "{{ form.imagem.id_for_label }}"
+      );
 
-      const categoryNoResults =
-        document.getElementById(
-          "categoryNoResults"
-        );
+    const previewImage =
+      document.getElementById(
+        "productPreviewImage"
+      );
 
+    const placeholder =
+      document.getElementById(
+        "productImagePlaceholder"
+      );
 
-      const categoryTriggerContent =
-        document.getElementById(
-          "categoryTriggerContent"
-        );
+    const imageOverlay =
+      document.getElementById(
+        "productImageOverlay"
+      );
 
+    const removeImageButton =
+      document.getElementById(
+        "removeProductImage"
+      );
 
-      const categoryPlaceholder =
-        document.getElementById(
-          "categoryPlaceholder"
-        );
+    const description =
+      document.getElementById(
+        "{{ form.descricao.id_for_label }}"
+      );
 
+    const descriptionCount =
+      document.getElementById(
+        "descriptionCount"
+      );
 
-      const counterText =
-        document.getElementById(
-          "categoriesCounterText"
-        );
+    const descriptionCounter =
+      document.getElementById(
+        "descriptionCounter"
+      );
 
+    const saveButton =
+      document.getElementById(
+        "productSaveButton"
+      );
 
-      const footerCount =
-        document.getElementById(
-          "categoryFooterCount"
-        );
+    const saveNormal =
+      document.getElementById(
+        "productSaveNormal"
+      );
 
+    const saveLoading =
+      document.getElementById(
+        "productSaveLoading"
+      );
 
-      const clearCategories =
-        document.getElementById(
-          "clearCategories"
-        );
+    function getCategoryCheckboxes() {
 
-
-      const imageInput =
-        document.getElementById(
-          "{{ form.imagem.id_for_label }}"
-        );
-
-
-      const previewImage =
-        document.getElementById(
-          "productPreviewImage"
-        );
-
-
-      const placeholder =
-        document.getElementById(
-          "productImagePlaceholder"
-        );
-
-
-      const imageOverlay =
-        document.getElementById(
-          "productImageOverlay"
-        );
-
-
-      const removeImageButton =
-        document.getElementById(
-          "removeProductImage"
-        );
-
-
-      const description =
-        document.getElementById(
-          "{{ form.descricao.id_for_label }}"
-        );
-
-
-      const descriptionCount =
-        document.getElementById(
-          "descriptionCount"
-        );
-
-
-      const descriptionCounter =
-        document.getElementById(
-          "descriptionCounter"
-        );
-
-
-      const progressBar =
-        document.getElementById(
-          "productProgressBar"
-        );
-
-
-      const saveButton =
-        document.getElementById(
-          "productSaveButton"
-        );
-
-
-      const saveNormal =
-        document.getElementById(
-          "productSaveNormal"
-        );
-
-
-      const saveLoading =
-        document.getElementById(
-          "productSaveLoading"
-        );
-
-
-
-      const categoryCheckboxes =
-        categoryOptions
-          ? categoryOptions.querySelectorAll(
-            ".product-category-checkbox"
-          )
-          : [];
-
-
-      function getSelectedCategories() {
-
-        return Array.from(
-          categoryCheckboxes
-        ).filter(
-          checkbox =>
-            checkbox.checked
-        );
-
+      if (!categoryOptions) {
+        return [];
       }
 
+      return Array.from(
+        categoryOptions.querySelectorAll(
+          ".product-category-checkbox"
+        )
+      );
+    }
 
 
-      function updateCategoryUI() {
+    function getSelectedCategories() {
 
-        const selected =
-          getSelectedCategories();
-
-
-
-
-        if (counterText) {
-
-          if (selected.length === 0) {
-
-            counterText.textContent =
-              "0 categorias selecionadas";
-
-          }
-
-          else if (selected.length === 1) {
-
-            counterText.textContent =
-              "1 categoria selecionada";
-
-          }
-
-          else {
-
-            counterText.textContent =
-              selected.length +
-              " categorias selecionadas";
-
-          }
-
+      return getCategoryCheckboxes().filter(
+        function (checkbox) {
+          return checkbox.checked;
         }
+      );
+    }
+
+
+    function updateCategoryUI() {
+
+      const selected =
+        getSelectedCategories();
 
 
 
 
-        if (footerCount) {
+      if (counterText) {
 
-          footerCount.textContent =
+        if (selected.length === 0) {
+
+          counterText.textContent =
+            "0 categorias selecionadas";
+
+        } else if (selected.length === 1) {
+
+          counterText.textContent =
+            "1 categoria selecionada";
+
+        } else {
+
+          counterText.textContent =
             selected.length +
-            (
-              selected.length === 1
-                ? " selecionada"
-                : " selecionadas"
-            );
-
+            " categorias selecionadas";
         }
-
-
-
-
-        if (categoryTriggerContent) {
-
-          categoryTriggerContent
-            .querySelectorAll(
-              ".product-category-chip"
-            )
-            .forEach(
-              chip => chip.remove()
-            );
-
-        }
-
-
-
-
-        if (categoryPlaceholder) {
-
-          categoryPlaceholder.style.display =
-            selected.length
-              ? "none"
-              : "inline";
-
-        }
-
-
-        /* CRIAR CHIPS */
-
-        selected.forEach(
-          function (checkbox) {
-
-            const option =
-              checkbox.closest(
-                ".product-category-option"
-              );
-
-
-            if (!option) {
-              return;
-            }
-
-
-            const nameElement =
-              option.querySelector(
-                ".product-category-option-name"
-              );
-
-
-            const name =
-              nameElement
-                ? nameElement.textContent.trim()
-                : checkbox.value;
-
-
-            const chip =
-              document.createElement(
-                "span"
-              );
-
-
-            chip.className =
-              "product-category-chip";
-
-
-            const text =
-              document.createElement(
-                "span"
-              );
-
-
-            text.textContent =
-              name;
-
-
-            const remove =
-              document.createElement(
-                "button"
-              );
-
-
-            remove.type =
-              "button";
-
-
-            remove.className =
-              "product-category-chip-remove";
-
-
-            remove.textContent =
-              "×";
-
-
-            remove.title =
-              "Remover categoria";
-
-
-            remove.addEventListener(
-              "click",
-              function (event) {
-
-                event.stopPropagation();
-
-                checkbox.checked =
-                  false;
-
-                updateCategoryUI();
-
-                updateProgress();
-
-              }
-            );
-
-
-            chip.appendChild(text);
-
-            chip.appendChild(remove);
-
-
-            categoryTriggerContent
-              .insertBefore(
-                chip,
-                categoryPlaceholder
-              );
-
-          }
-        );
-
-      }
-
-
-
-      if (categoryTrigger) {
-
-        categoryTrigger.addEventListener(
-          "click",
-          function (event) {
-
-            event.stopPropagation();
-
-
-            const open =
-              categoryDropdown.classList.contains(
-                "open"
-              );
-
-
-            if (open) {
-
-              categoryDropdown.classList.remove(
-                "open"
-              );
-
-              categoryTrigger.classList.remove(
-                "open"
-              );
-
-              categoryTrigger.setAttribute(
-                "aria-expanded",
-                "false"
-              );
-
-            }
-
-            else {
-
-              categoryDropdown.classList.add(
-                "open"
-              );
-
-              categoryTrigger.classList.add(
-                "open"
-              );
-
-              categoryTrigger.setAttribute(
-                "aria-expanded",
-                "true"
-              );
-
-
-              if (categorySearch) {
-
-                setTimeout(
-                  () =>
-                    categorySearch.focus(),
-                  100
-                );
-
-              }
-
-            }
-
-          }
-        );
-
-      }
-
-
-      if (categoryDropdown) {
-
-        categoryDropdown.addEventListener(
-          "click",
-          function (event) {
-
-            event.stopPropagation();
-
-          }
-        );
-
       }
 
 
 
 
-      document.addEventListener(
+      if (footerCount) {
+
+        footerCount.textContent =
+          selected.length +
+          (
+            selected.length === 1
+              ? " selecionada"
+              : " selecionadas"
+          );
+      }
+
+
+
+      if (categoryTriggerContent) {
+
+        categoryTriggerContent
+          .querySelectorAll(
+            ".product-category-chip"
+          )
+          .forEach(
+            function (chip) {
+              chip.remove();
+            }
+          );
+      }
+
+
+
+
+      if (categoryPlaceholder) {
+
+        categoryPlaceholder.style.display =
+          selected.length > 0
+            ? "none"
+            : "inline";
+      }
+
+
+      selected.forEach(
+        function (checkbox) {
+
+          const option =
+            checkbox.closest(
+              ".product-category-option"
+            );
+
+          if (!option) {
+            return;
+          }
+
+
+          const nameElement =
+            option.querySelector(
+              ".product-category-option-name"
+            );
+
+          const name =
+            nameElement
+              ? nameElement.textContent.trim()
+              : checkbox.value;
+
+
+          const chip =
+            document.createElement("span");
+
+          chip.className =
+            "product-category-chip";
+
+
+          const text =
+            document.createElement("span");
+
+          text.className =
+            "product-category-chip-name";
+
+          text.textContent =
+            name;
+
+
+          const remove =
+            document.createElement("button");
+
+          remove.type = "button";
+
+          remove.className =
+            "product-category-chip-remove";
+
+          remove.textContent = "×";
+
+          remove.title =
+            "Remover categoria";
+
+
+          remove.addEventListener(
+            "click",
+            function (event) {
+
+              event.preventDefault();
+
+              event.stopPropagation();
+
+              checkbox.checked = false;
+
+              updateCategoryUI();
+
+              updateProgress();
+            }
+          );
+
+
+          chip.appendChild(text);
+
+          chip.appendChild(remove);
+
+
+          categoryTriggerContent.insertBefore(
+            chip,
+            categoryPlaceholder
+          );
+        }
+      );
+    }
+
+
+
+
+    if (categoryTrigger && categoryDropdown) {
+
+      categoryTrigger.addEventListener(
         "click",
-        function () {
+        function (event) {
 
-          if (
-            categoryDropdown &&
-            categoryTrigger
-          ) {
+          event.preventDefault();
+
+          event.stopPropagation();
+
+
+          const isOpen =
+            categoryDropdown.classList.contains(
+              "open"
+            );
+
+
+          if (isOpen) {
 
             categoryDropdown.classList.remove(
               "open"
@@ -3360,563 +2497,575 @@ Cadastrar Produto Agrícola | AgroIA Moxico
               "false"
             );
 
-          }
+          } else {
 
-        }
-      );
-
-
-
-      categoryCheckboxes.forEach(
-        function (checkbox) {
-
-          checkbox.addEventListener(
-            "change",
-            function () {
-
-              updateCategoryUI();
-
-              updateProgress();
-
-            }
-          );
-
-        }
-      );
-
-
-
-
-      if (clearCategories) {
-
-        clearCategories.addEventListener(
-          "click",
-          function () {
-
-            categoryCheckboxes.forEach(
-              checkbox => {
-
-                checkbox.checked =
-                  false;
-
-              }
+            categoryDropdown.classList.add(
+              "open"
             );
 
+            categoryTrigger.classList.add(
+              "open"
+            );
+
+            categoryTrigger.setAttribute(
+              "aria-expanded",
+              "true"
+            );
+
+
+            if (categorySearch) {
+
+              setTimeout(
+                function () {
+                  categorySearch.focus();
+                },
+                100
+              );
+            }
+          }
+        }
+      );
+    }
+
+
+
+
+    if (categoryDropdown) {
+
+      categoryDropdown.addEventListener(
+        "click",
+        function (event) {
+
+          event.stopPropagation();
+        }
+      );
+    }
+
+
+    document.addEventListener(
+      "click",
+      function () {
+
+        if (
+          categoryDropdown &&
+          categoryTrigger
+        ) {
+
+          categoryDropdown.classList.remove(
+            "open"
+          );
+
+          categoryTrigger.classList.remove(
+            "open"
+          );
+
+          categoryTrigger.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+        }
+      }
+    );
+
+
+
+
+    getCategoryCheckboxes().forEach(
+      function (checkbox) {
+
+        checkbox.addEventListener(
+          "change",
+          function () {
 
             updateCategoryUI();
 
             updateProgress();
-
           }
         );
-
       }
+    );
 
 
 
 
-      if (categorySearch) {
+    if (clearCategories) {
 
-        categorySearch.addEventListener(
-          "input",
-          function () {
+      clearCategories.addEventListener(
+        "click",
+        function () {
 
-            const term =
-              this.value
-                .toLowerCase()
-                .trim();
+          getCategoryCheckboxes()
+            .forEach(
+              function (checkbox) {
 
-
-            let visible =
-              0;
-
-
-            if (!categoryOptions) {
-              return;
-            }
+                checkbox.checked = false;
+              }
+            );
 
 
-            categoryOptions
-              .querySelectorAll(
-                ".product-category-option"
-              )
-              .forEach(
-                function (option) {
+          updateCategoryUI();
 
-                  const name =
-                    (
-                      option.dataset.categoryName ||
-                      ""
-                    );
+          updateProgress();
+        }
+      );
+    }
 
 
-                  const description =
-                    option.textContent
-                      .toLowerCase();
 
 
-                  const match =
-                    !term ||
-                    name.includes(term) ||
-                    description.includes(term);
+    if (categorySearch) {
+
+      categorySearch.addEventListener(
+        "input",
+        function () {
+
+          const term =
+            this.value
+              .toLowerCase()
+              .trim();
 
 
-                  if (match) {
+          let visible = 0;
 
-                    option.classList.remove(
-                      "hidden"
-                    );
 
-                    visible++;
+          if (!categoryOptions) {
+            return;
+          }
 
-                  }
 
-                  else {
+          categoryOptions
+            .querySelectorAll(
+              ".product-category-option"
+            )
+            .forEach(
+              function (option) {
 
-                    option.classList.add(
-                      "hidden"
-                    );
+                const name =
+                  (
+                    option.dataset.categoryName ||
+                    ""
+                  ).toLowerCase();
 
-                  }
 
+                const description =
+                  option.textContent
+                    .toLowerCase();
+
+
+                const match =
+                  !term ||
+                  name.includes(term) ||
+                  description.includes(term);
+
+
+                if (match) {
+
+                  option.classList.remove(
+                    "hidden"
+                  );
+
+                  visible++;
+
+                } else {
+
+                  option.classList.add(
+                    "hidden"
+                  );
                 }
-              );
+              }
+            );
 
 
-            if (categoryNoResults) {
+          if (categoryNoResults) {
 
-              categoryNoResults.style.display =
-                visible === 0
-                  ? "block"
-                  : "none";
-
-            }
-
+            categoryNoResults.style.display =
+              visible === 0
+                ? "block"
+                : "none";
           }
-        );
+        }
+      );
+    }
 
+
+
+
+    function resetImagePreview() {
+
+      if (previewImage) {
+
+        previewImage.src = "";
+
+        previewImage.style.display =
+          "none";
       }
 
 
+      if (placeholder) {
 
-      updateCategoryUI();
-
-
-
-      function resetImagePreview() {
-
-        if (previewImage) {
-
-          previewImage.src = "";
-
-          previewImage.style.display =
-            "none";
-
-        }
-
-
-        if (placeholder) {
-
-          placeholder.style.display =
-            "block";
-
-        }
-
-
-        if (imageOverlay) {
-
-          imageOverlay.textContent =
-            "";
-
-          imageOverlay.style.display =
-            "none";
-
-        }
-
-
-        if (removeImageButton) {
-
-          removeImageButton.style.display =
-            "none";
-
-        }
-
+        placeholder.style.display =
+          "block";
       }
 
 
+      if (imageOverlay) {
 
-      if (imageInput) {
+        imageOverlay.textContent = "";
 
-        imageInput.classList.add(
-          "product-form-file"
-        );
-
-
-        imageInput.setAttribute(
-          "accept",
-          "image/jpeg,image/png,image/webp,image/gif"
-        );
-
-
-        imageInput.addEventListener(
-          "change",
-          function () {
-
-            const file =
-              this.files &&
-              this.files[0];
-
-
-            if (!file) {
-
-              resetImagePreview();
-
-              return;
-
-            }
-
-
-            if (
-              !file.type.startsWith(
-                "image/"
-              )
-            ) {
-
-              alert(
-                "Selecione um ficheiro de imagem válido."
-              );
-
-              this.value = "";
-
-              resetImagePreview();
-
-              return;
-
-            }
-
-
-            if (
-              file.size >
-              5 * 1024 * 1024
-            ) {
-
-              alert(
-                "A imagem não pode ultrapassar 5 MB."
-              );
-
-              this.value = "";
-
-              resetImagePreview();
-
-              return;
-
-            }
-
-
-            const reader =
-              new FileReader();
-
-
-            reader.onload =
-              function (event) {
-
-                previewImage.src =
-                  event.target.result;
-
-
-                previewImage.style.display =
-                  "block";
-
-
-                placeholder.style.display =
-                  "none";
-
-
-                imageOverlay.textContent =
-                  file.name;
-
-
-                imageOverlay.style.display =
-                  "block";
-
-
-                removeImageButton.style.display =
-                  "inline-block";
-
-
-                updateProgress();
-
-              };
-
-
-            reader.readAsDataURL(file);
-
-          }
-        );
-
+        imageOverlay.style.display =
+          "none";
       }
-
 
 
       if (removeImageButton) {
 
-        removeImageButton.addEventListener(
-          "click",
-          function () {
+        removeImageButton.style.display =
+          "none";
+      }
+    }
 
-            if (imageInput) {
 
-              imageInput.value = "";
+    if (imageInput) {
 
-            }
+      imageInput.classList.add(
+        "product-form-file"
+      );
 
+
+      imageInput.setAttribute(
+        "accept",
+        "image/jpeg,image/png,image/webp,image/gif"
+      );
+
+
+      imageInput.addEventListener(
+        "change",
+        function () {
+
+          const file =
+            this.files &&
+            this.files[0];
+
+
+          if (!file) {
 
             resetImagePreview();
 
             updateProgress();
 
+            return;
           }
-        );
-
-      }
 
 
+          if (!file.type.startsWith("image/")) {
 
-      function updateDescriptionCounter() {
+            alert(
+              "Selecione um ficheiro de imagem válido."
+            );
 
-        if (
-          !description ||
-          !descriptionCount
-        ) {
+            this.value = "";
 
-          return;
+            resetImagePreview();
 
-        }
-
-
-        const length =
-          description.value.length;
-
-
-        descriptionCount.textContent =
-          length;
-
-
-        descriptionCounter.classList.remove(
-          "warning",
-          "danger"
-        );
-
-
-        if (length >= 900) {
-
-          descriptionCounter.classList.add(
-            "danger"
-          );
-
-        }
-
-        else if (length >= 750) {
-
-          descriptionCounter.classList.add(
-            "warning"
-          );
-
-        }
-
-      }
-
-
-
-      if (description) {
-
-        description.addEventListener(
-          "input",
-          function () {
-
-            updateDescriptionCounter();
-
-            updateProgress();
-
+            return;
           }
-        );
 
 
-        updateDescriptionCounter();
+          if (
+            file.size >
+            5 * 1024 * 1024
+          ) {
 
-      }
+            alert(
+              "A imagem não pode ultrapassar 5 MB."
+            );
 
+            this.value = "";
 
+            resetImagePreview();
 
-
-      function updateProgress() {
-
-        if (
-          !form ||
-          !progressBar
-        ) {
-
-          return;
-
-        }
+            return;
+          }
 
 
-        const name =
-          document.getElementById(
-            "{{ form.nome.id_for_label }}"
-          );
+          const reader =
+            new FileReader();
 
 
-        const descriptionField =
-          document.getElementById(
-            "{{ form.descricao.id_for_label }}"
-          );
+          reader.onload =
+            function (event) {
 
+              if (previewImage) {
 
-        let total =
-          4;
+                previewImage.src =
+                  event.target.result;
 
-
-        let completed =
-          0;
-
-
-        if (
-          name &&
-          name.value.trim()
-        ) {
-
-          completed++;
-
-        }
-
-
-        if (
-          descriptionField &&
-          descriptionField.value.trim()
-        ) {
-
-          completed++;
-
-        }
-
-
-        if (
-          getSelectedCategories().length
-        ) {
-
-          completed++;
-
-        }
-
-
-        if (
-          imageInput &&
-          imageInput.files &&
-          imageInput.files.length
-        ) {
-
-          completed++;
-
-        }
-
-
-        const percentage =
-          Math.round(
-            (completed / total) * 100
-          );
-
-
-        progressBar.style.width =
-          percentage + "%";
-
-      }
-
-
-
-      if (form) {
-
-        form.addEventListener(
-          "input",
-          updateProgress
-        );
-
-
-        form.addEventListener(
-          "change",
-          updateProgress
-        );
-
-
-        updateProgress();
-
-      }
-
-
-
-
-      if (form) {
-
-        form.addEventListener(
-          "submit",
-          function (event) {
-
-
-
-            if (
-              getSelectedCategories().length === 0
-            ) {
-
-              event.preventDefault();
-
-
-              alert(
-                "Selecione pelo menos uma categoria para o produto."
-              );
-
-
-              if (categoryTrigger) {
-
-                categoryTrigger.click();
-
+                previewImage.style.display =
+                  "block";
               }
 
 
-              return;
+              if (placeholder) {
 
-            }
-
-
-
-
-            if (
-              saveButton &&
-              saveNormal &&
-              saveLoading
-            ) {
-
-              saveButton.disabled =
-                true;
+                placeholder.style.display =
+                  "none";
+              }
 
 
-              saveNormal.style.display =
-                "none";
+              if (imageOverlay) {
+
+                imageOverlay.textContent =
+                  file.name;
+
+                imageOverlay.style.display =
+                  "block";
+              }
 
 
-              saveLoading.style.display =
-                "inline-flex";
+              if (removeImageButton) {
 
-            }
+                removeImageButton.style.display =
+                  "inline-block";
+              }
 
-          }
-        );
 
-      }
+              updateProgress();
+            };
 
+
+          reader.readAsDataURL(file);
+        }
+      );
     }
 
-  );
 
+
+    if (removeImageButton) {
+
+      removeImageButton.addEventListener(
+        "click",
+        function () {
+
+          if (imageInput) {
+
+            imageInput.value = "";
+          }
+
+
+          resetImagePreview();
+
+          updateProgress();
+        }
+      );
+    }
+
+
+
+
+    function updateDescriptionCounter() {
+
+      if (
+        !description ||
+        !descriptionCount ||
+        !descriptionCounter
+      ) {
+        return;
+      }
+
+
+      const length =
+        description.value.length;
+
+
+      descriptionCount.textContent =
+        length;
+
+
+      descriptionCounter.classList.remove(
+        "warning",
+        "danger"
+      );
+
+
+      if (length >= 900) {
+
+        descriptionCounter.classList.add(
+          "danger"
+        );
+
+      } else if (length >= 750) {
+
+        descriptionCounter.classList.add(
+          "warning"
+        );
+      }
+    }
+
+
+    if (description) {
+
+      description.addEventListener(
+        "input",
+        function () {
+
+          updateDescriptionCounter();
+
+          updateProgress();
+        }
+      );
+
+
+      updateDescriptionCounter();
+    }
+
+
+
+    function updateProgress() {
+
+      if (!progressBar) {
+        return;
+      }
+
+
+      const nameField =
+        document.getElementById(
+          "{{ form.nome.id_for_label }}"
+        );
+
+
+      const descriptionField =
+        document.getElementById(
+          "{{ form.descricao.id_for_label }}"
+        );
+
+
+      let total = 4;
+
+      let completed = 0;
+
+
+      if (
+        nameField &&
+        nameField.value.trim()
+      ) {
+        completed++;
+      }
+
+
+      if (
+        descriptionField &&
+        descriptionField.value.trim()
+      ) {
+        completed++;
+      }
+
+
+      if (
+        getSelectedCategories().length > 0
+      ) {
+        completed++;
+      }
+
+
+      if (
+        imageInput &&
+        imageInput.files &&
+        imageInput.files.length > 0
+      ) {
+        completed++;
+      }
+
+
+      const percentage =
+        Math.round(
+          (completed / total) * 100
+        );
+
+
+      progressBar.style.width =
+        percentage + "%";
+    }
+
+
+
+    if (form) {
+
+      form.addEventListener(
+        "input",
+        updateProgress
+      );
+
+
+      form.addEventListener(
+        "change",
+        updateProgress
+      );
+    }
+
+
+
+    if (form) {
+
+      form.addEventListener(
+        "submit",
+        function (event) {
+
+          const selected =
+            getSelectedCategories();
+
+
+          if (selected.length === 0) {
+
+            event.preventDefault();
+
+
+            alert(
+              "Selecione pelo menos uma categoria para o produto."
+            );
+
+
+            if (categoryTrigger) {
+
+              categoryTrigger.click();
+            }
+
+
+            return;
+          }
+
+
+
+
+          if (
+            saveButton &&
+            saveNormal &&
+            saveLoading
+          ) {
+
+            saveButton.disabled =
+              true;
+
+
+            saveNormal.style.display =
+              "none";
+
+
+            saveLoading.style.display =
+              "inline-flex";
+          }
+        }
+      );
+    }
+
+
+
+    updateCategoryUI();
+
+    updateDescriptionCounter();
+
+    updateProgress();
+
+  });
 </script>
 
 {% endblock %}

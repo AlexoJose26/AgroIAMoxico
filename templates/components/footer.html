@@ -39,6 +39,7 @@
                         </span>
                     </div>
 
+
                     <div class="footer-about-item">
                         <span class="footer-check">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -52,6 +53,7 @@
                         </span>
                     </div>
 
+
                     <div class="footer-about-item">
                         <span class="footer-check">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -64,6 +66,7 @@
                             Diagnóstico agrícola assistido por IA
                         </span>
                     </div>
+
 
                     <div class="footer-about-item">
                         <span class="footer-check">
@@ -91,37 +94,87 @@
                     Explorar
                 </h3>
 
+
                 <!-- PÁGINA INICIAL -->
-                <a href="{% url 'inicio:home' %}" class="footer-link">
+                <a href="{% url 'inicio:home' %}" class="footer-link" aria-label="Ir para a página inicial">
+
                     <span class="footer-link-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
                             <path d="M3 10.5 12 3l9 7.5"></path>
                             <path d="M5 9.5V21h14V9.5"></path>
+
                         </svg>
                     </span>
 
                     <span>
                         Página inicial
                     </span>
+
                 </a>
 
 
                 <!-- PRODUTOS AGRÍCOLAS -->
-                <a href="{% url 'produtos:produtos_agricolas' %}" class="footer-link">
+                <a href="{% url 'produtos:produtos' %}" class="footer-link" aria-label="Ver produtos agrícolas">
 
                     <span class="footer-link-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
                             <path d="M4 10h16"></path>
                             <path d="M5 10l1.5 10h11L19 10"></path>
                             <path d="M9 10V7a3 3 0 0 1 6 0v3"></path>
+
                         </svg>
                     </span>
 
                     <span>
                         Produtos agrícolas
                     </span>
+
+                </a>
+
+
+                <!-- CATEGORIAS -->
+                <a href="{% url 'categorias:categorias' %}" class="footer-link" aria-label="Ver categorias agrícolas">
+
+                    <span class="footer-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+                            <path d="M4 5h16v14H4z"></path>
+                            <path d="M8 9h8"></path>
+                            <path d="M8 13h5"></path>
+
+                        </svg>
+                    </span>
+
+                    <span>
+                        Categorias
+                    </span>
+
+                </a>
+
+
+                <!-- DIAGNÓSTICO IA -->
+                <a href="{% url 'diagnostico:diagnostico' %}" class="footer-link" aria-label="Abrir diagnóstico IA">
+
+                    <span class="footer-link-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+                            <path d="M12 3a7 7 0 0 0-4 12.74V19h8v-3.26A7 7 0 0 0 12 3z"></path>
+                            <path d="M9 22h6"></path>
+                            <path d="M9 19h6"></path>
+
+                        </svg>
+                    </span>
+
+                    <span>
+                        Diagnóstico IA
+                    </span>
+
                 </a>
 
             </div>
@@ -136,59 +189,69 @@
                     Utilizar o AgroIA
                 </h3>
 
+
                 <!-- MEU PERFIL -->
                 {% if user.is_authenticated %}
 
-                <a href="{% url 'inicio:perfil' %}" class="footer-link">
+                <a href="{% url 'inicio:perfil' %}" class="footer-link" aria-label="Abrir meu perfil">
 
                     <span class="footer-link-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
                             <circle cx="12" cy="8" r="3.5"></circle>
                             <path d="M4.5 21c.8-4.2 3.2-6.5 7.5-6.5s6.7 2.3 7.5 6.5"></path>
+
                         </svg>
                     </span>
 
                     <span>
                         Meu perfil
                     </span>
+
                 </a>
 
                 {% else %}
 
-                <a href="{% url 'inicio:login' %}" class="footer-link">
+                <a href="{% url 'inicio:login' %}" class="footer-link" aria-label="Entrar na conta">
 
                     <span class="footer-link-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
                             <circle cx="12" cy="8" r="3.5"></circle>
                             <path d="M4.5 21c.8-4.2 3.2-6.5 7.5-6.5s6.7 2.3 7.5 6.5"></path>
+
                         </svg>
                     </span>
 
                     <span>
                         Meu perfil
                     </span>
+
                 </a>
 
                 {% endif %}
 
 
                 <!-- SOBRE O AGROIA -->
-                <a href="{% url 'inicio:sobre' %}" class="footer-link">
+                <a href="{% url 'inicio:sobre' %}" class="footer-link" aria-label="Conhecer o AgroIA">
 
                     <span class="footer-link-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
                             <circle cx="12" cy="12" r="9"></circle>
                             <path d="M12 11v5"></path>
                             <path d="M12 8h.01"></path>
+
                         </svg>
                     </span>
 
                     <span>
                         Sobre o AgroIA
                     </span>
+
                 </a>
 
             </div>
@@ -228,8 +291,16 @@
                         Desenvolvido por
                     </span>
 
+                    <!--
+                        LINK DO GITHUB
+
+                        - Continua totalmente clicável
+                        - Abre o GitHub numa nova aba
+                        - Não possui title, evitando tooltip nativo
+                        - aria-label mantém acessibilidade
+                    -->
                     <a href="https://github.com/AlexoJose26" class="github-link" target="_blank"
-                        rel="noopener noreferrer" aria-label="Visitar GitHub de Alexo José">
+                        rel="noopener noreferrer" aria-label="Visitar perfil de Alexo José no GitHub">
 
                         <strong>
                             Alexo José

@@ -1,2182 +1,1181 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
 Diagnóstico IA | AgroIA Moxico
 {% endblock %}
-
 
 {% block extra_css %}
 
 <style>
   /* ============================================================
    AGROIA MOXICO — DIAGNÓSTICO IA
-============================================================ */
+   ============================================================ */
 
   :root {
-    --ai-green: #176b45;
-    --ai-green-dark: #0d4d31;
-    --ai-green-deep: #06351f;
-    --ai-green-light: #eaf7ef;
-    --ai-green-soft: #f5faf7;
-
-    --ai-gold: #d6a84f;
-
-    --ai-text: #173127;
-    --ai-muted: #718078;
-
-    --ai-border: #dfeae3;
-
-    --ai-white: #ffffff;
-
-    --ai-danger: #b94e43;
-    --ai-danger-light: #fff2f0;
-
-    --ai-warning: #9a762d;
-    --ai-warning-light: #fff8e9;
-
-    --ai-success: #28764d;
-    --ai-success-light: #edf8f1;
-
-    --ai-shadow:
-      0 20px 55px rgba(16, 61, 42, .09);
-
-    --ai-shadow-small:
-      0 10px 28px rgba(16, 61, 42, .07);
+    --diag-green: #176b45;
+    --diag-green-dark: #0d4d31;
+    --diag-green-light: #eaf7ef;
+    --diag-gold: #d9a441;
+    --diag-white: #ffffff;
+    --diag-bg: #f5f8f6;
+    --diag-text: #17352a;
+    --diag-muted: #6b7d75;
+    --diag-border: #dfe9e3;
+    --diag-danger: #c0392b;
+    --diag-warning: #b7791f;
+    --diag-success: #188653;
+    --diag-shadow: 0 14px 35px rgba(13, 77, 49, .09);
+    --diag-radius: 20px;
   }
-
 
   /* ============================================================
    BASE
-============================================================ */
+   ============================================================ */
 
-  .ai-page {
-    width: 100%;
-    overflow: hidden;
-    background: #f7fbf8;
+  .diag-page {
+    min-height: calc(100vh - 68px);
+    background:
+      radial-gradient(circle at 10% 10%,
+        rgba(23, 107, 69, .08),
+        transparent 30%),
+      radial-gradient(circle at 90% 15%,
+        rgba(217, 164, 65, .08),
+        transparent 25%),
+      var(--diag-bg);
+
+    padding: 35px 0 70px;
   }
 
-  .ai-page *,
-  .ai-page *::before,
-  .ai-page *::after {
-    box-sizing: border-box;
+  .diag-container {
+    width: min(1200px, calc(100% - 32px));
+    margin: 0 auto;
   }
-
-
-  /* ============================================================
-   ANIMAÇÕES
-============================================================ */
-
-  @keyframes aiFadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(18px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes aiZoom {
-    from {
-      transform: scale(1.06);
-    }
-
-    to {
-      transform: scale(1);
-    }
-  }
-
-  @keyframes aiSpin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes aiPulse {
-    0% {
-      transform: scale(.96);
-      opacity: .65;
-    }
-
-    50% {
-      transform: scale(1);
-      opacity: 1;
-    }
-
-    100% {
-      transform: scale(.96);
-      opacity: .65;
-    }
-  }
-
 
   /* ============================================================
    HERO
-============================================================ */
+   ============================================================ */
 
-  .ai-hero {
+  .diag-hero {
     position: relative;
-    min-height: 395px;
+    overflow: hidden;
+    border-radius: 28px;
+    padding: 38px;
+    margin-bottom: 28px;
+    color: #fff;
+
+    background:
+      linear-gradient(135deg,
+        rgba(13, 77, 49, .98),
+        rgba(23, 107, 69, .94));
+
+    box-shadow: var(--diag-shadow);
+  }
+
+  .diag-hero::before {
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .06);
+    top: -150px;
+    right: -80px;
+  }
+
+  .diag-hero::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(217, 164, 65, .10);
+    bottom: -100px;
+    left: 25%;
+  }
+
+  .diag-hero-content {
+    position: relative;
+    z-index: 2;
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
 
-    overflow: hidden;
-    isolation: isolate;
-
-    background: var(--ai-green-deep);
+    gap: 30px;
   }
 
-  .ai-hero-bg {
-    position: absolute;
-    inset: 0;
-    z-index: -5;
+  .diag-hero-text {
+    max-width: 720px;
   }
 
-  .ai-hero-bg img {
-    position: absolute;
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    opacity: 0;
-
-    transform: scale(1.05);
-
-    transition: opacity 1.1s ease;
-  }
-
-  .ai-hero-bg img.active {
-    opacity: 1;
-
-    animation:
-      aiZoom 7s ease forwards;
-  }
-
-  .ai-hero::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    z-index: -3;
-
-    background:
-      linear-gradient(100deg,
-        rgba(3, 31, 20, .96),
-        rgba(7, 60, 38, .82),
-        rgba(23, 107, 69, .48));
-  }
-
-  .ai-hero .container {
-    width: 100%;
-  }
-
-  .ai-hero-layout {
-    min-height: 395px;
-
-    display: grid;
-
-    grid-template-columns:
-      minmax(0, 1fr) minmax(360px, 440px);
-
-    gap: 38px;
-
-    align-items: center;
-  }
-
-  .ai-hero-content {
-    max-width: 700px;
-
-    padding: 40px 0;
-
-    animation:
-      aiFadeUp .7s ease both;
-  }
-
-  .ai-badge {
+  .diag-eyebrow {
     display: inline-flex;
-
     align-items: center;
     gap: 8px;
 
-    padding: 8px 13px;
-
-    border:
-      1px solid rgba(255, 255, 255, .18);
-
+    padding: 7px 13px;
     border-radius: 999px;
 
-    color: #fff;
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .15);
 
-    background:
-      rgba(255, 255, 255, .09);
+    font-size: .82rem;
+    font-weight: 700;
 
-    backdrop-filter: blur(10px);
+    margin-bottom: 14px;
+  }
 
-    font-size: .66rem;
+  .diag-hero h1 {
+    margin: 0 0 12px;
+
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.08;
     font-weight: 800;
-
-    letter-spacing: .07em;
-
-    text-transform: uppercase;
   }
 
-  .ai-badge svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .ai-hero h1 {
-    max-width: 720px;
-
-    margin: 18px 0 14px;
-
-    color: #fff;
-
-    font-size:
-      clamp(2.25rem, 4.5vw, 3.75rem);
-
-    line-height: 1.02;
-
-    letter-spacing: -.055em;
-  }
-
-  .ai-hero h1 span {
-    display: block;
-
-    color: #bceecb;
-  }
-
-  .ai-hero-description {
-    max-width: 590px;
-
+  .diag-hero p {
     margin: 0;
+    max-width: 680px;
 
-    color:
-      rgba(255, 255, 255, .76);
+    color: rgba(255, 255, 255, .82);
 
-    font-size: .86rem;
-
+    font-size: 1rem;
     line-height: 1.7;
   }
 
+  .diag-hero-icon {
+    width: 100px;
+    height: 100px;
 
-  /* ============================================================
-   ESTATÍSTICAS
-============================================================ */
+    flex: 0 0 100px;
 
-  .ai-hero-stats {
-    display: grid;
-
-    grid-template-columns:
-      repeat(3, 1fr);
-
-    gap: 10px;
-
-    animation:
-      aiFadeUp .9s .15s ease both;
-  }
-
-  .ai-stat-card {
-    min-height: 135px;
-
-    padding: 17px;
+    border-radius: 28px;
 
     display: flex;
-
-    flex-direction: column;
-
-    justify-content: space-between;
-
-    border:
-      1px solid rgba(255, 255, 255, .14);
-
-    border-radius: 18px;
-
-    background:
-      linear-gradient(145deg,
-        rgba(255, 255, 255, .14),
-        rgba(255, 255, 255, .05));
-
-    backdrop-filter: blur(15px);
-
-    box-shadow:
-      0 15px 35px rgba(0, 0, 0, .12);
-  }
-
-  .ai-stat-icon {
-    width: 38px;
-    height: 38px;
-
-    display: grid;
-
-    place-items: center;
-
-    border-radius: 11px;
-
-    color: #fff;
-
-    background:
-      rgba(255, 255, 255, .11);
-  }
-
-  .ai-stat-icon svg {
-    width: 19px;
-    height: 19px;
-  }
-
-  .ai-stat-value {
-    display: block;
-
-    color: #fff;
-
-    font-size: 1.45rem;
-
-    font-weight: 900;
-
-    letter-spacing: -.04em;
-  }
-
-  .ai-stat-label {
-    display: block;
-
-    margin-top: 2px;
-
-    color:
-      rgba(255, 255, 255, .62);
-
-    font-size: .59rem;
-
-    font-weight: 700;
-
-    line-height: 1.4;
-  }
-
-
-  /* ============================================================
-   ÁREA PRINCIPAL
-============================================================ */
-
-  .ai-diagnostic {
-    padding: 62px 0 85px;
-
-    background:
-      linear-gradient(180deg,
-        #f7fbf8,
-        #edf6f0);
-  }
-
-  .ai-diagnostic-header {
-    max-width: 680px;
-
-    margin:
-      0 auto 35px;
-
-    text-align: center;
-  }
-
-  .ai-eyebrow {
-    display: inline-flex;
-
     align-items: center;
+    justify-content: center;
 
-    gap: 7px;
+    background: rgba(255, 255, 255, .11);
+    border: 1px solid rgba(255, 255, 255, .14);
 
-    margin-bottom: 8px;
-
-    color: var(--ai-green);
-
-    font-size: .65rem;
-
-    font-weight: 900;
-
-    letter-spacing: .1em;
-
-    text-transform: uppercase;
+    font-size: 3rem;
   }
-
-  .ai-eyebrow::before {
-    content: "";
-
-    width: 23px;
-    height: 2px;
-
-    border-radius: 10px;
-
-    background:
-      var(--ai-gold);
-  }
-
-  .ai-diagnostic-header h2 {
-    margin:
-      0 0 9px;
-
-    color: var(--ai-text);
-
-    font-size:
-      clamp(1.75rem, 3.5vw, 2.35rem);
-
-    letter-spacing: -.045em;
-  }
-
-  .ai-diagnostic-header p {
-    margin: 0;
-
-    color: var(--ai-muted);
-
-    font-size: .78rem;
-
-    line-height: 1.75;
-  }
-
 
   /* ============================================================
    MENSAGENS
-============================================================ */
+   ============================================================ */
 
-  .ai-messages {
-    margin-bottom: 20px;
+  .diag-messages {
+    margin-bottom: 22px;
   }
 
-  .ai-message {
-    padding: 13px 15px;
-
-    border-radius: 12px;
-
-    font-size: .68rem;
-
-    line-height: 1.5;
-  }
-
-  .ai-message.error {
-    color: #7c342d;
-
-    background:
-      var(--ai-danger-light);
-
-    border:
-      1px solid #f0d0cc;
-  }
-
-  .ai-message.success {
-    color: #276642;
-
-    background:
-      var(--ai-success-light);
-
-    border:
-      1px solid #cce8d6;
-  }
-
-  .ai-message.warning {
-    color: #725d2b;
-
-    background:
-      var(--ai-warning-light);
-
-    border:
-      1px solid #eedeb8;
-  }
-
-  .ai-message.info {
-    color: #285c48;
-
-    background:
-      #edf7f2;
-
-    border:
-      1px solid #cfe6da;
-  }
-
-
-  /* ============================================================
-   GRID
-============================================================ */
-
-  .ai-grid {
-    display: grid;
-
-    grid-template-columns:
-      minmax(0, .95fr) minmax(0, 1.05fr);
-
-    gap: 22px;
-
-    align-items: stretch;
-  }
-
-
-  /* ============================================================
-   CARD
-============================================================ */
-
-  .ai-card {
-    position: relative;
-
-    overflow: hidden;
-
-    padding: 27px;
-
-    border:
-      1px solid var(--ai-border);
-
-    border-radius: 23px;
-
-    background:
-      rgba(255, 255, 255, .97);
-
-    box-shadow:
-      var(--ai-shadow);
-  }
-
-  .ai-card-header {
+  .diag-message {
     display: flex;
-
     align-items: center;
-
     gap: 12px;
 
-    margin-bottom: 20px;
-  }
-
-  .ai-card-icon {
-    width: 47px;
-    height: 47px;
-
-    flex-shrink: 0;
-
-    display: grid;
-
-    place-items: center;
-
+    padding: 14px 18px;
     border-radius: 14px;
 
-    color:
-      var(--ai-green);
+    margin-bottom: 10px;
 
-    background:
-      var(--ai-green-light);
+    font-size: .92rem;
+    font-weight: 600;
   }
 
-  .ai-card-icon svg {
-    width: 22px;
-    height: 22px;
+  .diag-message.success {
+    color: #176b45;
+    background: #e8f7ef;
+    border: 1px solid #ccebd9;
   }
 
-  .ai-card-header h2 {
-    margin:
-      0 0 3px;
-
-    color:
-      var(--ai-text);
-
-    font-size: 1.05rem;
+  .diag-message.error {
+    color: #a93226;
+    background: #fdecea;
+    border: 1px solid #f5c6c1;
   }
 
-  .ai-card-header p {
-    margin: 0;
-
-    color:
-      var(--ai-muted);
-
-    font-size: .7rem;
+  .diag-message.warning {
+    color: #8a6118;
+    background: #fff7df;
+    border: 1px solid #f2dfaa;
   }
 
+  .diag-message.info {
+    color: #245b78;
+    background: #eaf5fb;
+    border: 1px solid #c9e3f2;
+  }
 
   /* ============================================================
-   PRODUTO
-============================================================ */
+   ESTATÍSTICAS
+   ============================================================ */
 
-  .ai-product {
-    display: flex;
-
-    align-items: center;
-
-    gap: 13px;
-
-    margin-bottom: 17px;
-
-    padding: 13px;
-
-    border:
-      1px solid var(--ai-border);
-
-    border-radius: 15px;
-
-    background:
-      #f8fbf9;
-  }
-
-  .ai-product-image {
-    width: 70px;
-    height: 70px;
-
-    flex-shrink: 0;
-
-    overflow: hidden;
-
+  .diag-stats {
     display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
 
-    place-items: center;
-
-    border-radius: 14px;
-
-    background:
-      var(--ai-green-light);
+    margin-bottom: 28px;
   }
 
-  .ai-product-image img {
-    width: 100%;
-    height: 100%;
+  .diag-stat {
+    background: var(--diag-white);
+    border: 1px solid var(--diag-border);
+    border-radius: 18px;
 
-    object-fit: cover;
+    padding: 20px;
+
+    box-shadow: 0 7px 24px rgba(13, 77, 49, .05);
   }
 
-  .ai-product-info {
-    min-width: 0;
-  }
-
-  .ai-product-label {
-    display: block;
-
-    margin-bottom: 3px;
-
-    color: #8a9891;
-
-    font-size: .58rem;
-
-    font-weight: 800;
-
-    letter-spacing: .05em;
-
-    text-transform: uppercase;
-  }
-
-  .ai-product-name {
-    display: block;
-
-    overflow: hidden;
-
-    color:
-      var(--ai-text);
-
-    font-size: .9rem;
-
-    font-weight: 850;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-  }
-
-  .ai-product-status {
-    display: inline-flex;
-
+  .diag-stat-top {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    gap: 10px;
+  }
 
-    gap: 5px;
-
-    margin-top: 5px;
-
-    color:
-      var(--ai-green);
-
-    font-size: .6rem;
-
+  .diag-stat-label {
+    color: var(--diag-muted);
+    font-size: .82rem;
     font-weight: 700;
   }
 
-  .ai-product-status::before {
-    content: "";
+  .diag-stat-icon {
+    width: 38px;
+    height: 38px;
 
-    width: 6px;
-    height: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    border-radius: 50%;
+    border-radius: 11px;
 
-    background: #38a56b;
+    background: var(--diag-green-light);
+    color: var(--diag-green);
   }
 
-  .ai-product-status.no-image {
-    color:
-      var(--ai-danger);
+  .diag-stat-value {
+    margin-top: 10px;
+
+    font-size: 1.75rem;
+    font-weight: 800;
+
+    color: var(--diag-text);
   }
 
-  .ai-product-status.no-image::before {
-    background:
-      var(--ai-danger);
-  }
+  .diag-stat-sub {
+    margin-top: 4px;
 
+    color: var(--diag-muted);
+    font-size: .78rem;
+  }
 
   /* ============================================================
-   IMAGEM
-============================================================ */
+   TÍTULOS
+   ============================================================ */
 
-  .ai-registered-image {
-    position: relative;
-
-    margin-bottom: 17px;
-
-    overflow: hidden;
-
-    border:
-      1px solid var(--ai-border);
-
-    border-radius: 18px;
-
-    background:
-      #edf5f0;
-
-    box-shadow:
-      0 8px 25px rgba(16, 61, 42, .06);
-  }
-
-  .ai-registered-image img {
-    display: block;
-
-    width: 100%;
-
-    height: 310px;
-
-    object-fit: cover;
-
-    transition:
-      transform .5s ease;
-  }
-
-  .ai-registered-image:hover img {
-    transform:
-      scale(1.025);
-  }
-
-  .ai-registered-label {
-    position: absolute;
-
-    left: 12px;
-    top: 12px;
-
-    z-index: 2;
-
-    display: inline-flex;
-
+  .diag-section-title {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
 
-    gap: 5px;
+    gap: 15px;
+    margin-bottom: 16px;
+  }
 
-    padding: 7px 10px;
+  .diag-section-title h2 {
+    margin: 0;
 
-    border-radius: 999px;
-
-    color: #fff;
-
-    background:
-      rgba(13, 77, 49, .86);
-
-    backdrop-filter:
-      blur(8px);
-
-    font-size: .56rem;
-
+    font-size: 1.35rem;
+    color: var(--diag-text);
     font-weight: 800;
   }
 
-  .ai-registered-label svg {
-    width: 12px;
-    height: 12px;
+  .diag-section-title p {
+    margin: 4px 0 0;
+
+    color: var(--diag-muted);
+    font-size: .88rem;
   }
 
+  /* ============================================================
+   PRODUTO SELECIONADO
+   ============================================================ */
+
+  .selected-product {
+    background: var(--diag-white);
+    border: 1px solid var(--diag-border);
+    border-radius: var(--diag-radius);
+
+    padding: 22px;
+    margin-bottom: 28px;
+
+    box-shadow: var(--diag-shadow);
+  }
+
+  .selected-product-inner {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+
+    gap: 25px;
+    align-items: center;
+  }
+
+  .selected-product-image {
+    width: 100%;
+    height: 210px;
+
+    border-radius: 17px;
+    overflow: hidden;
+
+    background: var(--diag-green-light);
+  }
+
+  .selected-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .selected-product-no-image {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--diag-muted);
+    font-size: 2.5rem;
+  }
+
+  .selected-product-info h3 {
+    margin: 0 0 8px;
+
+    font-size: 1.6rem;
+    color: var(--diag-text);
+  }
+
+  .selected-product-info p {
+    color: var(--diag-muted);
+
+    line-height: 1.6;
+
+    margin: 0 0 15px;
+  }
+
+  .product-categories {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .product-category {
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    background: var(--diag-green-light);
+    color: var(--diag-green);
+
+    font-size: .75rem;
+    font-weight: 700;
+  }
 
   /* ============================================================
-   PROCESSO
-============================================================ */
+   BOTÕES
+   ============================================================ */
 
-  .ai-process-info {
-    display: grid;
+  .diag-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 
-    grid-template-columns:
-      repeat(3, 1fr);
+  .diag-btn {
+    min-height: 44px;
+
+    padding: 11px 17px;
+
+    border-radius: 12px;
+    border: none;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     gap: 8px;
 
-    margin-bottom: 15px;
+    text-decoration: none;
+
+    font-size: .88rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: .2s ease;
   }
 
-  .ai-process-item {
-    padding: 12px 9px;
-
-    text-align: center;
-
-    border:
-      1px solid var(--ai-border);
-
-    border-radius: 12px;
-
-    background:
-      #f8fbf9;
+  .diag-btn:hover {
+    transform: translateY(-1px);
   }
 
-  .ai-process-icon {
-    width: 29px;
-    height: 29px;
-
-    display: grid;
-
-    place-items: center;
-
-    margin:
-      0 auto 6px;
-
-    border-radius: 9px;
-
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
+  .diag-btn-primary {
+    color: #fff;
+    background: var(--diag-green);
   }
 
-  .ai-process-icon svg {
-    width: 15px;
-    height: 15px;
+  .diag-btn-primary:hover {
+    background: var(--diag-green-dark);
   }
 
-  .ai-process-item strong {
-    display: block;
-
-    color:
-      var(--ai-text);
-
-    font-size: .59rem;
-
-    font-weight: 850;
+  .diag-btn-secondary {
+    color: var(--diag-green);
+    background: var(--diag-green-light);
   }
 
-  .ai-process-item span {
-    display: block;
+  .diag-btn-outline {
+    color: var(--diag-text);
+    background: #fff;
 
-    margin-top: 2px;
-
-    color:
-      var(--ai-muted);
-
-    font-size: .52rem;
+    border: 1px solid var(--diag-border);
   }
 
+  .diag-btn-gold {
+    color: #fff;
+    background: #b98a25;
+  }
 
   /* ============================================================
-   BOTÃO
-============================================================ */
+   FORMULÁRIO
+   ============================================================ */
 
-  .ai-analyze {
-    position: relative;
+  .analysis-box {
+    background: var(--diag-white);
 
-    width: 100%;
+    border: 1px solid var(--diag-border);
+    border-radius: var(--diag-radius);
 
-    min-height: 56px;
+    padding: 25px;
+    margin-bottom: 30px;
 
+    box-shadow: var(--diag-shadow);
+  }
+
+  .analysis-box-header {
     display: flex;
-
     align-items: center;
 
+    gap: 13px;
+    margin-bottom: 20px;
+  }
+
+  .analysis-box-icon {
+    width: 44px;
+    height: 44px;
+
+    border-radius: 13px;
+
+    display: flex;
+    align-items: center;
     justify-content: center;
 
-    gap: 9px;
+    background: var(--diag-green-light);
+    color: var(--diag-green);
 
-    margin-top: 6px;
+    font-size: 1.2rem;
+  }
+
+  .analysis-box h3 {
+    margin: 0;
+
+    color: var(--diag-text);
+    font-size: 1.15rem;
+  }
+
+  .analysis-box p {
+    margin: 4px 0 0;
+
+    color: var(--diag-muted);
+    font-size: .85rem;
+  }
+
+  .analysis-warning {
+    display: flex;
+    gap: 12px;
+
+    padding: 14px;
+    margin-bottom: 18px;
+
+    border-radius: 13px;
+
+    background: #fff8e6;
+    border: 1px solid #f0dfa9;
+
+    color: #795a1a;
+
+    font-size: .85rem;
+    line-height: 1.5;
+  }
+
+  .analysis-submit {
+    width: 100%;
 
     border: none;
+    cursor: pointer;
 
-    border-radius: 14px;
+    padding: 15px;
+
+    border-radius: 13px;
 
     color: #fff;
 
     background:
       linear-gradient(135deg,
-        var(--ai-green),
-        var(--ai-green-dark));
+        var(--diag-green),
+        var(--diag-green-dark));
 
-    font-size: .78rem;
-
-    font-weight: 850;
-
-    cursor: pointer;
-
-    transition:
-      .3s ease;
-
-    box-shadow:
-      0 9px 22px rgba(23, 107, 69, .15);
-  }
-
-  .ai-analyze:hover {
-    transform:
-      translateY(-2px);
-
-    box-shadow:
-      0 13px 28px rgba(23, 107, 69, .24);
-  }
-
-  .ai-analyze:disabled {
-    opacity: .75;
-
-    cursor: wait;
-
-    transform: none;
-  }
-
-  .ai-analyze svg {
-    width: 19px;
-    height: 19px;
-  }
-
-  .ai-spinner {
-    width: 18px;
-    height: 18px;
-
-    border:
-      2px solid rgba(255, 255, 255, .35);
-
-    border-top-color:
-      #fff;
-
-    border-radius: 50%;
-
-    animation:
-      aiSpin .8s linear infinite;
-  }
-
-
-  /* ============================================================
-   NOTA
-============================================================ */
-
-  .ai-note {
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 7px;
-
-    margin-top: 12px;
-
-    color:
-      #7b8b84;
-
-    font-size: .59rem;
-
-    line-height: 1.55;
-  }
-
-  .ai-note svg {
-    width: 14px;
-    height: 14px;
-
-    flex-shrink: 0;
-
-    color:
-      var(--ai-green);
-  }
-
-
-  /* ============================================================
-   HISTÓRICO
-============================================================ */
-
-  .ai-history-link {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 10px;
-
-    margin-top: 18px;
-
-    padding: 13px 15px;
-
-    border:
-      1px solid var(--ai-border);
-
-    border-radius: 13px;
-
-    color:
-      var(--ai-text);
-
-    background:
-      #f8fbf9;
-
-    text-decoration: none;
-
-    transition:
-      .25s ease;
-  }
-
-  .ai-history-link:hover {
-    transform:
-      translateY(-1px);
-
-    border-color:
-      #c9ddd0;
-
-    background:
-      #f1f8f3;
-  }
-
-  .ai-history-link-content {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-  }
-
-  .ai-history-link-icon {
-    width: 34px;
-    height: 34px;
-
-    display: grid;
-
-    place-items: center;
-
-    border-radius: 10px;
-
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
-  }
-
-  .ai-history-link-icon svg {
-    width: 17px;
-    height: 17px;
-  }
-
-  .ai-history-link strong {
-    display: block;
-
-    font-size: .65rem;
-  }
-
-  .ai-history-link span {
-    display: block;
-
-    margin-top: 2px;
-
-    color:
-      var(--ai-muted);
-
-    font-size: .55rem;
-  }
-
-  .ai-history-link>svg {
-    width: 16px;
-    height: 16px;
-
-    color:
-      var(--ai-green);
-  }
-
-
-  /* ============================================================
-   HISTÓRICO RECENTE
-============================================================ */
-
-  .ai-recent-history {
-    margin-top: 20px;
-  }
-
-  .ai-recent-title {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 10px;
-
-    margin-bottom: 10px;
-  }
-
-  .ai-recent-title strong {
-    color:
-      var(--ai-text);
-
-    font-size: .68rem;
-  }
-
-  .ai-recent-title a {
-    color:
-      var(--ai-green);
-
-    font-size: .58rem;
-
+    font-size: .95rem;
     font-weight: 800;
 
-    text-decoration: none;
+    transition: .2s ease;
   }
 
-  .ai-history-item {
-    display: flex;
+  .analysis-submit:hover {
+    transform: translateY(-1px);
 
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 10px;
-
-    padding: 11px 12px;
-
-    margin-bottom: 7px;
-
-    border:
-      1px solid var(--ai-border);
-
-    border-radius: 12px;
-
-    background:
-      #fff;
-
-    text-decoration: none;
-
-    transition:
-      .2s ease;
+    box-shadow:
+      0 9px 22px rgba(23, 107, 69, .2);
   }
-
-  .ai-history-item:hover {
-    transform:
-      translateY(-1px);
-
-    border-color:
-      #c9ddd0;
-  }
-
-  .ai-history-item-left {
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    min-width: 0;
-  }
-
-  .ai-history-item-icon {
-    width: 31px;
-    height: 31px;
-
-    flex-shrink: 0;
-
-    display: grid;
-
-    place-items: center;
-
-    border-radius: 9px;
-
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
-  }
-
-  .ai-history-item-icon svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .ai-history-item-info {
-    min-width: 0;
-  }
-
-  .ai-history-item-info strong {
-    display: block;
-
-    overflow: hidden;
-
-    color:
-      var(--ai-text);
-
-    font-size: .59rem;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-  }
-
-  .ai-history-item-info span {
-    display: block;
-
-    margin-top: 2px;
-
-    color:
-      var(--ai-muted);
-
-    font-size: .52rem;
-  }
-
-  .ai-history-item-result {
-    flex-shrink: 0;
-
-    padding: 5px 8px;
-
-    border-radius: 999px;
-
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
-
-    font-size: .5rem;
-
-    font-weight: 800;
-  }
-
 
   /* ============================================================
    RESULTADO
-============================================================ */
+   ============================================================ */
 
-  .ai-result-card {
-    margin-top: 22px;
+  .result-box {
+    background: var(--diag-white);
 
-    border:
-      1px solid var(--ai-border);
+    border: 1px solid var(--diag-border);
+    border-radius: 24px;
 
-    border-radius: 23px;
+    padding: 27px;
+    margin-bottom: 30px;
 
-    background:
-      #fff;
-
-    box-shadow:
-      var(--ai-shadow);
+    box-shadow: var(--diag-shadow);
   }
 
-  .ai-result-header {
+  .result-header {
     display: flex;
-
-    align-items: center;
-
+    align-items: flex-start;
     justify-content: space-between;
 
     gap: 20px;
-
-    padding: 22px 25px;
-
-    border-bottom:
-      1px solid var(--ai-border);
+    margin-bottom: 25px;
   }
 
-  .ai-result-header-left {
+  .result-title {
     display: flex;
-
     align-items: center;
 
-    gap: 12px;
+    gap: 14px;
   }
 
-  .ai-result-icon {
-    width: 45px;
-    height: 45px;
+  .result-icon {
+    width: 52px;
+    height: 52px;
 
-    display: grid;
+    border-radius: 15px;
 
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    border-radius: 13px;
+    background: var(--diag-green-light);
+    color: var(--diag-green);
 
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
+    font-size: 1.35rem;
   }
 
-  .ai-result-icon svg {
-    width: 21px;
-    height: 21px;
-  }
-
-  .ai-result-header h2 {
-    margin: 0 0 3px;
-
-    color:
-      var(--ai-text);
-
-    font-size: 1rem;
-  }
-
-  .ai-result-header p {
+  .result-title h2 {
     margin: 0;
 
-    color:
-      var(--ai-muted);
-
-    font-size: .62rem;
+    color: var(--diag-text);
+    font-size: 1.4rem;
   }
 
-  .ai-status-badge {
-    display: inline-flex;
+  .result-title p {
+    margin: 4px 0 0;
 
-    align-items: center;
+    color: var(--diag-muted);
+    font-size: .84rem;
+  }
 
-    gap: 5px;
-
-    padding: 7px 10px;
+  .result-status {
+    padding: 8px 13px;
 
     border-radius: 999px;
 
-    color:
-      var(--ai-success);
-
-    background:
-      var(--ai-success-light);
-
-    font-size: .55rem;
-
+    font-size: .78rem;
     font-weight: 800;
+
+    text-transform: capitalize;
   }
 
-  .ai-status-badge::before {
-    content: "";
-
-    width: 6px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background:
-      #38a56b;
+  .status-saudavel {
+    color: #147444;
+    background: #e3f7eb;
   }
 
-
-  /* ============================================================
-   RESULTADO — CONTEÚDO
-============================================================ */
-
-  .ai-result-body {
-    padding: 25px;
+  .status-problema {
+    color: #a13a2f;
+    background: #fde9e6;
   }
 
-  .ai-result-main {
+  .status-indeterminado {
+    color: #7c601d;
+    background: #fff5d9;
+  }
+
+  .result-grid {
     display: grid;
+    grid-template-columns: 280px 1fr;
 
-    grid-template-columns:
-      minmax(230px, .75fr) minmax(0, 1.25fr);
-
-    gap: 22px;
-
-    align-items: stretch;
+    gap: 25px;
   }
 
-
-  /* ============================================================
-   IMAGEM DO RESULTADO
-============================================================ */
-
-  .ai-result-image {
-    position: relative;
-
-    overflow: hidden;
-
-    min-height: 300px;
+  .result-image {
+    height: 280px;
 
     border-radius: 18px;
+    overflow: hidden;
 
-    background:
-      #edf5f0;
-
-    border:
-      1px solid var(--ai-border);
+    background: var(--diag-green-light);
   }
 
-  .ai-result-image img {
+  .result-image img {
     width: 100%;
     height: 100%;
-
-    min-height: 300px;
-
-    display: block;
 
     object-fit: cover;
   }
 
-  .ai-result-image-label {
-    position: absolute;
+  .result-image-empty {
+    width: 100%;
+    height: 100%;
 
-    left: 12px;
-    top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    padding: 7px 10px;
+    color: var(--diag-green);
 
-    border-radius: 999px;
-
-    color: #fff;
-
-    background:
-      rgba(13, 77, 49, .87);
-
-    font-size: .54rem;
-
-    font-weight: 800;
+    font-size: 2.5rem;
   }
 
+  .result-content {
+    display: flex;
+    flex-direction: column;
 
-  /* ============================================================
-   RESULTADO PRINCIPAL
-============================================================ */
-
-  .ai-result-summary {
-    padding: 20px;
-
-    border:
-      1px solid var(--ai-border);
-
-    border-radius: 18px;
-
-    background:
-      #f8fbf9;
+    gap: 15px;
   }
 
-  .ai-result-label {
-    display: block;
+  .result-main {
+    padding: 18px;
 
-    margin-bottom: 6px;
+    border-radius: 15px;
 
-    color:
-      #829089;
+    background: #f7faf8;
+    border: 1px solid var(--diag-border);
+  }
 
-    font-size: .57rem;
+  .result-main-label {
+    color: var(--diag-muted);
 
+    font-size: .75rem;
     font-weight: 800;
-
-    letter-spacing: .06em;
 
     text-transform: uppercase;
+    letter-spacing: .04em;
   }
 
-  .ai-result-name {
-    margin: 0;
-
-    color:
-      var(--ai-text);
-
-    font-size:
-      clamp(1.3rem, 2.5vw, 2rem);
-
-    line-height: 1.15;
-
-    letter-spacing: -.04em;
-  }
-
-  .ai-result-class {
+  .result-main-value {
     margin-top: 6px;
 
-    color:
-      var(--ai-muted);
+    color: var(--diag-text);
 
-    font-size: .67rem;
+    font-size: 1.4rem;
+    font-weight: 800;
   }
 
-
-  /* ============================================================
-   CONFIANÇA
-============================================================ */
-
-  .ai-confidence {
-    margin-top: 23px;
+  .confidence-wrap {
+    margin-top: 10px;
   }
 
-  .ai-confidence-top {
+  .confidence-head {
     display: flex;
-
-    align-items: center;
-
     justify-content: space-between;
 
-    gap: 10px;
+    color: var(--diag-muted);
 
-    margin-bottom: 7px;
-  }
-
-  .ai-confidence-top span {
-    color:
-      var(--ai-muted);
-
-    font-size: .58rem;
-
+    font-size: .8rem;
     font-weight: 700;
   }
 
-  .ai-confidence-top strong {
-    color:
-      var(--ai-green);
-
-    font-size: .8rem;
-
-    font-weight: 900;
-  }
-
-  .ai-confidence-bar {
-    width: 100%;
+  .confidence-bar {
     height: 9px;
+
+    margin-top: 7px;
 
     overflow: hidden;
 
-    border-radius: 999px;
+    border-radius: 99px;
 
-    background:
-      #dfeae3;
+    background: #e7eee9;
   }
 
-  .ai-confidence-fill {
+  .confidence-fill {
     height: 100%;
 
     border-radius: inherit;
 
-    background:
-      linear-gradient(90deg,
-        #75bd94,
-        var(--ai-green));
-
-    transition:
-      width .8s ease;
+    background: var(--diag-green);
   }
 
-
-  /* ============================================================
-   BADGES DE RESULTADO
-============================================================ */
-
-  .ai-result-badge {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    margin-top: 18px;
-
-    padding: 9px 12px;
-
-    border-radius: 999px;
-
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
-
-    font-size: .58rem;
-
-    font-weight: 850;
-  }
-
-  .ai-result-badge svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .ai-result-badge.danger {
-    color:
-      #9c4138;
-
-    background:
-      var(--ai-danger-light);
-  }
-
-  .ai-result-badge.warning {
-    color:
-      #7c652e;
-
-    background:
-      var(--ai-warning-light);
-  }
-
-
-  /* ============================================================
-   INFORMAÇÕES DO RESULTADO
-============================================================ */
-
-  .ai-result-information {
+  .result-info {
     display: grid;
-
-    grid-template-columns:
-      repeat(2, 1fr);
-
-    gap: 10px;
-
-    margin-top: 22px;
-  }
-
-  .ai-result-info-box {
-    padding: 13px;
-
-    border:
-      1px solid var(--ai-border);
-
-    border-radius: 13px;
-
-    background:
-      #fff;
-  }
-
-  .ai-result-info-box.full {
-    grid-column:
-      1 / -1;
-  }
-
-  .ai-result-info-label {
-    display: block;
-
-    margin-bottom: 5px;
-
-    color:
-      #8a9891;
-
-    font-size: .52rem;
-
-    font-weight: 800;
-
-    text-transform: uppercase;
-
-    letter-spacing: .04em;
-  }
-
-  .ai-result-info-value {
-    display: block;
-
-    color:
-      var(--ai-text);
-
-    font-size: .65rem;
-
-    font-weight: 750;
-
-    line-height: 1.55;
-  }
-
-
-  /* ============================================================
-   DESCRIÇÃO / RECOMENDAÇÕES
-============================================================ */
-
-  .ai-result-sections {
-    display: grid;
-
-    grid-template-columns:
-      repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
 
     gap: 12px;
-
-    margin-top: 22px;
   }
 
-  .ai-result-section {
+  .result-info-card {
+    padding: 15px;
+
+    border-radius: 14px;
+
+    background: #fbfcfb;
+    border: 1px solid var(--diag-border);
+  }
+
+  .result-info-card strong {
+    display: block;
+
+    color: var(--diag-text);
+
+    font-size: .82rem;
+
+    margin-bottom: 5px;
+  }
+
+  .result-info-card span {
+    color: var(--diag-muted);
+
+    font-size: .85rem;
+    line-height: 1.5;
+  }
+
+  .result-text {
     padding: 17px;
 
-    border:
-      1px solid var(--ai-border);
+    border-radius: 14px;
 
-    border-radius: 15px;
-
-    background:
-      #fff;
+    background: #fbfcfb;
+    border: 1px solid var(--diag-border);
   }
 
-  .ai-result-section-header {
-    display: flex;
+  .result-text h4 {
+    margin: 0 0 8px;
 
-    align-items: center;
+    color: var(--diag-text);
 
-    gap: 8px;
-
-    margin-bottom: 9px;
+    font-size: .95rem;
   }
 
-  .ai-result-section-icon {
-    width: 31px;
-    height: 31px;
-
-    display: grid;
-
-    place-items: center;
-
-    flex-shrink: 0;
-
-    border-radius: 9px;
-
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
-  }
-
-  .ai-result-section-icon svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .ai-result-section h3 {
+  .result-text p {
     margin: 0;
 
-    color:
-      var(--ai-text);
+    color: var(--diag-muted);
 
-    font-size: .66rem;
-  }
-
-  .ai-result-section p {
-    margin: 0;
-
-    color:
-      var(--ai-muted);
-
-    font-size: .61rem;
-
-    line-height: 1.7;
+    line-height: 1.65;
+    font-size: .87rem;
 
     white-space: pre-line;
   }
 
-
   /* ============================================================
-   COMPATIBILIDADE
-============================================================ */
+   ALERTAS
+   ============================================================ */
 
-  .ai-compatibility {
+  .result-alert {
     display: flex;
+    gap: 12px;
 
-    align-items: flex-start;
+    padding: 15px;
+    margin-bottom: 15px;
 
-    gap: 10px;
+    border-radius: 14px;
 
-    margin-top: 15px;
-
-    padding: 13px;
-
-    border-radius: 13px;
-
-    color:
-      #6f5d2d;
-
-    background:
-      var(--ai-warning-light);
-
-    border:
-      1px solid #eee0bd;
-
-    font-size: .6rem;
-
+    font-size: .85rem;
     line-height: 1.55;
   }
 
-  .ai-compatibility.success {
-    color:
-      #276642;
-
-    background:
-      var(--ai-success-light);
-
-    border-color:
-      #cce8d6;
+  .result-alert.warning {
+    color: #775819;
+    background: #fff8e3;
+    border: 1px solid #f0dfa7;
   }
 
-  .ai-compatibility svg {
-    width: 16px;
-    height: 16px;
-
-    flex-shrink: 0;
+  .result-alert.danger {
+    color: #963a30;
+    background: #fdebea;
+    border: 1px solid #f4c9c5;
   }
-
 
   /* ============================================================
-   AÇÕES DO RESULTADO
-============================================================ */
+   HISTÓRICO
+   ============================================================ */
 
-  .ai-result-actions {
-    display: flex;
+  .history-box {
+    background: var(--diag-white);
 
-    flex-wrap: wrap;
+    border: 1px solid var(--diag-border);
+    border-radius: var(--diag-radius);
 
-    gap: 9px;
+    padding: 24px;
 
-    margin-top: 22px;
+    box-shadow: var(--diag-shadow);
   }
 
-  .ai-result-action {
-    display: inline-flex;
+  .history-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .history-item {
+    display: grid;
+
+    grid-template-columns: 52px 1fr auto;
 
     align-items: center;
 
-    justify-content: center;
+    gap: 14px;
 
-    gap: 7px;
+    padding: 13px;
 
-    min-height: 42px;
-
-    padding:
-      0 14px;
-
-    border-radius: 11px;
-
-    font-size: .59rem;
-
-    font-weight: 800;
+    border: 1px solid var(--diag-border);
+    border-radius: 14px;
 
     text-decoration: none;
 
-    transition:
-      .25s ease;
+    transition: .2s ease;
   }
 
-  .ai-result-action svg {
-    width: 15px;
-    height: 15px;
+  .history-item:hover {
+    border-color: rgba(23, 107, 69, .3);
+    background: #fbfdfb;
   }
 
-  .ai-result-action.primary {
-    color: #fff;
+  .history-image {
+    width: 52px;
+    height: 52px;
 
-    background:
-      linear-gradient(135deg,
-        var(--ai-green),
-        var(--ai-green-dark));
-  }
-
-  .ai-result-action.secondary {
-    color:
-      var(--ai-text);
-
-    border:
-      1px solid var(--ai-border);
-
-    background:
-      #f8fbf9;
-  }
-
-  .ai-result-action:hover {
-    transform:
-      translateY(-1px);
-  }
-
-
-  /* ============================================================
-   CARD INFORMATIVO
-============================================================ */
-
-  .ai-info-card {
-    min-height: 100%;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
-  }
-
-  .ai-info-content {
-    text-align: center;
-
-    padding: 25px;
-  }
-
-  .ai-empty-icon {
-    width: 88px;
-    height: 88px;
-
-    display: grid;
-
-    place-items: center;
-
-    margin:
-      0 auto 20px;
-
-    border-radius: 27px;
-
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
-
-    animation:
-      aiPulse 2.8s ease-in-out infinite;
-  }
-
-  .ai-empty-icon svg {
-    width: 38px;
-    height: 38px;
-  }
-
-  .ai-info-content h2 {
-    margin:
-      0 0 9px;
-
-    color:
-      var(--ai-text);
-
-    font-size: 1.25rem;
-  }
-
-  .ai-info-content>p {
-    max-width: 390px;
-
-    margin:
-      0 auto;
-
-    color:
-      var(--ai-muted);
-
-    font-size: .69rem;
-
-    line-height: 1.75;
-  }
-
-
-  /* ============================================================
-   INFORMAÇÕES
-============================================================ */
-
-  .ai-info-list {
-    display: grid;
-
-    gap: 10px;
-
-    margin-top: 25px;
-
-    text-align: left;
-  }
-
-  .ai-info-item {
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 10px;
-
-    padding: 12px;
-
-    border:
-      1px solid var(--ai-border);
+    overflow: hidden;
 
     border-radius: 12px;
 
-    background:
-      #f8fbf9;
+    background: var(--diag-green-light);
   }
 
-  .ai-info-item-icon {
-    width: 30px;
-    height: 30px;
+  .history-image img {
+    width: 100%;
+    height: 100%;
 
-    flex-shrink: 0;
-
-    display: grid;
-
-    place-items: center;
-
-    border-radius: 9px;
-
-    color:
-      var(--ai-green);
-
-    background:
-      var(--ai-green-light);
+    object-fit: cover;
   }
 
-  .ai-info-item-icon svg {
-    width: 15px;
-    height: 15px;
+  .history-image-empty {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--diag-green);
   }
 
-  .ai-info-item strong {
+  .history-info strong {
     display: block;
 
-    margin-bottom: 2px;
+    color: var(--diag-text);
 
-    color:
-      var(--ai-text);
-
-    font-size: .62rem;
+    font-size: .88rem;
   }
 
-  .ai-info-item span {
-    color:
-      var(--ai-muted);
+  .history-info span {
+    display: block;
 
-    font-size: .57rem;
+    margin-top: 3px;
 
-    line-height: 1.5;
+    color: var(--diag-muted);
+
+    font-size: .76rem;
   }
 
+  .history-result {
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    background: var(--diag-green-light);
+    color: var(--diag-green);
+
+    font-size: .7rem;
+    font-weight: 800;
+  }
 
   /* ============================================================
-   AVISO
-============================================================ */
+   PRODUTOS
+   ============================================================ */
 
-  .ai-warning {
+  .products-box {
+    margin-top: 30px;
+  }
+
+  .products-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 18px;
+  }
+
+  .product-card {
+    overflow: hidden;
+
+    background: var(--diag-white);
+
+    border: 1px solid var(--diag-border);
+    border-radius: 18px;
+
+    box-shadow:
+      0 7px 22px rgba(13, 77, 49, .05);
+
+    transition: .2s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+      0 13px 30px rgba(13, 77, 49, .09);
+  }
+
+  .product-card-image {
+    height: 170px;
+
+    background: var(--diag-green-light);
+
+    overflow: hidden;
+  }
+
+  .product-card-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+  }
+
+  .product-card-empty {
+    height: 100%;
+
     display: flex;
+    align-items: center;
+    justify-content: center;
 
-    align-items: flex-start;
+    color: var(--diag-green);
 
-    gap: 8px;
+    font-size: 2.4rem;
+  }
 
-    margin-top: 18px;
+  .product-card-body {
+    padding: 17px;
+  }
 
-    padding: 12px;
+  .product-card-body h3 {
+    margin: 0 0 6px;
 
-    border:
-      1px solid #eee5ce;
+    color: var(--diag-text);
 
-    border-radius: 11px;
+    font-size: 1rem;
+  }
 
-    color:
-      #6d6552;
+  .product-card-body p {
+    margin: 0 0 13px;
 
-    background:
-      #fbf8f0;
+    color: var(--diag-muted);
 
-    font-size: .57rem;
-
+    font-size: .8rem;
     line-height: 1.5;
   }
 
-  .ai-warning svg {
-    width: 15px;
-    height: 15px;
-
-    flex-shrink: 0;
-
-    color:
-      #a08035;
+  .product-card-actions {
+    display: flex;
+    gap: 8px;
   }
 
+  .product-card-actions .diag-btn {
+    flex: 1;
+
+    padding: 9px 10px;
+
+    font-size: .75rem;
+  }
 
   /* ============================================================
-   SEM PRODUTO
-============================================================ */
+   ESTADO VAZIO
+   ============================================================ */
 
-  .ai-no-product {
-    padding: 25px;
-
+  .empty-state {
     text-align: center;
 
-    border:
-      1px dashed var(--ai-border);
+    padding: 45px 25px;
 
-    border-radius: 16px;
+    background: var(--diag-white);
 
-    color:
-      var(--ai-muted);
-
-    background:
-      #f8fbf9;
-
-    font-size: .68rem;
-
-    line-height: 1.65;
+    border: 1px dashed var(--diag-border);
+    border-radius: 18px;
   }
 
-  .ai-no-product strong {
-    color:
-      var(--ai-text);
+  .empty-icon {
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--diag-green-light);
+    color: var(--diag-green);
+
+    font-size: 1.7rem;
   }
 
+  .empty-state h3 {
+    margin: 0 0 7px;
+
+    color: var(--diag-text);
+  }
+
+  .empty-state p {
+    margin: 0;
+
+    color: var(--diag-muted);
+
+    font-size: .88rem;
+  }
 
   /* ============================================================
    RESPONSIVO
-============================================================ */
+   ============================================================ */
 
-  @media (max-width: 1050px) {
+  @media (max-width: 1000px) {
 
-    .ai-hero-layout {
-      grid-template-columns: 1fr;
-
-      gap: 25px;
-
-      padding: 50px 0;
+    .diag-stats {
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    .ai-hero-content {
-      padding: 0;
+    .products-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    .ai-hero-stats {
-      max-width: 600px;
+    .result-grid {
+      grid-template-columns: 220px 1fr;
     }
   }
 
+  @media (max-width: 760px) {
 
-  @media (max-width: 950px) {
-
-    .ai-grid {
-      grid-template-columns: 1fr;
+    .diag-page {
+      padding-top: 20px;
     }
 
-    .ai-result-main {
-      grid-template-columns: 1fr;
-    }
-  }
-
-
-  @media (max-width: 700px) {
-
-    .ai-hero-layout {
-      padding: 45px 0;
+    .diag-hero {
+      padding: 25px;
+      border-radius: 22px;
     }
 
-    .ai-hero h1 {
-      font-size: 2.45rem;
-    }
-
-    .ai-hero-stats {
-      grid-template-columns: 1fr;
-    }
-
-    .ai-stat-card {
-      min-height: 105px;
-    }
-
-    .ai-card {
-      padding: 20px;
-
-      border-radius: 19px;
-    }
-
-    .ai-registered-image img {
-      height: 240px;
-    }
-
-    .ai-process-info {
-      grid-template-columns: 1fr;
-    }
-
-    .ai-result-information,
-    .ai-result-sections {
-      grid-template-columns: 1fr;
-    }
-
-    .ai-result-header {
+    .diag-hero-content {
       align-items: flex-start;
+    }
 
+    .diag-hero-icon {
+      display: none;
+    }
+
+    .selected-product-inner,
+    .result-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .selected-product-image {
+      height: 230px;
+    }
+
+    .result-image {
+      height: 230px;
+    }
+
+    .products-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+
+    .diag-container {
+      width: min(100% - 20px, 1200px);
+    }
+
+    .diag-stats {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .diag-stat {
+      padding: 15px;
+    }
+
+    .diag-stat-value {
+      font-size: 1.35rem;
+    }
+
+    .result-header {
       flex-direction: column;
     }
 
-    .ai-result-actions {
-      flex-direction: column;
+    .result-info {
+      grid-template-columns: 1fr;
     }
 
-    .ai-result-action {
-      width: 100%;
+    .history-item {
+      grid-template-columns: 45px 1fr;
+    }
+
+    .history-result {
+      grid-column: 2;
+      width: fit-content;
     }
   }
 </style>
@@ -2184,612 +1183,266 @@ Diagnóstico IA | AgroIA Moxico
 {% endblock %}
 
 
-
 {% block content %}
 
-<div class="ai-page">
+<div class="diag-page">
 
-  <!-- ========================================================
-         HERO
-    ========================================================= -->
+  <div class="diag-container">
 
-  <section class="ai-hero">
+    <!-- =====================================================
+             HERO
+             ===================================================== -->
 
-    <div class="ai-hero-bg">
+    <section class="diag-hero">
 
-      <img class="active"
-        src="https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=2200&q=85" alt="">
+      <div class="diag-hero-content">
 
-      <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=85" alt="">
+        <div class="diag-hero-text">
 
-      <img src="https://images.unsplash.com/photo-1523742813035-ef7a3e5e3e08?auto=format&fit=crop&w=2200&q=85" alt="">
-
-    </div>
-
-
-    <div class="container">
-
-      <div class="ai-hero-layout">
-
-        <div class="ai-hero-content">
-
-          <span class="ai-badge">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M9 3a3 3 0 0 0-3 3v1a3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3Z" />
-              <path d="M15 3a3 3 0 0 1 3 3v1a3 3 0 0 1-3 3" />
-              <path d="M9 12h6" />
-              <path d="M9 17h6" />
-            </svg>
-
-            AgroIA Moxico · Inteligência Artificial
-
-          </span>
-
+          <div class="diag-eyebrow">
+            Diagnóstico Inteligente
+          </div>
 
           <h1>
-
-            Diagnóstico inteligente
-
-            <span>
-              para a sua cultura.
-            </span>
-
+            Diagnóstico IA de Produtos Agrícolas
           </h1>
 
-
-          <p class="ai-hero-description">
-
-            Utilize inteligência artificial para analisar
-            automaticamente a imagem cadastrada no produto
-            e obter uma classificação baseada no modelo
-            de visão computacional do AgroIA Moxico.
-
+          <p>
+            Analise automaticamente os produtos agrícolas
+            cadastrados utilizando inteligência artificial.
+            Escolha um produto para iniciar o diagnóstico
+            e acompanhe os resultados e o histórico das análises.
           </p>
 
         </div>
 
-
-
-        <!-- ESTATÍSTICAS -->
-
-        <div class="ai-hero-stats">
-
-          <div class="ai-stat-card">
-
-            <div class="ai-stat-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 7v5l3 2" />
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong class="ai-stat-value">
-                {{ total_diagnosticos|default:0 }}
-              </strong>
-
-              <span class="ai-stat-label">
-                Diagnósticos realizados
-              </span>
-
-            </div>
-
-          </div>
-
-
-
-          <div class="ai-stat-card">
-
-            <div class="ai-stat-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M4 19V5" />
-                <path d="M4 19h16" />
-                <path d="m7 15 4-4 3 2 5-6" />
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong class="ai-stat-value">
-                {{ total_produtos|default:0 }}
-              </strong>
-
-              <span class="ai-stat-label">
-                Produtos disponíveis
-              </span>
-
-            </div>
-
-          </div>
-
-
-
-          <div class="ai-stat-card">
-
-            <div class="ai-stat-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z" />
-                <path d="m8.5 12 2.2 2.2 4.8-5" />
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong class="ai-stat-value">
-                {{ precisao_ia|default:92 }}%
-              </strong>
-
-              <span class="ai-stat-label">
-                Sistema de IA ativo
-              </span>
-
-            </div>
-
-          </div>
-
+        <div class="diag-hero-icon">
+          🌱
         </div>
 
       </div>
+
+    </section>
+
+
+    <!-- =====================================================
+             MENSAGENS
+             ===================================================== -->
+
+    {% if messages %}
+
+    <div class="diag-messages">
+
+      {% for message in messages %}
+
+      <div class="diag-message {{ message.tags }}">
+
+        {% if "success" in message.tags %}
+        ✓
+        {% elif "error" in message.tags %}
+        !
+        {% elif "warning" in message.tags %}
+        ⚠
+        {% else %}
+        ℹ
+        {% endif %}
+
+        <span>
+          {{ message }}
+        </span>
+
+      </div>
+
+      {% endfor %}
 
     </div>
 
-  </section>
+    {% endif %}
 
 
+    <!-- =====================================================
+             ESTATÍSTICAS
+             ===================================================== -->
 
-  <!-- ========================================================
-         DIAGNÓSTICO
-    ========================================================= -->
+    <section class="diag-stats">
 
-  <section class="ai-diagnostic" id="diagnostico">
+      <div class="diag-stat">
 
-    <div class="container">
+        <div class="diag-stat-top">
 
+          <span class="diag-stat-label">
+            Diagnósticos realizados
+          </span>
 
-      <div class="ai-diagnostic-header">
+          <span class="diag-stat-icon">
+            🧠
+          </span>
 
-        <span class="ai-eyebrow">
-          Diagnóstico IA
-        </span>
-
-        <h2>
-          Análise inteligente da cultura
-        </h2>
-
-        <p>
-
-          O produto é recebido automaticamente a partir
-          do cadastro. A imagem armazenada no produto
-          é enviada diretamente para o modelo de
-          inteligência artificial.
-
-        </p>
-
-      </div>
-
-
-
-      <!-- MENSAGENS -->
-
-      {% if messages %}
-
-      <div class="ai-messages">
-
-        {% for message in messages %}
-
-        <div class="ai-message {{ message.tags }}">
-          {{ message }}
         </div>
 
-        {% endfor %}
+        <div class="diag-stat-value">
+          {{ total_diagnosticos_usuario|default:0 }}
+        </div>
+
+        <div class="diag-stat-sub">
+          No seu histórico
+        </div>
 
       </div>
 
-      {% endif %}
+
+      <div class="diag-stat">
+
+        <div class="diag-stat-top">
+
+          <span class="diag-stat-label">
+            Concluídos
+          </span>
+
+          <span class="diag-stat-icon">
+            ✓
+          </span>
+
+        </div>
+
+        <div class="diag-stat-value">
+          {{ diagnosticos_concluidos|default:0 }}
+        </div>
+
+        <div class="diag-stat-sub">
+          Análises concluídas
+        </div>
+
+      </div>
 
 
+      <div class="diag-stat">
 
-      <!-- ==================================================
-                 ÁREA PRINCIPAL
-            ================================================== -->
+        <div class="diag-stat-top">
 
-      <div class="ai-grid">
+          <span class="diag-stat-label">
+            Produtos disponíveis
+          </span>
 
+          <span class="diag-stat-icon">
+            🌾
+          </span>
 
-        <!-- ==================================================
-                     CARD DE DIAGNÓSTICO
-                ================================================== -->
+        </div>
 
-        <div class="ai-card">
+        <div class="diag-stat-value">
+          {{ total_produtos|default:0 }}
+        </div>
 
-          <div class="ai-card-header">
+        <div class="diag-stat-sub">
+          Produtos ativos
+        </div>
 
-            <div class="ai-card-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M12 3a9 9 0 1 0 9 9" />
-                <path d="M12 7v5l3 2" />
-                <path d="M17 3h4v4" />
-              </svg>
-
-            </div>
-
-            <div>
-
-              <h2>
-                Realizar diagnóstico
-              </h2>
-
-              <p>
-                Análise automática da imagem cadastrada
-              </p>
-
-            </div>
-
-          </div>
+      </div>
 
 
+      <div class="diag-stat">
 
-          {% if produto %}
+        <div class="diag-stat-top">
 
+          <span class="diag-stat-label">
+            Confiança média
+          </span>
 
-          <!-- ==================================================
-                         PRODUTO
-                    ================================================== -->
+          <span class="diag-stat-icon">
+            %
+          </span>
 
-          <div class="ai-product">
+        </div>
 
-            <div class="ai-product-image">
+        <div class="diag-stat-value">
+          {{ confianca_media|default:0|floatformat:2 }}%
+        </div>
 
-              {% if produto.imagem %}
+        <div class="diag-stat-sub">
+          Precisão média das análises
+        </div>
 
-              <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+      </div>
 
-              {% else %}
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="
-                                    width:100%;
-                                    height:100%;
-                                    padding:17px;
-                                    color:#176b45;
-                                ">
-                <path d="M12 20V9" />
-                <path d="M12 9c-4 0-6-2-6-5 4 0 6 2 6 5Z" />
-                <path d="M12 12c4 0 6-2 6-5-4 0-6 2-6 5Z" />
-              </svg>
-
-              {% endif %}
-
-            </div>
+    </section>
 
 
-            <div class="ai-product-info">
+    <!-- =====================================================
+             PRODUTO SELECIONADO
+             ===================================================== -->
 
-              <span class="ai-product-label">
-                Produto em análise
-              </span>
+    {% if produto %}
 
-              <span class="ai-product-name">
-                {{ produto.nome }}
-              </span>
+    <section class="selected-product">
 
+      <div class="diag-section-title">
 
-              {% if produto.imagem %}
+        <div>
 
-              <span class="ai-product-status">
-                Imagem pronta para análise
-              </span>
+          <h2>
+            Produto selecionado
+          </h2>
 
-              {% else %}
+          <p>
+            Este é o produto que será analisado pela IA.
+          </p>
 
-              <span class="ai-product-status no-image">
-                Sem imagem cadastrada
-              </span>
+        </div>
 
-              {% endif %}
-
-            </div>
-
-          </div>
+      </div>
 
 
+      <div class="selected-product-inner">
+
+        <div class="selected-product-image">
 
           {% if produto.imagem %}
 
+          <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
 
-          <!-- ==================================================
-                         IMAGEM
-                    ================================================== -->
+          {% else %}
 
-          <div class="ai-registered-image">
+          <div class="selected-product-no-image">
+            🌱
+          </div>
 
-            <span class="ai-registered-label">
+          {% endif %}
 
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M4 5h16v14H4z" />
-                <circle cx="9" cy="10" r="2" />
-                <path d="m4 17 4-4 3 3 3-4 6 5" />
-              </svg>
+        </div>
 
-              Imagem cadastrada no produto
 
+        <div class="selected-product-info">
+
+          <h3>
+            {{ produto.nome }}
+          </h3>
+
+
+          {% if produto.descricao %}
+
+          <p>
+            {{ produto.descricao|truncatewords:35 }}
+          </p>
+
+          {% else %}
+
+          <p>
+            Produto agrícola cadastrado no sistema.
+          </p>
+
+          {% endif %}
+
+
+          {% if produto.categorias.all %}
+
+          <div class="product-categories">
+
+            {% for categoria in produto.categorias.all %}
+
+            <span class="product-category">
+              {{ categoria.nome }}
             </span>
-
-
-            <img src="{{ produto.imagem.url }}" alt="Imagem de {{ produto.nome }}">
-
-          </div>
-
-
-
-          <!-- ==================================================
-                         PROCESSO
-                    ================================================== -->
-
-          <div class="ai-process-info">
-
-
-            <div class="ai-process-item">
-
-              <div class="ai-process-icon">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <rect x="3" y="3" width="18" height="18" rx="3" />
-
-                  <circle cx="8" cy="8" r="1" />
-
-                  <path d="m3 17 5-5 4 4 3-3 6 5" />
-                </svg>
-
-              </div>
-
-              <strong>
-                Imagem cadastrada
-              </strong>
-
-              <span>
-                Fonte da análise
-              </span>
-
-            </div>
-
-
-
-            <div class="ai-process-item">
-
-              <div class="ai-process-icon">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M12 3v18" />
-                  <path d="M3 12h18" />
-                  <circle cx="12" cy="12" r="7" />
-                </svg>
-
-              </div>
-
-              <strong>
-                Visão computacional
-              </strong>
-
-              <span>
-                Modelo AgroIA
-              </span>
-
-            </div>
-
-
-
-            <div class="ai-process-item">
-
-              <div class="ai-process-icon">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z" />
-                  <path d="m8.5 12 2.2 2.2 4.8-5" />
-                </svg>
-
-              </div>
-
-              <strong>
-                Análise automática
-              </strong>
-
-              <span>
-                Resultado com confiança
-              </span>
-
-            </div>
-
-          </div>
-
-
-
-          <!-- ==================================================
-                         FORMULÁRIO
-                    ================================================== -->
-
-          <form method="POST" action="{% url 'diagnostico:analisar' produto_id=produto.id %}" id="diagnosticoForm">
-
-            {% csrf_token %}
-
-
-            <button type="submit" class="ai-analyze" id="aiAnalyze">
-
-              <span id="aiButtonNormal">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <circle cx="11" cy="11" r="7" />
-
-                  <path d="m20 20-4-4" />
-                </svg>
-
-                Realizar diagnóstico com IA
-
-              </span>
-
-
-              <span id="aiButtonLoading" style="
-                                    display:none;
-                                    align-items:center;
-                                    justify-content:center;
-                                    gap:9px;
-                                ">
-
-                <span class="ai-spinner"></span>
-
-                A analisar imagem...
-
-              </span>
-
-            </button>
-
-          </form>
-
-
-
-          <!-- NOTA -->
-
-          <div class="ai-note">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="12" cy="12" r="9" />
-
-              <path d="M12 11v5" />
-
-              <path d="M12 8h.01" />
-            </svg>
-
-            <span>
-
-              A imagem utilizada pela inteligência
-              artificial é a imagem armazenada no
-              cadastro do produto. Não é necessário
-              carregar outra fotografia.
-
-            </span>
-
-          </div>
-
-
-
-          <!-- ==================================================
-                         HISTÓRICO DO PRODUTO
-                    ================================================== -->
-
-          <a href="{% url 'diagnostico:historico_produto' produto_id=produto.id %}" class="ai-history-link">
-
-            <div class="ai-history-link-content">
-
-              <div class="ai-history-link-icon">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <circle cx="12" cy="12" r="9" />
-
-                  <path d="M12 7v5l3 2" />
-                </svg>
-
-              </div>
-
-
-              <div>
-
-                <strong>
-                  Histórico deste produto
-                </strong>
-
-                <span>
-                  Consulte todos os diagnósticos realizados
-                </span>
-
-              </div>
-
-            </div>
-
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-
-          </a>
-
-
-
-          <!-- ==================================================
-                         HISTÓRICO RECENTE
-                    ================================================== -->
-
-          {% if ultimos_diagnosticos %}
-
-          <div class="ai-recent-history">
-
-            <div class="ai-recent-title">
-
-              <strong>
-                Diagnósticos recentes
-              </strong>
-
-              <a href="{% url 'diagnostico:historico_produto' produto_id=produto.id %}">
-                Ver todos
-              </a>
-
-            </div>
-
-
-            {% for item in ultimos_diagnosticos %}
-
-            <a href="{% url 'diagnostico:detalhe' diagnostico_id=item.id %}" class="ai-history-item">
-
-              <div class="ai-history-item-left">
-
-                <div class="ai-history-item-icon">
-
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M4 5h16v14H4z" />
-                    <circle cx="9" cy="10" r="2" />
-                    <path d="m4 17 4-4 3 3 3-4 6 5" />
-                  </svg>
-
-                </div>
-
-
-                <div class="ai-history-item-info">
-
-                  <strong>
-
-                    {% if item.doenca_identificada %}
-                    {{ item.doenca_identificada }}
-                    {% elif item.classe_identificada %}
-                    {{ item.classe_identificada }}
-                    {% else %}
-                    Resultado indeterminado
-                    {% endif %}
-
-                  </strong>
-
-                  <span>
-                    {{ item.data_criacao|date:"d/m/Y H:i" }}
-                  </span>
-
-                </div>
-
-              </div>
-
-
-              <span class="ai-history-item-result">
-
-                {{ item.get_resultado_display }}
-
-              </span>
-
-            </a>
 
             {% endfor %}
 
@@ -2798,251 +1451,20 @@ Diagnóstico IA | AgroIA Moxico
           {% endif %}
 
 
-          {% else %}
+          <div class="diag-actions">
 
+            <!-- VOLTAR PARA A PÁGINA PRINCIPAL -->
 
-          <!-- ==================================================
-                         SEM IMAGEM
-                    ================================================== -->
+            <a href="{% url 'diagnostico:diagnostico' %}" class="diag-btn diag-btn-outline">
+              ← Voltar aos produtos
+            </a>
 
-          <div class="ai-no-product">
 
-            <strong>
-              Este produto não possui imagem cadastrada.
-            </strong>
+            <!-- HISTÓRICO DO PRODUTO -->
 
-            <br>
-            <br>
-
-            Para realizar o diagnóstico,
-            adicione uma imagem ao produto
-            antes de iniciar a análise.
-
-          </div>
-
-          {% endif %}
-
-
-          {% else %}
-
-
-          <!-- ==================================================
-                         SEM PRODUTO
-                    ================================================== -->
-
-          <div class="ai-no-product">
-
-            <strong>
-              Nenhum produto foi selecionado.
-            </strong>
-
-            <br>
-            <br>
-
-            O diagnóstico deve ser iniciado
-            através de um produto cadastrado
-            no AgroIA Moxico.
-
-          </div>
-
-          {% endif %}
-
-        </div>
-
-
-
-        <!-- ==================================================
-                     CARD INFORMATIVO
-                ================================================== -->
-
-        <div class="ai-card ai-info-card">
-
-          <div class="ai-info-content">
-
-            <div class="ai-empty-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="5" y="5" width="14" height="14" rx="3" />
-
-                <path d="M9 9h6v6H9z" />
-
-                <path d="M9 2v3" />
-                <path d="M15 2v3" />
-
-                <path d="M9 19v3" />
-                <path d="M15 19v3" />
-
-                <path d="M2 9h3" />
-                <path d="M2 15h3" />
-
-                <path d="M19 9h3" />
-                <path d="M19 15h3" />
-              </svg>
-
-            </div>
-
-
-            <h2>
-              Como funciona o diagnóstico?
-            </h2>
-
-
-            <p>
-
-              O AgroIA Moxico analisa a imagem
-              cadastrada no produto utilizando
-              um modelo de visão computacional.
-              O resultado é automaticamente
-              registado no histórico.
-
-            </p>
-
-
-            <div class="ai-info-list">
-
-
-              <div class="ai-info-item">
-
-                <div class="ai-info-item-icon">
-
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M4 5h16v14H4z" />
-                    <circle cx="9" cy="10" r="2" />
-                    <path d="m4 17 4-4 3 3 3-4 6 5" />
-                  </svg>
-
-                </div>
-
-
-                <div>
-
-                  <strong>
-                    1. Imagem do produto
-                  </strong>
-
-                  <span>
-                    A imagem cadastrada é utilizada
-                    automaticamente.
-                  </span>
-
-                </div>
-
-              </div>
-
-
-
-              <div class="ai-info-item">
-
-                <div class="ai-info-item-icon">
-
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="12" cy="12" r="8" />
-
-                    <path d="M12 8v8" />
-                    <path d="M8 12h8" />
-                  </svg>
-
-                </div>
-
-
-                <div>
-
-                  <strong>
-                    2. Inteligência artificial
-                  </strong>
-
-                  <span>
-                    O modelo de visão computacional
-                    processa a imagem.
-                  </span>
-
-                </div>
-
-              </div>
-
-
-
-              <div class="ai-info-item">
-
-                <div class="ai-info-item-icon">
-
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z" />
-                    <path d="m8.5 12 2.2 2.2 4.8-5" />
-                  </svg>
-
-                </div>
-
-
-                <div>
-
-                  <strong>
-                    3. Resultado
-                  </strong>
-
-                  <span>
-                    A classe, confiança, doença,
-                    descrição e recomendações
-                    são apresentadas.
-                  </span>
-
-                </div>
-
-              </div>
-
-
-
-              <div class="ai-info-item">
-
-                <div class="ai-info-item-icon">
-
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="12" cy="12" r="9" />
-
-                    <path d="M12 7v5l3 2" />
-                  </svg>
-
-                </div>
-
-
-                <div>
-
-                  <strong>
-                    4. Histórico
-                  </strong>
-
-                  <span>
-                    Cada análise fica associada
-                    ao produto e ao utilizador.
-                  </span>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="ai-warning">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M12 3 2.5 20h19L12 3Z" />
-
-                <path d="M12 9v5" />
-
-                <path d="M12 17h.01" />
-              </svg>
-
-              <span>
-
-                O diagnóstico do AgroIA Moxico
-                é uma ferramenta de apoio baseada
-                na análise da imagem e não substitui
-                a avaliação de um técnico agrícola.
-
-              </span>
-
-            </div>
+            <a href="{% url 'diagnostico:historico_produto' produto.id %}" class="diag-btn diag-btn-secondary">
+              📋 Histórico do produto
+            </a>
 
           </div>
 
@@ -3050,683 +1472,795 @@ Diagnóstico IA | AgroIA Moxico
 
       </div>
 
+    </section>
 
 
-      <!-- ====================================================
-                 RESULTADO DO DIAGNÓSTICO
-            ===================================================== -->
+    <!-- =====================================================
+             ÁREA DE ANÁLISE
+             ===================================================== -->
 
-      {% if resultado %}
+    {% if not resultado %}
 
-      <div class="ai-result-card" id="resultado">
+    <section class="analysis-box">
 
+      <div class="analysis-box-header">
 
-        <!-- CABEÇALHO -->
+        <div class="analysis-box-icon">
+          🤖
+        </div>
 
-        <div class="ai-result-header">
+        <div>
 
-          <div class="ai-result-header-left">
+          <h3>
+            Executar diagnóstico
+          </h3>
 
-            <div class="ai-result-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z" />
-
-                <path d="m8.5 12 2.2 2.2 4.8-5" />
-              </svg>
-
-            </div>
-
-
-            <div>
-
-              <h2>
-                Resultado do diagnóstico
-              </h2>
-
-              <p>
-                Análise concluída pela inteligência artificial
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <span class="ai-status-badge">
-            Diagnóstico concluído
-          </span>
+          <p>
+            A imagem cadastrada no produto será enviada
+            automaticamente para análise pela inteligência artificial.
+          </p>
 
         </div>
 
+      </div>
 
 
-        <!-- CORPO -->
+      {% if produto.imagem %}
 
-        <div class="ai-result-body">
+      <div class="analysis-warning">
 
+        <span>ℹ️</span>
 
-          <div class="ai-result-main">
+        <span>
 
+          A análise utilizará automaticamente a imagem
+          cadastrada em
 
-            <!-- IMAGEM -->
+          <strong>
+            {{ produto.nome }}
+          </strong>.
 
-            <div class="ai-result-image">
+          Não é necessário selecionar ou enviar outra imagem.
 
-              {% if resultado.imagem_url %}
+        </span>
 
-              <img src="{{ resultado.imagem_url }}" alt="Imagem analisada de {{ resultado.produto_nome }}">
+      </div>
 
-              {% endif %}
 
+      <!-- =================================================
+                 ANALISAR PRODUTO
+                 ROTA:
+                 diagnostico/produto/<produto_id>/analisar/
+                 ================================================= -->
 
-              <span class="ai-result-image-label">
-                Imagem analisada
-              </span>
+      <form method="post" action="{% url 'diagnostico:analisar' produto.id %}">
 
-            </div>
+        {% csrf_token %}
 
+        <button type="submit" class="analysis-submit">
+          🔍 Analisar {{ produto.nome }}
+        </button>
 
+      </form>
 
-            <!-- RESUMO -->
 
-            <div class="ai-result-summary">
+      {% else %}
 
-              <span class="ai-result-label">
-                Resultado identificado
-              </span>
+      <div class="analysis-warning">
 
+        <span>⚠️</span>
 
-              <h2 class="ai-result-name">
+        <span>
 
-                {% if resultado.doenca %}
-                {{ resultado.doenca }}
+          Este produto não possui uma imagem cadastrada.
+          Adicione uma imagem ao produto antes de executar
+          o diagnóstico.
 
-                {% elif resultado.classe %}
-                {{ resultado.classe }}
-
-                {% else %}
-                Resultado indeterminado
-                {% endif %}
-
-              </h2>
-
-
-              {% if resultado.classe %}
-
-              <div class="ai-result-class">
-
-                Classe identificada:
-                <strong>
-                  {{ resultado.classe }}
-                </strong>
-
-              </div>
-
-              {% endif %}
-
-
-
-              <!-- CONFIANÇA -->
-
-              <div class="ai-confidence">
-
-                <div class="ai-confidence-top">
-
-                  <span>
-                    Confiança da inteligência artificial
-                  </span>
-
-                  <strong>
-                    {{ resultado.confianca|floatformat:2 }}%
-                  </strong>
-
-                </div>
-
-
-                <div class="ai-confidence-bar">
-
-                  <div class="ai-confidence-fill" style="width: {{ resultado.confianca|default:0 }}%;"></div>
-
-                </div>
-
-              </div>
-
-
-
-              <!-- TIPO -->
-
-              {% if resultado.resultado == "saudavel" %}
-
-              <span class="ai-result-badge">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="m5 12 4 4L19 6" />
-                </svg>
-
-                Cultura aparentemente saudável
-
-              </span>
-
-
-              {% elif resultado.resultado == "doenca" %}
-
-              <span class="ai-result-badge danger">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M12 3 2.5 20h19L12 3Z" />
-                  <path d="M12 9v5" />
-                  <path d="M12 17h.01" />
-                </svg>
-
-                Possível doença identificada
-
-              </span>
-
-
-              {% elif resultado.resultado == "praga" %}
-
-              <span class="ai-result-badge danger">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M12 3v18" />
-                  <path d="M5 7h14" />
-                  <path d="M5 17h14" />
-                  <circle cx="12" cy="12" r="8" />
-                </svg>
-
-                Possível presença de praga
-
-              </span>
-
-
-              {% elif resultado.resultado == "fungo" %}
-
-              <span class="ai-result-badge danger">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <circle cx="12" cy="12" r="8" />
-                  <path d="M8 12h8" />
-                  <path d="M12 8v8" />
-                </svg>
-
-                Possível presença de fungo
-
-              </span>
-
-
-              {% elif resultado.resultado == "deficiencia" %}
-
-              <span class="ai-result-badge warning">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M12 3 2.5 20h19L12 3Z" />
-                  <path d="M12 9v5" />
-                  <path d="M12 17h.01" />
-                </svg>
-
-                Possível deficiência nutricional
-
-              </span>
-
-
-              {% else %}
-
-              <span class="ai-result-badge warning">
-
-                Resultado indeterminado
-
-              </span>
-
-              {% endif %}
-
-            </div>
-
-          </div>
-
-
-
-          <!-- ==================================================
-                         INFORMAÇÕES
-                    ================================================== -->
-
-          <div class="ai-result-information">
-
-
-            <div class="ai-result-info-box">
-
-              <span class="ai-result-info-label">
-                Produto
-              </span>
-
-              <span class="ai-result-info-value">
-                {{ resultado.produto_nome }}
-              </span>
-
-            </div>
-
-
-            <div class="ai-result-info-box">
-
-              <span class="ai-result-info-label">
-                Cultura identificada
-              </span>
-
-              <span class="ai-result-info-value">
-
-                {% if resultado.cultura %}
-                {{ resultado.cultura }}
-                {% else %}
-                Não informada
-                {% endif %}
-
-              </span>
-
-            </div>
-
-
-            <div class="ai-result-info-box">
-
-              <span class="ai-result-info-label">
-                Classe da IA
-              </span>
-
-              <span class="ai-result-info-value">
-                {{ resultado.classe|default:"Não identificada" }}
-              </span>
-
-            </div>
-
-
-            <div class="ai-result-info-box">
-
-              <span class="ai-result-info-label">
-                Doença / condição
-              </span>
-
-              <span class="ai-result-info-value">
-
-                {% if resultado.doenca %}
-                {{ resultado.doenca }}
-                {% else %}
-                Nenhuma doença específica identificada
-                {% endif %}
-
-              </span>
-
-            </div>
-
-          </div>
-
-
-
-          <!-- ==================================================
-                         DESCRIÇÃO E RECOMENDAÇÕES
-                    ================================================== -->
-
-          <div class="ai-result-sections">
-
-
-            {% if resultado.descricao %}
-
-            <div class="ai-result-section">
-
-              <div class="ai-result-section-header">
-
-                <div class="ai-result-section-icon">
-
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M5 4h14v16H5z" />
-                    <path d="M8 8h8" />
-                    <path d="M8 12h8" />
-                    <path d="M8 16h5" />
-                  </svg>
-
-                </div>
-
-                <h3>
-                  Descrição do resultado
-                </h3>
-
-              </div>
-
-
-              <p>
-                {{ resultado.descricao }}
-              </p>
-
-            </div>
-
-            {% endif %}
-
-
-
-            {% if resultado.recomendacoes %}
-
-            <div class="ai-result-section">
-
-              <div class="ai-result-section-header">
-
-                <div class="ai-result-section-icon">
-
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M12 3v18" />
-                    <path d="M5 8c3-3 6-3 7 0" />
-                    <path d="M19 8c-3-3-6-3-7 0" />
-                  </svg>
-
-                </div>
-
-                <h3>
-                  Recomendações
-                </h3>
-
-              </div>
-
-
-              <p>
-                {{ resultado.recomendacoes }}
-              </p>
-
-            </div>
-
-            {% endif %}
-
-          </div>
-
-
-
-          <!-- ==================================================
-                         COMPATIBILIDADE
-                    ================================================== -->
-
-          {% if resultado.produto_compativel == False %}
-
-          <div class="ai-compatibility">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M12 3 2.5 20h19L12 3Z" />
-              <path d="M12 9v5" />
-              <path d="M12 17h.01" />
-            </svg>
-
-
-            <span>
-
-              {% if resultado.mensagem_compatibilidade %}
-
-              {{ resultado.mensagem_compatibilidade }}
-
-              {% else %}
-
-              A cultura identificada pela IA
-              pode não corresponder ao produto
-              cadastrado. Verifique a imagem
-              e os dados do produto.
-
-              {% endif %}
-
-            </span>
-
-          </div>
-
-
-          {% elif resultado.mensagem_compatibilidade %}
-
-          <div class="ai-compatibility success">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="m5 12 4 4L19 6" />
-            </svg>
-
-            <span>
-              {{ resultado.mensagem_compatibilidade }}
-            </span>
-
-          </div>
-
-          {% endif %}
-
-
-
-          <!-- ==================================================
-                         BAIXA CONFIANÇA
-                    ================================================== -->
-
-          {% if resultado.baixa_confianca %}
-
-          <div class="ai-compatibility">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M12 3 2.5 20h19L12 3Z" />
-              <path d="M12 9v5" />
-              <path d="M12 17h.01" />
-            </svg>
-
-            <span>
-
-              A análise apresentou uma confiança
-              relativamente baixa. Recomenda-se
-              verificar a imagem e confirmar o
-              resultado com um técnico agrícola.
-
-            </span>
-
-          </div>
-
-          {% endif %}
-
-
-
-          <!-- ==================================================
-                         AÇÕES
-                    ================================================== -->
-
-          {% if diagnostico %}
-
-          <div class="ai-result-actions">
-
-
-            <a href="{% url 'diagnostico:detalhe' diagnostico_id=diagnostico.id %}" class="ai-result-action primary">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M4 5h16v14H4z" />
-                <path d="M8 9h8" />
-                <path d="M8 13h6" />
-              </svg>
-
-              Ver detalhes completos
-
-            </a>
-
-
-
-            <a href="{% url 'diagnostico:historico_produto' produto_id=produto.id %}"
-              class="ai-result-action secondary">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <circle cx="12" cy="12" r="9" />
-
-                <path d="M12 7v5l3 2" />
-              </svg>
-
-              Histórico do produto
-
-            </a>
-
-
-
-            <a href="{% url 'diagnostico:historico' %}" class="ai-result-action secondary">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M4 6h16" />
-                <path d="M4 12h16" />
-                <path d="M4 18h16" />
-              </svg>
-
-              Histórico geral
-
-            </a>
-
-          </div>
-
-          {% endif %}
-
-        </div>
+        </span>
 
       </div>
 
       {% endif %}
 
-    </div>
+    </section>
 
-  </section>
+    {% endif %}
+
+    {% endif %}
+
+
+    <!-- =====================================================
+             RESULTADO
+             ===================================================== -->
+
+    {% if resultado %}
+
+    <section class="result-box">
+
+      <div class="result-header">
+
+        <div class="result-title">
+
+          <div class="result-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <h2>
+              Diagnóstico concluído
+            </h2>
+
+            <p>
+              Resultado da análise realizada pela IA
+            </p>
+
+          </div>
+
+        </div>
+
+
+        {% if resultado.resultado == "saudavel" %}
+
+        <span class="result-status status-saudavel">
+          Saudável
+        </span>
+
+        {% elif resultado.resultado == "indeterminado" %}
+
+        <span class="result-status status-indeterminado">
+          Indeterminado
+        </span>
+
+        {% else %}
+
+        <span class="result-status status-problema">
+          {{ resultado.resultado|default:"Problema"|title }}
+        </span>
+
+        {% endif %}
+
+      </div>
+
+
+      {% if not resultado.produto_compativel %}
+
+      <div class="result-alert warning">
+
+        <span>⚠️</span>
+
+        <span>
+          {{ resultado.mensagem_compatibilidade|default:"A imagem analisada pode não corresponder ao produto
+          selecionado." }}
+        </span>
+
+      </div>
+
+      {% endif %}
+
+
+      {% if resultado.baixa_confianca %}
+
+      <div class="result-alert warning">
+
+        <span>⚠️</span>
+
+        <span>
+          A análise apresentou confiança relativamente baixa.
+          Recomenda-se utilizar uma imagem mais nítida e,
+          quando necessário, confirmar o resultado com orientação técnica.
+        </span>
+
+      </div>
+
+      {% endif %}
+
+
+      <div class="result-grid">
+
+        <!-- IMAGEM -->
+
+        <div class="result-image">
+
+          {% if resultado.imagem_url %}
+
+          <img src="{{ resultado.imagem_url }}" alt="Imagem analisada">
+
+          {% elif resultado.imagem %}
+
+          <img src="{{ resultado.imagem.url }}" alt="Imagem analisada">
+
+          {% elif produto and produto.imagem %}
+
+          <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+
+          {% else %}
+
+          <div class="result-image-empty">
+            🌱
+          </div>
+
+          {% endif %}
+
+        </div>
+
+
+        <!-- INFORMAÇÕES -->
+
+        <div class="result-content">
+
+          <!-- PRODUTO -->
+
+          <div class="result-main">
+
+            <div class="result-main-label">
+              Produto analisado
+            </div>
+
+            <div class="result-main-value">
+
+              {% if resultado.produto_nome %}
+
+              {{ resultado.produto_nome }}
+
+              {% elif resultado.produto %}
+
+              {{ resultado.produto.nome }}
+
+              {% elif produto %}
+
+              {{ produto.nome }}
+
+              {% else %}
+
+              Produto não identificado
+
+              {% endif %}
+
+            </div>
+
+          </div>
+
+
+          <!-- CLASSE / RESULTADO -->
+
+          <div class="result-info">
+
+            <div class="result-info-card">
+
+              <strong>
+                Classe identificada
+              </strong>
+
+              <span>
+
+                {% if resultado.classe %}
+
+                {{ resultado.classe }}
+
+                {% elif resultado.classe_identificada %}
+
+                {{ resultado.classe_identificada }}
+
+                {% elif resultado.doenca_identificada %}
+
+                {{ resultado.doenca_identificada }}
+
+                {% else %}
+
+                Não identificada
+
+                {% endif %}
+
+              </span>
+
+            </div>
+
+
+            <div class="result-info-card">
+
+              <strong>
+                Resultado
+              </strong>
+
+              <span>
+                {{ resultado.resultado|default:"Indeterminado"|title }}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- CONFIANÇA -->
+
+          <div class="result-main">
+
+            <div class="result-main-label">
+              Confiança da IA
+            </div>
+
+            <div class="result-main-value">
+
+              {% if resultado.confianca %}
+
+              {{ resultado.confianca|floatformat:2 }}%
+
+              {% else %}
+
+              0%
+
+              {% endif %}
+
+            </div>
+
+
+            <div class="confidence-wrap">
+
+              <div class="confidence-head">
+
+                <span>
+                  Nível de confiança
+                </span>
+
+                <span>
+
+                  {% if resultado.confianca %}
+
+                  {{ resultado.confianca|floatformat:1 }}%
+
+                  {% else %}
+
+                  0%
+
+                  {% endif %}
+
+                </span>
+
+              </div>
+
+
+              <div class="confidence-bar">
+
+                <div class="confidence-fill" style="width: {{ resultado.confianca|default:0 }}%;"></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- DOENÇA -->
+
+          {% if resultado.doenca %}
+
+          <div class="result-text">
+
+            <h4>
+              Doença / problema identificado
+            </h4>
+
+            <p>
+              {{ resultado.doenca }}
+            </p>
+
+          </div>
+
+          {% elif resultado.doenca_identificada %}
+
+          <div class="result-text">
+
+            <h4>
+              Doença / problema identificado
+            </h4>
+
+            <p>
+              {{ resultado.doenca_identificada }}
+            </p>
+
+          </div>
+
+          {% endif %}
+
+
+          <!-- DESCRIÇÃO -->
+
+          {% if resultado.descricao %}
+
+          <div class="result-text">
+
+            <h4>
+              Descrição do resultado
+            </h4>
+
+            <p>
+              {{ resultado.descricao }}
+            </p>
+
+          </div>
+
+          {% elif resultado.descricao_resultado %}
+
+          <div class="result-text">
+
+            <h4>
+              Descrição do resultado
+            </h4>
+
+            <p>
+              {{ resultado.descricao_resultado }}
+            </p>
+
+          </div>
+
+          {% endif %}
+
+
+          <!-- RECOMENDAÇÕES -->
+
+          {% if resultado.recomendacoes %}
+
+          <div class="result-text">
+
+            <h4>
+              Recomendações
+            </h4>
+
+            <p>
+              {{ resultado.recomendacoes }}
+            </p>
+
+          </div>
+
+          {% endif %}
+
+
+          <!-- =================================================
+                         AÇÕES DO RESULTADO
+                         ================================================= -->
+
+          <div class="diag-actions">
+
+            <!-- DETALHE DO DIAGNÓSTICO -->
+
+            {% if resultado.id %}
+
+            <a href="{% url 'diagnostico:detalhe' resultado.id %}" class="diag-btn diag-btn-primary">
+              📄 Ver detalhes completos
+            </a>
+
+            {% endif %}
+
+
+            <!-- HISTÓRICO DO PRODUTO -->
+
+            {% if resultado.produto_id %}
+
+            <a href="{% url 'diagnostico:historico_produto' resultado.produto_id %}"
+              class="diag-btn diag-btn-secondary">
+              📋 Ver histórico
+            </a>
+
+
+            <!-- NOVA ANÁLISE -->
+
+            <a href="{% url 'diagnostico:diagnostico_produto' resultado.produto_id %}"
+              class="diag-btn diag-btn-outline">
+              🔄 Nova análise
+            </a>
+
+            {% elif produto %}
+
+            <a href="{% url 'diagnostico:historico_produto' produto.id %}" class="diag-btn diag-btn-secondary">
+              📋 Ver histórico
+            </a>
+
+
+            <a href="{% url 'diagnostico:diagnostico_produto' produto.id %}" class="diag-btn diag-btn-outline">
+              🔄 Nova análise
+            </a>
+
+            {% endif %}
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+             HISTÓRICO RECENTE
+             ===================================================== -->
+
+    <section class="history-box">
+
+      <div class="diag-section-title">
+
+        <div>
+
+          <h2>
+            Diagnósticos recentes
+          </h2>
+
+          <p>
+            Últimas análises realizadas por si.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      {% if ultimos_diagnosticos %}
+
+      <div class="history-list">
+
+        {% for item in ultimos_diagnosticos %}
+
+        <!--
+                    Ao clicar num diagnóstico recente,
+                    abre o detalhe daquele diagnóstico.
+                -->
+
+        <a href="{% url 'diagnostico:detalhe' item.id %}" class="history-item">
+
+          <div class="history-image">
+
+            {% if item.imagem %}
+
+            <img src="{{ item.imagem.url }}" alt="{{ item.produto.nome|default:'Diagnóstico' }}">
+
+            {% elif item.produto and item.produto.imagem %}
+
+            <img src="{{ item.produto.imagem.url }}" alt="{{ item.produto.nome }}">
+
+            {% else %}
+
+            <div class="history-image-empty">
+              🌱
+            </div>
+
+            {% endif %}
+
+          </div>
+
+
+          <div class="history-info">
+
+            <strong>
+
+              {% if item.produto %}
+
+              {{ item.produto.nome }}
+
+              {% else %}
+
+              Produto não associado
+
+              {% endif %}
+
+            </strong>
+
+
+            <span>
+
+              {{ item.data_criacao|date:"d/m/Y H:i" }}
+
+              ·
+
+              {% if item.classe_identificada %}
+
+              {{ item.classe_identificada }}
+
+              {% elif item.doenca_identificada %}
+
+              {{ item.doenca_identificada }}
+
+              {% else %}
+
+              Resultado IA
+
+              {% endif %}
+
+            </span>
+
+          </div>
+
+
+          <span class="history-result">
+
+            {% if item.status == "concluido" %}
+
+            {{ item.resultado|default:"Concluído"|title }}
+
+            {% elif item.status == "erro" %}
+
+            Erro
+
+            {% elif item.status == "processando" %}
+
+            Processando
+
+            {% else %}
+
+            Pendente
+
+            {% endif %}
+
+          </span>
+
+        </a>
+
+        {% endfor %}
+
+      </div>
+
+
+      {% else %}
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          📋
+        </div>
+
+        <h3>
+          Nenhum diagnóstico realizado
+        </h3>
+
+        <p>
+          Quando realizar uma análise, os diagnósticos
+          recentes aparecerão aqui.
+        </p>
+
+      </div>
+
+      {% endif %}
+
+    </section>
+
+
+    <!-- =====================================================
+             PRODUTOS DISPONÍVEIS
+             ===================================================== -->
+
+    {% if not produto %}
+
+    <section class="products-box">
+
+      <div class="diag-section-title">
+
+        <div>
+
+          <h2>
+            Produtos disponíveis para diagnóstico
+          </h2>
+
+          <p>
+            Selecione um produto cadastrado para iniciar
+            uma análise ou consultar o seu histórico.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      {% if produtos %}
+
+      <div class="products-grid">
+
+        {% for item in produtos %}
+
+        <article class="product-card">
+
+          <div class="product-card-image">
+
+            {% if item.imagem %}
+
+            <img src="{{ item.imagem.url }}" alt="{{ item.nome }}">
+
+            {% else %}
+
+            <div class="product-card-empty">
+              🌱
+            </div>
+
+            {% endif %}
+
+          </div>
+
+
+          <div class="product-card-body">
+
+            <h3>
+              {{ item.nome }}
+            </h3>
+
+
+            {% if item.descricao %}
+
+            <p>
+              {{ item.descricao|truncatewords:18 }}
+            </p>
+
+            {% else %}
+
+            <p>
+              Produto agrícola disponível
+              para diagnóstico.
+            </p>
+
+            {% endif %}
+
+
+            <div class="product-card-actions">
+
+              <!-- =================================================
+                                 ANALISAR
+                                 ROTA:
+                                 produto/<id>/
+                                 ================================================= -->
+
+              <a href="{% url 'diagnostico:diagnostico_produto' item.id %}" class="diag-btn diag-btn-primary">
+                🔍 Analisar
+              </a>
+
+
+              <!-- =================================================
+                                 HISTÓRICO DO PRODUTO
+                                 ROTA:
+                                 historico/produto/<id>/
+                                 ================================================= -->
+
+              <a href="{% url 'diagnostico:historico_produto' item.id %}" class="diag-btn diag-btn-outline">
+                📋 Histórico
+              </a>
+
+            </div>
+
+          </div>
+
+        </article>
+
+        {% endfor %}
+
+      </div>
+
+
+      {% else %}
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          🌾
+        </div>
+
+        <h3>
+          Nenhum produto disponível
+        </h3>
+
+        <p>
+          Não existem produtos agrícolas ativos
+          cadastrados para diagnóstico.
+        </p>
+
+      </div>
+
+      {% endif %}
+
+    </section>
+
+    {% endif %}
+
+  </div>
 
 </div>
-
-{% endblock %}
-
-
-
-{% block extra_js %}
-
-<script>
-
-  document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-
-      /* ========================================================
-         HERO SLIDER
-      ======================================================== */
-
-      const heroImages =
-        document.querySelectorAll(
-          ".ai-hero-bg img"
-        );
-
-      let heroIndex = 0;
-
-
-      if (heroImages.length > 1) {
-
-        setInterval(
-          function () {
-
-            heroImages[
-              heroIndex
-            ].classList.remove(
-              "active"
-            );
-
-
-            heroIndex =
-              (
-                heroIndex + 1
-              ) %
-              heroImages.length;
-
-
-            heroImages[
-              heroIndex
-            ].classList.add(
-              "active"
-            );
-
-          },
-          6000
-        );
-      }
-
-
-
-      /* ========================================================
-         FORMULÁRIO DE DIAGNÓSTICO
-      ======================================================== */
-
-      const form =
-        document.getElementById(
-          "diagnosticoForm"
-        );
-
-      const button =
-        document.getElementById(
-          "aiAnalyze"
-        );
-
-      const normal =
-        document.getElementById(
-          "aiButtonNormal"
-        );
-
-      const loading =
-        document.getElementById(
-          "aiButtonLoading"
-        );
-
-
-      if (form && button) {
-
-        form.addEventListener(
-          "submit",
-          function () {
-
-            if (button.disabled) {
-              return;
-            }
-
-
-            button.disabled = true;
-
-
-            if (normal) {
-
-              normal.style.display =
-                "none";
-
-            }
-
-
-            if (loading) {
-
-              loading.style.display =
-                "flex";
-
-            }
-
-          }
-        );
-
-      }
-
-
-
-      const resultado =
-        document.getElementById(
-          "resultado"
-        );
-
-
-      if (resultado) {
-
-        setTimeout(
-          function () {
-
-            resultado.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
-
-          },
-          250
-        );
-
-      }
-
-    }
-  );
-
-</script>
 
 {% endblock %}
