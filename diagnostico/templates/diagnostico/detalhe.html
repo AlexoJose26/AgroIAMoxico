@@ -1645,13 +1645,9 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
   <div class="diagnostico-container">
 
 
-    <!-- =====================================================
-         NAVEGAÇÃO
-         ===================================================== -->
-
     <nav class="diag-top-navigation diag-animate-right" aria-label="Navegação do diagnóstico">
 
-      <!-- VOLTAR -->
+
       <a href="{% url 'inicio:home' %}" class="diag-navigation-button diag-back-button" onclick="
                 if (window.history.length > 1) {
                     event.preventDefault();
@@ -1663,7 +1659,7 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
       </a>
 
 
-      <!-- HISTÓRICO -->
+
       {% if diagnostico.produto %}
       <a href="{% url 'diagnostico:historico_produto' diagnostico.produto.id %}"
         class="diag-navigation-button diag-history-button">
@@ -1675,9 +1671,6 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
     </nav>
 
 
-    <!-- =====================================================
-         CABEÇALHO
-         ===================================================== -->
 
     <header class="diag-header diag-animate">
 
@@ -1709,9 +1702,6 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
     </header>
 
 
-    <!-- =====================================================
-         PRODUTO ANALISADO
-         ===================================================== -->
 
     {% if diagnostico.produto %}
 
@@ -1780,13 +1770,9 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
     {% endif %}
 
 
-    <!-- =====================================================
-         CARD PRINCIPAL DO DIAGNÓSTICO
-         ===================================================== -->
-
     <section class="diag-result-card">
 
-      <!-- CABEÇALHO DO CARD -->
+
 
       <div class="diag-result-header">
 
@@ -1803,7 +1789,7 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
         </div>
 
 
-        <!-- STATUS -->
+
 
         {% if diagnostico.status == "concluido" %}
 
@@ -1838,16 +1824,10 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
       </div>
 
 
-      <!-- =================================================
-             GRID
-             ================================================= -->
 
       <div class="diag-result-grid">
 
 
-        <!-- =================================================
-                 IMAGEM ANALISADA
-                 ================================================= -->
 
         <div class="diag-image-panel">
 
@@ -1904,14 +1884,11 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
         </div>
 
 
-        <!-- =================================================
-                 INFORMAÇÕES DA ANÁLISE
-                 ================================================= -->
 
         <div class="diag-info-panel">
 
 
-          <!-- PROCESSANDO -->
+
 
           {% if diagnostico.status == "processando" %}
 
@@ -1938,7 +1915,6 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
           {% endif %}
 
 
-          <!-- PENDENTE -->
 
           {% if diagnostico.status == "pendente" %}
 
@@ -1965,10 +1941,7 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
           {% endif %}
 
 
-          <!-- =================================================
-                     RESULTADO PRINCIPAL
-                     ================================================= -->
-
+   
           {% if diagnostico.status == "concluido" %}
 
           <div class="diag-main-result">
