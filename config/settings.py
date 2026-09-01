@@ -15,15 +15,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
-    "django-insecure-dev-key-change-this"
+    "django-insecure-dev-key-change-this",
 )
 
 DEBUG = (
-    os.environ.get(
-        "DEBUG",
-        "True"
-    ).lower()
-    == "true"
+    os.environ.get("DEBUG", "True").lower() == "true"
 )
 
 
@@ -35,7 +31,7 @@ ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
         "ALLOWED_HOSTS",
-        "127.0.0.1,localhost"
+        "127.0.0.1,localhost",
     ).split(",")
     if host.strip()
 ]
@@ -125,6 +121,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
 
     try:
+
         import dj_database_url
 
         DATABASES = {
@@ -241,50 +238,43 @@ if not DEBUG:
 
 
 # ============================================================
+# AGROIA - API DE INTELIGÊNCIA ARTIFICIAL
 # ============================================================
-# AGROIA - CONFIGURAÇÃO DA API DE INTELIGÊNCIA ARTIFICIAL
-# ============================================================
-# ============================================================
-
-# IMPORTANTE:
 #
 # O Django NÃO carrega o model.keras.
 #
-# O modelo e as classes ficam exclusivamente na AgroIA-API.
+# O modelo de IA fica exclusivamente na AgroIA-API.
 #
-# Django envia:
+# LOCAL:
 #
-#     POST /analisar
+# Django  -> http://127.0.0.1:8000
+# FastAPI -> http://127.0.0.1:8001
 #
-# para a API FastAPI.
+# PRODUÇÃO:
 #
-# Ambiente local:
+# Django (Vercel)
+#       |
+#       v
+# AgroIA-API (Render)
 #
-#     Django  -> 8000
-#     FastAPI -> 8001
-#
-# Portanto:
-#
-#     http://127.0.0.1:8001/analisar
-#
-# Em produção, basta definir AGROIA_API_URL no ambiente.
+# A URL da API em produção será definida através da
+# variável de ambiente AGROIA_API_URL.
 # ============================================================
 
 AGROIA_API_URL = os.environ.get(
     "AGROIA_API_URL",
-    "http://127.0.0.1:8001/analisar"
+    "http://127.0.0.1:8001/analisar",
 )
 
 
-# Tempo máximo para aguardar a resposta da IA.
-#
-# A primeira análise pode demorar mais porque a API pode
-# precisar carregar o modelo TensorFlow.
-#
+# ============================================================
+# TIMEOUT DA API DE IA
+# ============================================================
+
 AGROIA_API_TIMEOUT = int(
     os.environ.get(
         "AGROIA_API_TIMEOUT",
-        "120"
+        "120",
     )
 )
 
@@ -333,12 +323,11 @@ if not DEBUG:
 
 CSRF_COOKIE_HTTPONLY = False
 
-
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
         "CSRF_TRUSTED_ORIGINS",
-        ""
+        "",
     ).split(",")
     if origin.strip()
 ]
