@@ -18,9 +18,10 @@ SECRET_KEY = os.environ.get(
     "django-insecure-dev-key-change-this",
 )
 
-DEBUG = (
-    os.environ.get("DEBUG", "True").lower() == "true"
-)
+DEBUG = os.environ.get(
+    "DEBUG",
+    "True",
+).lower() == "true"
 
 
 # ============================================================
@@ -121,7 +122,6 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
 
     try:
-
         import dj_database_url
 
         DATABASES = {
@@ -132,12 +132,12 @@ if DATABASE_URL:
             )
         }
 
-    except ImportError:
+    except ImportError as exc:
 
         raise ImportError(
             "O pacote 'dj-database-url' é necessário "
             "quando DATABASE_URL está configurada."
-        )
+        ) from exc
 
 else:
 
@@ -154,25 +154,21 @@ else:
 # ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
-
     {
         "NAME":
             "django.contrib.auth.password_validation."
             "UserAttributeSimilarityValidator",
     },
-
     {
         "NAME":
             "django.contrib.auth.password_validation."
             "MinimumLengthValidator",
     },
-
     {
         "NAME":
             "django.contrib.auth.password_validation."
             "CommonPasswordValidator",
     },
-
     {
         "NAME":
             "django.contrib.auth.password_validation."
@@ -195,7 +191,7 @@ USE_TZ = True
 
 
 # ============================================================
-# ARQUIVOS STATIC
+# STATIC
 # ============================================================
 
 STATIC_URL = "/static/"
@@ -208,7 +204,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # ============================================================
-# ARQUIVOS MEDIA
+# MEDIA
 # ============================================================
 
 MEDIA_URL = "/media/"
@@ -223,7 +219,6 @@ MEDIA_ROOT = BASE_DIR / "media"
 if not DEBUG:
 
     STORAGES = {
-
         "default": {
             "BACKEND":
                 "django.core.files.storage.FileSystemStorage",
@@ -238,27 +233,42 @@ if not DEBUG:
 
 
 # ============================================================
-# AGROIA - API DE INTELIGÊNCIA ARTIFICIAL
+# AGROIA API
 # ============================================================
 #
-# O Django NÃO carrega o model.keras.
+# O Django NÃO possui o modelo de IA.
 #
-# O modelo de IA fica exclusivamente na AgroIA-API.
+# O TensorFlow/Keras/model.keras ficam exclusivamente
+# na AgroIA-API.
 #
-# LOCAL:
+# Desenvolvimento:
 #
-# Django  -> http://127.0.0.1:8000
-# FastAPI -> http://127.0.0.1:8001
+# Django:
+# http://127.0.0.1:8000
 #
-# PRODUÇÃO:
+# AgroIA API:
+# http://127.0.0.1:8001
 #
-# Django (Vercel)
-#       |
-#       v
-# AgroIA-API (Render)
+# Produção:
 #
-# A URL da API em produção será definida através da
-# variável de ambiente AGROIA_API_URL.
+# Django:
+# Vercel
+#
+#        |
+#        v
+#
+# AgroIA API:
+# Render
+#
+# A URL de produção deve ser configurada na Vercel
+# através da variável:
+#
+# AGROIA_API_URL
+#
+# Exemplo:
+#
+# https://agroia-api.onrender.com/analisar
+#
 # ============================================================
 
 AGROIA_API_URL = os.environ.get(
@@ -271,12 +281,18 @@ AGROIA_API_URL = os.environ.get(
 # TIMEOUT DA API DE IA
 # ============================================================
 
-AGROIA_API_TIMEOUT = int(
-    os.environ.get(
-        "AGROIA_API_TIMEOUT",
-        "120",
+try:
+
+    AGROIA_API_TIMEOUT = int(
+        os.environ.get(
+            "AGROIA_API_TIMEOUT",
+            "120",
+        )
     )
-)
+
+except (TypeError, ValueError):
+
+    AGROIA_API_TIMEOUT = 120
 
 
 # ============================================================
@@ -368,4 +384,7 @@ SECURE_REFERRER_POLICY = "same-origin"
 # DEFAULT AUTO FIELD
 # ============================================================
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = (
+    "django.db.models.BigAutoField"
+)
+
