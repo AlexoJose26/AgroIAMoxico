@@ -1,301 +1,148 @@
+import mimetypes
+import os
 from pathlib import Path
-import json
-import re
-import unicodedata
 
-import numpy as np
-import tensorflow as tf
+import requests
 from PIL import Image, UnidentifiedImageError
-from django.conf import settings
 
 
-# ============================================================
-# AGROIA MOXICO
-# SERVIÇO DE INTELIGÊNCIA ARTIFICIAL
-# DIAGNÓSTICO BASEADO NO PRODUTO CADASTRADO
-# ============================================================
+MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
-# ============================================================
-# CAMINHOS
-# ============================================================
-
-BASE_DIR = Path(settings.BASE_DIR)
-
-MODEL_PATH = (
-    BASE_DIR
-    / "diagnostico"
-    / "ai"
-    / "model.keras"
+API_URL = os.getenv(
+    "AGROIA_API_URL",
+    "http://127.0.0.1:8001/analisar",
 )
 
-CLASS_NAMES_PATH = (
-    BASE_DIR
-    / "diagnostico"
-    / "ai"
-    / "class_names.json"
+API_TIMEOUT = int(
+    os.getenv(
+        "AGROIA_API_TIMEOUT",
+        "120",
+    )
 )
 
 
-# ============================================================
-# CONFIGURAÇÕES DO MODELO
-# ============================================================
-
-# Deve corresponder ao tamanho utilizado durante o treinamento.
-IMAGE_SIZE = (224, 224)
-
-# Tamanho máximo permitido para a imagem cadastrada no produto.
-MAX_IMAGE_SIZE = 10 * 1024 * 1024
-
-# Confiança mínima considerada aceitável.
-MIN_CONFIDENCE = 40.0
-
-# Quantidade esperada de classes.
-EXPECTED_CLASSES = 11
-
-
-# ============================================================
-# CACHE
-# ============================================================
-
-_model = None
-_class_names = None
-
-
-# ============================================================
-# INFORMAÇÕES DAS CLASSES
-# ============================================================
-
-RESULTADOS = {
-
-    # ========================================================
-    # MILHO
-    # ========================================================
-
-    "milho_saudavel": {
-        "produto": "milho",
-        "resultado": "saudavel",
-        "doenca": "Milho saudável",
-        "descricao": (
-            "A imagem apresenta características compatíveis "
-            "com uma planta de milho saudável."
-        ),
-        "recomendacoes": (
-            "Continue acompanhando regularmente a cultura, "
-            "mantenha uma boa nutrição, controle de plantas "
-            "daninhas e realize inspeções periódicas."
-        ),
-    },
-
-    "milho_ferrugem": {
-        "produto": "milho",
-        "resultado": "fungo",
-        "doenca": "Possível ferrugem do milho",
-        "descricao": (
-            "A imagem apresenta características visuais "
-            "compatíveis com sintomas associados à ferrugem "
-            "do milho."
-        ),
-        "recomendacoes": (
-            "Observe a evolução dos sintomas e a presença "
-            "de lesões em outras plantas. Procure orientação "
-            "de um técnico agrícola para confirmação e "
-            "tratamento adequado."
-        ),
-    },
-
-    "milho_mancha_foliar": {
-        "produto": "milho",
-        "resultado": "fungo",
-        "doenca": "Possível mancha foliar do milho",
-        "descricao": (
-            "Foram identificadas características visuais "
-            "compatíveis com sintomas de mancha foliar."
-        ),
-        "recomendacoes": (
-            "Observe outras plantas da parcela, retire "
-            "materiais vegetais muito afetados quando "
-            "apropriado e procure orientação técnica."
-        ),
-    },
-
-
-    # ========================================================
-    # FEIJÃO
-    # ========================================================
-
-    "feijao_saudavel": {
-        "produto": "feijao",
-        "resultado": "saudavel",
-        "doenca": "Feijão saudável",
-        "descricao": (
-            "A imagem apresenta características compatíveis "
-            "com uma planta de feijão saudável."
-        ),
-        "recomendacoes": (
-            "Continue monitorando a cultura, mantenha boas "
-            "práticas de manejo e faça inspeções regulares."
-        ),
-    },
-
-    "feijao_antracnose": {
-        "produto": "feijao",
-        "resultado": "fungo",
-        "doenca": "Possível antracnose do feijão",
-        "descricao": (
-            "A imagem apresenta características visuais "
-            "compatíveis com sintomas associados à antracnose."
-        ),
-        "recomendacoes": (
-            "Monitore a evolução dos sintomas e procure "
-            "orientação de um técnico agrícola para confirmar "
-            "o diagnóstico e definir as medidas de controle."
-        ),
-    },
-
-
-    # ========================================================
-    # MANDIOCA
-    # ========================================================
-
-    "mandioca_saudavel": {
-        "produto": "mandioca",
-        "resultado": "saudavel",
-        "doenca": "Mandioca saudável",
-        "descricao": (
-            "A imagem apresenta características compatíveis "
-            "com uma planta de mandioca saudável."
-        ),
-        "recomendacoes": (
-            "Continue realizando inspeções regulares e "
-            "mantenha boas práticas de manejo da cultura."
-        ),
-    },
-
-    "mandioca_mosaico": {
-        "produto": "mandioca",
-        "resultado": "doenca",
-        "doenca": "Possível mosaico da mandioca",
-        "descricao": (
-            "A imagem apresenta características visuais "
-            "compatíveis com sintomas de mosaico da mandioca."
-        ),
-        "recomendacoes": (
-            "Observe a presença de sintomas semelhantes em "
-            "outras plantas e procure orientação técnica para "
-            "confirmar o diagnóstico."
-        ),
-    },
-
-
-    # ========================================================
-    # ARROZ
-    # ========================================================
-
-    "arroz_saudavel": {
-        "produto": "arroz",
-        "resultado": "saudavel",
-        "doenca": "Arroz saudável",
-        "descricao": (
-            "A imagem apresenta características compatíveis "
-            "com uma planta de arroz saudável."
-        ),
-        "recomendacoes": (
-            "Continue monitorando a cultura e mantenha boas "
-            "práticas de manejo agrícola."
-        ),
-    },
-
-    "arroz_mancha_foliar": {
-        "produto": "arroz",
-        "resultado": "fungo",
-        "doenca": "Possível mancha foliar do arroz",
-        "descricao": (
-            "A imagem apresenta características visuais "
-            "compatíveis com sintomas de mancha foliar."
-        ),
-        "recomendacoes": (
-            "Monitore outras plantas da parcela e procure "
-            "orientação técnica para confirmar a causa "
-            "dos sintomas."
-        ),
-    },
-
-
-    # ========================================================
-    # TOMATE
-    # ========================================================
-
-    "tomate_saudavel": {
-        "produto": "tomate",
-        "resultado": "saudavel",
-        "doenca": "Tomate saudável",
-        "descricao": (
-            "A imagem apresenta características compatíveis "
-            "com uma planta de tomate saudável."
-        ),
-        "recomendacoes": (
-            "Continue acompanhando a cultura e observe "
-            "regularmente folhas, caules e frutos."
-        ),
-    },
-
-    "tomate_requeima": {
-        "produto": "tomate",
-        "resultado": "fungo",
-        "doenca": "Possível requeima do tomate",
-        "descricao": (
-            "A imagem apresenta características visuais "
-            "compatíveis com sintomas associados à requeima."
-        ),
-        "recomendacoes": (
-            "Observe a evolução dos sintomas e procure "
-            "orientação técnica para confirmação e definição "
-            "das medidas adequadas de manejo."
-        ),
-    },
-}
-
-
-# ============================================================
-# NORMALIZAÇÃO DE TEXTO
-# ============================================================
 
 def normalizar_texto(valor):
-    """
-    Normaliza texto para comparação.
-
-    Exemplos:
-
-        Feijão       -> feijao
-        Milho        -> milho
-        Mancha Foliar -> mancha_foliar
-    """
 
     if valor is None:
         return ""
 
-    texto = str(valor).strip().lower()
+    return str(valor).strip().lower()
 
-    # Remove acentos de forma segura.
-    texto = unicodedata.normalize(
-        "NFKD",
+
+
+def obter_nome_produto(produto):
+
+
+    if produto is None:
+        return ""
+
+    nome = getattr(
+        produto,
+        "nome",
+        "",
+    )
+
+    return normalizar_texto(nome)
+
+
+
+def normalizar_cultura(valor):
+    """
+    Converte diferentes formas de identificação de uma
+    cultura para um nome padrão utilizado pelo sistema.
+    """
+
+    texto = normalizar_texto(valor)
+
+    if not texto:
+        return ""
+
+    # Remover caracteres que aparecem nas classes da IA
+    texto = (
+        texto
+        .replace("_", " ")
+        .replace("(", "")
+        .replace(")", "")
+        .replace(",", "")
+        .strip()
+    )
+
+    # Espaços duplicados
+    texto = " ".join(texto.split())
+
+    equivalencias = {
+        # MILHO
+        "milho": "milho",
+        "corn": "milho",
+        "maize": "milho",
+        "corn maize": "milho",
+        "corn maize healthy": "milho",
+        "corn maize common rust": "milho",
+
+        # TOMATE
+        "tomate": "tomate",
+        "tomato": "tomate",
+
+        # BATATA
+        "batata": "batata",
+        "potato": "batata",
+
+        # MAÇÃ
+        "maca": "maçã",
+        "maçã": "maçã",
+        "apple": "maçã",
+
+        # UVA
+        "uva": "uva",
+        "grape": "uva",
+
+        # PÊSSEGO
+        "pessego": "pêssego",
+        "pêssego": "pêssego",
+        "peach": "pêssego",
+
+        # CEREJA
+        "cereja": "cereja",
+        "cherry": "cereja",
+
+        # LARANJA
+        "laranja": "laranja",
+        "orange": "laranja",
+
+        # SOJA
+        "soja": "soja",
+        "soybean": "soja",
+
+        # MORANGO
+        "morango": "morango",
+        "strawberry": "morango",
+
+        # FRAMBOESA
+        "framboesa": "framboesa",
+        "raspberry": "framboesa",
+
+        # MIRTILO
+        "mirtilo": "mirtilo",
+        "blueberry": "mirtilo",
+
+        # PIMENTÃO
+        "pimentao": "pimentão",
+        "pimentão": "pimentão",
+        "pepper": "pimentão",
+        "pepper bell": "pimentão",
+
+        # ABÓBORA
+        "abobora": "abóbora",
+        "abóbora": "abóbora",
+        "squash": "abóbora",
+    }
+
+    return equivalencias.get(
+        texto,
         texto,
     )
-
-    texto = "".join(
-        caractere
-        for caractere in texto
-        if not unicodedata.combining(caractere)
-    )
-
-    texto = re.sub(
-        r"[^a-z0-9]+",
-        "_",
-        texto,
-    )
-
-    return texto.strip("_")
 
 
 # ============================================================
@@ -304,216 +151,114 @@ def normalizar_texto(valor):
 
 def identificar_produto_da_classe(classe):
     """
-    Identifica o produto correspondente à classe retornada
-    pelo modelo.
+    Identifica a cultura/produto a partir da classe retornada
+    pela inteligência artificial.
 
     Exemplos:
 
-        milho_ferrugem
-        -> milho
+        Corn_(maize)___healthy
+        -> Corn_(maize)
 
-        feijao_antracnose
-        -> feijao
-
-        mandioca_mosaico
-        -> mandioca
+        Tomato___Late_blight
+        -> Tomato
     """
-
-    classe = normalizar_texto(classe)
 
     if not classe:
         return ""
 
-    if classe in RESULTADOS:
-        return RESULTADOS[classe].get(
-            "produto",
-            "",
-        )
+    classe_original = str(classe).strip()
 
-    if "_" in classe:
-        return classe.split("_")[0]
+    if "___" in classe_original:
+        produto = classe_original.split(
+            "___",
+            1,
+        )[0]
+    else:
+        produto = classe_original
 
-    return ""
+    return normalizar_cultura(produto)
 
 
 # ============================================================
-# ALIAS PARA COMPATIBILIDADE
+# IDENTIFICAR CULTURA
 # ============================================================
 
 def identificar_cultura_da_classe(classe):
     """
-    Mantém compatibilidade com código antigo.
-
-    O sistema atual trabalha com produtos, mas esta função
-    continua disponível para evitar quebra de código legado.
+    Alias para identificação da cultura.
     """
 
-    return identificar_produto_da_classe(classe)
+    return identificar_produto_da_classe(
+        classe
+    )
 
 
 # ============================================================
-# CARREGAR MODELO
+# VALIDAR PRODUTO COM CLASSE
 # ============================================================
 
-def load_model():
+def validar_produto_com_classe(produto, classe):
     """
-    Carrega o modelo TensorFlow/Keras apenas uma vez.
+    Verifica se o produto selecionado no Django corresponde
+    à cultura identificada pela IA.
     """
 
-    global _model
+    if produto is None or not classe:
+        return {
+            "corresponde": True,
+            "mensagem": "",
+        }
 
-    if _model is not None:
-        return _model
-
-    # --------------------------------------------------------
-    # EXISTÊNCIA
-    # --------------------------------------------------------
-
-    if not MODEL_PATH.exists():
-        raise FileNotFoundError(
-            "Modelo de IA não encontrado.\n\n"
-            f"Caminho esperado:\n{MODEL_PATH}\n\n"
-            "Execute o train_model.py para gerar o "
-            "arquivo model.keras."
+    nome_produto = normalizar_cultura(
+        getattr(
+            produto,
+            "nome",
+            "",
         )
+    )
 
-    # --------------------------------------------------------
-    # TAMANHO
-    # --------------------------------------------------------
+    produto_detectado = identificar_produto_da_classe(
+        classe
+    )
 
-    model_size = MODEL_PATH.stat().st_size
+    # Se não conseguirmos determinar algum dos dois,
+    # não bloqueamos o diagnóstico.
+    if not nome_produto or not produto_detectado:
+        return {
+            "corresponde": True,
+            "mensagem": "",
+        }
 
-    if model_size <= 0:
-        raise RuntimeError(
-            "O arquivo model.keras está vazio.\n\n"
-            "Execute o train_model.py para treinar "
-            "o modelo antes de realizar diagnósticos."
-        )
+    if nome_produto == produto_detectado:
+        return {
+            "corresponde": True,
+            "mensagem": "",
+        }
 
-    # --------------------------------------------------------
-    # CARREGAR
-    # --------------------------------------------------------
+    nome_original = getattr(
+        produto,
+        "nome",
+        "",
+    )
 
-    try:
-        _model = tf.keras.models.load_model(
-            MODEL_PATH,
-            compile=False,
-        )
-
-    except Exception as exc:
-
-        raise RuntimeError(
-            "Não foi possível carregar o modelo "
-            "TensorFlow/Keras.\n\n"
-            "Verifique se o arquivo model.keras foi "
-            "gerado corretamente pelo train_model.py."
-        ) from exc
-
-    return _model
+    return {
+        "corresponde": False,
+        "mensagem": (
+            "A inteligência artificial identificou "
+            f"'{produto_detectado}', mas o produto selecionado "
+            f"é '{nome_original}'. "
+            "Verifique se a imagem corresponde ao produto."
+        ),
+    }
 
 
 # ============================================================
-# CARREGAR CLASSES
+# VALIDAR IMAGEM
 # ============================================================
 
-def load_class_names():
+def validar_imagem(image_file):
     """
-    Carrega e valida o class_names.json.
-    """
-
-    global _class_names
-
-    if _class_names is not None:
-        return _class_names
-
-    if not CLASS_NAMES_PATH.exists():
-        raise FileNotFoundError(
-            "Arquivo class_names.json não encontrado.\n\n"
-            f"Caminho esperado:\n{CLASS_NAMES_PATH}"
-        )
-
-    try:
-
-        with open(
-            CLASS_NAMES_PATH,
-            "r",
-            encoding="utf-8",
-        ) as file:
-
-            data = json.load(file)
-
-    except json.JSONDecodeError as exc:
-
-        raise ValueError(
-            "O arquivo class_names.json não contém "
-            "um JSON válido."
-        ) from exc
-
-    except OSError as exc:
-
-        raise RuntimeError(
-            "Não foi possível ler o arquivo "
-            "class_names.json."
-        ) from exc
-
-    if not isinstance(data, list):
-        raise ValueError(
-            "O class_names.json deve conter uma lista."
-        )
-
-    if not data:
-        raise ValueError(
-            "O class_names.json está vazio."
-        )
-
-    classes_normalizadas = []
-
-    for classe in data:
-
-        classe_normalizada = normalizar_texto(
-            classe
-        )
-
-        if classe_normalizada:
-            classes_normalizadas.append(
-                classe_normalizada
-            )
-
-    if not classes_normalizadas:
-        raise ValueError(
-            "Nenhuma classe válida foi encontrada "
-            "no class_names.json."
-        )
-
-    if len(classes_normalizadas) != EXPECTED_CLASSES:
-        raise ValueError(
-            "O sistema AgroIA Moxico espera exatamente "
-            f"{EXPECTED_CLASSES} classes.\n\n"
-            f"Classes encontradas: "
-            f"{len(classes_normalizadas)}"
-        )
-
-    _class_names = classes_normalizadas
-
-    return _class_names
-
-
-# ============================================================
-# PREPARAR IMAGEM
-# ============================================================
-
-def prepare_image(image_file):
-    """
-    Prepara a imagem cadastrada no ProdutoAgricola.
-
-    Aceita:
-
-    - FieldFile do Django;
-    - UploadedFile;
-    - arquivo aberto;
-    - objeto compatível com PIL.
-
-    A imagem não é alterada no armazenamento.
+    Valida a imagem antes de enviá-la para a API externa.
     """
 
     if image_file is None:
@@ -521,22 +266,18 @@ def prepare_image(image_file):
             "Nenhuma imagem foi fornecida para análise."
         )
 
-    # ========================================================
+    # --------------------------------------------------------
     # TAMANHO
-    # ========================================================
+    # --------------------------------------------------------
 
     try:
-
-        file_size = getattr(
+        tamanho = getattr(
             image_file,
             "size",
             0,
         )
 
-        if (
-            file_size
-            and file_size > MAX_IMAGE_SIZE
-        ):
+        if tamanho and tamanho > MAX_IMAGE_SIZE:
             raise ValueError(
                 "A imagem não pode ultrapassar 10 MB."
             )
@@ -547,17 +288,13 @@ def prepare_image(image_file):
     except Exception:
         pass
 
-    # ========================================================
-    # ABRIR IMAGEM
-    # ========================================================
+    # --------------------------------------------------------
+    # ABRIR E VALIDAR IMAGEM
+    # --------------------------------------------------------
 
-    image = None
+    imagem = None
 
     try:
-
-        # ----------------------------------------------------
-        # FieldFile do Django
-        # ----------------------------------------------------
 
         if hasattr(
             image_file,
@@ -568,22 +305,19 @@ def prepare_image(image_file):
 
             try:
 
-                image = Image.open(
+                imagem = Image.open(
                     image_file
                 )
 
-                image.load()
+                imagem.load()
 
             finally:
 
                 try:
                     image_file.close()
+
                 except Exception:
                     pass
-
-        # ----------------------------------------------------
-        # UploadedFile / arquivo
-        # ----------------------------------------------------
 
         else:
 
@@ -593,11 +327,11 @@ def prepare_image(image_file):
             ):
                 image_file.seek(0)
 
-            image = Image.open(
+            imagem = Image.open(
                 image_file
             )
 
-            image.load()
+            imagem.load()
 
     except UnidentifiedImageError as exc:
 
@@ -616,222 +350,670 @@ def prepare_image(image_file):
             "no produto."
         ) from exc
 
-    # ========================================================
-    # RGB
-    # ========================================================
+    # --------------------------------------------------------
+    # CONVERTER PARA RGB
+    # --------------------------------------------------------
 
     try:
 
-        image = image.convert(
+        imagem = imagem.convert(
             "RGB"
         )
 
     except Exception as exc:
 
         raise ValueError(
-            "Não foi possível converter a imagem "
-            "para o formato RGB."
+            "Não foi possível processar a imagem "
+            "cadastrada no produto."
+        ) from exc
+
+    return imagem
+
+
+# ============================================================
+# OBTER BYTES DA IMAGEM
+# ============================================================
+
+def obter_bytes_imagem(image_file):
+    """
+    Obtém os bytes reais da imagem.
+    """
+
+    if image_file is None:
+        raise ValueError(
+            "Nenhuma imagem foi fornecida para análise."
+        )
+
+    try:
+
+        if hasattr(
+            image_file,
+            "open",
+        ):
+
+            image_file.open("rb")
+
+            try:
+
+                dados = image_file.read()
+
+            finally:
+
+                try:
+                    image_file.close()
+
+                except Exception:
+                    pass
+
+        else:
+
+            if hasattr(
+                image_file,
+                "seek",
+            ):
+                image_file.seek(0)
+
+            dados = image_file.read()
+
+    except Exception as exc:
+
+        raise ValueError(
+            "Não foi possível ler a imagem "
+            "cadastrada no produto."
+        ) from exc
+
+    if not dados:
+
+        raise ValueError(
+            "A imagem cadastrada no produto está vazia."
+        )
+
+    if len(dados) > MAX_IMAGE_SIZE:
+
+        raise ValueError(
+            "A imagem não pode ultrapassar 10 MB."
+        )
+
+    return dados
+
+
+# ============================================================
+# DETERMINAR MIME TYPE
+# ============================================================
+
+def obter_content_type(nome_arquivo):
+    """
+    Determina o tipo MIME da imagem.
+    """
+
+    extensao = Path(
+        nome_arquivo or ""
+    ).suffix.lower()
+
+    tipos = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+        ".webp": "image/webp",
+    }
+
+    if extensao in tipos:
+        return tipos[extensao]
+
+    content_type, _ = mimetypes.guess_type(
+        nome_arquivo or ""
+    )
+
+    if content_type in {
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+    }:
+        return content_type
+
+    return "image/jpeg"
+
+
+# ============================================================
+# ENVIAR IMAGEM PARA A API EXTERNA
+# ============================================================
+
+def enviar_para_api(
+    imagem_bytes,
+    nome_arquivo="imagem.jpg",
+):
+    """
+    Envia a imagem para:
+
+        POST http://127.0.0.1:8001/analisar
+
+    da API externa AgroIA.
+    """
+
+    if not imagem_bytes:
+
+        raise ValueError(
+            "Nenhuma imagem disponível para enviar à API."
+        )
+
+    if len(imagem_bytes) > MAX_IMAGE_SIZE:
+
+        raise ValueError(
+            "A imagem não pode ultrapassar 10 MB."
+        )
+
+    content_type = obter_content_type(
+        nome_arquivo
+    )
+
+    arquivos = {
+        "imagem": (
+            nome_arquivo,
+            imagem_bytes,
+            content_type,
+        )
+    }
+
+    try:
+
+        resposta = requests.post(
+            API_URL,
+            files=arquivos,
+            timeout=API_TIMEOUT,
+        )
+
+    except requests.exceptions.ConnectionError as exc:
+
+        raise ValueError(
+            "Não foi possível conectar à API de "
+            "inteligência artificial. "
+            "Verifique se a API AgroIA está em execução "
+            f"em {API_URL}."
+        ) from exc
+
+    except requests.exceptions.Timeout as exc:
+
+        raise ValueError(
+            "A API de inteligência artificial demorou "
+            "demasiado tempo para responder. "
+            "Tente novamente."
+        ) from exc
+
+    except requests.exceptions.RequestException as exc:
+
+        raise ValueError(
+            "Ocorreu um erro ao comunicar com a API "
+            "de inteligência artificial."
         ) from exc
 
     # ========================================================
-    # REDIMENSIONAR
+    # ERROS HTTP
     # ========================================================
 
-    image = image.resize(
-        IMAGE_SIZE,
-        Image.Resampling.LANCZOS,
-    )
+    if resposta.status_code >= 400:
+
+        detalhe = ""
+
+        try:
+
+            dados_erro = resposta.json()
+
+            if isinstance(
+                dados_erro,
+                dict,
+            ):
+
+                detalhe = (
+                    dados_erro.get("detail")
+                    or dados_erro.get("erro")
+                    or dados_erro.get("message")
+                    or ""
+                )
+
+        except Exception:
+            pass
+
+        if resposta.status_code == 400:
+
+            raise ValueError(
+                detalhe
+                or "A API rejeitou a imagem enviada."
+            )
+
+        if resposta.status_code == 413:
+
+            raise ValueError(
+                "A imagem não pode ultrapassar 10 MB."
+            )
+
+        if resposta.status_code == 422:
+
+            raise ValueError(
+                detalhe
+                or (
+                    "A API recebeu dados inválidos "
+                    "para realizar a análise."
+                )
+            )
+
+        if resposta.status_code >= 500:
+
+            raise ValueError(
+                "A API de inteligência artificial "
+                "encontrou um erro interno. "
+                "Verifique se o modelo está funcionando."
+            )
+
+        raise ValueError(
+            detalhe
+            or (
+                "A API de inteligência artificial "
+                "não conseguiu processar a imagem."
+            )
+        )
 
     # ========================================================
-    # NUMPY
+    # JSON
     # ========================================================
 
-    image_array = np.asarray(
-        image,
-        dtype=np.float32,
-    )
+    try:
 
-    # ========================================================
-    # NORMALIZAÇÃO
-    # ========================================================
+        dados = resposta.json()
 
-    image_array /= 255.0
+    except ValueError as exc:
 
-    # ========================================================
-    # BATCH
-    # ========================================================
+        raise ValueError(
+            "A API de inteligência artificial "
+            "retornou uma resposta inválida."
+        ) from exc
 
-    image_array = np.expand_dims(
-        image_array,
-        axis=0,
-    )
+    if not isinstance(
+        dados,
+        dict,
+    ):
 
-    return image_array
+        raise ValueError(
+            "A API de inteligência artificial "
+            "retornou um formato inesperado."
+        )
+
+    return dados
 
 
 # ============================================================
-# OBTER INFORMAÇÕES DA CLASSE
+# EXTRAIR RESULTADO DA API
 # ============================================================
 
-def obter_informacoes_classe(classe):
+def extrair_resultado_api(dados_api):
     """
-    Retorna informações agrícolas da classe detectada.
-    """
+    Extrai o objeto 'resultado' retornado pela API.
 
-    classe = normalizar_texto(
-        classe
-    )
+    Formato esperado:
 
-    informacao = RESULTADOS.get(
-        classe
-    )
-
-    if informacao:
-        return informacao.copy()
-
-    produto = identificar_produto_da_classe(
-        classe
-    )
-
-    return {
-        "produto": produto,
-        "resultado": "indeterminado",
-        "doenca": (
-            classe.replace(
-                "_",
-                " ",
-            ).title()
-            if classe
-            else "Resultado não identificado"
-        ),
-        "descricao": (
-            "O modelo identificou uma classe para a qual "
-            "ainda não existe uma descrição detalhada "
-            "configurada no sistema."
-        ),
-        "recomendacoes": (
-            "Procure orientação técnica para confirmar "
-            "o resultado antes de tomar qualquer decisão."
-        ),
+    {
+        "sucesso": true,
+        "resultado": {
+            "classe": "...",
+            "produto": "...",
+            "problema": "...",
+            "tipo": "...",
+            "confianca": 91.16,
+            "principais_previsoes": [...]
+        }
     }
-
-
-# ============================================================
-# OBTER NOME NORMALIZADO DO PRODUTO
-# ============================================================
-
-def obter_nome_produto(produto):
-    """
-    Obtém o nome normalizado do ProdutoAgricola.
-
-    Exemplo:
-
-        ProdutoAgricola(nome="Milho")
-        -> milho
     """
 
-    if produto is None:
-        return ""
+    if not dados_api:
 
-    nome = getattr(
-        produto,
-        "nome",
-        "",
+        raise ValueError(
+            "A API de inteligência artificial "
+            "não retornou nenhum resultado."
+        )
+
+    sucesso = dados_api.get(
+        "sucesso",
+        False,
     )
 
-    return normalizar_texto(
-        nome
+    if sucesso is False:
+
+        raise ValueError(
+            "A API de inteligência artificial "
+            "não conseguiu concluir a análise."
+        )
+
+    resultado = dados_api.get(
+        "resultado"
     )
+
+    if not isinstance(
+        resultado,
+        dict,
+    ):
+
+        raise ValueError(
+            "A API de inteligência artificial "
+            "não retornou os dados do diagnóstico."
+        )
+
+    return resultado
 
 
 # ============================================================
-# VALIDAR PRODUTO COM CLASSE
+# NORMALIZAR RESULTADO DA API
 # ============================================================
 
-def validar_produto_com_classe(
-    produto,
-    classe,
+def normalizar_resultado_api(
+    resultado,
+    produto=None,
 ):
     """
-    Verifica se o produto cadastrado corresponde ao produto
-    identificado pela IA.
-
-    Produto cadastrado:
-        Milho
-
-    Classe da IA:
-        milho_ferrugem
-
-    Resultado:
-        corresponde = True
+    Converte o resultado da API externa para o formato
+    utilizado pelo sistema Django.
     """
 
-    if produto is None:
-        return {
-            "corresponde": True,
-            "mensagem": "",
-        }
+    if not resultado:
 
-    produto_detectado = identificar_produto_da_classe(
-        classe
+        raise ValueError(
+            "A inteligência artificial não retornou "
+            "nenhum resultado."
+        )
+
+    # --------------------------------------------------------
+    # CAMPOS PRINCIPAIS
+    # --------------------------------------------------------
+
+    classe = str(
+        resultado.get(
+            "classe",
+            "",
+        )
+        or ""
+    ).strip()
+
+    produto_detectado = str(
+        resultado.get(
+            "produto",
+            "",
+        )
+        or ""
+    ).strip()
+
+    problema = str(
+        resultado.get(
+            "problema",
+            "",
+        )
+        or ""
+    ).strip()
+
+    tipo = str(
+        resultado.get(
+            "tipo",
+            "",
+        )
+        or ""
+    ).strip()
+
+    # --------------------------------------------------------
+    # CONFIANÇA
+    # --------------------------------------------------------
+
+    try:
+
+        confianca = float(
+            resultado.get(
+                "confianca",
+                0,
+            )
+        )
+
+    except (
+        TypeError,
+        ValueError,
+    ):
+
+        confianca = 0.0
+
+    confianca = max(
+        0.0,
+        min(
+            100.0,
+            confianca,
+        ),
     )
 
-    if not produto_detectado:
-        return {
-            "corresponde": True,
-            "mensagem": "",
-        }
+    # --------------------------------------------------------
+    # PRINCIPAIS PREVISÕES
+    # --------------------------------------------------------
 
-    produto_cadastrado = obter_nome_produto(
-        produto
+    principais_previsoes = resultado.get(
+        "principais_previsoes",
+        [],
     )
 
-    if not produto_cadastrado:
-        return {
-            "corresponde": True,
-            "mensagem": "",
-        }
+    if not isinstance(
+        principais_previsoes,
+        list,
+    ):
 
-    # ========================================================
-    # COMPARAÇÃO
-    # ========================================================
+        principais_previsoes = []
 
-    corresponde = (
-        produto_detectado in produto_cadastrado
-        or produto_cadastrado in produto_detectado
+    # --------------------------------------------------------
+    # NORMALIZAÇÃO DO TIPO
+    # --------------------------------------------------------
+
+    tipo_lower = normalizar_texto(
+        tipo
     )
 
-    if corresponde:
-        return {
-            "corresponde": True,
-            "mensagem": "",
+    problema_lower = normalizar_texto(
+        problema
+    )
+
+    # --------------------------------------------------------
+    # DETERMINAR RESULTADO
+    # --------------------------------------------------------
+
+    if (
+        "healthy" in problema_lower
+        or "saudavel" in problema_lower
+        or "saudável" in problema_lower
+        or "healthy" in tipo_lower
+        or "saudavel" in tipo_lower
+        or "saudável" in tipo_lower
+    ):
+
+        resultado_final = "saudavel"
+
+    elif "praga" in tipo_lower:
+
+        resultado_final = "praga"
+
+    elif (
+        "fung" in tipo_lower
+        or "fungo" in tipo_lower
+        or "fungica" in tipo_lower
+        or "fúngica" in tipo_lower
+    ):
+
+        resultado_final = "fungo"
+
+    elif "viral" in tipo_lower:
+
+        resultado_final = "doenca"
+
+    elif "bacteriana" in tipo_lower:
+
+        resultado_final = "doenca"
+
+    elif (
+        "deficiência" in tipo_lower
+        or "deficiencia" in tipo_lower
+    ):
+
+        resultado_final = "deficiencia"
+
+    elif (
+        problema
+        and problema_lower not in {
+            "healthy",
+            "saudavel",
+            "saudável",
         }
+    ):
 
-    # ========================================================
-    # INCOMPATIBILIDADE
-    # ========================================================
+        resultado_final = "doenca"
 
-    nome_original = getattr(
+    else:
+
+        resultado_final = "indeterminado"
+
+    # --------------------------------------------------------
+    # DOENÇA
+    # --------------------------------------------------------
+
+    if resultado_final == "saudavel":
+
+        doenca = ""
+
+    elif problema:
+
+        doenca = problema
+
+    else:
+
+        doenca = ""
+
+    # --------------------------------------------------------
+    # NOME DO PRODUTO
+    # --------------------------------------------------------
+
+    produto_nome = (
+        produto_detectado
+        or obter_nome_produto(produto)
+        or "o produto analisado"
+    )
+
+    # --------------------------------------------------------
+    # DESCRIÇÃO
+    # --------------------------------------------------------
+
+    if resultado_final == "saudavel":
+
+        descricao = (
+            "A inteligência artificial identificou "
+            f"{produto_nome} como saudável."
+        )
+
+    elif doenca:
+
+        descricao = (
+            "A inteligência artificial identificou "
+            f"{doenca} em {produto_nome}."
+        )
+
+    else:
+
+        descricao = (
+            "A inteligência artificial não conseguiu "
+            "determinar com precisão o problema presente "
+            "na imagem."
+        )
+
+    # --------------------------------------------------------
+    # RECOMENDAÇÕES
+    # --------------------------------------------------------
+
+    if resultado_final == "saudavel":
+
+        recomendacoes = (
+            "A cultura foi identificada como saudável. "
+            "Continue acompanhando regularmente a plantação "
+            "e mantenha boas práticas agrícolas. "
+            "Faça novas análises caso sejam observadas "
+            "alterações nas folhas, frutos ou demais partes "
+            "da planta."
+        )
+
+    elif doenca:
+
+        recomendacoes = (
+            "A imagem apresenta características associadas "
+            f"a {doenca}. Recomenda-se acompanhar a evolução "
+            "dos sintomas e procurar orientação de um técnico "
+            "agrícola ou agrónomo para confirmar o diagnóstico "
+            "e definir o tratamento adequado."
+        )
+
+    else:
+
+        recomendacoes = (
+            "A inteligência artificial não conseguiu "
+            "determinar o problema com segurança. "
+            "Recomenda-se realizar uma nova análise com "
+            "uma imagem nítida e bem iluminada e procurar "
+            "orientação técnica quando necessário."
+        )
+
+    # --------------------------------------------------------
+    # CONFIANÇA BAIXA
+    # --------------------------------------------------------
+
+    baixa_confianca = confianca < 60.0
+
+    # --------------------------------------------------------
+    # COMPATIBILIDADE
+    # --------------------------------------------------------
+
+    compatibilidade = validar_produto_com_classe(
         produto,
-        "nome",
-        "produto",
+        classe,
     )
+
+    # --------------------------------------------------------
+    # RESULTADO FINAL
+    # --------------------------------------------------------
 
     return {
-        "corresponde": False,
-        "mensagem": (
-            "A inteligência artificial identificou "
-            f"uma classe compatível com '{produto_detectado}', "
-            f"enquanto o produto cadastrado é "
-            f"'{nome_original}'. "
-            "Verifique se a imagem cadastrada pertence "
-            "ao produto selecionado."
+        "classe": classe,
+
+        "produto": produto_detectado,
+
+        "produtos": produto_detectado,
+
+        "problema": problema,
+
+        "tipo": tipo,
+
+        "confianca": confianca,
+
+        "resultado": resultado_final,
+
+        "doenca": doenca,
+
+        "descricao": descricao,
+
+        "recomendacoes": recomendacoes,
+
+        "principais_previsoes": (
+            principais_previsoes
         ),
+
+        "produto_compativel": (
+            compatibilidade["corresponde"]
+        ),
+
+        "mensagem_compatibilidade": (
+            compatibilidade["mensagem"]
+        ),
+
+        "baixa_confianca": baixa_confianca,
     }
 
 
 # ============================================================
-# ANALISAR IMAGEM
+# FUNÇÃO PRINCIPAL — ANALISAR IMAGEM
 # ============================================================
 
 def analisar_imagem(
@@ -839,34 +1021,31 @@ def analisar_imagem(
     produto=None,
 ):
     """
-    Analisa a imagem através do modelo de IA.
+    Função principal utilizada pela views.py.
 
-    O fluxo principal do AgroIA Moxico é:
+    Fluxo:
 
-        ProdutoAgricola
+        Produto Django
               ↓
-        produto.imagem
+        Imagem cadastrada
               ↓
-        prepare_image()
+        Validação
               ↓
-        model.keras
+        Bytes da imagem
               ↓
-        classe
+        API externa AgroIA
               ↓
-        informações agrícolas
+        Modelo MobileNetV2
               ↓
-        validação do produto
+        Resultado da IA
               ↓
-        resultado final
-
-    Se 'produto' for fornecido, a função ignora qualquer
-    outra imagem e utiliza exclusivamente:
-
-        produto.imagem
+        Normalização
+              ↓
+        Django
     """
 
     # ========================================================
-    # VALIDAR PRODUTO
+    # OBTER IMAGEM DO PRODUTO
     # ========================================================
 
     if produto is not None:
@@ -878,458 +1057,90 @@ def analisar_imagem(
         )
 
         if not produto_imagem:
+
             raise ValueError(
                 "O produto selecionado não possui "
                 "uma imagem cadastrada."
             )
 
-        # ----------------------------------------------------
-        # IMPORTANTE:
-        # sempre utilizar a imagem do produto
-        # ----------------------------------------------------
-
         image_file = produto_imagem
 
     # ========================================================
-    # VALIDAR IMAGEM
+    # VERIFICAR IMAGEM
     # ========================================================
 
     if image_file is None:
+
         raise ValueError(
             "Nenhuma imagem disponível para realizar "
             "o diagnóstico."
         )
 
     # ========================================================
-    # CARREGAR MODELO
+    # VALIDAR IMAGEM
     # ========================================================
 
-    model = load_model()
-
-    # ========================================================
-    # CARREGAR CLASSES
-    # ========================================================
-
-    class_names = load_class_names()
-
-    # ========================================================
-    # PREPARAR IMAGEM
-    # ========================================================
-
-    image = prepare_image(
+    validar_imagem(
         image_file
     )
 
     # ========================================================
-    # PREDIÇÃO
+    # OBTER BYTES
     # ========================================================
+
+    imagem_bytes = obter_bytes_imagem(
+        image_file
+    )
+
+    # ========================================================
+    # NOME DO ARQUIVO
+    # ========================================================
+
+    nome_arquivo = "imagem.jpg"
 
     try:
 
-        predictions = model.predict(
-            image,
-            verbose=0,
-        )
-
-    except Exception as exc:
-
-        raise RuntimeError(
-            "Ocorreu um erro durante a análise da "
-            "imagem pelo modelo de IA."
-        ) from exc
-
-    if predictions is None:
-        raise RuntimeError(
-            "O modelo de IA não retornou resultados."
-        )
-
-    # ========================================================
-    # NUMPY
-    # ========================================================
-
-    try:
-
-        predictions = np.asarray(
-            predictions,
-            dtype=np.float32,
-        )
-
-    except Exception as exc:
-
-        raise RuntimeError(
-            "Não foi possível interpretar a saída "
-            "do modelo de IA."
-        ) from exc
-
-    # ========================================================
-    # NORMALIZAR SAÍDA
-    # ========================================================
-
-    if predictions.ndim == 1:
-
-        probabilities = predictions
-
-    elif predictions.ndim == 2:
-
-        if predictions.shape[0] < 1:
-            raise RuntimeError(
-                "O modelo não retornou nenhuma previsão."
+        nome_arquivo = Path(
+            getattr(
+                image_file,
+                "name",
+                "imagem.jpg",
             )
-
-        probabilities = predictions[0]
-
-    else:
-
-        raise RuntimeError(
-            "O modelo retornou uma saída inválida."
-        )
-
-    probabilities = np.asarray(
-        probabilities,
-        dtype=np.float32,
-    ).reshape(-1)
-
-    # ========================================================
-    # QUANTIDADE DE CLASSES
-    # ========================================================
-
-    if len(probabilities) != len(class_names):
-
-        raise ValueError(
-            "A quantidade de classes do modelo não "
-            "corresponde ao class_names.json.\n\n"
-            f"Saída do modelo: "
-            f"{len(probabilities)}\n"
-            f"Classes configuradas: "
-            f"{len(class_names)}"
-        )
-
-    # ========================================================
-    # VALORES FINITOS
-    # ========================================================
-
-    if not np.all(
-        np.isfinite(probabilities)
-    ):
-
-        raise RuntimeError(
-            "O modelo retornou probabilidades inválidas."
-        )
-
-    # ========================================================
-    # DETECTAR TIPO DA SAÍDA
-    # ========================================================
-
-    probability_sum = float(
-        np.sum(probabilities)
-    )
-
-    probabilities_are_valid = (
-        np.all(probabilities >= 0)
-        and
-        np.all(probabilities <= 1)
-        and
-        np.isclose(
-            probability_sum,
-            1.0,
-            atol=0.01,
-        )
-    )
-
-    # ========================================================
-    # SOFTMAX
-    # ========================================================
-
-    if not probabilities_are_valid:
-
-        probabilities = (
-            tf.nn.softmax(
-                probabilities
-            ).numpy()
-        )
-
-    # ========================================================
-    # SEGURANÇA
-    # ========================================================
-
-    if not np.all(
-        np.isfinite(probabilities)
-    ):
-
-        raise RuntimeError(
-            "Não foi possível obter probabilidades "
-            "válidas do modelo."
-        )
-
-    # ========================================================
-    # MELHOR CLASSE
-    # ========================================================
-
-    index = int(
-        np.argmax(
-            probabilities
-        )
-    )
-
-    confidence = float(
-        probabilities[index] * 100.0
-    )
-
-    confidence = max(
-        0.0,
-        min(
-            100.0,
-            confidence,
-        ),
-    )
-
-    classe = normalizar_texto(
-        class_names[index]
-    )
-
-    # ========================================================
-    # INFORMAÇÕES AGRÍCOLAS
-    # ========================================================
-
-    informacoes = obter_informacoes_classe(
-        classe
-    )
-
-    produto_detectado = informacoes.get(
-        "produto",
-        identificar_produto_da_classe(
-            classe
-        ),
-    )
-
-    # ========================================================
-    # COMPATIBILIDADE COM PRODUTO
-    # ========================================================
-
-    compatibilidade = validar_produto_com_classe(
-        produto,
-        classe,
-    )
-
-    produto_compativel = compatibilidade.get(
-        "corresponde",
-        True,
-    )
-
-    mensagem = compatibilidade.get(
-        "mensagem",
-        "",
-    )
-
-    # ========================================================
-    # BAIXA CONFIANÇA
-    # ========================================================
-
-    baixa_confianca = (
-        confidence < MIN_CONFIDENCE
-    )
-
-    if baixa_confianca:
-
-        mensagem_baixa_confianca = (
-            "A confiança da análise é relativamente "
-            "baixa. Recomenda-se verificar a qualidade "
-            "da imagem e procurar confirmação técnica."
-        )
-
-        if mensagem:
-
-            mensagem = (
-                f"{mensagem} "
-                f"{mensagem_baixa_confianca}"
-            )
-
-        else:
-
-            mensagem = (
-                mensagem_baixa_confianca
-            )
-
-    # ========================================================
-    # RESULTADO FINAL
-    # ========================================================
-
-    return {
-
-        # ----------------------------------------------------
-        # IDENTIFICAÇÃO TÉCNICA
-        # ----------------------------------------------------
-
-        "classe": classe,
-
-        # ----------------------------------------------------
-        # PRODUTO IDENTIFICADO PELA IA
-        # ----------------------------------------------------
-
-        "produto": produto_detectado,
-
-        # ----------------------------------------------------
-        # COMPATIBILIDADE
-        # ----------------------------------------------------
-
-        "produto_compativel": (
-            produto_compativel
-        ),
-
-        "mensagem_compatibilidade": (
-            mensagem
-        ),
-
-        # ----------------------------------------------------
-        # CONFIANÇA
-        # ----------------------------------------------------
-
-        "confianca": round(
-            confidence,
-            2,
-        ),
-
-        "baixa_confianca": (
-            baixa_confianca
-        ),
-
-        # ----------------------------------------------------
-        # RESULTADO
-        # ----------------------------------------------------
-
-        "resultado": informacoes.get(
-            "resultado",
-            "indeterminado",
-        ),
-
-        # ----------------------------------------------------
-        # DOENÇA
-        # ----------------------------------------------------
-
-        "doenca": informacoes.get(
-            "doenca",
-            "Resultado não identificado",
-        ),
-
-        # ----------------------------------------------------
-        # DESCRIÇÃO
-        # ----------------------------------------------------
-
-        "descricao": informacoes.get(
-            "descricao",
-            "",
-        ),
-
-        # ----------------------------------------------------
-        # RECOMENDAÇÕES
-        # ----------------------------------------------------
-
-        "recomendacoes": informacoes.get(
-            "recomendacoes",
-            "",
-        ),
-    }
-
-
-# ============================================================
-# TESTAR MODELO
-# ============================================================
-
-def testar_modelo():
-    """
-    Verifica se o model.keras e o class_names.json estão
-    corretamente configurados.
-
-    No shell do Django:
-
-        from diagnostico.ai_service import testar_modelo
-        testar_modelo()
-    """
-
-    model = load_model()
-
-    class_names = load_class_names()
-
-    # --------------------------------------------------------
-    # INPUT
-    # --------------------------------------------------------
-
-    try:
-
-        input_shape = model.input_shape
+        ).name
 
     except Exception:
 
-        input_shape = "Não disponível"
+        nome_arquivo = "imagem.jpg"
 
-    # --------------------------------------------------------
-    # OUTPUT
-    # --------------------------------------------------------
+    if not nome_arquivo:
 
-    try:
+        nome_arquivo = "imagem.jpg"
 
-        output_shape = model.output_shape
+    # ========================================================
+    # ENVIAR PARA API EXTERNA
+    # ========================================================
 
-    except Exception:
-
-        output_shape = "Não disponível"
-
-    # --------------------------------------------------------
-    # TAMANHO
-    # --------------------------------------------------------
-
-    model_size = (
-        MODEL_PATH.stat().st_size
-        if MODEL_PATH.exists()
-        else 0
+    dados_api = enviar_para_api(
+        imagem_bytes,
+        nome_arquivo,
     )
 
-    return {
+    # ========================================================
+    # EXTRAIR RESULTADO
+    # ========================================================
 
-        "modelo": str(
-            MODEL_PATH
-        ),
+    resultado_api = extrair_resultado_api(
+        dados_api
+    )
 
-        "modelo_existe": (
-            MODEL_PATH.exists()
-        ),
+    # ========================================================
+    # NORMALIZAR RESULTADO
+    # ========================================================
 
-        "modelo_tamanho": (
-            model_size
-        ),
+    resultado_final = normalizar_resultado_api(
+        resultado_api,
+        produto=produto,
+    )
 
-        "input_shape": (
-            input_shape
-        ),
+    return resultado_final
 
-        "output_shape": (
-            output_shape
-        ),
-
-        "quantidade_classes": (
-            len(class_names)
-        ),
-
-        "classes": (
-            class_names
-        ),
-    }
-
-
-# ============================================================
-# RECARREGAR MODELO
-# ============================================================
-
-def recarregar_modelo():
-    """
-    Limpa o cache do modelo e das classes e força novo
-    carregamento.
-    """
-
-    global _model
-    global _class_names
-
-    _model = None
-    _class_names = None
-
-    return load_model()

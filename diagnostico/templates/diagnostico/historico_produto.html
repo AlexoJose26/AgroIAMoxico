@@ -1,77 +1,75 @@
 {% extends "base.html" %}
 
-{% load static %}
-
-{% block title %}
-Histórico do Produto | AgroIA Moxico
-{% endblock %}
+{% block title %}Histórico de Diagnósticos | AgroIA Moxico{% endblock %}
 
 {% block extra_css %}
 
 <style>
-  /* ============================================================
-   AGROIA MOXICO — HISTÓRICO DO PRODUTO
-   Alinhado visualmente à página Diagnóstico IA
-   ============================================================ */
-
   :root {
     --history-green: #176b45;
     --history-green-dark: #0d4d31;
     --history-green-light: #eaf7ef;
+    --history-green-soft: #f3faf6;
+
     --history-gold: #d9a441;
 
     --history-white: #ffffff;
     --history-bg: #f5f8f6;
+
     --history-text: #17352a;
     --history-muted: #6b7d75;
+
     --history-border: #dfe9e3;
 
     --history-success: #188653;
+    --history-success-bg: #e7f7ed;
+
     --history-danger: #c0392b;
+    --history-danger-bg: #fdebea;
+
     --history-warning: #b7791f;
-    --history-info: #245b78;
+    --history-warning-bg: #fff6df;
 
     --history-shadow:
-      0 14px 35px rgba(13, 77, 49, .08);
+      0 15px 40px rgba(13, 77, 49, .07);
 
     --history-radius: 20px;
   }
 
 
-  /* ============================================================
-   PÁGINA
-   ============================================================ */
+  /* =========================================================
+     PÁGINA
+  ========================================================= */
 
   .history-page {
     min-height: calc(100vh - 68px);
 
-    background:
-      radial-gradient(circle at 8% 8%,
-        rgba(23, 107, 69, .08),
-        transparent 30%),
-      radial-gradient(circle at 92% 12%,
-        rgba(217, 164, 65, .08),
-        transparent 25%),
-      linear-gradient(180deg,
-        #f8fbf9 0%,
-        var(--history-bg) 100%);
+    padding: 34px 0 80px;
 
-    padding: 35px 0 75px;
+    background:
+      radial-gradient(circle at 5% 3%,
+        rgba(23, 107, 69, .09),
+        transparent 27%),
+      radial-gradient(circle at 95% 5%,
+        rgba(217, 164, 65, .10),
+        transparent 24%),
+      linear-gradient(180deg,
+        #f9fcfa 0%,
+        var(--history-bg) 100%);
   }
 
 
   .history-container {
-    width: min(1200px, calc(100% - 32px));
+    width: min(1180px, calc(100% - 32px));
     margin: 0 auto;
   }
 
 
-  /* ============================================================
-   ANIMAÇÕES
-   ============================================================ */
+  /* =========================================================
+     ANIMAÇÕES
+  ========================================================= */
 
   @keyframes historyFadeUp {
-
     from {
       opacity: 0;
       transform: translateY(20px);
@@ -85,7 +83,6 @@ Histórico do Produto | AgroIA Moxico
 
 
   @keyframes historyFadeRight {
-
     from {
       opacity: 0;
       transform: translateX(-18px);
@@ -115,35 +112,31 @@ Histórico do Produto | AgroIA Moxico
 
     0%,
     100% {
-      box-shadow:
-        0 0 0 0 rgba(23, 107, 69, .18);
+      box-shadow: 0 0 0 0 rgba(23, 107, 69, .18);
     }
 
     50% {
-      box-shadow:
-        0 0 0 8px rgba(23, 107, 69, 0);
+      box-shadow: 0 0 0 8px rgba(23, 107, 69, 0);
     }
   }
 
 
   .history-fade-up {
-    animation:
-      historyFadeUp .65s ease both;
+    animation: historyFadeUp .55s ease both;
   }
 
 
   .history-fade-right {
-    animation:
-      historyFadeRight .55s ease both;
+    animation: historyFadeRight .45s ease both;
   }
 
 
-  /* ============================================================
-   BOTÃO VOLTAR
-   ============================================================ */
+  /* =========================================================
+     BOTÃO VOLTAR
+  ========================================================= */
 
   .history-back-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
   }
 
 
@@ -156,51 +149,53 @@ Histórico do Produto | AgroIA Moxico
     padding: 0 15px;
 
     color: var(--history-green-dark);
-    background: rgba(255, 255, 255, .94);
+    background: rgba(255, 255, 255, .95);
 
-    border:
-      1px solid var(--history-border);
-
+    border: 1px solid var(--history-border);
     border-radius: 12px;
 
     text-decoration: none;
 
-    font-size: .85rem;
-    font-weight: 800;
+    font-size: .82rem;
+    font-weight: 850;
 
     box-shadow:
-      0 6px 18px rgba(0, 0, 0, .05);
+      0 6px 18px rgba(0, 0, 0, .04);
 
     transition:
-      .25s ease;
+      transform .2s ease,
+      background .2s ease,
+      border-color .2s ease,
+      box-shadow .2s ease;
   }
 
 
   .history-back:hover {
+    color: var(--history-green-dark);
+
+    background: var(--history-green-light);
+
+    border-color: #c9e3d2;
+
     transform: translateX(-4px);
 
-    color: var(--history-green);
-
-    background:
-      var(--history-green-light);
-
-    border-color:
-      #cde4d6;
+    box-shadow:
+      0 9px 22px rgba(13, 77, 49, .07);
   }
 
 
-  /* ============================================================
-   CABEÇALHO
-   ============================================================ */
+  /* =========================================================
+     CABEÇALHO
+  ========================================================= */
 
   .history-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 25px;
 
-    margin-bottom: 25px;
+    margin-bottom: 28px;
 
     flex-wrap: wrap;
   }
@@ -217,16 +212,16 @@ Histórico do Produto | AgroIA Moxico
 
 
   .history-header-icon {
-    width: 58px;
-    height: 58px;
+    width: 62px;
+    height: 62px;
 
-    flex: 0 0 58px;
+    flex: 0 0 62px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 17px;
+    border-radius: 18px;
 
     color: #fff;
 
@@ -235,10 +230,10 @@ Histórico do Produto | AgroIA Moxico
         var(--history-green),
         var(--history-green-dark));
 
-    font-size: 23px;
+    font-size: 25px;
 
     box-shadow:
-      0 10px 25px rgba(23, 107, 69, .20);
+      0 12px 27px rgba(23, 107, 69, .20);
 
     animation:
       historyFloat 3s ease-in-out infinite;
@@ -246,36 +241,37 @@ Histórico do Produto | AgroIA Moxico
 
 
   .history-header h1 {
-    margin: 0 0 5px;
+    margin: 0 0 6px;
 
-    color:
-      var(--history-green-dark);
+    color: var(--history-green-dark);
 
     font-size:
-      clamp(1.65rem, 3vw, 2.3rem);
+      clamp(1.65rem, 3vw, 2.35rem);
 
-    line-height: 1.1;
+    line-height: 1.08;
 
-    font-weight: 900;
+    font-weight: 950;
 
-    letter-spacing:
-      -.035em;
+    letter-spacing: -.04em;
   }
 
 
   .history-header p {
+    max-width: 700px;
+
     margin: 0;
 
-    color:
-      var(--history-muted);
+    color: var(--history-muted);
 
-    font-size: .9rem;
+    font-size: .88rem;
+
+    line-height: 1.6;
   }
 
 
-  /* ============================================================
-   AÇÕES DO CABEÇALHO
-   ============================================================ */
+  /* =========================================================
+     AÇÕES
+  ========================================================= */
 
   .history-actions {
     display: flex;
@@ -288,27 +284,28 @@ Histórico do Produto | AgroIA Moxico
 
 
   .history-btn {
-    min-height: 42px;
+    min-height: 43px;
 
-    padding: 0 15px;
+    padding: 0 16px;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    gap: 8px;
+    gap: 7px;
 
-    border-radius: 12px;
+    border-radius: 11px;
 
     text-decoration: none;
 
-    font-size: .83rem;
+    font-size: .80rem;
     font-weight: 850;
 
     transition:
       transform .2s ease,
+      background .2s ease,
       box-shadow .2s ease,
-      background .2s ease;
+      border-color .2s ease;
   }
 
 
@@ -321,120 +318,93 @@ Histórico do Produto | AgroIA Moxico
     color: #fff;
 
     background:
-      var(--history-green);
+      linear-gradient(135deg,
+        var(--history-green),
+        var(--history-green-dark));
 
     box-shadow:
-      0 8px 20px rgba(23, 107, 69, .18);
+      0 8px 20px rgba(23, 107, 69, .17);
   }
 
 
   .history-btn-primary:hover {
     color: #fff;
 
-    background:
-      var(--history-green-dark);
+    box-shadow:
+      0 12px 25px rgba(23, 107, 69, .22);
   }
 
 
-  .history-btn-secondary {
-    color:
-      var(--history-green-dark);
+  /* =========================================================
+     BLOCO DE DESTAQUE
+  ========================================================= */
 
-    background:
-      #fff;
-
-    border:
-      1px solid var(--history-border);
-  }
-
-
-  .history-btn-secondary:hover {
-    color:
-      var(--history-green-dark);
-
-    background:
-      var(--history-green-light);
-  }
-
-
-  /* ============================================================
-   HERO DO PRODUTO
-   ============================================================ */
-
-  .product-history-hero {
+  .history-hero {
     position: relative;
 
     overflow: hidden;
 
-    display: grid;
+    margin-bottom: 25px;
 
-    grid-template-columns:
-      minmax(0, 1fr) auto;
+    padding: 24px 26px;
 
+    display: flex;
     align-items: center;
+    justify-content: space-between;
 
     gap: 25px;
-
-    padding: 25px 28px;
-
-    margin-bottom: 25px;
 
     border-radius: 22px;
 
     background:
       linear-gradient(135deg,
-        #ffffff,
-        #f1faf4);
+        #ffffff 0%,
+        #f1faf5 100%);
 
-    border:
-      1px solid #dcebe2;
+    border: 1px solid #dcebe2;
 
     box-shadow:
-      var(--history-shadow);
+      0 18px 45px rgba(13, 77, 49, .08);
   }
 
 
-  .product-history-hero::before {
+  .history-hero::before {
     content: "";
 
     position: absolute;
 
-    width: 220px;
-    height: 220px;
+    width: 190px;
+    height: 190px;
 
-    right: -90px;
-    top: -110px;
+    right: -65px;
+    top: -85px;
 
     border-radius: 50%;
 
     background:
       rgba(23, 107, 69, .06);
-
-    pointer-events: none;
   }
 
 
-  .product-history-hero::after {
+  .history-hero::after {
     content: "";
 
     position: absolute;
 
-    width: 150px;
-    height: 150px;
+    width: 90px;
+    height: 90px;
 
-    left: 42%;
-    bottom: -110px;
+    right: 130px;
+    bottom: -55px;
 
     border-radius: 50%;
 
     background:
-      rgba(217, 164, 65, .06);
-
-    pointer-events: none;
+      rgba(217, 164, 65, .07);
   }
 
 
-  .product-history-info {
+  .history-hero-content {
     position: relative;
     z-index: 1;
 
@@ -442,259 +412,226 @@ Histórico do Produto | AgroIA Moxico
     align-items: center;
 
     gap: 15px;
-
-    min-width: 0;
   }
 
 
-  .product-history-icon {
-    width: 60px;
-    height: 60px;
+  .history-hero-icon {
+    width: 48px;
+    height: 48px;
 
-    flex: 0 0 60px;
+    flex: 0 0 48px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 18px;
+    border-radius: 14px;
 
-    color:
-      var(--history-green);
+    background: var(--history-green-light);
 
-    background:
-      var(--history-green-light);
+    color: var(--history-green);
 
-    font-size: 25px;
+    font-size: 21px;
   }
 
 
-  .product-history-label {
+  .history-hero-text strong {
     display: block;
 
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 
-    color:
-      var(--history-muted);
+    color: var(--history-green-dark);
 
-    font-size: .68rem;
+    font-size: .96rem;
+    font-weight: 900;
+  }
+
+
+  .history-hero-text span {
+    display: block;
+
+    color: var(--history-muted);
+
+    font-size: .76rem;
+    line-height: 1.5;
+  }
+
+
+  .history-hero-total {
+    position: relative;
+    z-index: 1;
+
+    text-align: right;
+  }
+
+
+  .history-hero-total strong {
+    display: block;
+
+    color: var(--history-green-dark);
+
+    font-size: 2rem;
+
+    line-height: 1;
+
+    font-weight: 950;
+  }
+
+
+  .history-hero-total span {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--history-muted);
+
+    font-size: .65rem;
+
+    font-weight: 850;
+
+    text-transform: uppercase;
+
+    letter-spacing: .07em;
+  }
+
+
+  /* =========================================================
+     ESTATÍSTICAS
+  ========================================================= */
+
+  .history-overview {
+    display: grid;
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 13px;
+
+    margin-bottom: 30px;
+  }
+
+
+  .overview-card {
+    position: relative;
+
+    overflow: hidden;
+
+    min-width: 0;
+
+    padding: 18px;
+
+    background: #fff;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 17px;
+
+    box-shadow: var(--history-shadow);
+
+    transition:
+      transform .22s ease,
+      border-color .22s ease,
+      box-shadow .22s ease;
+  }
+
+
+  .overview-card:hover {
+    transform: translateY(-4px);
+
+    border-color: #c9dfd2;
+
+    box-shadow:
+      0 18px 36px rgba(13, 77, 49, .10);
+  }
+
+
+  .overview-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 80px;
+    height: 80px;
+
+    right: -35px;
+    bottom: -35px;
+
+    border-radius: 50%;
+
+    background:
+      rgba(23, 107, 69, .05);
+  }
+
+
+  .overview-icon {
+    width: 39px;
+    height: 39px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 12px;
+
+    border-radius: 11px;
+
+    color: var(--history-green);
+
+    background: var(--history-green-light);
+
+    font-size: 17px;
+  }
+
+
+  .overview-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--history-muted);
+
+    font-size: .63rem;
 
     font-weight: 900;
 
     text-transform: uppercase;
 
-    letter-spacing: .08em;
+    letter-spacing: .07em;
   }
 
 
-  .product-history-name {
+  .overview-value {
     display: block;
 
-    color:
-      var(--history-green-dark);
+    color: var(--history-green-dark);
 
-    font-size:
-      clamp(1.15rem, 2vw, 1.5rem);
+    font-size: 1.28rem;
 
-    font-weight: 900;
+    line-height: 1.2;
+
+    font-weight: 950;
 
     word-break: break-word;
   }
 
 
-  .product-history-description {
-    margin-top: 5px;
-
-    color:
-      var(--history-muted);
-
-    font-size: .8rem;
-
-    line-height: 1.5;
-  }
-
-
-  /* ============================================================
-   ESTATÍSTICAS DO PRODUTO
-   ============================================================ */
-
-  .product-history-stats {
-    position: relative;
-    z-index: 1;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    flex-wrap: wrap;
-  }
-
-
-  .product-stat {
-    min-width: 105px;
-
-    padding: 12px 13px;
-
-    text-align: center;
-
-    background:
-      rgba(255, 255, 255, .78);
-
-    border:
-      1px solid var(--history-border);
-
-    border-radius: 13px;
-  }
-
-
-  .product-stat strong {
-    display: block;
-
-    color:
-      var(--history-green-dark);
-
-    font-size: 1.05rem;
-
-    font-weight: 900;
-  }
-
-
-  .product-stat span {
-    color:
-      var(--history-muted);
-
-    font-size: .64rem;
-
-    font-weight: 800;
-
-    text-transform: uppercase;
-  }
-
-
-  /* ============================================================
-   RESUMO
-   ============================================================ */
-
-  .history-summary {
-    display: grid;
-
-    grid-template-columns:
-      repeat(3, 1fr);
-
-    gap: 15px;
-
-    margin-bottom: 28px;
-  }
-
-
-  .summary-card {
-    padding: 18px;
-
-    background:
-      var(--history-white);
-
-    border:
-      1px solid var(--history-border);
-
-    border-radius: 17px;
-
-    box-shadow:
-      0 7px 24px rgba(13, 77, 49, .05);
-
-    transition:
-      .2s ease;
-  }
-
-
-  .summary-card:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-      0 12px 28px rgba(13, 77, 49, .08);
-  }
-
-
-  .summary-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 10px;
-  }
-
-
-  .summary-label {
-    color:
-      var(--history-muted);
-
-    font-size: .76rem;
-
-    font-weight: 800;
-  }
-
-
-  .summary-icon {
-    width: 37px;
-    height: 37px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 11px;
-
-    color:
-      var(--history-green);
-
-    background:
-      var(--history-green-light);
-
-    font-size: .95rem;
-  }
-
-
-  .summary-value {
-    margin-top: 9px;
-
-    color:
-      var(--history-text);
-
-    font-size: 1.55rem;
-
-    font-weight: 900;
-  }
-
-
-  .summary-description {
-    margin-top: 3px;
-
-    color:
-      var(--history-muted);
-
-    font-size: .72rem;
-  }
-
-
-  /* ============================================================
-   CABEÇALHO DA TIMELINE
-   ============================================================ */
+  /* =========================================================
+     SEÇÃO DO HISTÓRICO
+  ========================================================= */
 
   .history-section {
-    margin-top: 5px;
+    margin-top: 27px;
   }
 
 
   .history-section-header {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
     gap: 15px;
 
-    margin-bottom: 16px;
+    margin-bottom: 15px;
 
     flex-wrap: wrap;
   }
@@ -702,16 +639,17 @@ Histórico do Produto | AgroIA Moxico
 
   .history-section-heading {
     display: flex;
-
     align-items: center;
 
-    gap: 12px;
+    gap: 11px;
   }
 
 
   .history-section-icon {
-    width: 44px;
-    height: 44px;
+    width: 45px;
+    height: 45px;
+
+    flex: 0 0 45px;
 
     display: flex;
     align-items: center;
@@ -719,11 +657,9 @@ Histórico do Produto | AgroIA Moxico
 
     border-radius: 13px;
 
-    color:
-      var(--history-green);
+    color: var(--history-green);
 
-    background:
-      var(--history-green-light);
+    background: var(--history-green-light);
 
     font-size: 18px;
   }
@@ -732,58 +668,52 @@ Histórico do Produto | AgroIA Moxico
   .history-section-heading h2 {
     margin: 0;
 
-    color:
-      var(--history-text);
+    color: var(--history-text);
 
-    font-size: 1.35rem;
+    font-size: 1.25rem;
 
-    font-weight: 900;
+    font-weight: 950;
   }
 
 
   .history-section-heading p {
-    margin: 4px 0 0;
+    margin: 3px 0 0;
 
-    color:
-      var(--history-muted);
+    color: var(--history-muted);
 
-    font-size: .83rem;
+    font-size: .77rem;
   }
 
 
-  /* ============================================================
-   CARD DA TIMELINE
-   ============================================================ */
+  /* =========================================================
+     CARD DO HISTÓRICO
+  ========================================================= */
 
   .history-card {
     padding: 22px;
 
     background:
-      var(--history-white);
+      rgba(255, 255, 255, .96);
 
-    border:
-      1px solid var(--history-border);
+    border: 1px solid var(--history-border);
 
-    border-radius:
-      var(--history-radius);
+    border-radius: var(--history-radius);
 
-    box-shadow:
-      var(--history-shadow);
+    box-shadow: var(--history-shadow);
   }
 
 
-  /* ============================================================
-   TIMELINE
-   ============================================================ */
+  /* =========================================================
+     TIMELINE
+  ========================================================= */
 
   .history-timeline {
     position: relative;
 
     display: flex;
-
     flex-direction: column;
 
-    gap: 13px;
+    gap: 14px;
   }
 
 
@@ -792,40 +722,42 @@ Histórico do Produto | AgroIA Moxico
 
     position: absolute;
 
-    left: 20px;
+    left: 21px;
 
-    top: 20px;
-
-    bottom: 20px;
+    top: 21px;
+    bottom: 21px;
 
     width: 2px;
 
     background:
       linear-gradient(180deg,
-        #cfe3d7,
-        #e6eee9);
+        #c9e3d2,
+        #e7eee9);
   }
 
 
   .history-item {
     position: relative;
+    z-index: 1;
 
     display: grid;
 
     grid-template-columns:
-      42px minmax(0, 1fr);
+      43px minmax(0, 1fr);
 
     gap: 13px;
 
     align-items: start;
-
-    z-index: 1;
   }
 
 
+  /* =========================================================
+     PONTO
+  ========================================================= */
+
   .history-timeline-dot {
-    width: 42px;
-    height: 42px;
+    width: 43px;
+    height: 43px;
 
     display: flex;
     align-items: center;
@@ -833,131 +765,26 @@ Histórico do Produto | AgroIA Moxico
 
     border-radius: 50%;
 
-    color:
-      var(--history-green);
+    color: var(--history-green);
 
-    background:
-      #fff;
+    background: #fff;
 
-    border:
-      3px solid #dceee3;
+    border: 3px solid #dceee3;
 
-    font-size: .8rem;
-
-    transition:
-      .25s ease;
+    font-size: .80rem;
+    font-weight: 900;
 
     box-shadow:
-      0 4px 12px rgba(13, 77, 49, .05);
+      0 5px 14px rgba(13, 77, 49, .06);
+
+    transition:
+      transform .22s ease,
+      box-shadow .22s ease;
   }
 
 
   .history-item:hover .history-timeline-dot {
-    transform:
-      scale(1.07);
-  }
-
-
-  /* ============================================================
-   CORES DOS ESTADOS
-   ============================================================ */
-
-  .history-item.status-concluido .history-timeline-dot {
-    color:
-      var(--history-success);
-
-    border-color:
-      #ccebd9;
-
-    background:
-      #f5fcf8;
-  }
-
-
-  .history-item.status-erro .history-timeline-dot {
-    color:
-      var(--history-danger);
-
-    border-color:
-      #f0cbc7;
-
-    background:
-      #fff8f7;
-  }
-
-
-  .history-item.status-processando .history-timeline-dot {
-    color:
-      var(--history-warning);
-
-    border-color:
-      #efdfa9;
-
-    background:
-      #fffaf0;
-  }
-
-
-  .history-item.status-pendente .history-timeline-dot {
-    color:
-      var(--history-muted);
-
-    border-color:
-      #dfe7e2;
-
-    background:
-      #fafcfb;
-  }
-
-
-  /* ============================================================
-   CONTEÚDO DO ITEM
-   ============================================================ */
-
-  .history-item-content {
-    min-width: 0;
-
-    padding: 17px 18px;
-
-    background:
-      #fbfcfb;
-
-    border:
-      1px solid var(--history-border);
-
-    border-radius: 15px;
-
-    transition:
-      transform .22s ease,
-      box-shadow .22s ease,
-      border-color .22s ease;
-  }
-
-
-  .history-item-content:hover {
-    transform:
-      translateY(-2px);
-
-    border-color:
-      #cfe3d7;
-
-    box-shadow:
-      0 10px 25px rgba(0, 0, 0, .06);
-  }
-
-
-  /* ============================================================
-   ITEM ATUAL / MAIS RECENTE
-   ============================================================ */
-
-  .history-item.latest .history-item-content {
-    background:
-      linear-gradient(135deg,
-        #eff9f3,
-        #fbfdfc);
-
-    border-color:
-      #c9e5d3;
+    transform: scale(1.07);
   }
 
 
@@ -965,19 +792,98 @@ Histórico do Produto | AgroIA Moxico
     color: #fff;
 
     background:
-      var(--history-green);
+      linear-gradient(135deg,
+        var(--history-green),
+        var(--history-green-dark));
 
-    border-color:
-      var(--history-green);
+    border-color: var(--history-green);
 
     animation:
       historyPulse 2.5s infinite;
   }
 
 
-  /* ============================================================
-   TOPO DO ITEM
-   ============================================================ */
+  .history-item.status-concluido .history-timeline-dot {
+    color: var(--history-success);
+
+    background: #f6fdf8;
+
+    border-color: #ccebd9;
+  }
+
+
+  .history-item.status-erro .history-timeline-dot {
+    color: var(--history-danger);
+
+    background: #fff8f7;
+
+    border-color: #f0cbc7;
+  }
+
+
+  .history-item.status-processando .history-timeline-dot {
+    color: var(--history-warning);
+
+    background: #fffaf0;
+
+    border-color: #efdfa9;
+  }
+
+
+  .history-item.status-pendente .history-timeline-dot {
+    color: var(--history-muted);
+
+    background: #fafcfb;
+
+    border-color: #dfe7e2;
+  }
+
+
+  /* =========================================================
+     CONTEÚDO
+  ========================================================= */
+
+  .history-item-content {
+    min-width: 0;
+
+    padding: 18px;
+
+    background: #fbfdfc;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 16px;
+
+    transition:
+      transform .22s ease,
+      border-color .22s ease,
+      box-shadow .22s ease;
+  }
+
+
+  .history-item-content:hover {
+    transform: translateY(-2px);
+
+    border-color: #cce1d4;
+
+    box-shadow:
+      0 11px 25px rgba(13, 77, 49, .07);
+  }
+
+
+  .history-item.latest .history-item-content {
+    background:
+      linear-gradient(135deg,
+        #eef9f3,
+        #fbfdfc);
+
+    border-color: #c7e3d0;
+  }
+
+
+  /* =========================================================
+     CABEÇALHO DO ITEM
+  ========================================================= */
 
   .history-item-top {
     display: flex;
@@ -987,106 +893,138 @@ Histórico do Produto | AgroIA Moxico
 
     gap: 12px;
 
-    margin-bottom: 9px;
+    margin-bottom: 10px;
 
     flex-wrap: wrap;
   }
 
 
   .history-item-title {
-    color:
-      var(--history-green-dark);
+    color: var(--history-green-dark);
 
-    font-size: .92rem;
+    font-size: .93rem;
 
-    font-weight: 900;
+    font-weight: 950;
   }
 
 
   .history-current {
     display: inline-flex;
-
     align-items: center;
 
-    gap: 5px;
+    gap: 4px;
 
-    margin-left: 6px;
+    margin-left: 5px;
 
     padding: 4px 8px;
 
-    color:
-      var(--history-green);
+    color: var(--history-green);
 
-    background:
-      var(--history-green-light);
+    background: var(--history-green-light);
 
     border-radius: 999px;
 
-    font-size: .61rem;
+    font-size: .57rem;
 
     font-weight: 900;
   }
 
 
   .history-item-date {
-    color:
-      var(--history-muted);
-
-    font-size: .7rem;
-
-    font-weight: 700;
-  }
-
-
-  /* ============================================================
-   RESULTADO
-   ============================================================ */
-
-  .history-result-row {
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 8px;
-
-    margin-bottom: 11px;
-
-    flex-wrap: wrap;
-  }
-
-
-  .history-result-label {
-    color:
-      var(--history-muted);
+    color: var(--history-muted);
 
     font-size: .68rem;
 
-    font-weight: 800;
-
-    text-transform: uppercase;
+    font-weight: 750;
   }
 
 
-  .history-result-value {
-    color:
-      var(--history-text);
+  /* =========================================================
+     PRODUTO
+  ========================================================= */
 
-    font-size: .84rem;
+  .history-product-name {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 11px;
+
+    padding: 6px 10px;
+
+    color: var(--history-green-dark);
+
+    background: #fff;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 9px;
+
+    font-size: .68rem;
 
     font-weight: 900;
   }
 
 
-  /* ============================================================
-   METADADOS
-   ============================================================ */
+  /* =========================================================
+     RESULTADO
+  ========================================================= */
+
+  .history-result-box {
+    margin-bottom: 12px;
+
+    padding: 12px 13px;
+
+    background: #fff;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 11px;
+  }
+
+
+  .history-result-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--history-muted);
+
+    font-size: .60rem;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: .06em;
+  }
+
+
+  .history-result-value {
+    display: block;
+
+    color: var(--history-text);
+
+    font-size: .88rem;
+
+    line-height: 1.45;
+
+    font-weight: 900;
+  }
+
+
+  /* =========================================================
+     METADADOS
+  ========================================================= */
 
   .history-meta {
     display: flex;
 
     align-items: center;
 
-    gap: 9px;
+    gap: 7px;
 
     flex-wrap: wrap;
   }
@@ -1097,43 +1035,40 @@ Histórico do Produto | AgroIA Moxico
 
     align-items: center;
 
-    gap: 6px;
+    gap: 5px;
 
-    padding: 6px 9px;
+    padding: 5px 9px;
 
-    color:
-      var(--history-muted);
+    color: var(--history-muted);
 
-    background:
-      #fff;
+    background: #fff;
 
-    border:
-      1px solid var(--history-border);
+    border: 1px solid var(--history-border);
 
-    border-radius: 9px;
+    border-radius: 8px;
 
-    font-size: .7rem;
+    font-size: .66rem;
 
-    font-weight: 750;
+    font-weight: 800;
   }
 
 
-  /* ============================================================
-   BADGES DE STATUS
-   ============================================================ */
+  /* =========================================================
+     STATUS
+  ========================================================= */
 
   .history-status {
     display: inline-flex;
 
     align-items: center;
 
-    gap: 6px;
+    gap: 5px;
 
-    padding: 6px 10px;
+    padding: 5px 9px;
 
     border-radius: 999px;
 
-    font-size: .69rem;
+    font-size: .65rem;
 
     font-weight: 900;
   }
@@ -1142,46 +1077,41 @@ Histórico do Produto | AgroIA Moxico
   .history-status-concluido {
     color: #147444;
 
-    background:
-      #e3f7eb;
+    background: var(--history-success-bg);
   }
 
 
   .history-status-erro {
     color: #a13a2f;
 
-    background:
-      #fde9e6;
+    background: var(--history-danger-bg);
   }
 
 
   .history-status-processando {
     color: #8a6118;
 
-    background:
-      #fff5d9;
+    background: var(--history-warning-bg);
   }
 
 
   .history-status-pendente {
     color: #68766f;
 
-    background:
-      #edf2ef;
+    background: #edf2ef;
   }
 
 
-  /* ============================================================
-   BARRA DE CONFIANÇA
-   ============================================================ */
+  /* =========================================================
+     CONFIANÇA
+  ========================================================= */
 
   .history-confidence {
     margin-top: 13px;
 
     padding-top: 13px;
 
-    border-top:
-      1px solid var(--history-border);
+    border-top: 1px solid var(--history-border);
   }
 
 
@@ -1193,26 +1123,31 @@ Histórico do Produto | AgroIA Moxico
 
     gap: 10px;
 
-    margin-bottom: 6px;
+    margin-bottom: 7px;
 
-    color:
-      var(--history-muted);
+    color: var(--history-muted);
 
-    font-size: .7rem;
+    font-size: .67rem;
 
     font-weight: 800;
   }
 
 
+  .history-confidence-top strong {
+    color: var(--history-green-dark);
+
+    font-size: .72rem;
+  }
+
+
   .history-confidence-bar {
-    height: 7px;
+    height: 8px;
 
     overflow: hidden;
 
     border-radius: 99px;
 
-    background:
-      #e7eee9;
+    background: #e7eee9;
   }
 
 
@@ -1227,296 +1162,236 @@ Histórico do Produto | AgroIA Moxico
         #39a76f);
 
     transition:
-      width .7s ease;
+      width .8s ease;
   }
 
 
-  /* ============================================================
-   AÇÃO VER DETALHES
-   ============================================================ */
-
-  .history-view {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    margin-top: 13px;
-
-    padding-top: 11px;
-
-    color:
-      var(--history-green);
-
-    border-top:
-      1px solid var(--history-border);
-
-    text-decoration: none;
-
-    font-size: .75rem;
-
-    font-weight: 850;
-
-    transition:
-      .2s ease;
-  }
-
-
-  .history-view:hover {
-    color:
-      var(--history-green-dark);
-
-    gap: 10px;
-  }
-
-
-  /* ============================================================
-   ALERTA DE ERRO
-   ============================================================ */
+  /* =========================================================
+     ERRO
+  ========================================================= */
 
   .history-error {
     margin-top: 12px;
 
     padding: 11px 13px;
 
-    color:
-      #963a30;
+    color: #963a30;
 
-    background:
-      #fdebea;
+    background: var(--history-danger-bg);
 
-    border:
-      1px solid #f4c9c5;
+    border: 1px solid #f4c9c5;
 
-    border-radius: 11px;
+    border-radius: 10px;
 
-    font-size: .75rem;
+    font-size: .72rem;
 
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
 
-  /* ============================================================
-   ESTADO VAZIO
-   ============================================================ */
+  /* =========================================================
+     LINK DETALHES
+  ========================================================= */
+
+  .history-view {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 13px;
+
+    padding-top: 11px;
+
+    color: var(--history-green);
+
+    border-top: 1px solid var(--history-border);
+
+    text-decoration: none;
+
+    font-size: .73rem;
+
+    font-weight: 900;
+
+    transition:
+      color .2s ease,
+      gap .2s ease;
+  }
+
+
+  .history-view:hover {
+    color: var(--history-green-dark);
+
+    gap: 10px;
+  }
+
+
+  /* =========================================================
+     ESTADO VAZIO
+  ========================================================= */
 
   .history-empty {
-    text-align: center;
+    padding: 65px 25px;
 
-    padding: 55px 25px;
+    text-align: center;
   }
 
 
   .history-empty-icon {
-    width: 68px;
-    height: 68px;
-
-    margin:
-      0 auto 16px;
+    width: 75px;
+    height: 75px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 20px;
+    margin: 0 auto 17px;
 
-    color:
-      var(--history-green);
+    border-radius: 21px;
+
+    color: var(--history-green);
 
     background:
-      var(--history-green-light);
+      linear-gradient(135deg,
+        var(--history-green-light),
+        #f7fcf9);
 
-    font-size: 1.8rem;
+    font-size: 2rem;
+
+    box-shadow:
+      0 10px 25px rgba(23, 107, 69, .08);
   }
 
 
   .history-empty h3 {
-    margin: 0 0 7px;
+    margin: 0 0 8px;
 
-    color:
-      var(--history-text);
+    color: var(--history-text);
 
-    font-size: 1.15rem;
+    font-size: 1.18rem;
 
-    font-weight: 850;
+    font-weight: 950;
   }
 
 
   .history-empty p {
     max-width: 520px;
 
-    margin: 0 auto;
+    margin: 0 auto 20px;
 
-    color:
-      var(--history-muted);
+    color: var(--history-muted);
 
-    font-size: .86rem;
+    font-size: .83rem;
 
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
 
-  .history-empty-actions {
+  /* =========================================================
+     RODAPÉ DA PÁGINA
+  ========================================================= */
+
+  .history-footer-action {
     display: flex;
 
     justify-content: center;
 
-    gap: 10px;
-
-    margin-top: 20px;
-
-    flex-wrap: wrap;
+    margin-top: 25px;
   }
 
 
-  /* ============================================================
-   MENSAGENS DJANGO
-   ============================================================ */
+  /* =========================================================
+     RESPONSIVO
+  ========================================================= */
 
-  .history-messages {
-    margin-bottom: 20px;
-  }
+  @media (max-width: 1000px) {
 
-
-  .history-message {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 13px 16px;
-
-    margin-bottom: 9px;
-
-    border-radius: 13px;
-
-    font-size: .84rem;
-
-    font-weight: 700;
-  }
-
-
-  .history-message.success {
-    color: #176b45;
-
-    background: #e8f7ef;
-
-    border: 1px solid #ccebd9;
-  }
-
-
-  .history-message.error {
-    color: #a93226;
-
-    background: #fdecea;
-
-    border: 1px solid #f5c6c1;
-  }
-
-
-  .history-message.warning {
-    color: #8a6118;
-
-    background: #fff7df;
-
-    border: 1px solid #f2dfaa;
-  }
-
-
-  .history-message.info {
-    color: #245b78;
-
-    background: #eaf5fb;
-
-    border: 1px solid #c9e3f2;
-  }
-
-
-  /* ============================================================
-   RESPONSIVO
-   ============================================================ */
-
-  @media (max-width: 950px) {
-
-    .product-history-hero {
-      grid-template-columns: 1fr;
-    }
-
-    .product-history-stats {
-      justify-content: flex-start;
-    }
-
-    .history-summary {
+    .history-overview {
       grid-template-columns:
-        repeat(3, 1fr);
+        repeat(2, minmax(0, 1fr));
     }
   }
 
 
-  @media (max-width: 760px) {
+  @media (max-width: 700px) {
 
     .history-page {
-      padding:
-        22px 0 60px;
+      padding: 23px 0 55px;
     }
+
+
+    .history-container {
+      width: min(100% - 24px, 1180px);
+    }
+
 
     .history-header {
       align-items: flex-start;
     }
 
+
     .history-header-left {
       align-items: flex-start;
     }
+
 
     .history-actions {
       width: 100%;
     }
 
+
     .history-actions .history-btn {
       flex: 1;
     }
 
-    .product-history-hero {
-      padding: 20px;
+
+    .history-hero {
+      align-items: flex-start;
+
+      padding: 19px;
     }
 
-    .history-summary {
-      grid-template-columns:
-        repeat(2, 1fr);
+
+    .history-hero-total {
+      text-align: left;
     }
+
+
+    .history-overview {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+
 
     .history-card {
-      padding: 15px;
+      padding: 14px;
     }
+
 
     .history-timeline::before {
-      left: 16px;
+      left: 17px;
     }
 
-    .history-timeline-dot {
-      width: 34px;
-      height: 34px;
-
-      font-size: .7rem;
-    }
 
     .history-item {
       grid-template-columns:
-        34px minmax(0, 1fr);
+        35px minmax(0, 1fr);
 
-      gap: 10px;
+      gap: 9px;
+    }
+
+
+    .history-timeline-dot {
+      width: 35px;
+      height: 35px;
+
+      font-size: .70rem;
     }
   }
 
 
-  @media (max-width: 520px) {
-
-    .history-container {
-      width:
-        min(100% - 20px, 1200px);
-    }
+  @media (max-width: 500px) {
 
     .history-header-icon {
       width: 50px;
@@ -1529,57 +1404,50 @@ Histórico do Produto | AgroIA Moxico
       font-size: 20px;
     }
 
+
     .history-header h1 {
-      font-size: 1.5rem;
+      font-size: 1.48rem;
     }
+
 
     .history-header p {
-      font-size: .8rem;
+      font-size: .77rem;
     }
 
-    .history-actions {
+
+    .history-overview {
+      grid-template-columns: 1fr;
+    }
+
+
+    .history-hero {
       flex-direction: column;
     }
 
-    .history-actions .history-btn {
+
+    .history-hero-total {
       width: 100%;
-      flex: none;
+
+      padding-top: 12px;
+
+      border-top: 1px solid var(--history-border);
     }
 
-    .product-history-info {
+
+    .history-section-heading {
       align-items: flex-start;
     }
 
-    .product-history-stats {
-      display: grid;
 
-      grid-template-columns:
-        repeat(2, 1fr);
-
-      width: 100%;
+    .history-section-heading h2 {
+      font-size: 1.10rem;
     }
 
-    .product-stat {
-      min-width: 0;
+
+    .history-section-heading p {
+      font-size: .73rem;
     }
 
-    .history-summary {
-      grid-template-columns: 1fr 1fr;
-
-      gap: 10px;
-    }
-
-    .summary-card {
-      padding: 14px;
-    }
-
-    .summary-value {
-      font-size: 1.3rem;
-    }
-
-    .history-section-header {
-      align-items: flex-start;
-    }
 
     .history-item-top {
       flex-direction: column;
@@ -1587,30 +1455,32 @@ Histórico do Produto | AgroIA Moxico
       gap: 5px;
     }
 
+
     .history-meta {
-      gap: 6px;
+      gap: 5px;
     }
 
-    .history-meta-item {
-      font-size: .67rem;
+
+    .history-item-content {
+      padding: 14px;
     }
   }
 
 
-  @media (max-width: 390px) {
+  @media (max-width: 380px) {
 
-    .history-summary {
-      grid-template-columns: 1fr;
+    .history-actions {
+      flex-direction: column;
     }
 
-    .product-history-stats {
-      grid-template-columns: 1fr 1fr;
+
+    .history-actions .history-btn {
+      width: 100%;
     }
   }
 </style>
 
 {% endblock %}
-
 
 {% block content %}
 
@@ -1618,322 +1488,203 @@ Histórico do Produto | AgroIA Moxico
 
   <div class="history-container">
 
-
-    <!-- =====================================================
-             VOLTAR
-             ===================================================== -->
-
     <div class="history-back-wrapper history-fade-right">
 
       <a href="{% url 'diagnostico:diagnostico' %}" class="history-back">
-
         ←
-
         Voltar ao diagnóstico
-
       </a>
 
     </div>
-
-
-    <!-- =====================================================
-             CABEÇALHO
-             ===================================================== -->
 
     <header class="history-header history-fade-up">
 
       <div class="history-header-left">
 
         <div class="history-header-icon">
-
-          📋
-
+          📊
         </div>
 
         <div>
 
           <h1>
-            Histórico do Produto
+            Histórico de diagnósticos
           </h1>
 
           <p>
-            Consulte todas as análises realizadas neste produto agrícola.
+            Consulte os diagnósticos realizados pela inteligência
+            artificial, acompanhe os resultados e veja os detalhes
+            de cada análise dos seus produtos agrícolas.
           </p>
 
         </div>
 
       </div>
 
-
-      <div class="history-actions">
-
-        {% if produto %}
-
-        <a href="{% url 'diagnostico:diagnostico_produto' produto.id %}" class="history-btn history-btn-primary">
-
-          🔍
-
-          Novo diagnóstico
-
-        </a>
-
-        {% endif %}
-
-      </div>
-
     </header>
 
 
-    <!-- =====================================================
-             MENSAGENS
-             ===================================================== -->
+    <section class="history-hero history-fade-up">
 
-    {% if messages %}
+      <div class="history-hero-content">
 
-    <div class="history-messages">
+        <div class="history-hero-icon">
+          🌱
+        </div>
 
-      {% for message in messages %}
+        <div class="history-hero-text">
 
-      <div class="history-message {{ message.tags }}">
+          <strong>
+            Central de histórico
+          </strong>
 
-        {% if "success" in message.tags %}
-        ✓
-        {% elif "error" in message.tags %}
-        !
-        {% elif "warning" in message.tags %}
-        ⚠
-        {% else %}
-        ℹ
-        {% endif %}
+          <span>
+            Todos os seus diagnósticos realizados aparecem
+            nesta área, organizados do mais recente para o mais antigo.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="history-hero-total">
+
+        <strong>
+          {{ total_diagnosticos|default:0 }}
+        </strong>
 
         <span>
-          {{ message }}
+          diagnósticos realizados
         </span>
 
       </div>
 
-      {% endfor %}
-
-    </div>
-
-    {% endif %}
-
-
-    {% if produto %}
+    </section>
 
 
     <!-- =====================================================
-             HERO DO PRODUTO
-             ===================================================== -->
+     ESTATÍSTICAS
+====================================================== -->
 
-    <section class="product-history-hero history-fade-up">
+    <section class="history-overview history-fade-up">
 
-      <div class="product-history-info">
 
-        <div class="product-history-icon">
+      <!-- TOTAL -->
 
+      <article class="overview-card">
+
+        <div class="overview-icon">
+          📋
+        </div>
+
+        <span class="overview-label">
+          Total de análises
+        </span>
+
+        <span class="overview-value">
+          {{ total_diagnosticos|default:0 }}
+        </span>
+
+      </article>
+
+
+      <!-- PRODUTOS -->
+
+      <article class="overview-card">
+
+        <div class="overview-icon">
           🌱
-
         </div>
 
-        <div>
+        <span class="overview-label">
+          Produtos analisados
+        </span>
 
-          <span class="product-history-label">
-            Produto agrícola
-          </span>
+        <span class="overview-value">
+          {{ total_produtos|default:0 }}
+        </span>
 
-          <span class="product-history-name">
-            {{ produto.nome }}
-          </span>
+      </article>
 
-          {% if produto.descricao %}
 
-          <div class="product-history-description">
+      <!-- CONCLUÍDOS -->
 
-            {{ produto.descricao|truncatechars:160 }}
+      <article class="overview-card">
 
-          </div>
-
-          {% endif %}
-
+        <div class="overview-icon">
+          ✓
         </div>
 
-      </div>
+        <span class="overview-label">
+          Diagnósticos concluídos
+        </span>
+
+        <span class="overview-value">
+          {{ diagnosticos_concluidos|default:0 }}
+        </span>
+
+      </article>
 
 
-      <div class="product-history-stats">
+      <!-- ÚLTIMA ANÁLISE -->
 
-        <div class="product-stat">
+      <article class="overview-card">
 
-          <strong>
-            {{ total_diagnosticos|default:0 }}
-          </strong>
-
-          <span>
-            Diagnósticos
-          </span>
-
+        <div class="overview-icon">
+          🕐
         </div>
 
+        <span class="overview-label">
+          Última análise
+        </span>
 
-        <div class="product-stat">
+        <span class="overview-value">
 
           {% if ultimo_diagnostico %}
 
-          <strong>
-            {{ ultimo_diagnostico.data_criacao|date:"d/m/Y" }}
-          </strong>
+          {{ ultimo_diagnostico.data_criacao|date:"d/m/Y" }}
 
           {% else %}
 
-          <strong>
-            —
-          </strong>
+          —
 
           {% endif %}
 
-          <span>
-            Última análise
-          </span>
+        </span>
 
-        </div>
-
-      </div>
+      </article>
 
     </section>
 
 
     <!-- =====================================================
-             RESUMO
-             ===================================================== -->
-
-    <section class="history-summary history-fade-up">
-
-
-      <div class="summary-card">
-
-        <div class="summary-top">
-
-          <span class="summary-label">
-            Total de análises
-          </span>
-
-          <span class="summary-icon">
-            🧠
-          </span>
-
-        </div>
-
-        <div class="summary-value">
-
-          {{ total_diagnosticos|default:0 }}
-
-        </div>
-
-        <div class="summary-description">
-          Diagnósticos registrados para este produto
-        </div>
-
-      </div>
-
-
-      <div class="summary-card">
-
-        <div class="summary-top">
-
-          <span class="summary-label">
-            Concluídos
-          </span>
-
-          <span class="summary-icon">
-            ✓
-          </span>
-
-        </div>
-
-        <div class="summary-value">
-
-          {{ diagnosticos_concluidos|default:0 }}
-
-        </div>
-
-        <div class="summary-description">
-          Análises processadas com sucesso
-        </div>
-
-      </div>
-
-
-      <div class="summary-card">
-
-        <div class="summary-top">
-
-          <span class="summary-label">
-            Confiança média
-          </span>
-
-          <span class="summary-icon">
-            %
-          </span>
-
-        </div>
-
-        <div class="summary-value">
-
-          {{ confianca_media|default:0|floatformat:1 }}%
-
-        </div>
-
-        <div class="summary-description">
-          Confiança média das análises
-        </div>
-
-      </div>
-
-
-    </section>
-
-
-    <!-- =====================================================
-             HISTÓRICO
-             ===================================================== -->
+     HISTÓRICO REAL
+====================================================== -->
 
     <section class="history-section history-fade-up">
-
 
       <div class="history-section-header">
 
         <div class="history-section-heading">
 
           <div class="history-section-icon">
-
             📋
-
           </div>
 
           <div>
 
             <h2>
-              Histórico de diagnósticos
+              Diagnósticos realizados
             </h2>
 
             <p>
-              Todas as análises realizadas em
-              <strong>{{ produto.nome }}</strong>.
+              Histórico completo das análises realizadas nos produtos agrícolas.
             </p>
 
           </div>
 
         </div>
-
-
-        <a href="{% url 'diagnostico:diagnostico_produto' produto.id %}" class="history-btn history-btn-secondary">
-
-          🔍
-
-          Analisar novamente
-
-        </a>
 
       </div>
 
@@ -1941,29 +1692,54 @@ Histórico do Produto | AgroIA Moxico
       <div class="history-card">
 
 
-        {% if historico %}
+        <!--
+
+      Compatibilidade:
+
+      A página tenta primeiro utilizar "historico".
+
+      Caso a sua views.py ainda envie os dados através
+      de "ultimos_diagnosticos", eles também serão exibidos.
+
+    -->
+
+        {% with lista_historico=historico|default:ultimos_diagnosticos %}
+
+
+        {% if lista_historico %}
+
 
         <div class="history-timeline">
 
 
-          {% for item in historico %}
-
-          <article class="history-item
-                        {% if forloop.first %}latest{% endif %}
-                        {% if item.status == 'concluido' %}
-                            status-concluido
-                        {% elif item.status == 'erro' %}
-                            status-erro
-                        {% elif item.status == 'processando' %}
-                            status-processando
-                        {% else %}
-                            status-pendente
-                        {% endif %}">
+          {% for item in lista_historico %}
 
 
-            <!-- =================================================
-                             PONTO DA TIMELINE
-                             ================================================= -->
+          <article class="
+                history-item
+
+                {% if forloop.first %}
+                  latest
+                {% endif %}
+
+                {% if item.status == 'concluido' %}
+                  status-concluido
+
+                {% elif item.status == 'erro' %}
+                  status-erro
+
+                {% elif item.status == 'processando' %}
+                  status-processando
+
+                {% else %}
+                  status-pendente
+                {% endif %}
+              ">
+
+
+            <!-- ======================================
+                   PONTO DA TIMELINE
+              ======================================= -->
 
             <div class="history-timeline-dot">
 
@@ -1988,36 +1764,30 @@ Histórico do Produto | AgroIA Moxico
             </div>
 
 
-            <!-- =================================================
-                             CONTEÚDO
-                             ================================================= -->
+            <!-- ======================================
+                   CONTEÚDO
+              ======================================= -->
 
             <div class="history-item-content">
 
 
-              <!-- TOPO -->
+              <!-- CABEÇALHO -->
 
               <div class="history-item-top">
 
-                <div>
+                <div class="history-item-title">
 
-                  <div class="history-item-title">
+                  Diagnóstico #{{ item.id }}
 
-                    Diagnóstico #{{ item.id }}
 
-                    {% if forloop.first %}
+                  {% if forloop.first %}
 
-                    <span class="history-current">
+                  <span class="history-current">
+                    ●
+                    Mais recente
+                  </span>
 
-                      ●
-
-                      Mais recente
-
-                    </span>
-
-                    {% endif %}
-
-                  </div>
+                  {% endif %}
 
                 </div>
 
@@ -2031,13 +1801,29 @@ Histórico do Produto | AgroIA Moxico
               </div>
 
 
+              <!-- PRODUTO -->
+
+              {% if item.produto %}
+
+              <div class="history-product-name">
+
+                🌱
+
+                {{ item.produto.nome }}
+
+              </div>
+
+              {% endif %}
+
+
               <!-- RESULTADO -->
 
-              <div class="history-result-row">
+              <div class="history-result-box">
 
                 <span class="history-result-label">
-                  Resultado:
+                  Resultado da análise
                 </span>
+
 
                 <span class="history-result-value">
 
@@ -2051,7 +1837,7 @@ Histórico do Produto | AgroIA Moxico
 
                   {% else %}
 
-                  Não identificado
+                  Resultado não identificado
 
                   {% endif %}
 
@@ -2077,6 +1863,7 @@ Histórico do Produto | AgroIA Moxico
 
                 </span>
 
+
                 {% elif item.status == "erro" %}
 
                 <span class="history-status history-status-erro">
@@ -2087,6 +1874,7 @@ Histórico do Produto | AgroIA Moxico
 
                 </span>
 
+
                 {% elif item.status == "processando" %}
 
                 <span class="history-status history-status-processando">
@@ -2096,6 +1884,7 @@ Histórico do Produto | AgroIA Moxico
                   Processando
 
                 </span>
+
 
                 {% else %}
 
@@ -2127,7 +1916,7 @@ Histórico do Produto | AgroIA Moxico
 
                 <!-- CONFIANÇA -->
 
-                {% if item.confianca %}
+                {% if item.confianca is not None %}
 
                 <span class="history-meta-item">
 
@@ -2143,18 +1932,16 @@ Histórico do Produto | AgroIA Moxico
               </div>
 
 
-              <!-- =================================================
-                                 CONFIANÇA
-                                 ================================================= -->
+              <!-- CONFIANÇA -->
 
-              {% if item.confianca %}
+              {% if item.confianca is not None %}
 
               <div class="history-confidence">
 
                 <div class="history-confidence-top">
 
                   <span>
-                    Confiança da IA
+                    Confiança da inteligência artificial
                   </span>
 
                   <strong>
@@ -2162,6 +1949,7 @@ Histórico do Produto | AgroIA Moxico
                   </strong>
 
                 </div>
+
 
                 <div class="history-confidence-bar">
 
@@ -2174,9 +1962,7 @@ Histórico do Produto | AgroIA Moxico
               {% endif %}
 
 
-              <!-- =================================================
-                                 ERRO
-                                 ================================================= -->
+              <!-- ERRO -->
 
               {% if item.status == "erro" and item.erro %}
 
@@ -2193,22 +1979,18 @@ Histórico do Produto | AgroIA Moxico
               {% endif %}
 
 
-              <!-- =================================================
-                                 VER DETALHES
-                                 ================================================= -->
+              <!-- DETALHES -->
 
               <a href="{% url 'diagnostico:detalhe' item.id %}" class="history-view">
-
-                Ver detalhes do diagnóstico
-
+                Ver detalhes completos
                 →
-
               </a>
 
 
             </div>
 
           </article>
+
 
           {% endfor %}
 
@@ -2220,51 +2002,29 @@ Histórico do Produto | AgroIA Moxico
 
 
         <!-- =================================================
-                     ESTADO VAZIO
-                     ================================================= -->
+             SÓ APARECE SE REALMENTE NÃO EXISTIR HISTÓRICO
+        ================================================== -->
 
         <div class="history-empty">
 
           <div class="history-empty-icon">
-
             📋
-
           </div>
 
           <h3>
-            Nenhum diagnóstico realizado
+            Ainda não existem diagnósticos
           </h3>
 
           <p>
-
-            Ainda não existem análises registadas para
-            <strong>{{ produto.nome }}</strong>.
-
-            Quando uma análise for realizada, o resultado
-            aparecerá automaticamente neste histórico.
-
+            Quando realizar uma análise através da página de
+            diagnóstico, o resultado será registado automaticamente
+            e aparecerá aqui neste histórico.
           </p>
 
-
-          <div class="history-empty-actions">
-
-            <a href="{% url 'diagnostico:diagnostico_produto' produto.id %}" class="history-btn history-btn-primary">
-
-              🔍
-
-              Fazer primeiro diagnóstico
-
-            </a>
-
-            <a href="{% url 'diagnostico:diagnostico' %}" class="history-btn history-btn-secondary">
-
-              ←
-
-              Voltar
-
-            </a>
-
-          </div>
+          <a href="{% url 'diagnostico:diagnostico' %}" class="history-btn history-btn-primary">
+            🔍
+            Fazer diagnóstico
+          </a>
 
         </div>
 
@@ -2272,53 +2032,12 @@ Histórico do Produto | AgroIA Moxico
         {% endif %}
 
 
-      </div>
+        {% endwith %}
 
-    </section>
-
-
-    {% else %}
-
-
-    <!-- =====================================================
-             PRODUTO NÃO ENCONTRADO
-             ===================================================== -->
-
-    <section class="history-card history-fade-up">
-
-      <div class="history-empty">
-
-        <div class="history-empty-icon">
-          ⚠️
-        </div>
-
-        <h3>
-          Produto não encontrado
-        </h3>
-
-        <p>
-          Não foi possível localizar o produto associado
-          a este histórico de diagnósticos.
-        </p>
-
-        <div class="history-empty-actions">
-
-          <a href="{% url 'diagnostico:diagnostico' %}" class="history-btn history-btn-primary">
-
-            ←
-
-            Voltar ao diagnóstico
-
-          </a>
-
-        </div>
 
       </div>
 
     </section>
-
-    {% endif %}
-
 
   </div>
 
