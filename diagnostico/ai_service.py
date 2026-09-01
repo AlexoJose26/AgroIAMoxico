@@ -6,13 +6,20 @@ import requests
 from PIL import Image, UnidentifiedImageError
 
 
+# ============================================================
+# CONFIGURAÇÕES
+# ============================================================
+
 MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10 MB
 
-
+# Em produção, a Vercel deverá usar a variável:
+# AGROIA_API_URL=https://agroia-api.onrender.com/analisar
+#
+# O endereço local continua como fallback para desenvolvimento.
 API_URL = os.getenv(
     "AGROIA_API_URL",
     "http://127.0.0.1:8001/analisar",
-)
+).strip().rstrip("/")
 
 API_TIMEOUT = int(
     os.getenv(
@@ -22,19 +29,28 @@ API_TIMEOUT = int(
 )
 
 
+# ============================================================
+# NORMALIZAR TEXTO
+# ============================================================
 
 def normalizar_texto(valor):
-
+    """
+    Converte um valor para texto normalizado.
+    """
     if valor is None:
         return ""
 
     return str(valor).strip().lower()
 
 
+# ============================================================
+# OBTER NOME DO PRODUTO
+# ============================================================
 
 def obter_nome_produto(produto):
-
-
+    """
+    Obtém o nome do produto Django.
+    """
     if produto is None:
         return ""
 
@@ -47,6 +63,9 @@ def obter_nome_produto(produto):
     return normalizar_texto(nome)
 
 
+# ============================================================
+# NORMALIZAR CULTURA
+# ============================================================
 
 def normalizar_cultura(valor):
     """
@@ -59,7 +78,7 @@ def normalizar_cultura(valor):
     if not texto:
         return ""
 
-    # Remover caracteres que aparecem nas classes da IA
+    # Remover caracteres utilizados nas classes da IA
     texto = (
         texto
         .replace("_", " ")
@@ -69,11 +88,14 @@ def normalizar_cultura(valor):
         .strip()
     )
 
-    # Espaços duplicados
+    # Remover espaços duplicados
     texto = " ".join(texto.split())
 
     equivalencias = {
+
+        # ----------------------------------------------------
         # MILHO
+        # ----------------------------------------------------
         "milho": "milho",
         "corn": "milho",
         "maize": "milho",
@@ -81,59 +103,85 @@ def normalizar_cultura(valor):
         "corn maize healthy": "milho",
         "corn maize common rust": "milho",
 
+        # ----------------------------------------------------
         # TOMATE
+        # ----------------------------------------------------
         "tomate": "tomate",
         "tomato": "tomate",
 
+        # ----------------------------------------------------
         # BATATA
+        # ----------------------------------------------------
         "batata": "batata",
         "potato": "batata",
 
+        # ----------------------------------------------------
         # MAÇÃ
+        # ----------------------------------------------------
         "maca": "maçã",
         "maçã": "maçã",
         "apple": "maçã",
 
+        # ----------------------------------------------------
         # UVA
+        # ----------------------------------------------------
         "uva": "uva",
         "grape": "uva",
 
+        # ----------------------------------------------------
         # PÊSSEGO
+        # ----------------------------------------------------
         "pessego": "pêssego",
         "pêssego": "pêssego",
         "peach": "pêssego",
 
+        # ----------------------------------------------------
         # CEREJA
+        # ----------------------------------------------------
         "cereja": "cereja",
         "cherry": "cereja",
 
+        # ----------------------------------------------------
         # LARANJA
+        # ----------------------------------------------------
         "laranja": "laranja",
         "orange": "laranja",
 
+        # ----------------------------------------------------
         # SOJA
+        # ----------------------------------------------------
         "soja": "soja",
         "soybean": "soja",
 
+        # ----------------------------------------------------
         # MORANGO
+        # ----------------------------------------------------
         "morango": "morango",
         "strawberry": "morango",
 
+        # ----------------------------------------------------
         # FRAMBOESA
+        # ----------------------------------------------------
         "framboesa": "framboesa",
         "raspberry": "framboesa",
 
+        # ----------------------------------------------------
         # MIRTILO
+        # ----------------------------------------------------
         "mirtilo": "mirtilo",
         "blueberry": "mirtilo",
 
+        # ----------------------------------------------------
         # PIMENTÃO
+        # ----------------------------------------------------
         "pimentao": "pimentão",
         "pimentão": "pimentão",
         "pepper": "pimentão",
         "pepper bell": "pimentão",
 
+        # ----------------------------------------------------
         # ABÓBORA
+        # ----------------------------------------------------
         "abobora": "abóbora",
         "abóbora": "abóbora",
         "squash": "abóbora",
@@ -152,15 +200,15 @@ def normalizar_cultura(valor):
 def identificar_produto_da_classe(classe):
     """
     Identifica a cultura/produto a partir da classe retornada
-    pela inteligência artificial.
+    pela API de inteligência artificial.
 
     Exemplos:
 
         Corn_(maize)___healthy
-        -> Corn_(maize)
+        -> milho
 
         Tomato___Late_blight
-        -> Tomato
+        -> tomate
     """
 
     if not classe:
@@ -187,10 +235,7 @@ def identificar_cultura_da_classe(classe):
     """
     Alias para identificação da cultura.
     """
-
-    return identificar_produto_da_classe(
-        classe
-    )
+    return identificar_produto_da_classe(classe)
 
 
 # ============================================================
@@ -296,41 +341,27 @@ def validar_imagem(image_file):
 
     try:
 
-        if hasattr(
-            image_file,
-            "open",
-        ):
+        if hasattr(image_file, "open"):
 
             image_file.open("rb")
 
             try:
-
-                imagem = Image.open(
-                    image_file
-                )
-
+                imagem = Image.open(image_file)
                 imagem.load()
 
             finally:
 
                 try:
                     image_file.close()
-
                 except Exception:
                     pass
 
         else:
 
-            if hasattr(
-                image_file,
-                "seek",
-            ):
+            if hasattr(image_file, "seek"):
                 image_file.seek(0)
 
-            imagem = Image.open(
-                image_file
-            )
-
+            imagem = Image.open(image_file)
             imagem.load()
 
     except UnidentifiedImageError as exc:
@@ -356,9 +387,7 @@ def validar_imagem(image_file):
 
     try:
 
-        imagem = imagem.convert(
-            "RGB"
-        )
+        imagem = imagem.convert("RGB")
 
     except Exception as exc:
 
@@ -386,31 +415,23 @@ def obter_bytes_imagem(image_file):
 
     try:
 
-        if hasattr(
-            image_file,
-            "open",
-        ):
+        if hasattr(image_file, "open"):
 
             image_file.open("rb")
 
             try:
-
                 dados = image_file.read()
 
             finally:
 
                 try:
                     image_file.close()
-
                 except Exception:
                     pass
 
         else:
 
-            if hasattr(
-                image_file,
-                "seek",
-            ):
+            if hasattr(image_file, "seek"):
                 image_file.seek(0)
 
             dados = image_file.read()
@@ -423,13 +444,11 @@ def obter_bytes_imagem(image_file):
         ) from exc
 
     if not dados:
-
         raise ValueError(
             "A imagem cadastrada no produto está vazia."
         )
 
     if len(dados) > MAX_IMAGE_SIZE:
-
         raise ValueError(
             "A imagem não pode ultrapassar 10 MB."
         )
@@ -483,21 +502,21 @@ def enviar_para_api(
     nome_arquivo="imagem.jpg",
 ):
     """
-    Envia a imagem para:
+    Envia a imagem para a API externa AgroIA.
 
-        POST http://127.0.0.1:8001/analisar
+    Produção:
+        https://agroia-api.onrender.com/analisar
 
-    da API externa AgroIA.
+    Desenvolvimento:
+        http://127.0.0.1:8001/analisar
     """
 
     if not imagem_bytes:
-
         raise ValueError(
             "Nenhuma imagem disponível para enviar à API."
         )
 
     if len(imagem_bytes) > MAX_IMAGE_SIZE:
-
         raise ValueError(
             "A imagem não pode ultrapassar 10 MB."
         )
@@ -527,8 +546,8 @@ def enviar_para_api(
         raise ValueError(
             "Não foi possível conectar à API de "
             "inteligência artificial. "
-            "Verifique se a API AgroIA está em execução "
-            f"em {API_URL}."
+            f"Verifique se a API AgroIA está disponível em "
+            f"{API_URL}."
         ) from exc
 
     except requests.exceptions.Timeout as exc:
@@ -558,10 +577,7 @@ def enviar_para_api(
 
             dados_erro = resposta.json()
 
-            if isinstance(
-                dados_erro,
-                dict,
-            ):
+            if isinstance(dados_erro, dict):
 
                 detalhe = (
                     dados_erro.get("detail")
@@ -627,10 +643,7 @@ def enviar_para_api(
             "retornou uma resposta inválida."
         ) from exc
 
-    if not isinstance(
-        dados,
-        dict,
-    ):
+    if not isinstance(dados, dict):
 
         raise ValueError(
             "A API de inteligência artificial "
@@ -677,19 +690,26 @@ def extrair_resultado_api(dados_api):
 
     if sucesso is False:
 
+        detalhe = (
+            dados_api.get("detail")
+            or dados_api.get("erro")
+            or dados_api.get("message")
+            or ""
+        )
+
         raise ValueError(
-            "A API de inteligência artificial "
-            "não conseguiu concluir a análise."
+            detalhe
+            or (
+                "A API de inteligência artificial "
+                "não conseguiu concluir a análise."
+            )
         )
 
     resultado = dados_api.get(
         "resultado"
     )
 
-    if not isinstance(
-        resultado,
-        dict,
-    ):
+    if not isinstance(resultado, dict):
 
         raise ValueError(
             "A API de inteligência artificial "
@@ -796,11 +816,10 @@ def normalizar_resultado_api(
         principais_previsoes,
         list,
     ):
-
         principais_previsoes = []
 
     # --------------------------------------------------------
-    # NORMALIZAÇÃO DO TIPO
+    # NORMALIZAÇÃO
     # --------------------------------------------------------
 
     tipo_lower = normalizar_texto(
@@ -1033,11 +1052,11 @@ def analisar_imagem(
               ↓
         Bytes da imagem
               ↓
-        API externa AgroIA
+        API externa Render
               ↓
-        Modelo MobileNetV2
+        Modelo IA
               ↓
-        Resultado da IA
+        Resultado JSON
               ↓
         Normalização
               ↓
@@ -1113,7 +1132,6 @@ def analisar_imagem(
         nome_arquivo = "imagem.jpg"
 
     if not nome_arquivo:
-
         nome_arquivo = "imagem.jpg"
 
     # ========================================================
@@ -1143,4 +1161,3 @@ def analisar_imagem(
     )
 
     return resultado_final
-
