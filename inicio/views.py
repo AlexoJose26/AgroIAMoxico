@@ -15,14 +15,19 @@ from .models import Perfil
 
 
 # ============================================================
-# FUNÇÕES AUXILIARES
+# PERFIL DO UTILIZADOR
 # ============================================================
 
 def obter_perfil_usuario(user):
     """
-    Obtém ou cria o perfil pertencente ao utilizador autenticado.
+    Obtém o perfil pertencente ao utilizador autenticado.
 
-    Cada utilizador possui o seu próprio Perfil.
+    O signals.py é responsável por criar automaticamente
+    o Perfil quando um novo User é criado.
+
+    O get_or_create é mantido como mecanismo de segurança
+    para utilizadores antigos que eventualmente não tenham
+    um Perfil.
     """
     perfil_usuario, created = Perfil.objects.get_or_create(
         user=user,
@@ -37,7 +42,8 @@ def obter_perfil_usuario(user):
 
 def produtos_do_usuario(user):
     """
-    Retorna somente os produtos pertencentes ao utilizador.
+    Retorna somente os produtos ativos pertencentes
+    ao utilizador autenticado.
     """
     return (
         ProdutoAgricola.objects
@@ -56,13 +62,6 @@ def produtos_do_usuario(user):
 def home(request):
     """
     Página inicial do AgroIA Moxico.
-
-    Utilizadores autenticados:
-    - visualizam os seus produtos;
-    - visualizam os seus diagnósticos.
-
-    Visitantes:
-    - não recebem dados privados de utilizadores.
     """
 
     if request.user.is_authenticated:
@@ -97,12 +96,15 @@ def home(request):
     else:
 
         produtos = ProdutoAgricola.objects.none()
+
         total_produtos = 0
 
         produtos_analise = ProdutoAgricola.objects.none()
+
         total_produtos_analise = 0
 
         total_diagnosticos = 0
+
         meus_diagnosticos = 0
 
     contexto = {
@@ -128,12 +130,6 @@ def home(request):
 def login_view(request):
     """
     Login normal do Django.
-
-    Não utiliza:
-    - OTP;
-    - SMS;
-    - autenticação por dispositivo;
-    - autenticação de dois fatores.
     """
 
     if request.user.is_authenticated:
@@ -226,7 +222,8 @@ def login_view(request):
 
         if user is not None:
 
-            # Garante que o perfil existe.
+            # Garante que utilizadores antigos também possuem
+            # um Perfil.
             obter_perfil_usuario(user)
 
             login(
@@ -325,10 +322,13 @@ def cadastro(request):
     """
     Cria uma nova conta de utilizador.
 
-    A fotografia não é adicionada durante o cadastro.
+    O signals.py é responsável por criar automaticamente
+    o Perfil associado ao novo User.
 
-    O Perfil é criado automaticamente e associado
-    exclusivamente ao novo utilizador.
+    Depois da criação do User, esta função apenas obtém
+    esse Perfil e preenche os dados adicionais do formulário.
+
+    A fotografia não é adicionada durante o cadastro.
     """
 
     if request.user.is_authenticated:
@@ -379,8 +379,9 @@ def cadastro(request):
         "",
     )
 
-    # Compatibilidade caso algum template antigo envie password2.
+    # Compatibilidade com templates antigos.
     if not password_confirm:
+
         password_confirm = request.POST.get(
             "password2",
             "",
@@ -412,7 +413,7 @@ def cadastro(request):
     ).strip()
 
     # ========================================================
-    # DADOS PARA REPREENCHER O FORMULÁRIO EM CASO DE ERRO
+    # DADOS PARA REPREENCHER O FORMULÁRIO
     # ========================================================
 
     dados_formulario = {
@@ -432,7 +433,7 @@ def cadastro(request):
     }
 
     # ========================================================
-    # VALIDAÇÕES
+    # VALIDAÇÃO DO USERNAME
     # ========================================================
 
     if not username:
@@ -461,11 +462,28 @@ def cadastro(request):
             contexto,
         )
 
+    # ========================================================
+    # VALIDAÇÃO DA PASSWORD
+    # ========================================================
+
     if not password:
 
         messages.error(
             request,
             "Informe uma palavra-passe.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    if not password_confirm:
+
+        messages.error(
+            request,
+            "Confirme a sua palavra-passe.",
         )
 
         return render(
@@ -500,17 +518,23 @@ def cadastro(request):
             contexto,
         )
 
-    # --------------------------------------------------------
-    # VALIDAR NOME DE UTILIZADOR
-    # --------------------------------------------------------
+    # ========================================================
+    # VALIDAR USERNAME
+    # ========================================================
 
-    if User.objects.filter(
-        username__iexact=username
-    ).exists():
+    username_existente = (
+        User.objects
+        .filter(
+            username__iexact=username
+        )
+        .exists()
+    )
+
+    if username_existente:
 
         messages.error(
             request,
-            "Este nome de utilizador já está em uso.",
+            f"O nome de utilizador '{username}' já está registado.",
         )
 
         return render(
@@ -519,28 +543,36 @@ def cadastro(request):
             contexto,
         )
 
-    # --------------------------------------------------------
+    # ========================================================
     # VALIDAR E-MAIL
-    # --------------------------------------------------------
+    # ========================================================
 
-    if email and User.objects.filter(
-        email__iexact=email
-    ).exists():
+    if email:
 
-        messages.error(
-            request,
-            "Este endereço de e-mail já está registado.",
+        email_existente = (
+            User.objects
+            .filter(
+                email__iexact=email
+            )
+            .exists()
         )
 
-        return render(
-            request,
-            "inicio/cadastro.html",
-            contexto,
-        )
+        if email_existente:
 
-    # --------------------------------------------------------
+            messages.error(
+                request,
+                f"O e-mail '{email}' já está registado.",
+            )
+
+            return render(
+                request,
+                "inicio/cadastro.html",
+                contexto,
+            )
+
+    # ========================================================
     # VALIDAR TIPO DE UTILIZADOR
-    # --------------------------------------------------------
+    # ========================================================
 
     tipos_validos = {
         escolha[0]
@@ -561,7 +593,7 @@ def cadastro(request):
         )
 
     # ========================================================
-    # CRIAR UTILIZADOR + PERFIL
+    # CRIAR USER + ATUALIZAR PERFIL
     # ========================================================
 
     try:
@@ -569,8 +601,12 @@ def cadastro(request):
         with transaction.atomic():
 
             # ------------------------------------------------
-            # CRIAR UTILIZADOR
+            # CRIAR USER
             # ------------------------------------------------
+            #
+            # Neste momento o signals.py será acionado
+            # automaticamente e criará o Perfil.
+            #
 
             user = User.objects.create_user(
                 username=username,
@@ -581,29 +617,114 @@ def cadastro(request):
             )
 
             # ------------------------------------------------
-            # CRIAR PERFIL
+            # OBTER O PERFIL CRIADO PELO SIGNAL
             # ------------------------------------------------
 
-            Perfil.objects.create(
-                user=user,
-                telefone=telefone,
-                localizacao=localizacao,
-                municipio=municipio,
-                provincia=provincia or "Moxico",
-                tipo_utilizador=tipo_utilizador or "outro",
+            perfil_usuario = Perfil.objects.get(
+                user=user
             )
+
+            # ------------------------------------------------
+            # PREENCHER OS DADOS DO PERFIL
+            # ------------------------------------------------
+
+            perfil_usuario.telefone = telefone
+
+            perfil_usuario.localizacao = localizacao
+
+            perfil_usuario.municipio = municipio
+
+            perfil_usuario.provincia = (
+                provincia or "Moxico"
+            )
+
+            perfil_usuario.tipo_utilizador = (
+                tipo_utilizador or "outro"
+            )
+
+            perfil_usuario.save()
 
     # ========================================================
     # ERRO DE INTEGRIDADE
     # ========================================================
 
-    except IntegrityError:
+    except IntegrityError as e:
+
+        print(
+            "\n========================================"
+        )
+
+        print(
+            "ERRO DE INTEGRIDADE NO CADASTRO:"
+        )
+
+        print(
+            repr(e)
+        )
+
+        print(
+            "USERNAME:",
+            repr(username)
+        )
+
+        print(
+            "EMAIL:",
+            repr(email)
+        )
+
+        print(
+            "========================================\n"
+        )
+
+        username_existe = (
+            User.objects
+            .filter(
+                username__iexact=username
+            )
+            .exists()
+        )
+
+        email_existe = (
+            bool(email)
+            and User.objects
+            .filter(
+                email__iexact=email
+            )
+            .exists()
+        )
+
+        if username_existe and email_existe:
+
+            mensagem = (
+                "O nome de utilizador e o e-mail "
+                "já estão registados."
+            )
+
+        elif username_existe:
+
+            mensagem = (
+                f"O nome de utilizador '{username}' "
+                "já está registado."
+            )
+
+        elif email_existe:
+
+            mensagem = (
+                f"O e-mail '{email}' "
+                "já está registado."
+            )
+
+        else:
+
+            mensagem = (
+                "Não foi possível criar a conta devido "
+                "a uma restrição da base de dados. "
+                "Consulte o terminal para obter o erro técnico."
+            )
 
         messages.error(
             request,
-            "Não foi possível criar a conta porque "
-            "alguns dados já estão registados. "
-            "Verifique o nome de utilizador e o e-mail.",
+            mensagem,
         )
 
         return render(
@@ -613,21 +734,23 @@ def cadastro(request):
         )
 
     # ========================================================
-    # OUTRO ERRO
+    # ERRO GERAL
     # ========================================================
 
     except Exception as e:
 
-        # Registo técnico no terminal/log.
         print(
             "\n========================================"
         )
+
         print(
             "ERRO REAL NO CADASTRO:"
         )
+
         print(
             repr(e)
         )
+
         print(
             "========================================\n"
         )
@@ -785,6 +908,7 @@ def editar_perfil(request):
                 with transaction.atomic():
 
                     user_form.save()
+
                     perfil_form.save()
 
                 messages.success(
@@ -801,12 +925,15 @@ def editar_perfil(request):
                 print(
                     "\n========================================"
                 )
+
                 print(
                     "ERRO AO ATUALIZAR PERFIL:"
                 )
+
                 print(
                     repr(e)
                 )
+
                 print(
                     "========================================\n"
                 )
