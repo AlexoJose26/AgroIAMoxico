@@ -221,26 +221,16 @@ MEDIA_ROOT = BASE_DIR / "media"
 # ============================================================
 
 if not DEBUG:
-
     STORAGES = {
         "default": {
-            "BACKEND": (
-                "django.core.files.storage.FileSystemStorage"
-            ),
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
-
         "staticfiles": {
             "BACKEND": (
-                "django.contrib.staticfiles.storage."
-                "ManifestStaticFilesStorage"
+                "django.contrib.staticfiles.storage.StaticFilesStorage"
             ),
         },
     }
-
-
-# ============================================================
-# API DE INTELIGÊNCIA ARTIFICIAL
-# ============================================================
 
 AGROIA_API_URL = os.environ.get(
     "AGROIA_API_URL",
@@ -316,21 +306,6 @@ CSRF_TRUSTED_ORIGINS = [
     if origin.strip()
 ]
 
-
-# ============================================================
-# SEGURANÇA HTTPS
-# ============================================================
-#
-# LOCAL:
-#   http://127.0.0.1:8000/
-#   http://localhost:8000/
-#
-# PRODUÇÃO:
-#   https://agroiamoxico.vercel.app/
-#
-# Na Vercel o HTTPS é obrigatório.
-# Localmente NÃO fazemos redirecionamento para HTTPS.
-# ============================================================
 
 if IS_VERCEL:
 
