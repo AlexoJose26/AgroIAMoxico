@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -38,17 +38,6 @@ def obter_perfil_usuario(user):
 def produtos_do_usuario(user):
     """
     Retorna somente os produtos pertencentes ao utilizador.
-
-    IMPORTANTE:
-    O modelo ProdutoAgricola deve possuir:
-
-        usuario = models.ForeignKey(
-            User,
-            on_delete=models.CASCADE,
-            related_name="produtos_agricolas",
-        )
-
-    Assim, os produtos ficam isolados por conta.
     """
     return (
         ProdutoAgricola.objects
@@ -68,12 +57,12 @@ def home(request):
     """
     Página inicial do AgroIA Moxico.
 
-    Se o utilizador estiver autenticado:
-    - mostra os produtos dele;
-    - mostra os diagnósticos dele.
+    Utilizadores autenticados:
+    - visualizam os seus produtos;
+    - visualizam os seus diagnósticos.
 
-    Para visitantes:
-    - não expõe dados privados de outros utilizadores.
+    Visitantes:
+    - não recebem dados privados de utilizadores.
     """
 
     if request.user.is_authenticated:
@@ -97,24 +86,23 @@ def home(request):
 
         total_diagnosticos = (
             Diagnostico.objects
-            .filter(usuario=request.user)
+            .filter(
+                usuario=request.user
+            )
             .count()
         )
 
         meus_diagnosticos = total_diagnosticos
 
     else:
-        # Visitantes não recebem dados privados de utilizadores.
-        produtos = ProdutoAgricola.objects.none()
 
+        produtos = ProdutoAgricola.objects.none()
         total_produtos = 0
 
         produtos_analise = ProdutoAgricola.objects.none()
-
         total_produtos_analise = 0
 
         total_diagnosticos = 0
-
         meus_diagnosticos = 0
 
     contexto = {
@@ -142,10 +130,10 @@ def login_view(request):
     Login normal do Django.
 
     Não utiliza:
-    - OTP
-    - SMS
-    - autenticação por dispositivo
-    - autenticação de dois fatores
+    - OTP;
+    - SMS;
+    - autenticação por dispositivo;
+    - autenticação de dois fatores.
     """
 
     if request.user.is_authenticated:
@@ -191,6 +179,7 @@ def login_view(request):
         # ----------------------------------------------------
 
         if not username:
+
             messages.error(
                 request,
                 "Digite o seu nome de utilizador.",
@@ -210,6 +199,7 @@ def login_view(request):
         # ----------------------------------------------------
 
         if not password:
+
             messages.error(
                 request,
                 "Digite a sua palavra-passe.",
@@ -249,10 +239,13 @@ def login_view(request):
             # ------------------------------------------------
 
             if remember:
+
                 request.session.set_expiry(
                     60 * 60 * 24 * 30
                 )
+
             else:
+
                 request.session.set_expiry(0)
 
             messages.success(
@@ -306,7 +299,6 @@ def logout_view(request):
     """
     Termina completamente a sessão do utilizador.
 
-    O logout do Django limpa a sessão autenticada.
     Nenhum dado permanente do utilizador é apagado.
     """
 
@@ -315,15 +307,7 @@ def logout_view(request):
         or request.user.username
     )
 
-    # --------------------------------------------------------
-    # LIMPA A SESSÃO
-    # --------------------------------------------------------
-
     logout(request)
-
-    # --------------------------------------------------------
-    # NOVA SESSÃO APENAS PARA A MENSAGEM
-    # --------------------------------------------------------
 
     messages.success(
         request,
@@ -343,7 +327,7 @@ def cadastro(request):
 
     A fotografia não é adicionada durante o cadastro.
 
-    O perfil é criado automaticamente e fica associado
+    O Perfil é criado automaticamente e associado
     exclusivamente ao novo utilizador.
     """
 
@@ -351,204 +335,338 @@ def cadastro(request):
         return redirect("inicio:perfil")
 
     # --------------------------------------------------------
-    # POST
+    # GET
     # --------------------------------------------------------
 
-    if request.method == "POST":
+    if request.method != "POST":
 
-        username = request.POST.get(
-            "username",
-            "",
-        ).strip()
-
-        first_name = request.POST.get(
-            "first_name",
-            "",
-        ).strip()
-
-        last_name = request.POST.get(
-            "last_name",
-            "",
-        ).strip()
-
-        email = request.POST.get(
-            "email",
-            "",
-        ).strip().lower()
-
-        password = request.POST.get(
-            "password",
-            "",
+        return render(
+            request,
+            "inicio/cadastro.html",
         )
 
+    # ========================================================
+    # RECEBER DADOS DO FORMULÁRIO
+    # ========================================================
+
+    username = request.POST.get(
+        "username",
+        "",
+    ).strip()
+
+    first_name = request.POST.get(
+        "first_name",
+        "",
+    ).strip()
+
+    last_name = request.POST.get(
+        "last_name",
+        "",
+    ).strip()
+
+    email = request.POST.get(
+        "email",
+        "",
+    ).strip().lower()
+
+    password = request.POST.get(
+        "password",
+        "",
+    )
+
+    password_confirm = request.POST.get(
+        "password_confirm",
+        "",
+    )
+
+    # Compatibilidade caso algum template antigo envie password2.
+    if not password_confirm:
         password_confirm = request.POST.get(
-            "password_confirm",
-            request.POST.get(
-                "password2",
-                "",
-            ),
+            "password2",
+            "",
         )
 
-        telefone = request.POST.get(
-            "telefone",
-            "",
-        ).strip()
+    telefone = request.POST.get(
+        "telefone",
+        "",
+    ).strip()
 
-        localizacao = request.POST.get(
-            "localizacao",
-            "",
-        ).strip()
+    localizacao = request.POST.get(
+        "localizacao",
+        "",
+    ).strip()
 
-        municipio = request.POST.get(
-            "municipio",
-            "",
-        ).strip()
+    municipio = request.POST.get(
+        "municipio",
+        "",
+    ).strip()
 
-        provincia = request.POST.get(
-            "provincia",
-            "Moxico",
-        ).strip()
+    provincia = request.POST.get(
+        "provincia",
+        "Moxico",
+    ).strip()
 
-        tipo_utilizador = request.POST.get(
-            "tipo_utilizador",
-            "outro",
-        ).strip()
+    tipo_utilizador = request.POST.get(
+        "tipo_utilizador",
+        "outro",
+    ).strip()
 
-        # ----------------------------------------------------
-        # VALIDAÇÕES
-        # ----------------------------------------------------
+    # ========================================================
+    # DADOS PARA REPREENCHER O FORMULÁRIO EM CASO DE ERRO
+    # ========================================================
 
-        if not username:
-            messages.error(
-                request,
-                "Informe o nome de utilizador.",
-            )
+    dados_formulario = {
+        "username": username,
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "telefone": telefone,
+        "localizacao": localizacao,
+        "municipio": municipio,
+        "provincia": provincia or "Moxico",
+        "tipo_utilizador": tipo_utilizador or "outro",
+    }
 
-            return render(
-                request,
-                "inicio/cadastro.html",
-            )
+    contexto = {
+        "dados": dados_formulario,
+    }
 
-        if not password:
-            messages.error(
-                request,
-                "Informe uma palavra-passe.",
-            )
+    # ========================================================
+    # VALIDAÇÕES
+    # ========================================================
 
-            return render(
-                request,
-                "inicio/cadastro.html",
-            )
+    if not username:
 
-        if password != password_confirm:
-            messages.error(
-                request,
-                "As palavras-passe não coincidem.",
-            )
-
-            return render(
-                request,
-                "inicio/cadastro.html",
-            )
-
-        if len(password) < 8:
-            messages.error(
-                request,
-                "A palavra-passe deve ter pelo menos 8 caracteres.",
-            )
-
-            return render(
-                request,
-                "inicio/cadastro.html",
-            )
-
-        if User.objects.filter(
-            username__iexact=username
-        ).exists():
-
-            messages.error(
-                request,
-                "Este nome de utilizador já está em uso.",
-            )
-
-            return render(
-                request,
-                "inicio/cadastro.html",
-            )
-
-        if email and User.objects.filter(
-            email__iexact=email
-        ).exists():
-
-            messages.error(
-                request,
-                "Este endereço de e-mail já está registado.",
-            )
-
-            return render(
-                request,
-                "inicio/cadastro.html",
-            )
-
-        try:
-
-            with transaction.atomic():
-
-                user = User.objects.create_user(
-                    username=username,
-                    email=email,
-                    password=password,
-                    first_name=first_name,
-                    last_name=last_name,
-                )
-
-                Perfil.objects.create(
-                    user=user,
-                    telefone=telefone,
-                    localizacao=localizacao,
-                    municipio=municipio,
-                    provincia=provincia or "Moxico",
-                    tipo_utilizador=(
-                        tipo_utilizador
-                        or "outro"
-                    ),
-                )
-
-        except Exception:
-
-            messages.error(
-                request,
-                "Não foi possível criar a conta. "
-                "Verifique os dados e tente novamente.",
-            )
-
-            return render(
-                request,
-                "inicio/cadastro.html",
-            )
-
-        login(
+        messages.error(
             request,
-            user,
+            "Informe o nome de utilizador.",
         )
 
-        messages.success(
+        return render(
             request,
-            "Conta criada com sucesso! "
-            "Bem-vindo ao AgroIA Moxico.",
+            "inicio/cadastro.html",
+            contexto,
         )
 
-        return redirect(
-            "inicio:perfil"
+    if len(username) < 3:
+
+        messages.error(
+            request,
+            "O nome de utilizador deve ter pelo menos 3 caracteres.",
         )
 
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
 
-    return render(
+    if not password:
+
+        messages.error(
+            request,
+            "Informe uma palavra-passe.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    if password != password_confirm:
+
+        messages.error(
+            request,
+            "As palavras-passe não coincidem.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    if len(password) < 8:
+
+        messages.error(
+            request,
+            "A palavra-passe deve ter pelo menos 8 caracteres.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    # --------------------------------------------------------
+    # VALIDAR NOME DE UTILIZADOR
+    # --------------------------------------------------------
+
+    if User.objects.filter(
+        username__iexact=username
+    ).exists():
+
+        messages.error(
+            request,
+            "Este nome de utilizador já está em uso.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    # --------------------------------------------------------
+    # VALIDAR E-MAIL
+    # --------------------------------------------------------
+
+    if email and User.objects.filter(
+        email__iexact=email
+    ).exists():
+
+        messages.error(
+            request,
+            "Este endereço de e-mail já está registado.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    # --------------------------------------------------------
+    # VALIDAR TIPO DE UTILIZADOR
+    # --------------------------------------------------------
+
+    tipos_validos = {
+        escolha[0]
+        for escolha in Perfil.TIPOS_UTILIZADOR
+    }
+
+    if tipo_utilizador not in tipos_validos:
+
+        messages.error(
+            request,
+            "Selecione um tipo de utilizador válido.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    # ========================================================
+    # CRIAR UTILIZADOR + PERFIL
+    # ========================================================
+
+    try:
+
+        with transaction.atomic():
+
+            # ------------------------------------------------
+            # CRIAR UTILIZADOR
+            # ------------------------------------------------
+
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+            )
+
+            # ------------------------------------------------
+            # CRIAR PERFIL
+            # ------------------------------------------------
+
+            Perfil.objects.create(
+                user=user,
+                telefone=telefone,
+                localizacao=localizacao,
+                municipio=municipio,
+                provincia=provincia or "Moxico",
+                tipo_utilizador=tipo_utilizador or "outro",
+            )
+
+    # ========================================================
+    # ERRO DE INTEGRIDADE
+    # ========================================================
+
+    except IntegrityError:
+
+        messages.error(
+            request,
+            "Não foi possível criar a conta porque "
+            "alguns dados já estão registados. "
+            "Verifique o nome de utilizador e o e-mail.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    # ========================================================
+    # OUTRO ERRO
+    # ========================================================
+
+    except Exception as e:
+
+        # Registo técnico no terminal/log.
+        print(
+            "\n========================================"
+        )
+        print(
+            "ERRO REAL NO CADASTRO:"
+        )
+        print(
+            repr(e)
+        )
+        print(
+            "========================================\n"
+        )
+
+        messages.error(
+            request,
+            "Ocorreu um erro ao criar a conta. "
+            "Tente novamente.",
+        )
+
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
+
+    # ========================================================
+    # LOGIN AUTOMÁTICO
+    # ========================================================
+
+    login(
         request,
-        "inicio/cadastro.html",
+        user,
+    )
+
+    messages.success(
+        request,
+        "Conta criada com sucesso! "
+        "Bem-vindo ao AgroIA Moxico.",
+    )
+
+    return redirect(
+        "inicio:perfil"
     )
 
 
+# ============================================================
+# PERFIL
+# ============================================================
 
 @login_required
 def perfil(request):
@@ -557,6 +675,9 @@ def perfil(request):
         request.user
     )
 
+    # --------------------------------------------------------
+    # DIAGNÓSTICOS
+    # --------------------------------------------------------
 
     diagnosticos_usuario = (
         Diagnostico.objects
@@ -577,6 +698,10 @@ def perfil(request):
         .count()
     )
 
+    # --------------------------------------------------------
+    # PRODUTOS
+    # --------------------------------------------------------
+
     produtos_usuario = (
         ProdutoAgricola.objects
         .filter(
@@ -588,7 +713,6 @@ def perfil(request):
         produtos_usuario.count()
     )
 
-
     total_produtos_ativos = (
         produtos_usuario
         .filter(
@@ -596,7 +720,6 @@ def perfil(request):
         )
         .count()
     )
-
 
     total_produtos_analise = (
         produtos_usuario
@@ -610,10 +733,8 @@ def perfil(request):
     contexto = {
         "perfil": perfil_usuario,
         "usuario": request.user,
-
         "total_diagnosticos": total_diagnosticos,
         "diagnosticos_concluidos": diagnosticos_concluidos,
-
         "total_produtos": total_produtos,
         "total_produtos_ativos": total_produtos_ativos,
         "total_produtos_analise": total_produtos_analise,
@@ -626,6 +747,9 @@ def perfil(request):
     )
 
 
+# ============================================================
+# EDITAR PERFIL
+# ============================================================
 
 @login_required
 def editar_perfil(request):
@@ -633,6 +757,10 @@ def editar_perfil(request):
     perfil_usuario = obter_perfil_usuario(
         request.user
     )
+
+    # --------------------------------------------------------
+    # POST
+    # --------------------------------------------------------
 
     if request.method == "POST":
 
@@ -652,27 +780,54 @@ def editar_perfil(request):
             and perfil_form.is_valid()
         ):
 
-            with transaction.atomic():
+            try:
 
-                user_form.save()
+                with transaction.atomic():
 
-                perfil_form.save()
+                    user_form.save()
+                    perfil_form.save()
 
-            messages.success(
+                messages.success(
+                    request,
+                    "O seu perfil foi atualizado com sucesso.",
+                )
+
+                return redirect(
+                    "inicio:perfil"
+                )
+
+            except Exception as e:
+
+                print(
+                    "\n========================================"
+                )
+                print(
+                    "ERRO AO ATUALIZAR PERFIL:"
+                )
+                print(
+                    repr(e)
+                )
+                print(
+                    "========================================\n"
+                )
+
+                messages.error(
+                    request,
+                    "Não foi possível atualizar o perfil. "
+                    "Tente novamente.",
+                )
+
+        else:
+
+            messages.error(
                 request,
-                "O seu perfil foi atualizado com sucesso.",
+                "Não foi possível atualizar o perfil. "
+                "Verifique os campos assinalados.",
             )
 
-            return redirect(
-                "inicio:perfil"
-            )
-
-        messages.error(
-            request,
-            "Não foi possível atualizar o perfil. "
-            "Verifique os campos assinalados.",
-        )
-
+    # --------------------------------------------------------
+    # GET
+    # --------------------------------------------------------
 
     else:
 
@@ -698,11 +853,15 @@ def editar_perfil(request):
     )
 
 
+# ============================================================
+# REMOVER FOTO DE PERFIL
+# ============================================================
 
 @login_required
 def remover_foto_perfil(request):
 
     if request.method != "POST":
+
         return redirect(
             "inicio:perfil"
         )
@@ -742,9 +901,13 @@ def remover_foto_perfil(request):
         "inicio:perfil"
     )
 
+
+# ============================================================
+# PRODUTOS
+# ============================================================
+
 @login_required
 def produtos(request):
-
 
     produtos_lista = (
         ProdutoAgricola.objects
@@ -767,10 +930,12 @@ def produtos(request):
     )
 
 
+# ============================================================
+# DETALHE DO PRODUTO
+# ============================================================
 
 @login_required
 def detalhe_produto(request, pk):
-
 
     produto = get_object_or_404(
         ProdutoAgricola.objects.prefetch_related(
@@ -792,10 +957,12 @@ def detalhe_produto(request, pk):
     )
 
 
+# ============================================================
+# PESQUISAR PRODUTOS
+# ============================================================
 
 @login_required
 def pesquisar_produtos(request):
-
 
     termo = request.GET.get(
         "q",
@@ -839,10 +1006,11 @@ def pesquisar_produtos(request):
     )
 
 
-
+# ============================================================
+# SOBRE
+# ============================================================
 
 def sobre(request):
-
 
     return render(
         request,
