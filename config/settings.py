@@ -24,23 +24,13 @@ DEBUG = os.environ.get(
 ).lower() == "true"
 
 
-# ============================================================
-# HOSTS
-# ============================================================
-
 ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get(
-        "ALLOWED_HOSTS",
-        "127.0.0.1,localhost",
-    ).split(",")
-    if host.strip()
+    "127.0.0.1",
+    "localhost",
+    "agroiamoxico.vercel.app",
+    "agroiamoxico-6ah4ajppq-alexo-salvador-jose-projects.vercel.app",
 ]
 
-
-# ============================================================
-# APLICAÇÕES
-# ============================================================
 
 INSTALLED_APPS = [
     "django.contrib.admin",
