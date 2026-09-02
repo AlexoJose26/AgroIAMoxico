@@ -658,23 +658,7 @@ def enviar_para_api(
 # ============================================================
 
 def extrair_resultado_api(dados_api):
-    """
-    Extrai o objeto 'resultado' retornado pela API.
-
-    Formato esperado:
-
-    {
-        "sucesso": true,
-        "resultado": {
-            "classe": "...",
-            "produto": "...",
-            "problema": "...",
-            "tipo": "...",
-            "confianca": 91.16,
-            "principais_previsoes": [...]
-        }
-    }
-    """
+  
 
     if not dados_api:
 

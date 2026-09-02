@@ -34,6 +34,7 @@
     width: 100%;
     z-index: 9999;
     padding: 11px 18px;
+    box-sizing: border-box;
     pointer-events: none;
   }
 
@@ -67,6 +68,7 @@
     -webkit-backdrop-filter: blur(24px) saturate(145%);
 
     pointer-events: auto;
+
     position: relative;
     overflow: visible;
 
@@ -85,7 +87,9 @@
     content: "";
     position: absolute;
     inset: 0;
+
     border-radius: inherit;
+
     pointer-events: none;
 
     background:
@@ -108,12 +112,14 @@
     align-items: center;
 
     gap: 9px;
+
     flex-shrink: 0;
 
     text-decoration: none;
     color: var(--agro-text);
 
     padding: 3px 7px 3px 3px;
+
     border-radius: 14px;
 
     transition:
@@ -159,6 +165,7 @@
 
   .agro-brand-logo::before {
     content: "";
+
     position: absolute;
 
     width: 65px;
@@ -174,6 +181,7 @@
 
   .agro-brand-logo::after {
     content: "";
+
     position: absolute;
 
     width: 20px;
@@ -205,6 +213,7 @@
   .agro-brand-text {
     display: flex;
     flex-direction: column;
+
     line-height: 1;
   }
 
@@ -226,6 +235,7 @@
     font-weight: 750;
 
     letter-spacing: 1.9px;
+
     text-transform: uppercase;
   }
 
@@ -534,7 +544,6 @@
 
     opacity: 0;
     visibility: hidden;
-
     pointer-events: none;
 
     transform:
@@ -553,7 +562,6 @@
   .agro-user-dropdown.active {
     opacity: 1;
     visibility: visible;
-
     pointer-events: auto;
 
     transform:
@@ -649,7 +657,6 @@
     font-weight: 850;
 
     overflow: hidden;
-
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -665,7 +672,6 @@
     font-weight: 600;
 
     overflow: hidden;
-
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -677,6 +683,7 @@
 
   .agro-user-menu-link {
     width: 100%;
+
     min-height: 43px;
 
     display: flex;
@@ -922,8 +929,8 @@
   .agro-mobile-toggle {
     display: none;
 
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
 
     padding: 0;
 
@@ -943,10 +950,23 @@
     flex-direction: column;
 
     gap: 5px;
+
+    flex-shrink: 0;
+
+    position: relative;
+    z-index: 10001;
+
+    transition:
+      background .25s ease,
+      transform .25s ease;
+  }
+
+  .agro-mobile-toggle:hover {
+    background: rgba(234, 247, 239, .95);
   }
 
   .agro-mobile-toggle span {
-    width: 18px;
+    width: 19px;
     height: 2px;
 
     border-radius: 20px;
@@ -980,19 +1000,21 @@
   .agro-mobile-menu {
     position: absolute;
 
-    top: calc(100% + 7px);
-    right: 18px;
+    top: calc(100% + 8px);
+    right: 0;
 
-    width: min(380px, calc(100% - 36px));
+    width: min(380px, calc(100vw - 24px));
 
     padding: 8px;
 
+    box-sizing: border-box;
+
     border-radius: 17px;
 
-    background: rgba(248, 253, 250, .93);
+    background: rgba(248, 253, 250, .96);
 
     border:
-      1px solid rgba(255, 255, 255, .85);
+      1px solid rgba(255, 255, 255, .88);
 
     box-shadow:
       0 22px 55px rgba(8, 59, 39, .15);
@@ -1002,7 +1024,6 @@
 
     opacity: 0;
     visibility: hidden;
-
     pointer-events: none;
 
     transform:
@@ -1014,6 +1035,8 @@
       opacity .25s ease,
       visibility .25s ease,
       transform .25s ease;
+
+    z-index: 10000;
   }
 
   .agro-mobile-menu.active {
@@ -1029,19 +1052,16 @@
 
   .agro-mobile-menu nav {
     display: flex;
-
     flex-direction: column;
 
     gap: 3px;
   }
 
   .agro-mobile-menu nav>a {
-    min-height: 45px;
+    min-height: 48px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     padding: 0 12px;
@@ -1075,19 +1095,19 @@
    ============================================================ */
 
   .agro-mobile-menu-icon {
-    width: 29px;
-    height: 29px;
+    width: 31px;
+    height: 31px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     flex-shrink: 0;
 
-    border-radius: 8px;
+    border-radius: 9px;
 
-    background: rgba(23, 107, 69, .065);
+    background:
+      rgba(23, 107, 69, .065);
 
     color: var(--agro-green);
   }
@@ -1095,6 +1115,8 @@
   .agro-mobile-menu-icon svg {
     width: 16px;
     height: 16px;
+
+    display: block;
   }
 
 
@@ -1103,7 +1125,7 @@
    ============================================================ */
 
   .agro-mobile-menu .mobile-logout {
-    margin-top: 3px;
+    margin-top: 4px;
 
     color: #a24d4d;
 
@@ -1125,7 +1147,7 @@
   .agro-mobile-menu .mobile-register {
     justify-content: center;
 
-    margin-top: 3px;
+    margin-top: 4px;
 
     color: #ffffff;
 
@@ -1135,58 +1157,184 @@
         var(--agro-green-dark));
   }
 
+  .agro-mobile-menu .mobile-register:hover {
+    color: #ffffff;
+
+    background:
+      linear-gradient(135deg,
+        var(--agro-green-dark),
+        var(--agro-green-deep));
+  }
+
 
   /* ============================================================
-   RESPONSIVIDADE
+   RESPONSIVIDADE — TABLET / MOBILE
    ============================================================ */
 
   @media (max-width: 960px) {
 
     .agro-navbar {
-      padding: 9px 12px;
+      width: 100%;
+      max-width: 100%;
+
+      padding: 8px 10px;
+
+      box-sizing: border-box;
     }
 
     .agro-navbar-shell {
-      min-height: 64px;
+      width: 100%;
 
-      gap: 9px;
+      min-width: 0;
+      min-height: 62px;
+
+      padding:
+        5px 7px 5px 8px;
+
+      gap: 8px;
+
+      box-sizing: border-box;
+
+      border-radius: 16px;
     }
+
+
+    /* --------------------------------------------------------
+       LOGO OCUPA O ESPAÇO DISPONÍVEL
+       -------------------------------------------------------- */
+
+    .agro-brand {
+      min-width: 0;
+
+      flex: 1 1 auto;
+
+      overflow: hidden;
+
+      gap: 8px;
+    }
+
+    .agro-brand-text {
+      min-width: 0;
+
+      overflow: hidden;
+    }
+
+    .agro-brand-text strong,
+    .agro-brand-text span {
+      white-space: nowrap;
+    }
+
+
+    /* --------------------------------------------------------
+       ESCONDER TODA A NAVEGAÇÃO DESKTOP
+       -------------------------------------------------------- */
 
     .agro-main-nav {
-      display: none;
+      display: none !important;
     }
+
+
+    /* --------------------------------------------------------
+       ÁREA DIREITA
+       -------------------------------------------------------- */
 
     .agro-navbar-right {
       margin-left: auto;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 0;
+
+      flex: 0 0 auto;
     }
+
+
+    /* --------------------------------------------------------
+       NO MOBILE NÃO MOSTRAR:
+       - PERFIL
+       - DATA/HORA
+       - LOGIN
+       - REGISTRO
+       -------------------------------------------------------- */
+
+    .agro-user-wrapper,
+    .agro-datetime,
+    .agro-guest-actions {
+      display: none !important;
+    }
+
+
+    /* --------------------------------------------------------
+       MOSTRAR SOMENTE O BOTÃO DO MENU
+       -------------------------------------------------------- */
 
     .agro-mobile-toggle {
-      display: flex;
+      display: flex !important;
     }
 
-    .agro-datetime {
-      display: none;
-    }
 
-    .agro-user-wrapper {
-      display: flex;
+    /* --------------------------------------------------------
+       MENU MOBILE
+       -------------------------------------------------------- */
+
+    .agro-mobile-menu {
+      position: fixed;
+
+      top: auto;
+      right: 10px;
+
+      width:
+        min(380px,
+          calc(100vw - 20px));
+
+      max-width:
+        calc(100vw - 20px);
+
+      max-height:
+        calc(100dvh - 84px);
+
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      overscroll-behavior: contain;
+
+      -webkit-overflow-scrolling: touch;
+
+      box-sizing: border-box;
     }
   }
 
 
+  /* ============================================================
+   MOBILE PEQUENO
+   ============================================================ */
+
   @media (max-width: 600px) {
 
     .agro-navbar {
-      padding: 7px;
+      padding:
+        7px;
+
+      padding-left:
+        max(7px,
+          env(safe-area-inset-left));
+
+      padding-right:
+        max(7px,
+          env(safe-area-inset-right));
     }
 
     .agro-navbar-shell {
-      min-height: 61px;
+      min-height: 59px;
 
       padding:
         5px 6px 5px 8px;
 
-      border-radius: 16px;
+      gap: 6px;
+
+      border-radius: 15px;
     }
 
     .agro-brand {
@@ -1215,33 +1363,191 @@
       letter-spacing: 1.4px;
     }
 
-    .agro-user-area {
-      display: flex;
+    .agro-mobile-toggle {
+      width: 40px;
+      height: 40px;
+
+      border-radius: 11px;
     }
 
-    .agro-user-icon {
+    .agro-mobile-menu {
+      top: 68px;
+
+      right:
+        max(7px,
+          env(safe-area-inset-right));
+
+      width:
+        min(380px,
+          calc(100vw - 14px));
+
+      max-width:
+        calc(100vw - 14px);
+
+      max-height:
+        calc(100dvh - 78px);
+    }
+  }
+
+
+  /* ============================================================
+   MOBILE MUITO PEQUENO
+   ============================================================ */
+
+  @media (max-width: 380px) {
+
+    .agro-navbar {
+      padding: 6px;
+
+      padding-left:
+        max(6px,
+          env(safe-area-inset-left));
+
+      padding-right:
+        max(6px,
+          env(safe-area-inset-right));
+    }
+
+    .agro-navbar-shell {
+      min-height: 57px;
+
+      padding:
+        5px 5px 5px 7px;
+
+      gap: 5px;
+
+      border-radius: 14px;
+    }
+
+    .agro-brand {
+      gap: 6px;
+    }
+
+    .agro-brand-logo {
+      width: 38px;
+      height: 38px;
+
+      border-radius: 11px;
+    }
+
+    .agro-brand-logo svg {
+      width: 23px;
+      height: 23px;
+    }
+
+    .agro-brand-text strong {
+      font-size: 14px;
+
+      letter-spacing: -.4px;
+    }
+
+    .agro-brand-text span {
+      font-size: 7px;
+
+      letter-spacing: 1.1px;
+    }
+
+    .agro-mobile-toggle {
+      width: 38px;
+      height: 38px;
+    }
+
+    .agro-mobile-menu {
+      top: 64px;
+
+      right:
+        max(6px,
+          env(safe-area-inset-right));
+
+      width:
+        calc(100vw - 12px);
+
+      max-width:
+        calc(100vw - 12px);
+
+      max-height:
+        calc(100dvh - 72px);
+    }
+
+    .agro-mobile-menu nav>a {
+      min-height: 45px;
+
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+
+
+  /* ============================================================
+   MOBILE EXTREMAMENTE PEQUENO
+   ============================================================ */
+
+  @media (max-width: 340px) {
+
+    .agro-navbar-shell {
+      gap: 4px;
+
+      padding-left: 5px;
+      padding-right: 4px;
+    }
+
+    .agro-brand {
+      gap: 5px;
+    }
+
+    .agro-brand-logo {
+      width: 36px;
+      height: 36px;
+
+      border-radius: 10px;
+    }
+
+    .agro-brand-logo svg {
+      width: 21px;
+      height: 21px;
+    }
+
+    .agro-brand-text strong {
+      font-size: 13px;
+
+      letter-spacing: -.5px;
+    }
+
+    .agro-brand-text span {
+      font-size: 6.5px;
+
+      letter-spacing: .9px;
+    }
+
+    .agro-mobile-toggle {
       width: 36px;
       height: 36px;
     }
 
-    .agro-user-dropdown {
-      position: fixed;
-
-      top: 72px;
-      right: 7px;
-
-      width:
-        min(255px, calc(100vw - 14px));
+    .agro-mobile-toggle span {
+      width: 17px;
     }
 
     .agro-mobile-menu {
-      top: calc(100% + 5px);
+      top: 61px;
 
-      right: 7px;
+      right: 5px;
 
       width:
-        calc(100% - 14px);
+        calc(100vw - 10px);
+
+      max-width:
+        calc(100vw - 10px);
     }
+  }
+
+
+  /* ============================================================
+   BLOQUEAR SCROLL COM MENU ABERTO
+   ============================================================ */
+
+  body.agro-mobile-menu-open {
+    overflow: hidden;
   }
 
 
@@ -1252,22 +1558,23 @@
   .agro-navbar a:focus-visible,
   .agro-user-area:focus-visible,
   .agro-mobile-toggle:focus-visible {
-
     outline:
-      2px solid rgba(23, 107, 69, .22);
+      2px solid rgba(23, 107, 69, .35);
 
     outline-offset: 2px;
   }
 
+
+  /* ============================================================
+   REDUÇÃO DE MOVIMENTO
+   ============================================================ */
 
   @media (prefers-reduced-motion: reduce) {
 
     .agro-navbar *,
     .agro-navbar *::before,
     .agro-navbar *::after {
-
       animation: none !important;
-
       transition: none !important;
     }
   }
@@ -1325,15 +1632,12 @@
 
     <nav class="agro-main-nav" aria-label="Navegação principal">
 
-
-      <!-- ==================================================
-                 INÍCIO
-                 =================================================== -->
+      <!-- INÍCIO -->
 
       <a href="{% url 'inicio:home' %}" class="agro-nav-link
-               {% if request.resolver_match.app_name == 'inicio' and request.resolver_match.url_name == 'home' %}
-                   active
-               {% endif %}">
+                {% if request.resolver_match.app_name == 'inicio' and request.resolver_match.url_name == 'home' %}
+                    active
+                {% endif %}">
 
         <span class="agro-nav-icon">
 
@@ -1355,14 +1659,12 @@
       </a>
 
 
-      <!-- ==================================================
-                 PRODUTOS AGRÍCOLAS
-                 =================================================== -->
+      <!-- PRODUTOS -->
 
       <a href="{% url 'produtos:produtos' %}" class="agro-nav-link agro-products-link
-               {% if request.resolver_match.app_name == 'produtos' and request.resolver_match.url_name == 'produtos' %}
-                   active
-               {% endif %}">
+                {% if request.resolver_match.app_name == 'produtos' and request.resolver_match.url_name == 'produtos' %}
+                    active
+                {% endif %}">
 
         <span class="agro-nav-icon">
 
@@ -1384,14 +1686,12 @@
       </a>
 
 
-      <!-- ==================================================
-                 CATEGORIAS
-                 =================================================== -->
+      <!-- CATEGORIAS -->
 
       <a href="{% url 'categorias:categorias' %}" class="agro-nav-link agro-categorias-link
-               {% if request.resolver_match.app_name == 'categorias' %}
-                   active
-               {% endif %}">
+                {% if request.resolver_match.app_name == 'categorias' %}
+                    active
+                {% endif %}">
 
         <span class="agro-nav-icon">
 
@@ -1415,27 +1715,12 @@
       </a>
 
 
-      <!-- ==================================================
-                 DIAGNÓSTICOS
-
-                 IMPORTANTE:
-                 Esta rota aponta para a PÁGINA PRINCIPAL:
-
-                 diagnostico/
-
-                 NÃO aponta para:
-
-                 diagnostico/analisar/
-
-                 nem para:
-
-                 diagnostico/produto/<id>/analisar/
-                 =================================================== -->
+      <!-- DIAGNÓSTICOS -->
 
       <a href="{% url 'diagnostico:diagnostico' %}" class="agro-nav-link agro-diagnostico-link
-               {% if request.resolver_match.app_name == 'diagnostico' and request.resolver_match.url_name == 'diagnostico' %}
-                   active
-               {% endif %}" aria-label="Abrir página principal de diagnóstico por inteligência artificial">
+                {% if request.resolver_match.app_name == 'diagnostico' and request.resolver_match.url_name == 'diagnostico' %}
+                    active
+                {% endif %}" aria-label="Abrir página principal de diagnóstico por inteligência artificial">
 
         <span class="agro-nav-icon">
 
@@ -1472,10 +1757,7 @@
 
       {% if user.is_authenticated %}
 
-
-      <!-- ==================================================
-                 USUÁRIO
-                 =================================================== -->
+      <!-- USUÁRIO DESKTOP -->
 
       <div class="agro-user-wrapper">
 
@@ -1511,12 +1793,9 @@
         </button>
 
 
-        <!-- ==================================================
-                     DROPDOWN
-                     =================================================== -->
+        <!-- DROPDOWN -->
 
         <div class="agro-user-dropdown" id="agroUserDropdown" aria-hidden="true">
-
 
           <div class="agro-user-dropdown-header">
 
@@ -1567,9 +1846,7 @@
           </div>
 
 
-          <!-- ==================================================
-                         MEU PERFIL
-                         =================================================== -->
+          <!-- PERFIL -->
 
           <a href="{% url 'inicio:perfil' %}" class="agro-user-menu-link">
 
@@ -1586,16 +1863,12 @@
 
             </span>
 
-            <span>
-              Meu perfil
-            </span>
+            <span>Meu perfil</span>
 
           </a>
 
 
-          <!-- ==================================================
-                         LOGOUT
-                         =================================================== -->
+          <!-- LOGOUT -->
 
           <a href="{% url 'inicio:logout' %}" class="agro-user-menu-link logout" title="Terminar sessão"
             aria-label="Terminar sessão">
@@ -1615,9 +1888,7 @@
 
             </span>
 
-            <span>
-              Terminar sessão
-            </span>
+            <span>Terminar sessão</span>
 
           </a>
 
@@ -1626,9 +1897,7 @@
       </div>
 
 
-      <!-- ==================================================
-                 DATA / HORA
-                 =================================================== -->
+      <!-- DATA / HORA -->
 
       <div class="agro-datetime" aria-label="Data e hora atual">
 
@@ -1659,26 +1928,18 @@
 
       </div>
 
-
       {% else %}
 
-
-      <!-- ==================================================
-                 VISITANTE
-                 =================================================== -->
+      <!-- VISITANTE -->
 
       <div class="agro-guest-actions">
 
         <a href="{% url 'inicio:login' %}" class="agro-login-link">
-
           Entrar
-
         </a>
 
         <a href="{% url 'inicio:cadastro' %}" class="agro-register-button">
-
           Criar conta
-
         </a>
 
       </div>
@@ -1686,9 +1947,9 @@
       {% endif %}
 
 
-      <!-- ==================================================
+      <!-- =================================================
                  BOTÃO MOBILE
-                 =================================================== -->
+                 ================================================= -->
 
       <button type="button" class="agro-mobile-toggle" id="agroMobileToggle" aria-label="Abrir menu"
         aria-expanded="false" aria-controls="agroMobileMenu">
@@ -1704,24 +1965,20 @@
   </div>
 
 
-  <!-- ==========================================================
+  <!-- ========================================================
          MENU MOBILE
-         =========================================================== -->
+         ========================================================= -->
 
   <div class="agro-mobile-menu" id="agroMobileMenu" aria-hidden="true">
 
     <nav aria-label="Menu mobile">
 
 
-      <!-- ==================================================
-                 INÍCIO
-                 =================================================== -->
+      <!-- INÍCIO -->
 
       <a href="{% url 'inicio:home' %}">
 
-        <span>
-          Início
-        </span>
+        <span>Início</span>
 
         <span class="agro-mobile-menu-icon">
 
@@ -1741,15 +1998,11 @@
       </a>
 
 
-      <!-- ==================================================
-                 PRODUTOS
-                 =================================================== -->
+      <!-- PRODUTOS -->
 
       <a href="{% url 'produtos:produtos' %}">
 
-        <span>
-          Produtos Agrícolas
-        </span>
+        <span>Produtos Agrícolas</span>
 
         <span class="agro-mobile-menu-icon">
 
@@ -1769,15 +2022,11 @@
       </a>
 
 
-      <!-- ==================================================
-                 CATEGORIAS
-                 =================================================== -->
+      <!-- CATEGORIAS -->
 
       <a href="{% url 'categorias:categorias' %}">
 
-        <span>
-          Categorias
-        </span>
+        <span>Categorias</span>
 
         <span class="agro-mobile-menu-icon">
 
@@ -1799,27 +2048,12 @@
       </a>
 
 
-      <!-- ==================================================
-                 DIAGNÓSTICOS
-
-                 ATENÇÃO:
-                 Vai para:
-
-                 /diagnostico/
-
-                 usando:
-
-                 diagnostico:diagnostico
-
-                 NÃO usa diagnostico:analisar
-                 =================================================== -->
+      <!-- DIAGNÓSTICOS -->
 
       <a href="{% url 'diagnostico:diagnostico' %}"
         aria-label="Abrir página principal de diagnóstico por inteligência artificial">
 
-        <span>
-          Diagnósticos
-        </span>
+        <span>Diagnósticos</span>
 
         <span class="agro-mobile-menu-icon">
 
@@ -1845,28 +2079,23 @@
 
       {% if user.is_authenticated %}
 
-
-      <!-- ==================================================
-                 PERFIL MOBILE
-                 =================================================== -->
+      <!-- PERFIL -->
 
       <a href="{% url 'inicio:perfil' %}">
 
-        <span>
-          Meu perfil
-        </span>
+        <span>Meu perfil</span>
 
         <span class="agro-mobile-menu-icon">
 
           {% if user.perfil.foto %}
 
           <img src="{{ user.perfil.foto.url }}" alt="Foto de perfil" style="
-                                width: 100%;
-                                height: 100%;
-                                object-fit: cover;
-                                border-radius: 8px;
-                                display: block;
-                            ">
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    border-radius: 8px;
+                                    display: block;
+                                ">
 
           {% else %}
 
@@ -1886,15 +2115,11 @@
       </a>
 
 
-      <!-- ==================================================
-                 LOGOUT MOBILE
-                 =================================================== -->
+      <!-- LOGOUT -->
 
       <a href="{% url 'inicio:logout' %}" class="mobile-logout">
 
-        <span>
-          Terminar sessão
-        </span>
+        <span>Terminar sessão</span>
 
         <span class="agro-mobile-menu-icon">
 
@@ -1913,19 +2138,13 @@
 
       </a>
 
-
       {% else %}
 
-
-      <!-- ==================================================
-                 LOGIN MOBILE
-                 =================================================== -->
+      <!-- LOGIN -->
 
       <a href="{% url 'inicio:login' %}">
 
-        <span>
-          Entrar
-        </span>
+        <span>Entrar</span>
 
         <span class="agro-mobile-menu-icon">
 
@@ -1943,18 +2162,13 @@
       </a>
 
 
-      <!-- ==================================================
-                 CADASTRO MOBILE
-                 =================================================== -->
+      <!-- CADASTRO -->
 
       <a href="{% url 'inicio:cadastro' %}" class="mobile-register">
 
-        <span>
-          Criar conta
-        </span>
+        <span>Criar conta</span>
 
       </a>
-
 
       {% endif %}
 
@@ -2038,7 +2252,6 @@
 
     "use strict";
 
-
     const userButton =
       document.getElementById("agroUserButton");
 
@@ -2094,7 +2307,6 @@
       function (event) {
 
         event.stopPropagation();
-
 
         if (
           userDropdown.classList.contains("active")
@@ -2186,6 +2398,9 @@
     }
 
 
+    const mobileBreakpoint = 960;
+
+
     function closeMenu() {
 
       toggle.classList.remove("active");
@@ -2197,9 +2412,18 @@
         "false"
       );
 
+      toggle.setAttribute(
+        "aria-label",
+        "Abrir menu"
+      );
+
       menu.setAttribute(
         "aria-hidden",
         "true"
+      );
+
+      document.body.classList.remove(
+        "agro-mobile-menu-open"
       );
 
     }
@@ -2216,9 +2440,18 @@
         "true"
       );
 
+      toggle.setAttribute(
+        "aria-label",
+        "Fechar menu"
+      );
+
       menu.setAttribute(
         "aria-hidden",
         "false"
+      );
+
+      document.body.classList.add(
+        "agro-mobile-menu-open"
       );
 
     }
@@ -2227,6 +2460,8 @@
     toggle.addEventListener(
       "click",
       function (event) {
+
+        event.preventDefault();
 
         event.stopPropagation();
 
@@ -2254,7 +2489,11 @@
 
           link.addEventListener(
             "click",
-            closeMenu
+            function () {
+
+              closeMenu();
+
+            }
           );
 
         }
@@ -2296,14 +2535,44 @@
       "resize",
       function () {
 
-        if (window.innerWidth > 960) {
+        if (
+          window.innerWidth > mobileBreakpoint
+        ) {
 
           closeMenu();
 
         }
 
-      }
+      },
+      { passive: true }
     );
+
+
+    window.addEventListener(
+      "orientationchange",
+      function () {
+
+        window.setTimeout(
+          function () {
+
+            if (
+              window.innerWidth > mobileBreakpoint
+            ) {
+
+              closeMenu();
+
+            }
+
+          },
+          100
+        );
+
+      },
+      { passive: true }
+    );
+
+
+    closeMenu();
 
   })();
 </script>
