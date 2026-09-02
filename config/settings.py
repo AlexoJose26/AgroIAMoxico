@@ -2,16 +2,9 @@ from pathlib import Path
 import os
 
 
-# ============================================================
-# BASE
-# ============================================================
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# ============================================================
-# SEGURANÇA
-# ============================================================
 
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
@@ -20,16 +13,16 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get(
     "DEBUG",
-    "True",
+    "False",
 ).lower() == "true"
 
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "agroiamoxico.vercel.app",
-    "agroiamoxico-6ah4ajppq-alexo-salvador-jose-projects.vercel.app",
+    ".vercel.app",
 ]
+
 
 
 INSTALLED_APPS = [
@@ -40,7 +33,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Aplicações do projeto
     "inicio",
     "produtos",
     "categorias",
@@ -48,9 +40,6 @@ INSTALLED_APPS = [
 ]
 
 
-# ============================================================
-# MIDDLEWARE
-# ============================================================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -63,16 +52,10 @@ MIDDLEWARE = [
 ]
 
 
-# ============================================================
-# URLS
-# ============================================================
 
 ROOT_URLCONF = "config.urls"
 
 
-# ============================================================
-# TEMPLATES
-# ============================================================
 
 TEMPLATES = [
     {
@@ -95,16 +78,8 @@ TEMPLATES = [
 ]
 
 
-# ============================================================
-# WSGI
-# ============================================================
-
 WSGI_APPLICATION = "config.wsgi.application"
 
-
-# ============================================================
-# BANCO DE DADOS
-# ============================================================
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -131,6 +106,7 @@ if DATABASE_URL:
 
 else:
 
+
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -139,37 +115,34 @@ else:
     }
 
 
-# ============================================================
-# VALIDAÇÃO DE PASSWORD
-# ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME":
+        "NAME": (
             "django.contrib.auth.password_validation."
-            "UserAttributeSimilarityValidator",
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
-        "NAME":
+        "NAME": (
             "django.contrib.auth.password_validation."
-            "MinimumLengthValidator",
+            "MinimumLengthValidator"
+        ),
     },
     {
-        "NAME":
+        "NAME": (
             "django.contrib.auth.password_validation."
-            "CommonPasswordValidator",
+            "CommonPasswordValidator"
+        ),
     },
     {
-        "NAME":
+        "NAME": (
             "django.contrib.auth.password_validation."
-            "NumericPasswordValidator",
+            "NumericPasswordValidator"
+        ),
     },
 ]
 
-
-# ============================================================
-# INTERNACIONALIZAÇÃO
-# ============================================================
 
 LANGUAGE_CODE = "pt-pt"
 
@@ -180,9 +153,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-# ============================================================
-# STATIC
-# ============================================================
 
 STATIC_URL = "/static/"
 
@@ -193,83 +163,34 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# ============================================================
-# MEDIA
-# ============================================================
-
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-# ============================================================
-# STORAGE
-# ============================================================
-
 if not DEBUG:
 
     STORAGES = {
         "default": {
-            "BACKEND":
-                "django.core.files.storage.FileSystemStorage",
+            "BACKEND": (
+                "django.core.files.storage.FileSystemStorage"
+            ),
         },
 
         "staticfiles": {
-            "BACKEND":
+            "BACKEND": (
                 "django.contrib.staticfiles.storage."
-                "ManifestStaticFilesStorage",
+                "ManifestStaticFilesStorage"
+            ),
         },
     }
 
-
-# ============================================================
-# AGROIA API
-# ============================================================
-#
-# O Django NÃO possui o modelo de IA.
-#
-# O TensorFlow/Keras/model.keras ficam exclusivamente
-# na AgroIA-API.
-#
-# Desenvolvimento:
-#
-# Django:
-# http://127.0.0.1:8000
-#
-# AgroIA API:
-# http://127.0.0.1:8001
-#
-# Produção:
-#
-# Django:
-# Vercel
-#
-#        |
-#        v
-#
-# AgroIA API:
-# Render
-#
-# A URL de produção deve ser configurada na Vercel
-# através da variável:
-#
-# AGROIA_API_URL
-#
-# Exemplo:
-#
-# https://agroia-api.onrender.com/analisar
-#
-# ============================================================
 
 AGROIA_API_URL = os.environ.get(
     "AGROIA_API_URL",
     "http://127.0.0.1:8001/analisar",
 )
 
-
-# ============================================================
-# TIMEOUT DA API DE IA
-# ============================================================
 
 try:
 
@@ -285,10 +206,6 @@ except (TypeError, ValueError):
     AGROIA_API_TIMEOUT = 120
 
 
-# ============================================================
-# LOGIN / LOGOUT
-# ============================================================
-
 LOGIN_URL = "/login/"
 
 LOGIN_REDIRECT_URL = "/"
@@ -296,18 +213,11 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 
-# ============================================================
-# EMAIL
-# ============================================================
-
 EMAIL_BACKEND = (
     "django.core.mail.backends.console.EmailBackend"
 )
 
 
-# ============================================================
-# SESSÃO
-# ============================================================
 
 SESSION_COOKIE_AGE = 1209600
 
@@ -322,26 +232,19 @@ if not DEBUG:
 
     SESSION_COOKIE_SAMESITE = "Lax"
 
-
-# ============================================================
-# CSRF
-# ============================================================
-
 CSRF_COOKIE_HTTPONLY = False
+
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
         "CSRF_TRUSTED_ORIGINS",
-        "",
+        "https://agroiamoxico.vercel.app",
     ).split(",")
     if origin.strip()
 ]
 
 
-# ============================================================
-# SEGURANÇA HTTPS
-# ============================================================
 
 if not DEBUG:
 
@@ -359,10 +262,6 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = False
 
 
-# ============================================================
-# HEADERS DE SEGURANÇA
-# ============================================================
-
 X_FRAME_OPTIONS = "DENY"
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -370,11 +269,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"
 
 
-# ============================================================
-# DEFAULT AUTO FIELD
-# ============================================================
-
 DEFAULT_AUTO_FIELD = (
     "django.db.models.BigAutoField"
 )
-
