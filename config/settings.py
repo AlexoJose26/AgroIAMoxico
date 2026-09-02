@@ -55,12 +55,10 @@ INSTALLED_APPS = [
 ]
 
 
-# ============================================================
-# MIDDLEWARE
-# ============================================================
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -68,11 +66,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-
-# ============================================================
-# URLS
-# ============================================================
 
 ROOT_URLCONF = "config.urls"
 
@@ -216,9 +209,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-# ============================================================
-# STORAGE
-# ============================================================
 
 if not DEBUG:
     STORAGES = {
@@ -226,11 +216,10 @@ if not DEBUG:
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": (
-                "django.contrib.staticfiles.storage.StaticFilesStorage"
-            ),
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+
 
 AGROIA_API_URL = os.environ.get(
     "AGROIA_API_URL",

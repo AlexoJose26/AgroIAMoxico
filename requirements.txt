@@ -4,3 +4,5 @@ psycopg==3.3.5
 psycopg-binary==3.3.5
 Pillow==12.3.0
 requests==2.34.0
+
+whitenoise==6.12.0
