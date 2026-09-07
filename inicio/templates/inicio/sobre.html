@@ -70,7 +70,7 @@ Sobre | AgroIA Moxico
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: .82fr 1.18fr;
+    grid-template-columns: 1.18fr .82fr;
     gap: 70px;
     align-items: center;
   }
@@ -141,7 +141,7 @@ Sobre | AgroIA Moxico
   }
 
   /* ============================================================
-   CARD DESTAQUE
+   CARD DESTAQUE — PARA QUEM É
 ============================================================ */
 
   .about-intro-card {
@@ -220,6 +220,25 @@ Sobre | AgroIA Moxico
     line-height: 1.75;
   }
 
+  .about-intro-card-tags {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .about-intro-card-tags span {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--primary-light);
+    color: var(--primary-deep);
+    font-size: .70rem;
+    font-weight: 700;
+    border: 1px solid rgba(23, 107, 69, .10);
+  }
+
   /* ============================================================
    SEÇÕES
 ============================================================ */
@@ -239,6 +258,298 @@ Sobre | AgroIA Moxico
       linear-gradient(180deg,
         #f5faf7,
         #eef7f2);
+  }
+
+  /* ============================================================
+   O DESAFIO
+============================================================ */
+
+  .about-challenge {
+    padding: 82px 0;
+    background: #fff;
+  }
+
+  .about-challenge-grid {
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: 55px;
+    align-items: center;
+  }
+
+  .about-challenge-text h2 {
+    margin-top: 14px;
+    color: var(--primary-deep);
+    font-size: clamp(1.9rem, 3vw, 2.55rem);
+    line-height: 1.1;
+    letter-spacing: -.045em;
+  }
+
+  .about-challenge-text p {
+    margin-top: 16px;
+    color: var(--text-light);
+    font-size: .89rem;
+    line-height: 1.85;
+  }
+
+  .about-challenge-facts {
+    display: grid;
+    gap: 14px;
+  }
+
+  .about-challenge-fact {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background:
+      linear-gradient(145deg,
+        #f7fbf8,
+        #eef7f2);
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+
+  .about-challenge-fact:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .about-challenge-fact-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    color: var(--primary);
+    background: #fff;
+    border: 1px solid var(--border);
+  }
+
+  .about-challenge-fact-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .about-challenge-fact strong {
+    display: block;
+    color: var(--text);
+    font-size: .83rem;
+    font-weight: 800;
+  }
+
+  .about-challenge-fact p {
+    margin-top: 4px;
+    color: var(--text-light);
+    font-size: .76rem;
+    line-height: 1.65;
+  }
+
+  /* ============================================================
+   OBJETIVOS
+============================================================ */
+
+  .about-objectives {
+    padding: 82px 0;
+    background: #fff;
+  }
+
+  .about-objectives-header {
+    max-width: 700px;
+    margin-bottom: 34px;
+  }
+
+  .about-objectives-header h2 {
+    margin-top: 14px;
+    color: var(--primary-deep);
+    font-size: clamp(1.9rem, 3vw, 2.55rem);
+    letter-spacing: -.045em;
+  }
+
+  .about-objective-general {
+    position: relative;
+    overflow: hidden;
+    padding: 30px 34px;
+    margin-bottom: 32px;
+    border-radius: 22px;
+    color: #fff;
+    background:
+      linear-gradient(135deg,
+        #0d4d31 0%,
+        #083a25 100%);
+  }
+
+  .about-objective-general::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    top: -110px;
+    right: -80px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle,
+        rgba(217, 164, 65, .18),
+        transparent 70%);
+  }
+
+  .about-objective-general-label {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--secondary);
+    font-size: .68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+  }
+
+  .about-objective-general-label::before {
+    content: "";
+    width: 22px;
+    height: 2px;
+    border-radius: 20px;
+    background: var(--secondary);
+  }
+
+  .about-objective-general p {
+    position: relative;
+    z-index: 2;
+    max-width: 780px;
+    margin-top: 12px;
+    color: rgba(255, 255, 255, .82);
+    font-size: .93rem;
+    line-height: 1.85;
+  }
+
+  .about-objectives-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 13px;
+  }
+
+  .about-objective-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 18px 19px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background:
+      linear-gradient(145deg,
+        #f7fbf8,
+        #eef7f2);
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+
+  .about-objective-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .about-objective-item-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    border-radius: 9px;
+    color: #fff;
+    background: var(--primary);
+  }
+
+  .about-objective-item-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .about-objective-item p {
+    color: var(--text-light);
+    font-size: .80rem;
+    line-height: 1.7;
+  }
+
+  /* ============================================================
+   COMO FUNCIONA
+============================================================ */
+
+  .about-how {
+    padding: 82px 0;
+    background:
+      linear-gradient(180deg,
+        #f5faf7,
+        #eef7f2);
+  }
+
+  .about-how-header {
+    max-width: 700px;
+    margin-bottom: 38px;
+  }
+
+  .about-how-header h2 {
+    margin-top: 14px;
+    color: var(--primary-deep);
+    font-size: clamp(1.9rem, 3vw, 2.55rem);
+    letter-spacing: -.045em;
+  }
+
+  .about-how-header p {
+    max-width: 640px;
+    margin-top: 12px;
+    color: var(--text-light);
+    font-size: .89rem;
+    line-height: 1.8;
+  }
+
+  .about-how-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .about-how-step {
+    position: relative;
+    padding: 27px 22px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+
+  .about-how-step:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .about-how-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 17px;
+    border-radius: 50%;
+    background: var(--primary-dark);
+    color: #fff;
+    font-weight: 800;
+    font-size: .8rem;
+  }
+
+  .about-how-step h3 {
+    color: var(--text);
+    font-size: .91rem;
+    font-weight: 800;
+  }
+
+  .about-how-step p {
+    margin-top: 8px;
+    color: var(--text-light);
+    font-size: .78rem;
+    line-height: 1.7;
   }
 
   /* ============================================================
@@ -853,6 +1164,61 @@ Sobre | AgroIA Moxico
   }
 
   /* ============================================================
+   TRANSPARÊNCIA / AVISO
+============================================================ */
+
+  .about-disclaimer {
+    padding: 66px 0 70px;
+    background: #fff;
+  }
+
+  .about-disclaimer-box {
+    display: flex;
+    gap: 22px;
+    padding: 32px;
+    border-radius: 22px;
+    border: 1px solid rgba(217, 164, 65, .32);
+    background:
+      linear-gradient(145deg,
+        #fdf8ee,
+        #fbf2df);
+  }
+
+  .about-disclaimer-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    color: #9a6b0c;
+    background: #fff;
+    border: 1px solid rgba(217, 164, 65, .35);
+  }
+
+  .about-disclaimer-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .about-disclaimer-box h3 {
+    color: var(--text);
+    font-size: 1.02rem;
+    font-weight: 800;
+  }
+
+  .about-disclaimer-box p {
+    margin-top: 9px;
+    color: var(--text-light);
+    font-size: .83rem;
+    line-height: 1.85;
+  }
+
+  .about-disclaimer-box p+p {
+    margin-top: 10px;
+  }
+
+  /* ============================================================
    RODAPÉ VISUAL
 ============================================================ */
 
@@ -915,6 +1281,19 @@ Sobre | AgroIA Moxico
       min-height: auto;
     }
 
+    .about-challenge-grid {
+      grid-template-columns: 1fr;
+      gap: 35px;
+    }
+
+    .about-objectives-list {
+      grid-template-columns: 1fr;
+    }
+
+    .about-how-steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
     .about-values-grid {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -950,9 +1329,12 @@ Sobre | AgroIA Moxico
 
     .about-intro,
     .about-section,
+    .about-challenge,
+    .about-how,
     .about-education,
     .about-skills,
     .about-developer,
+    .about-disclaimer,
     .about-ending {
       padding: 55px 0;
     }
@@ -962,6 +1344,7 @@ Sobre | AgroIA Moxico
       font-size: clamp(2rem, 10vw, 2.8rem);
     }
 
+    .about-how-steps,
     .about-values-grid,
     .about-features-grid,
     .about-education-grid,
@@ -990,6 +1373,10 @@ Sobre | AgroIA Moxico
 
     .about-developer-contact a {
       justify-content: center;
+    }
+
+    .about-disclaimer-box {
+      flex-direction: column;
     }
   }
 
@@ -1053,28 +1440,567 @@ Sobre | AgroIA Moxico
               criada para aproximar informação,
               tecnologia e inteligência artificial
               das necessidades do contexto agrícola
-              angolano.
+              da província do Moxico, em Angola.
             </p>
 
             <p>
               A plataforma reúne diferentes recursos
               num ambiente simples, moderno e acessível,
               permitindo aos utilizadores consultar
-              conteúdos sobre culturas, produtos
-              agrícolas e ferramentas digitais.
+              conteúdos sobre culturas como o milho,
+              a mandioca e o feijão, produtos agrícolas
+              e ferramentas digitais de apoio à decisão.
             </p>
 
             <p>
               Entre os seus recursos encontra-se
-              também o apoio de inteligência artificial
-              para análise de imagens relacionadas
-              com culturas agrícolas.
+              o apoio de inteligência artificial
+              para análise de imagens de folhas,
+              ajudando a identificar possíveis
+              doenças nas culturas agrícolas.
             </p>
 
           </div>
         </div>
 
+
+        <!-- CARD — PARA QUEM É -->
+
+        <div class="about-intro-card">
+
+          <div class="about-intro-card-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+              <circle cx="10" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+
+            </svg>
+
+          </div>
+
+          <h3>
+            Para quem é o AgroIA Moxico
+          </h3>
+
+          <p>
+            A plataforma foi pensada para ser útil
+            a qualquer pessoa ligada à agricultura,
+            independentemente do nível de conhecimento
+            técnico.
+          </p>
+
+          <div class="about-intro-card-tags">
+
+            <span>Produtores</span>
+            <span>Agrónomos</span>
+            <span>Estudantes</span>
+            <span>Entusiastas</span>
+
+          </div>
+
+        </div>
+
       </div>
+    </div>
+
+
+  </section>
+
+  <!-- ==========================================================
+       O DESAFIO
+  =========================================================== -->
+
+  <section class="about-challenge">
+
+
+    <div class="about-container">
+
+      <div class="about-challenge-grid">
+
+        <div class="about-challenge-text">
+
+          <span class="about-section-label">
+            O contexto
+          </span>
+
+          <h2>
+            Um desafio real na
+            agricultura do Moxico.
+          </h2>
+
+          <p>
+            A agricultura de subsistência é a
+            principal fonte de sustento de muitas
+            famílias na província do Moxico. No
+            entanto, doenças e pragas continuam
+            a comprometer a produtividade das
+            culturas, sobretudo pela falta de
+            acompanhamento técnico regular.
+          </p>
+
+          <p>
+            Sem apoio especializado facilmente
+            acessível, muitos agricultores só
+            identificam uma doença quando esta já
+            está numa fase avançada — altura em
+            que a produção já foi afetada e as
+            opções de tratamento se tornam mais
+            limitadas e dispendiosas. O AgroIA
+            Moxico nasce para responder a este
+            problema, aproximando tecnologia e
+            conhecimento do agricultor.
+          </p>
+
+        </div>
+
+
+        <div class="about-challenge-facts">
+
+          <!-- DETEÇÃO TARDIA -->
+
+          <div class="about-challenge-fact">
+
+            <div class="about-challenge-fact-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <strong>
+                Deteção tardia, prejuízo maior
+              </strong>
+
+              <p>
+                Quanto mais tarde uma doença é
+                identificada, mais limitadas e
+                caras se tornam as opções de
+                tratamento.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- POUCO ACOMPANHAMENTO -->
+
+          <div class="about-challenge-fact">
+
+            <div class="about-challenge-fact-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+                <circle cx="10" cy="7" r="4" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <strong>
+                Pouco acompanhamento técnico
+              </strong>
+
+              <p>
+                A escassez de agrónomos e técnicos
+                disponíveis dificulta o apoio
+                regular aos agricultores da região.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- CULTURAS PRIORITÁRIAS -->
+
+          <div class="about-challenge-fact">
+
+            <div class="about-challenge-fact-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <strong>
+                Culturas prioritárias
+              </strong>
+
+              <p>
+                O sistema tem como foco culturas
+                centrais na região, como o milho,
+                a mandioca e o feijão.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+  </section>
+
+  <!-- ==========================================================
+       OBJETIVOS
+  =========================================================== -->
+
+  <section class="about-objectives">
+
+
+    <div class="about-container">
+
+      <div class="about-objectives-header">
+
+        <span class="about-section-label">
+          Objetivos do projeto
+        </span>
+
+        <h2>
+          O que o AgroIA Moxico
+          se propõe a alcançar.
+        </h2>
+
+      </div>
+
+
+      <!-- OBJETIVO GERAL -->
+
+      <div class="about-objective-general">
+
+        <span class="about-objective-general-label">
+          Objetivo geral
+        </span>
+
+        <p>
+          Desenvolver um sistema inteligente, com
+          recurso a Visão Computacional e Redes
+          Neuronais Convolucionais, capaz de identificar
+          automaticamente possíveis doenças em culturas
+          agrícolas a partir de fotografias, recomendando
+          ações preventivas ou curativas aos agricultores
+          da província do Moxico.
+        </p>
+
+      </div>
+
+
+      <!-- OBJETIVOS ESPECÍFICOS -->
+
+      <div class="about-objectives-list">
+
+        <div class="about-objective-item">
+
+          <span class="about-objective-item-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+
+          </span>
+
+          <p>
+            Selecionar e preparar um conjunto de dados
+            de imagens de plantas saudáveis e doentes,
+            adequado às culturas mais relevantes para
+            o Moxico (milho, mandioca, feijão).
+          </p>
+
+        </div>
+
+
+        <div class="about-objective-item">
+
+          <span class="about-objective-item-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+
+          </span>
+
+          <p>
+            Desenvolver e treinar um modelo de Rede
+            Neuronal Convolucional para a classificação
+            de doenças a partir de imagens de folhas.
+          </p>
+
+        </div>
+
+
+        <div class="about-objective-item">
+
+          <span class="about-objective-item-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+
+          </span>
+
+          <p>
+            Avaliar o desempenho do modelo através de
+            métricas adequadas (acurácia, precisão,
+            recall e matriz de confusão).
+          </p>
+
+        </div>
+
+
+        <div class="about-objective-item">
+
+          <span class="about-objective-item-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+
+          </span>
+
+          <p>
+            Desenvolver uma API REST, em Django, que
+            disponibilize o modelo treinado para uso
+            em aplicações Web e/ou móveis.
+          </p>
+
+        </div>
+
+
+        <div class="about-objective-item">
+
+          <span class="about-objective-item-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+
+          </span>
+
+          <p>
+            Desenvolver uma interface simples que
+            permita ao agricultor fotografar a planta
+            e visualizar o diagnóstico e as recomendações.
+          </p>
+
+        </div>
+
+
+        <div class="about-objective-item">
+
+          <span class="about-objective-item-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+
+          </span>
+
+          <p>
+            Construir uma base de conhecimento de
+            doenças e respetivas recomendações de
+            ação preventiva ou curativa.
+          </p>
+
+        </div>
+
+
+        <div class="about-objective-item">
+
+          <span class="about-objective-item-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+
+          </span>
+
+          <p>
+            Implementar um mecanismo de feedback que
+            permita ao agricultor confirmar a correção
+            do diagnóstico, apoiando a monitorização
+            contínua da qualidade do modelo.
+          </p>
+
+        </div>
+
+
+        <div class="about-objective-item">
+
+          <span class="about-objective-item-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+
+          </span>
+
+          <p>
+            Testar e validar o sistema desenvolvido,
+            corrigindo eventuais falhas identificadas.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+  </section>
+
+  <!-- ==========================================================
+       COMO FUNCIONA
+  =========================================================== -->
+
+  <section class="about-how">
+
+
+    <div class="about-container">
+
+      <div class="about-how-header">
+
+        <span class="about-section-label">
+          A solução
+        </span>
+
+        <h2>
+          Como funciona o
+          diagnóstico por IA.
+        </h2>
+
+        <p>
+          O processo foi pensado para ser simples
+          de usar, mesmo num telemóvel de baixo
+          custo e sem necessidade de conhecimento
+          técnico prévio.
+        </p>
+
+      </div>
+
+
+      <div class="about-how-steps">
+
+        <!-- PASSO 1 -->
+
+        <article class="about-how-step">
+
+          <span class="about-how-step-number">
+            1
+          </span>
+
+          <h3>
+            Fotografar a planta
+          </h3>
+
+          <p>
+            O agricultor tira uma fotografia da
+            folha ou da parte afetada da planta,
+            diretamente pelo telemóvel.
+          </p>
+
+        </article>
+
+
+        <!-- PASSO 2 -->
+
+        <article class="about-how-step">
+
+          <span class="about-how-step-number">
+            2
+          </span>
+
+          <h3>
+            Análise por Inteligência Artificial
+          </h3>
+
+          <p>
+            A imagem é processada por um modelo
+            de Visão Computacional (Rede Neuronal
+            Convolucional), treinado para reconhecer
+            padrões de doenças agrícolas.
+          </p>
+
+        </article>
+
+
+        <!-- PASSO 3 -->
+
+        <article class="about-how-step">
+
+          <span class="about-how-step-number">
+            3
+          </span>
+
+          <h3>
+            Diagnóstico e recomendações
+          </h3>
+
+          <p>
+            O sistema apresenta a doença mais
+            provável e sugere ações preventivas
+            ou curativas adequadas à situação.
+          </p>
+
+        </article>
+
+
+        <!-- PASSO 4 -->
+
+        <article class="about-how-step">
+
+          <span class="about-how-step-number">
+            4
+          </span>
+
+          <h3>
+            Feedback do agricultor
+          </h3>
+
+          <p>
+            O utilizador pode confirmar se o
+            diagnóstico esteve correto, ajudando
+            a melhorar continuamente a precisão
+            do sistema.
+          </p>
+
+        </article>
+
+      </div>
+
     </div>
 
 
@@ -1103,7 +2029,8 @@ Sobre | AgroIA Moxico
         <p>
           O AgroIA Moxico procura unir conhecimento,
           tecnologia e acessibilidade para fortalecer
-          o acesso à informação agrícola.
+          o acesso à informação agrícola e reduzir
+          as perdas causadas por diagnósticos tardios.
         </p>
 
       </div>
@@ -1280,8 +2207,90 @@ Sobre | AgroIA Moxico
           </h3>
 
           <p>
-            Ferramentas de análise assistida
-            por inteligência artificial.
+            Identificação de doenças em culturas
+            a partir de uma simples fotografia.
+          </p>
+
+        </article>
+
+
+        <!-- BASE DE CONHECIMENTO -->
+
+        <article class="about-feature">
+
+          <div class="about-feature-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+
+            </svg>
+
+          </div>
+
+          <h3>
+            Base de conhecimento
+          </h3>
+
+          <p>
+            Informação sobre doenças e as respetivas
+            recomendações preventivas ou curativas.
+          </p>
+
+        </article>
+
+
+        <!-- FEEDBACK -->
+
+        <article class="about-feature">
+
+          <div class="about-feature-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <path
+                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" />
+
+            </svg>
+
+          </div>
+
+          <h3>
+            Feedback e melhoria contínua
+          </h3>
+
+          <p>
+            O agricultor pode confirmar se o
+            diagnóstico esteve correto, ajudando
+            a melhorar o sistema.
+          </p>
+
+        </article>
+
+
+        <!-- CULTURAS -->
+
+        <article class="about-feature">
+
+          <div class="about-feature-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+              <path d="M11 20A7 7 0 0 1 4 13V8h7v5a7 7 0 0 1-7 7" />
+              <path d="M13 20a7 7 0 0 0 7-7V8h-7v5a7 7 0 0 0 7 7" />
+
+            </svg>
+
+          </div>
+
+          <h3>
+            Culturas do Moxico
+          </h3>
+
+          <p>
+            Foco em culturas relevantes para a
+            região, como milho, mandioca e feijão.
           </p>
 
         </article>
@@ -1363,10 +2372,11 @@ Sobre | AgroIA Moxico
 
           <p class="about-developer-description">
             Desenvolvedor do AgroIA Moxico e estudante
-            de Ciências da Computação, com interesse
-            no desenvolvimento de soluções digitais
-            aplicadas a problemas e necessidades
-            reais.
+            de Ciências da Computação. A plataforma
+            nasceu como Trabalho de Fim de Curso (TFC),
+            com o objetivo de aplicar tecnologia e
+            inteligência artificial a um problema real
+            da agricultura do Moxico.
           </p>
 
 
@@ -1449,7 +2459,8 @@ Sobre | AgroIA Moxico
 
               <p>
                 Frequentando o 5º ano do curso
-                de Ciências da Computação.
+                de Ciências da Computação, na
+                realização do TFC.
               </p>
 
             </div>
@@ -1919,6 +2930,61 @@ Sobre | AgroIA Moxico
   </section>
 
   <!-- ==========================================================
+       TRANSPARÊNCIA / AVISO
+  =========================================================== -->
+
+  <section class="about-disclaimer">
+
+    <div class="about-container">
+
+      <div class="about-disclaimer-box">
+
+        <div class="about-disclaimer-icon">
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <path d="M12 9v4" />
+            <path d="M12 17h.01" />
+            <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+
+          </svg>
+
+        </div>
+
+        <div>
+
+          <h3>
+            Projeto académico em desenvolvimento
+          </h3>
+
+          <p>
+            O AgroIA Moxico é o Trabalho de Fim de
+            Curso (TFC) de um estudante de Ciências
+            da Computação, desenvolvido com fins
+            académicos e sociais. O sistema encontra-se
+            em constante evolução e melhoria.
+          </p>
+
+          <p>
+            Os diagnósticos fornecidos pela
+            Inteligência Artificial devem ser
+            entendidos como um apoio à decisão —
+            e não como substituto da avaliação de
+            um agrónomo ou técnico agrícola
+            qualificado, especialmente em situações
+            críticas para a produção.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==========================================================
        ENCERRAMENTO
   =========================================================== -->
 
@@ -1950,8 +3016,9 @@ Sobre | AgroIA Moxico
           O AgroIA Moxico representa a união entre
           conhecimento, desenvolvimento de software
           e inteligência artificial para criar
-          soluções digitais aplicadas ao contexto
-          agrícola.
+          soluções digitais que ajudam a agricultura
+          da província do Moxico a enfrentar os seus
+          desafios reais.
         </p>
 
       </div>

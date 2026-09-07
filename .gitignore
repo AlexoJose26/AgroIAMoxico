@@ -69,3 +69,4 @@ dist/
 # Dataset de treinamento da IA
 diagnostico/ai/dataset/
 .vercel
+.env*
