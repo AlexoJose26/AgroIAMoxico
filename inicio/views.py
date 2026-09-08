@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import FieldError
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -14,21 +15,7 @@ from .forms import UserUpdateForm, PerfilUpdateForm
 from .models import Perfil
 
 
-# ============================================================
-# PERFIL DO UTILIZADOR
-# ============================================================
-
 def obter_perfil_usuario(user):
-    """
-    Obtém o perfil pertencente ao utilizador autenticado.
-
-    O signals.py é responsável por criar automaticamente
-    o Perfil quando um novo User é criado.
-
-    O get_or_create é mantido como mecanismo de segurança
-    para utilizadores antigos que eventualmente não tenham
-    um Perfil.
-    """
     perfil_usuario, created = Perfil.objects.get_or_create(
         user=user,
         defaults={
@@ -36,81 +23,173 @@ def obter_perfil_usuario(user):
             "tipo_utilizador": "outro",
         },
     )
-
     return perfil_usuario
 
 
 def produtos_do_usuario(user):
-    """
-    Retorna somente os produtos ativos pertencentes
-    ao utilizador autenticado.
-    """
-    return (
-        ProdutoAgricola.objects
-        .filter(
-            usuario=user,
-            ativo=True,
-        )
-        .prefetch_related("categorias")
-    )
-
-
-# ============================================================
-# PÁGINA INICIAL
-# ============================================================
-
-def home(request):
-    """
-    Página inicial do AgroIA Moxico.
-    """
-
-    if request.user.is_authenticated:
-
-        produtos = (
+    try:
+        return (
             ProdutoAgricola.objects
             .filter(
-                usuario=request.user,
+                usuario=user,
                 ativo=True,
             )
             .prefetch_related("categorias")
         )
+    except FieldError:
+        return ProdutoAgricola.objects.none()
 
-        total_produtos = produtos.count()
 
-        produtos_analise = produtos.filter(
-            analise_por_imagem=True
-        )
+def home(request):
+    produtos = ProdutoAgricola.objects.none()
+    produtos_analise = ProdutoAgricola.objects.none()
+    ultimos_diagnosticos = Diagnostico.objects.none()
 
-        total_produtos_analise = produtos_analise.count()
+    total_produtos = 0
+    total_produtos_analise = 0
+    total_diagnosticos = 0
+    meus_diagnosticos = 0
 
-        total_diagnosticos = (
-            Diagnostico.objects
-            .filter(
-                usuario=request.user
+    if request.user.is_authenticated:
+        usuario = request.user
+
+        try:
+            produtos = (
+                ProdutoAgricola.objects
+                .filter(
+                    usuario=usuario,
+                    ativo=True,
+                )
+                .prefetch_related("categorias")
             )
-            .count()
-        )
 
-        meus_diagnosticos = total_diagnosticos
+            total_produtos = produtos.count()
 
-    else:
+        except FieldError as e:
+            print(
+                "ERRO NOS PRODUTOS DA HOME:",
+                repr(e),
+            )
 
-        produtos = ProdutoAgricola.objects.none()
+            produtos = ProdutoAgricola.objects.none()
+            total_produtos = 0
 
-        total_produtos = 0
+        except Exception as e:
+            print(
+                "ERRO AO CARREGAR PRODUTOS DA HOME:",
+                repr(e),
+            )
 
-        produtos_analise = ProdutoAgricola.objects.none()
+            produtos = ProdutoAgricola.objects.none()
+            total_produtos = 0
 
-        total_produtos_analise = 0
+        try:
+            produtos_analise = (
+                produtos.filter(
+                    analise_por_imagem=True,
+                )
+            )
 
-        total_diagnosticos = 0
+            total_produtos_analise = (
+                produtos_analise.count()
+            )
 
-        meus_diagnosticos = 0
+        except FieldError as e:
+            print(
+                "CAMPO analise_por_imagem NÃO DISPONÍVEL:",
+                repr(e),
+            )
+
+            produtos_analise = ProdutoAgricola.objects.none()
+            total_produtos_analise = 0
+
+        except Exception as e:
+            print(
+                "ERRO AO CARREGAR PRODUTOS PARA ANÁLISE:",
+                repr(e),
+            )
+
+            produtos_analise = ProdutoAgricola.objects.none()
+            total_produtos_analise = 0
+
+        try:
+            total_diagnosticos = (
+                Diagnostico.objects
+                .filter(
+                    usuario=usuario,
+                )
+                .count()
+            )
+
+            meus_diagnosticos = total_diagnosticos
+
+        except FieldError as e:
+            print(
+                "ERRO NO CAMPO usuario DE DIAGNOSTICO:",
+                repr(e),
+            )
+
+            total_diagnosticos = 0
+            meus_diagnosticos = 0
+
+        except Exception as e:
+            print(
+                "ERRO AO CONTAR DIAGNOSTICOS:",
+                repr(e),
+            )
+
+            total_diagnosticos = 0
+            meus_diagnosticos = 0
+
+        try:
+            ultimos_diagnosticos = (
+                Diagnostico.objects
+                .filter(
+                    usuario=usuario,
+                )
+                .select_related("produto")
+                .order_by("-data_criacao")[:5]
+            )
+
+        except FieldError as e:
+            print(
+                "ERRO AO CARREGAR ULTIMOS DIAGNOSTICOS:",
+                repr(e),
+            )
+
+            try:
+                ultimos_diagnosticos = (
+                    Diagnostico.objects
+                    .filter(
+                        usuario=usuario,
+                    )
+                    .select_related("produto")[:5]
+                )
+            except Exception as fallback_error:
+                print(
+                    "ERRO NO FALLBACK DOS DIAGNOSTICOS:",
+                    repr(fallback_error),
+                )
+
+                ultimos_diagnosticos = (
+                    Diagnostico.objects.none()
+                )
+
+        except Exception as e:
+            print(
+                "ERRO AO CARREGAR DIAGNOSTICOS DA HOME:",
+                repr(e),
+            )
+
+            ultimos_diagnosticos = (
+                Diagnostico.objects.none()
+            )
 
     contexto = {
         "produtos": produtos,
-        "total_produtos": total_produtos,
         "produtos_analise": produtos_analise,
+        "ultimos_diagnosticos": ultimos_diagnosticos,
+        "total_produtos": total_produtos,
         "total_produtos_analise": total_produtos_analise,
         "total_diagnosticos": total_diagnosticos,
         "meus_diagnosticos": meus_diagnosticos,
@@ -123,27 +202,15 @@ def home(request):
     )
 
 
-# ============================================================
-# LOGIN
-# ============================================================
-
 def login_view(request):
-    """
-    Login normal do Django.
-    """
-
     if request.user.is_authenticated:
-        return redirect("inicio:perfil")
+        return redirect("inicio:home")
 
     next_url = (
         request.POST.get("next")
         or request.GET.get("next")
         or ""
     ).strip()
-
-    # --------------------------------------------------------
-    # PROTEÇÃO CONTRA REDIRECIONAMENTOS EXTERNOS
-    # --------------------------------------------------------
 
     if next_url and not url_has_allowed_host_and_scheme(
         url=next_url,
@@ -152,12 +219,7 @@ def login_view(request):
     ):
         next_url = ""
 
-    # --------------------------------------------------------
-    # POST
-    # --------------------------------------------------------
-
     if request.method == "POST":
-
         username = request.POST.get(
             "username",
             "",
@@ -168,14 +230,11 @@ def login_view(request):
             "",
         )
 
-        remember = request.POST.get("remember") == "on"
-
-        # ----------------------------------------------------
-        # VALIDAÇÃO DO UTILIZADOR
-        # ----------------------------------------------------
+        remember = request.POST.get(
+            "remember",
+        ) == "on"
 
         if not username:
-
             messages.error(
                 request,
                 "Digite o seu nome de utilizador.",
@@ -190,12 +249,7 @@ def login_view(request):
                 },
             )
 
-        # ----------------------------------------------------
-        # VALIDAÇÃO DA PALAVRA-PASSE
-        # ----------------------------------------------------
-
         if not password:
-
             messages.error(
                 request,
                 "Digite a sua palavra-passe.",
@@ -210,73 +264,56 @@ def login_view(request):
                 },
             )
 
-        # ----------------------------------------------------
-        # AUTENTICAÇÃO
-        # ----------------------------------------------------
-
         user = authenticate(
             request,
             username=username,
             password=password,
         )
 
-        if user is not None:
+        if user is None:
+            messages.error(
+                request,
+                "Nome de utilizador ou palavra-passe incorretos.",
+            )
 
-            # Garante que utilizadores antigos também possuem
-            # um Perfil.
+            return render(
+                request,
+                "inicio/login.html",
+                {
+                    "next": next_url,
+                    "username_value": username,
+                },
+            )
+
+        try:
             obter_perfil_usuario(user)
-
-            login(
-                request,
-                user,
+        except Exception as e:
+            print(
+                "ERRO AO OBTER PERFIL DURANTE LOGIN:",
+                repr(e),
             )
 
-            # ------------------------------------------------
-            # DURAÇÃO DA SESSÃO
-            # ------------------------------------------------
+        login(
+            request,
+            user,
+        )
 
-            if remember:
-
-                request.session.set_expiry(
-                    60 * 60 * 24 * 30
-                )
-
-            else:
-
-                request.session.set_expiry(0)
-
-            messages.success(
-                request,
-                f"Bem-vindo, "
-                f"{user.first_name or user.username}!",
+        if remember:
+            request.session.set_expiry(
+                60 * 60 * 24 * 30
             )
+        else:
+            request.session.set_expiry(0)
 
-            if next_url:
-                return redirect(next_url)
-
-            return redirect("inicio:home")
-
-        # ----------------------------------------------------
-        # LOGIN INVÁLIDO
-        # ----------------------------------------------------
-
-        messages.error(
+        messages.success(
             request,
-            "Nome de utilizador ou palavra-passe incorretos.",
+            f"Bem-vindo, {user.first_name or user.username}!",
         )
 
-        return render(
-            request,
-            "inicio/login.html",
-            {
-                "next": next_url,
-                "username_value": username,
-            },
-        )
+        if next_url:
+            return redirect(next_url)
 
-    # --------------------------------------------------------
-    # GET
-    # --------------------------------------------------------
+        return redirect("inicio:home")
 
     return render(
         request,
@@ -287,18 +324,8 @@ def login_view(request):
     )
 
 
-# ============================================================
-# LOGOUT
-# ============================================================
-
 @login_required
 def logout_view(request):
-    """
-    Termina completamente a sessão do utilizador.
-
-    Nenhum dado permanente do utilizador é apagado.
-    """
-
     nome_usuario = (
         request.user.first_name
         or request.user.username
@@ -314,40 +341,15 @@ def logout_view(request):
     return redirect("inicio:home")
 
 
-# ============================================================
-# CADASTRO
-# ============================================================
-
 def cadastro(request):
-    """
-    Cria uma nova conta de utilizador.
-
-    O signals.py é responsável por criar automaticamente
-    o Perfil associado ao novo User.
-
-    Depois da criação do User, esta função apenas obtém
-    esse Perfil e preenche os dados adicionais do formulário.
-
-    A fotografia não é adicionada durante o cadastro.
-    """
-
     if request.user.is_authenticated:
         return redirect("inicio:perfil")
 
-    # --------------------------------------------------------
-    # GET
-    # --------------------------------------------------------
-
     if request.method != "POST":
-
         return render(
             request,
             "inicio/cadastro.html",
         )
-
-    # ========================================================
-    # RECEBER DADOS DO FORMULÁRIO
-    # ========================================================
 
     username = request.POST.get(
         "username",
@@ -379,9 +381,7 @@ def cadastro(request):
         "",
     )
 
-    # Compatibilidade com templates antigos.
     if not password_confirm:
-
         password_confirm = request.POST.get(
             "password2",
             "",
@@ -412,10 +412,6 @@ def cadastro(request):
         "outro",
     ).strip()
 
-    # ========================================================
-    # DADOS PARA REPREENCHER O FORMULÁRIO
-    # ========================================================
-
     dados_formulario = {
         "username": username,
         "first_name": first_name,
@@ -432,12 +428,7 @@ def cadastro(request):
         "dados": dados_formulario,
     }
 
-    # ========================================================
-    # VALIDAÇÃO DO USERNAME
-    # ========================================================
-
     if not username:
-
         messages.error(
             request,
             "Informe o nome de utilizador.",
@@ -450,7 +441,6 @@ def cadastro(request):
         )
 
     if len(username) < 3:
-
         messages.error(
             request,
             "O nome de utilizador deve ter pelo menos 3 caracteres.",
@@ -462,12 +452,7 @@ def cadastro(request):
             contexto,
         )
 
-    # ========================================================
-    # VALIDAÇÃO DA PASSWORD
-    # ========================================================
-
     if not password:
-
         messages.error(
             request,
             "Informe uma palavra-passe.",
@@ -480,7 +465,6 @@ def cadastro(request):
         )
 
     if not password_confirm:
-
         messages.error(
             request,
             "Confirme a sua palavra-passe.",
@@ -493,7 +477,6 @@ def cadastro(request):
         )
 
     if password != password_confirm:
-
         messages.error(
             request,
             "As palavras-passe não coincidem.",
@@ -506,7 +489,6 @@ def cadastro(request):
         )
 
     if len(password) < 8:
-
         messages.error(
             request,
             "A palavra-passe deve ter pelo menos 8 caracteres.",
@@ -518,20 +500,9 @@ def cadastro(request):
             contexto,
         )
 
-    # ========================================================
-    # VALIDAR USERNAME
-    # ========================================================
-
-    username_existente = (
-        User.objects
-        .filter(
-            username__iexact=username
-        )
-        .exists()
-    )
-
-    if username_existente:
-
+    if User.objects.filter(
+        username__iexact=username,
+    ).exists():
         messages.error(
             request,
             f"O nome de utilizador '{username}' já está registado.",
@@ -543,44 +514,35 @@ def cadastro(request):
             contexto,
         )
 
-    # ========================================================
-    # VALIDAR E-MAIL
-    # ========================================================
-
-    if email:
-
-        email_existente = (
-            User.objects
-            .filter(
-                email__iexact=email
-            )
-            .exists()
+    if email and User.objects.filter(
+        email__iexact=email,
+    ).exists():
+        messages.error(
+            request,
+            f"O e-mail '{email}' já está registado.",
         )
 
-        if email_existente:
+        return render(
+            request,
+            "inicio/cadastro.html",
+            contexto,
+        )
 
-            messages.error(
-                request,
-                f"O e-mail '{email}' já está registado.",
-            )
-
-            return render(
-                request,
-                "inicio/cadastro.html",
-                contexto,
-            )
-
-    # ========================================================
-    # VALIDAR TIPO DE UTILIZADOR
-    # ========================================================
+    tipos_utilizador = getattr(
+        Perfil,
+        "TIPOS_UTILIZADOR",
+        [],
+    )
 
     tipos_validos = {
         escolha[0]
-        for escolha in Perfil.TIPOS_UTILIZADOR
+        for escolha in tipos_utilizador
     }
 
-    if tipo_utilizador not in tipos_validos:
-
+    if (
+        tipos_validos
+        and tipo_utilizador not in tipos_validos
+    ):
         messages.error(
             request,
             "Selecione um tipo de utilizador válido.",
@@ -592,22 +554,8 @@ def cadastro(request):
             contexto,
         )
 
-    # ========================================================
-    # CRIAR USER + ATUALIZAR PERFIL
-    # ========================================================
-
     try:
-
         with transaction.atomic():
-
-            # ------------------------------------------------
-            # CRIAR USER
-            # ------------------------------------------------
-            #
-            # Neste momento o signals.py será acionado
-            # automaticamente e criará o Perfil.
-            #
-
             user = User.objects.create_user(
                 username=username,
                 email=email,
@@ -616,110 +564,61 @@ def cadastro(request):
                 last_name=last_name,
             )
 
-            # ------------------------------------------------
-            # OBTER O PERFIL CRIADO PELO SIGNAL
-            # ------------------------------------------------
-
-            perfil_usuario = Perfil.objects.get(
-                user=user
+            perfil_usuario, created = (
+                Perfil.objects.get_or_create(
+                    user=user,
+                    defaults={
+                        "provincia": provincia or "Moxico",
+                        "tipo_utilizador": (
+                            tipo_utilizador or "outro"
+                        ),
+                    },
+                )
             )
 
-            # ------------------------------------------------
-            # PREENCHER OS DADOS DO PERFIL
-            # ------------------------------------------------
-
             perfil_usuario.telefone = telefone
-
             perfil_usuario.localizacao = localizacao
-
             perfil_usuario.municipio = municipio
-
             perfil_usuario.provincia = (
                 provincia or "Moxico"
             )
-
             perfil_usuario.tipo_utilizador = (
                 tipo_utilizador or "outro"
             )
 
             perfil_usuario.save()
 
-    # ========================================================
-    # ERRO DE INTEGRIDADE
-    # ========================================================
-
-    except IntegrityError as e:
-
-        print(
-            "\n========================================"
-        )
-
-        print(
-            "ERRO DE INTEGRIDADE NO CADASTRO:"
-        )
-
-        print(
-            repr(e)
-        )
-
-        print(
-            "USERNAME:",
-            repr(username)
-        )
-
-        print(
-            "EMAIL:",
-            repr(email)
-        )
-
-        print(
-            "========================================\n"
-        )
-
-        username_existe = (
-            User.objects
-            .filter(
-                username__iexact=username
-            )
-            .exists()
-        )
+    except IntegrityError:
+        username_existe = User.objects.filter(
+            username__iexact=username,
+        ).exists()
 
         email_existe = (
             bool(email)
-            and User.objects
-            .filter(
-                email__iexact=email
-            )
-            .exists()
+            and User.objects.filter(
+                email__iexact=email,
+            ).exists()
         )
 
         if username_existe and email_existe:
-
             mensagem = (
                 "O nome de utilizador e o e-mail "
                 "já estão registados."
             )
-
         elif username_existe:
-
             mensagem = (
                 f"O nome de utilizador '{username}' "
                 "já está registado."
             )
-
         elif email_existe:
-
             mensagem = (
                 f"O e-mail '{email}' "
                 "já está registado."
             )
-
         else:
-
             mensagem = (
                 "Não foi possível criar a conta devido "
-                "a uma restrição da base de dados. "
-                "Consulte o terminal para obter o erro técnico."
+                "a uma restrição da base de dados."
             )
 
         messages.error(
@@ -733,32 +632,15 @@ def cadastro(request):
             contexto,
         )
 
-    # ========================================================
-    # ERRO GERAL
-    # ========================================================
-
     except Exception as e:
-
         print(
-            "\n========================================"
-        )
-
-        print(
-            "ERRO REAL NO CADASTRO:"
-        )
-
-        print(
-            repr(e)
-        )
-
-        print(
-            "========================================\n"
+            "ERRO REAL NO CADASTRO:",
+            repr(e),
         )
 
         messages.error(
             request,
-            "Ocorreu um erro ao criar a conta. "
-            "Tente novamente.",
+            "Ocorreu um erro ao criar a conta. Tente novamente.",
         )
 
         return render(
@@ -767,10 +649,6 @@ def cadastro(request):
             contexto,
         )
 
-    # ========================================================
-    # LOGIN AUTOMÁTICO
-    # ========================================================
-
     login(
         request,
         user,
@@ -778,34 +656,22 @@ def cadastro(request):
 
     messages.success(
         request,
-        "Conta criada com sucesso! "
-        "Bem-vindo ao AgroIA Moxico.",
+        "Conta criada com sucesso! Bem-vindo ao AgroIA Moxico.",
     )
 
-    return redirect(
-        "inicio:perfil"
-    )
+    return redirect("inicio:perfil")
 
-
-# ============================================================
-# PERFIL
-# ============================================================
 
 @login_required
 def perfil(request):
-
     perfil_usuario = obter_perfil_usuario(
-        request.user
+        request.user,
     )
-
-    # --------------------------------------------------------
-    # DIAGNÓSTICOS
-    # --------------------------------------------------------
 
     diagnosticos_usuario = (
         Diagnostico.objects
         .filter(
-            usuario=request.user
+            usuario=request.user,
         )
     )
 
@@ -813,22 +679,21 @@ def perfil(request):
         diagnosticos_usuario.count()
     )
 
-    diagnosticos_concluidos = (
-        diagnosticos_usuario
-        .filter(
-            status="concluido"
+    try:
+        diagnosticos_concluidos = (
+            diagnosticos_usuario
+            .filter(
+                status="concluido",
+            )
+            .count()
         )
-        .count()
-    )
-
-    # --------------------------------------------------------
-    # PRODUTOS
-    # --------------------------------------------------------
+    except FieldError:
+        diagnosticos_concluidos = 0
 
     produtos_usuario = (
         ProdutoAgricola.objects
         .filter(
-            usuario=request.user
+            usuario=request.user,
         )
     )
 
@@ -839,22 +704,26 @@ def perfil(request):
     total_produtos_ativos = (
         produtos_usuario
         .filter(
-            ativo=True
+            ativo=True,
         )
         .count()
     )
 
-    total_produtos_analise = (
-        produtos_usuario
-        .filter(
-            ativo=True,
-            analise_por_imagem=True,
+    try:
+        total_produtos_analise = (
+            produtos_usuario
+            .filter(
+                ativo=True,
+                analise_por_imagem=True,
+            )
+            .count()
         )
-        .count()
-    )
+    except FieldError:
+        total_produtos_analise = 0
 
     contexto = {
         "perfil": perfil_usuario,
+        "perfil_usuario": perfil_usuario,
         "usuario": request.user,
         "total_diagnosticos": total_diagnosticos,
         "diagnosticos_concluidos": diagnosticos_concluidos,
@@ -870,23 +739,13 @@ def perfil(request):
     )
 
 
-# ============================================================
-# EDITAR PERFIL
-# ============================================================
-
 @login_required
 def editar_perfil(request):
-
     perfil_usuario = obter_perfil_usuario(
-        request.user
+        request.user,
     )
 
-    # --------------------------------------------------------
-    # POST
-    # --------------------------------------------------------
-
     if request.method == "POST":
-
         user_form = UserUpdateForm(
             request.POST,
             instance=request.user,
@@ -902,13 +761,9 @@ def editar_perfil(request):
             user_form.is_valid()
             and perfil_form.is_valid()
         ):
-
             try:
-
                 with transaction.atomic():
-
                     user_form.save()
-
                     perfil_form.save()
 
                 messages.success(
@@ -917,47 +772,28 @@ def editar_perfil(request):
                 )
 
                 return redirect(
-                    "inicio:perfil"
+                    "inicio:perfil",
                 )
 
             except Exception as e:
-
                 print(
-                    "\n========================================"
-                )
-
-                print(
-                    "ERRO AO ATUALIZAR PERFIL:"
-                )
-
-                print(
-                    repr(e)
-                )
-
-                print(
-                    "========================================\n"
+                    "ERRO AO ATUALIZAR PERFIL:",
+                    repr(e),
                 )
 
                 messages.error(
                     request,
-                    "Não foi possível atualizar o perfil. "
-                    "Tente novamente.",
+                    "Não foi possível atualizar o perfil. Tente novamente.",
                 )
 
         else:
-
             messages.error(
                 request,
                 "Não foi possível atualizar o perfil. "
                 "Verifique os campos assinalados.",
             )
 
-    # --------------------------------------------------------
-    # GET
-    # --------------------------------------------------------
-
     else:
-
         user_form = UserUpdateForm(
             instance=request.user,
         )
@@ -968,6 +804,7 @@ def editar_perfil(request):
 
     contexto = {
         "perfil": perfil_usuario,
+        "perfil_usuario": perfil_usuario,
         "usuario": request.user,
         "user_form": user_form,
         "perfil_form": perfil_form,
@@ -980,37 +817,33 @@ def editar_perfil(request):
     )
 
 
-# ============================================================
-# REMOVER FOTO DE PERFIL
-# ============================================================
-
 @login_required
 def remover_foto_perfil(request):
-
     if request.method != "POST":
-
         return redirect(
-            "inicio:perfil"
+            "inicio:perfil",
         )
 
     perfil_usuario = obter_perfil_usuario(
-        request.user
+        request.user,
     )
 
     if perfil_usuario.foto:
-
         perfil_usuario.foto.delete(
-            save=False
+            save=False,
         )
 
         perfil_usuario.foto = None
 
-        perfil_usuario.save(
-            update_fields=[
-                "foto",
-                "data_atualizacao",
-            ]
-        )
+        try:
+            perfil_usuario.save(
+                update_fields=[
+                    "foto",
+                    "data_atualizacao",
+                ],
+            )
+        except FieldError:
+            perfil_usuario.save()
 
         messages.success(
             request,
@@ -1018,24 +851,18 @@ def remover_foto_perfil(request):
         )
 
     else:
-
         messages.info(
             request,
             "Não existe nenhuma fotografia de perfil para remover.",
         )
 
     return redirect(
-        "inicio:perfil"
+        "inicio:perfil",
     )
 
 
-# ============================================================
-# PRODUTOS
-# ============================================================
-
 @login_required
 def produtos(request):
-
     produtos_lista = (
         ProdutoAgricola.objects
         .filter(
@@ -1057,16 +884,11 @@ def produtos(request):
     )
 
 
-# ============================================================
-# DETALHE DO PRODUTO
-# ============================================================
-
 @login_required
 def detalhe_produto(request, pk):
-
     produto = get_object_or_404(
         ProdutoAgricola.objects.prefetch_related(
-            "categorias"
+            "categorias",
         ),
         pk=pk,
         usuario=request.user,
@@ -1084,13 +906,8 @@ def detalhe_produto(request, pk):
     )
 
 
-# ============================================================
-# PESQUISAR PRODUTOS
-# ============================================================
-
 @login_required
 def pesquisar_produtos(request):
-
     termo = request.GET.get(
         "q",
         "",
@@ -1106,19 +923,28 @@ def pesquisar_produtos(request):
     )
 
     if termo:
-
-        produtos_lista = (
-            produtos_lista
-            .filter(
-                Q(nome__icontains=termo)
-                | Q(descricao__icontains=termo)
-                | Q(problemas__icontains=termo)
-                | Q(
-                    categorias__nome__icontains=termo
+        try:
+            produtos_lista = (
+                produtos_lista
+                .filter(
+                    Q(nome__icontains=termo)
+                    | Q(descricao__icontains=termo)
+                    | Q(problemas__icontains=termo)
+                    | Q(categorias__nome__icontains=termo)
                 )
+                .distinct()
             )
-            .distinct()
-        )
+
+        except FieldError:
+            produtos_lista = (
+                produtos_lista
+                .filter(
+                    Q(nome__icontains=termo)
+                    | Q(descricao__icontains=termo)
+                    | Q(categorias__nome__icontains=termo)
+                )
+                .distinct()
+            )
 
     contexto = {
         "produtos": produtos_lista,
@@ -1133,12 +959,7 @@ def pesquisar_produtos(request):
     )
 
 
-# ============================================================
-# SOBRE
-# ============================================================
-
 def sobre(request):
-
     return render(
         request,
         "inicio/sobre.html",

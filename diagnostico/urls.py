@@ -1,13 +1,9 @@
 from django.urls import path
-
 from . import views
-
 
 app_name = "diagnostico"
 
-
 urlpatterns = [
-
     path(
         "",
         views.diagnostico,
@@ -20,13 +16,11 @@ urlpatterns = [
         name="diagnostico_produto",
     ),
 
-
     path(
         "produto/<int:produto_id>/analisar/",
         views.analisar,
         name="analisar",
     ),
-
 
     path(
         "analisar/",

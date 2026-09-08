@@ -1,6 +1,6 @@
 from pathlib import Path
-
 import mimetypes
+
 import requests
 
 from django.conf import settings
@@ -8,13 +8,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from produtos.models import ProdutoAgricola
-
 from .models import Diagnostico
-
 
 
 API_IA_URL = getattr(
@@ -29,168 +28,160 @@ API_TIMEOUT = getattr(
     120,
 )
 
+MAX_IMAGE_SIZE = 10 * 1024 * 1024
 
+FORMATOS_PERMITIDOS = {
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "png": "image/png",
+    "webp": "image/webp",
+}
+
+
+# ============================================================
+# FUNÇÕES AUXILIARES
+# ============================================================
 
 def obter_contadores():
+    """
+    Obtém contadores gerais utilizados na interface.
+    """
+
+    total_diagnosticos = Diagnostico.objects.count()
+
+    produtos_ativos = ProdutoAgricola.objects.filter(
+        ativo=True
+    ).count()
+
     return {
-        "total_diagnosticos": Diagnostico.objects.count(),
-        "total_produtos": (
-            ProdutoAgricola.objects
-            .filter(ativo=True)
-            .count()
-        ),
+        "total_diagnosticos": total_diagnosticos,
+        "produtos_ativos": produtos_ativos,
         "precisao_ia": 92,
     }
 
 
 def obter_estatisticas_utilizador(request):
-    queryset = (
-        Diagnostico.objects
-        .filter(usuario=request.user)
+    """
+    Obtém estatísticas dos diagnósticos do utilizador autenticado.
+    """
+
+    diagnosticos = Diagnostico.objects.filter(
+        usuario=request.user
     )
 
-    total = queryset.count()
+    total = diagnosticos.count()
 
-    concluidos = (
-        queryset
-        .filter(status="concluido")
-        .count()
-    )
+    concluidos = diagnosticos.filter(
+        status="concluido"
+    ).count()
 
-    erros = (
-        queryset
-        .filter(status="erro")
-        .count()
-    )
+    erros = diagnosticos.filter(
+        status="erro"
+    ).count()
 
-    processando = (
-        queryset
-        .filter(status="processando")
-        .count()
-    )
+    processando = diagnosticos.filter(
+        status="processando"
+    ).count()
 
-    pendentes = (
-        queryset
-        .filter(status="pendente")
-        .count()
-    )
+    pendentes = diagnosticos.filter(
+        status="pendente"
+    ).count()
 
-    problemas = (
-        queryset
-        .filter(status="concluido")
-        .exclude(resultado="saudavel")
-        .count()
-    )
+    problemas = diagnosticos.filter(
+        resultado__in=[
+            "doenca",
+            "praga",
+            "fungo",
+            "deficiencia",
+        ],
+        status="concluido",
+    ).count()
 
-    saudaveis = (
-        queryset
-        .filter(
-            status="concluido",
-            resultado="saudavel",
-        )
-        .count()
-    )
+    saudaveis = diagnosticos.filter(
+        resultado="saudavel",
+        status="concluido",
+    ).count()
 
-    media_confianca = (
-        queryset
-        .filter(status="concluido")
-        .aggregate(
-            media=Avg("confianca")
-        )["media"]
-    )
+    media_confianca = diagnosticos.filter(
+        status="concluido"
+    ).aggregate(
+        media=Avg("confianca")
+    )["media"]
 
     if media_confianca is None:
         media_confianca = 0
 
     return {
-        "total_diagnosticos_usuario": total,
-        "diagnosticos_concluidos": concluidos,
-        "diagnosticos_erros": erros,
-        "diagnosticos_processando": processando,
-        "diagnosticos_pendentes": pendentes,
-        "diagnosticos_problemas": problemas,
-        "diagnosticos_saudaveis": saudaveis,
-        "confianca_media": round(
-            float(media_confianca),
-            2,
-        ),
+        "total": total,
+        "concluidos": concluidos,
+        "erros": erros,
+        "processando": processando,
+        "pendentes": pendentes,
+        "problemas": problemas,
+        "saudaveis": saudaveis,
+        "media_confianca": float(media_confianca),
     }
-
 
 
 def obter_estatisticas_produto(request, produto):
-    queryset = (
-        Diagnostico.objects
-        .filter(
-            usuario=request.user,
-            produto=produto,
-        )
+    """
+    Obtém estatísticas do produto para o utilizador atual.
+    """
+
+    diagnosticos = Diagnostico.objects.filter(
+        usuario=request.user,
+        produto=produto,
     )
 
-    total = queryset.count()
+    total = diagnosticos.count()
 
-    concluidos = (
-        queryset
-        .filter(status="concluido")
-        .count()
-    )
+    concluidos = diagnosticos.filter(
+        status="concluido"
+    ).count()
 
-    saudaveis = (
-        queryset
-        .filter(
-            status="concluido",
-            resultado="saudavel",
-        )
-        .count()
-    )
+    erros = diagnosticos.filter(
+        status="erro"
+    ).count()
 
-    problemas = (
-        queryset
-        .filter(status="concluido")
-        .exclude(resultado="saudavel")
-        .count()
-    )
+    problemas = diagnosticos.filter(
+        resultado__in=[
+            "doenca",
+            "praga",
+            "fungo",
+            "deficiencia",
+        ],
+        status="concluido",
+    ).count()
 
-    erros = (
-        queryset
-        .filter(status="erro")
-        .count()
-    )
+    saudaveis = diagnosticos.filter(
+        resultado="saudavel",
+        status="concluido",
+    ).count()
 
-    media_confianca = (
-        queryset
-        .filter(status="concluido")
-        .aggregate(
-            media=Avg("confianca")
-        )["media"]
-    )
+    media_confianca = diagnosticos.filter(
+        status="concluido"
+    ).aggregate(
+        media=Avg("confianca")
+    )["media"]
 
-    if media_confianca is None:
-        media_confianca = 0
+    ultimo_diagnostico = diagnosticos.order_by(
+        "-data_criacao"
+    ).first()
 
-    ultimo_diagnostico = (
-        queryset
-        .select_related(
-            "produto",
-            "usuario",
-        )
-        .order_by("-data_criacao")
-        .first()
-    )
+    primeiro_diagnostico = diagnosticos.order_by(
+        "data_criacao"
+    ).first()
 
     return {
-        "total_diagnosticos_produto": total,
-        "diagnosticos_concluidos_produto": concluidos,
-        "diagnosticos_saudaveis_produto": saudaveis,
-        "diagnosticos_problemas_produto": problemas,
-        "diagnosticos_erros_produto": erros,
-        "confianca_media_produto": round(
-            float(media_confianca),
-            2,
-        ),
+        "total": total,
+        "concluidos": concluidos,
+        "erros": erros,
+        "problemas": problemas,
+        "saudaveis": saudaveis,
+        "media_confianca": float(media_confianca or 0),
         "ultimo_diagnostico": ultimo_diagnostico,
+        "primeiro_diagnostico": primeiro_diagnostico,
     }
-
 
 
 def obter_ultimos_diagnosticos(
@@ -198,13 +189,14 @@ def obter_ultimos_diagnosticos(
     produto=None,
     limite=5,
 ):
+    """
+    Obtém os últimos diagnósticos do utilizador.
+    """
+
     queryset = (
         Diagnostico.objects
         .filter(usuario=request.user)
-        .select_related(
-            "produto",
-            "usuario",
-        )
+        .select_related("produto", "usuario")
         .order_by("-data_criacao")
     )
 
@@ -216,27 +208,27 @@ def obter_ultimos_diagnosticos(
     return queryset[:limite]
 
 
+def obter_diagnosticos_produto(request, produto):
+    """
+    Obtém todos os diagnósticos do utilizador para determinado produto.
+    """
 
-def obter_diagnosticos_produto(
-    request,
-    produto,
-):
     return (
         Diagnostico.objects
         .filter(
             usuario=request.user,
             produto=produto,
         )
-        .select_related(
-            "produto",
-            "usuario",
-        )
+        .select_related("produto", "usuario")
         .order_by("-data_criacao")
     )
 
 
+def obter_produtos_ativos(request=None):
+    """
+    Retorna os produtos ativos.
+    """
 
-def obter_produtos_ativos():
     return (
         ProdutoAgricola.objects
         .filter(ativo=True)
@@ -245,8 +237,24 @@ def obter_produtos_ativos():
     )
 
 
+def obter_produto(produto_id):
+    """
+    Obtém um produto ativo ou lança 404.
+    """
+
+    return get_object_or_404(
+        ProdutoAgricola.objects
+        .filter(ativo=True)
+        .prefetch_related("categorias"),
+        pk=produto_id,
+    )
+
 
 def obter_imagem_produto(produto):
+    """
+    Lê a imagem cadastrada no produto.
+    """
+
     if not produto.imagem:
         raise ValueError(
             "Este produto não possui uma imagem cadastrada."
@@ -256,448 +264,488 @@ def obter_imagem_produto(produto):
         produto.imagem.open("rb")
 
         try:
-            imagem_bytes = produto.imagem.read()
+            return produto.imagem.read()
         finally:
             produto.imagem.close()
 
     except Exception as exc:
         raise ValueError(
-            "Não foi possível abrir a imagem cadastrada "
-            "para este produto."
+            f"Não foi possível carregar a imagem do produto: {exc}"
         ) from exc
 
-    if not imagem_bytes:
-        raise ValueError(
-            "A imagem cadastrada deste produto está vazia."
-        )
 
-    return imagem_bytes
+def obter_nome_imagem(produto):
+    """
+    Obtém o nome original da imagem.
+    """
 
+    if not produto.imagem:
+        return "imagem.jpg"
+
+    nome = Path(
+        produto.imagem.name
+    ).name
+
+    if not nome:
+        return "imagem.jpg"
+
+    return nome
 
 
 def obter_content_type(nome_imagem):
+    """
+    Determina o MIME type da imagem.
+    """
 
-    extensao = Path(nome_imagem).suffix.lower()
+    extensao = Path(
+        nome_imagem
+    ).suffix.lower().replace(".", "")
 
-    tipos_permitidos = {
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".png": "image/png",
-        ".webp": "image/webp",
-    }
+    if extensao in FORMATOS_PERMITIDOS:
+        return FORMATOS_PERMITIDOS[extensao]
 
-    content_type = tipos_permitidos.get(extensao)
-
-    if content_type is None:
-        content_type, _ = mimetypes.guess_type(
-            nome_imagem
-        )
-
-    if content_type not in {
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-    }:
-        raise ValueError(
-            "Formato de imagem não suportado. "
-            "Utilize JPG, PNG ou WEBP."
-        )
-
-    return content_type
-
-
-def normalizar_resultado_ia(resultado_ia):
-    if not resultado_ia:
-        raise ValueError(
-            "A inteligência artificial não retornou "
-            "nenhum resultado."
-        )
-
-    classe = str(
-        resultado_ia.get("classe", "") or ""
-    ).strip()
-
-    produto_detectado = str(
-        resultado_ia.get("produto", "") or ""
-    ).strip()
-
-    problema = str(
-        resultado_ia.get("problema", "") or ""
-    ).strip()
-
-    tipo = str(
-        resultado_ia.get("tipo", "") or ""
-    ).strip()
-
-    principais_previsoes = (
-        resultado_ia.get(
-            "principais_previsoes",
-            [],
-        )
+    content_type, _ = mimetypes.guess_type(
+        nome_imagem
     )
 
-    if not isinstance(
-        principais_previsoes,
-        list,
-    ):
-        principais_previsoes = []
+    if content_type in FORMATOS_PERMITIDOS.values():
+        return content_type
+
+    return None
+
+
+def normalizar_texto(valor):
+    """
+    Normaliza texto para comparações.
+    """
+
+    if valor is None:
+        return ""
+
+    return (
+        str(valor)
+        .strip()
+        .lower()
+        .replace("á", "a")
+        .replace("à", "a")
+        .replace("ã", "a")
+        .replace("â", "a")
+        .replace("é", "e")
+        .replace("ê", "e")
+        .replace("í", "i")
+        .replace("ó", "o")
+        .replace("ô", "o")
+        .replace("õ", "o")
+        .replace("ú", "u")
+        .replace("ç", "c")
+    )
+
+
+# ============================================================
+# NORMALIZAÇÃO DO RESULTADO DA IA
+# ============================================================
+
+def normalizar_resultado_ia(resultado_ia):
+    """
+    Normaliza o resultado recebido da API de IA para o formato
+    utilizado pelo sistema.
+    """
+
+    if not isinstance(resultado_ia, dict):
+        raise ValueError(
+            "A API de IA retornou um resultado inválido."
+        )
+
+    classe = (
+        resultado_ia.get("classe")
+        or resultado_ia.get("class")
+        or resultado_ia.get("classe_identificada")
+        or ""
+    )
+
+    produto_detectado = (
+        resultado_ia.get("produto")
+        or resultado_ia.get("cultura")
+        or ""
+    )
+
+    problema = (
+        resultado_ia.get("problema")
+        or resultado_ia.get("doenca")
+        or resultado_ia.get("doenca_identificada")
+        or ""
+    )
+
+    tipo = (
+        resultado_ia.get("tipo")
+        or resultado_ia.get("resultado")
+        or ""
+    )
+
+    confianca = (
+        resultado_ia.get("confianca")
+        or resultado_ia.get("confidence")
+        or resultado_ia.get("precisao")
+        or 0
+    )
 
     try:
-        confianca = float(
-            resultado_ia.get(
-                "confianca",
-                0,
-            )
-        )
+        confianca = float(confianca)
     except (
         TypeError,
         ValueError,
     ):
-        confianca = 0.0
+        confianca = 0
+
+    if confianca <= 1:
+        confianca *= 100
 
     confianca = max(
-        0.0,
-        min(
-            100.0,
-            confianca,
-        ),
+        0,
+        min(100, confianca)
     )
 
-    tipo_lower = tipo.lower()
-    problema_lower = problema.lower()
+    tipo_normalizado = normalizar_texto(
+        tipo
+    )
 
-    # ========================================================
-    # RESULTADO
-    # ========================================================
+    problema_normalizado = normalizar_texto(
+        problema
+    )
 
-    if (
-        "healthy" in problema_lower
-        or "saudável" in problema_lower
-        or "saudavel" in problema_lower
-        or "healthy" in tipo_lower
-        or "saudável" in tipo_lower
-        or "saudavel" in tipo_lower
+    if any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "saudavel",
+            "healthy",
+            "normal",
+        ]
     ):
         resultado = "saudavel"
 
-    elif "praga" in tipo_lower:
+    elif any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "praga",
+            "pest",
+            "inseto",
+        ]
+    ):
         resultado = "praga"
 
-    elif (
-        "fung" in tipo_lower
-        or "fungo" in tipo_lower
-        or "fúng" in tipo_lower
+    elif any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "fungo",
+            "fungal",
+            "fungica",
+        ]
     ):
         resultado = "fungo"
 
-    elif (
-        "viral" in tipo_lower
-        or "virus" in tipo_lower
-        or "vírus" in tipo_lower
+    elif any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "deficiencia",
+            "nutricional",
+            "nutriente",
+        ]
+    ):
+        resultado = "deficiencia"
+
+    elif any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "doenca",
+            "disease",
+        ]
     ):
         resultado = "doenca"
 
-    elif "bacter" in tipo_lower:
-        resultado = "doenca"
-
-    elif "defici" in tipo_lower:
-        resultado = "deficiencia"
-
-    elif problema:
+    elif problema_normalizado:
         resultado = "doenca"
 
     else:
         resultado = "indeterminado"
 
-    # ========================================================
-    # DOENÇA
-    # ========================================================
+    descricao = (
+        resultado_ia.get("descricao")
+        or resultado_ia.get("descricao_resultado")
+        or ""
+    )
 
-    if resultado == "saudavel":
-        doenca = ""
+    recomendacoes = (
+        resultado_ia.get("recomendacoes")
+        or resultado_ia.get("recomendacao")
+        or ""
+    )
 
-    elif problema:
-        doenca = problema
+    principais_previsoes = (
+        resultado_ia.get("principais_previsoes")
+        or resultado_ia.get("previsoes")
+        or []
+    )
 
-    else:
-        doenca = ""
+    if not descricao:
 
-    # ========================================================
-    # DESCRIÇÃO
-    # ========================================================
+        if resultado == "saudavel":
+            descricao = (
+                "A análise da inteligência artificial indica "
+                "que a cultura apresenta características "
+                "compatíveis com uma condição saudável."
+            )
 
-    if resultado == "saudavel":
+        elif resultado == "praga":
+            descricao = (
+                "A inteligência artificial identificou "
+                "características compatíveis com a presença "
+                "de uma possível praga."
+            )
 
-        descricao = (
-            "A inteligência artificial identificou "
-            f"{produto_detectado or 'o produto analisado'} "
-            "como saudável."
-        )
+        elif resultado == "fungo":
+            descricao = (
+                "A análise identificou características "
+                "compatíveis com uma possível doença fúngica."
+            )
 
-    elif doenca:
+        elif resultado == "deficiencia":
+            descricao = (
+                "Foram identificadas características que podem "
+                "estar relacionadas com uma deficiência nutricional."
+            )
 
-        descricao = (
-            "A inteligência artificial identificou "
-            f"{doenca} em "
-            f"{produto_detectado or 'o produto analisado'}."
-        )
+        elif resultado == "doenca":
+            descricao = (
+                "A inteligência artificial identificou "
+                "características compatíveis com uma possível doença."
+            )
 
-    else:
+        else:
+            descricao = (
+                "Não foi possível determinar com segurança "
+                "a condição da cultura."
+            )
 
-        descricao = (
-            "A inteligência artificial não conseguiu "
-            "determinar com precisão o problema presente "
-            "na imagem."
-        )
+    if not recomendacoes:
 
-    # ========================================================
-    # RECOMENDAÇÕES
-    # ========================================================
+        if resultado == "saudavel":
+            recomendacoes = (
+                "Continue a acompanhar regularmente a cultura, "
+                "mantenha boas práticas agrícolas e realize "
+                "novas análises sempre que observar alterações."
+            )
 
-    if resultado == "saudavel":
+        elif resultado in [
+            "doenca",
+            "fungo",
+            "praga",
+            "deficiencia",
+        ]:
+            recomendacoes = (
+                "Recomenda-se acompanhar a evolução dos sintomas, "
+                "verificar as condições da cultura e procurar "
+                "orientação de um técnico agrícola antes de aplicar "
+                "qualquer tratamento."
+            )
 
-        recomendacoes = (
-            "Continue acompanhando regularmente a cultura "
-            "e mantenha boas práticas agrícolas. "
-            "Faça novas análises caso sejam observadas "
-            "alterações nas folhas, frutos ou demais partes "
-            "da planta."
-        )
+        else:
+            recomendacoes = (
+                "Realize uma nova análise utilizando uma imagem "
+                "de boa qualidade e, se possível, procure "
+                "avaliação técnica."
+            )
 
-    elif doenca:
-
-        recomendacoes = (
-            "Recomenda-se acompanhar a evolução dos sintomas "
-            "e procurar orientação de um técnico agrícola "
-            "ou agrónomo para confirmar o diagnóstico e "
-            "definir o tratamento adequado."
-        )
-
-    else:
-
-        recomendacoes = (
-            "Recomenda-se realizar uma nova análise com "
-            "uma imagem nítida e bem iluminada e, se "
-            "necessário, procurar orientação técnica."
-        )
-
-    baixa_confianca = confianca < 60
+    baixa_confianca = confianca < 40
 
     return {
         "classe": classe,
         "produto": produto_detectado,
-        "produtos": produto_detectado,
         "problema": problema,
         "tipo": tipo,
-        "confianca": confianca,
         "resultado": resultado,
-        "doenca": doenca,
+        "confianca": round(confianca, 2),
         "descricao": descricao,
         "recomendacoes": recomendacoes,
         "principais_previsoes": principais_previsoes,
-        "produto_compativel": True,
-        "mensagem_compatibilidade": "",
         "baixa_confianca": baixa_confianca,
+        "resultado_bruto": resultado_ia,
     }
 
 
 # ============================================================
-# VERIFICAR COMPATIBILIDADE DO PRODUTO
+# COMPATIBILIDADE DO PRODUTO
 # ============================================================
 
 def verificar_compatibilidade(
     produto,
     produto_detectado,
 ):
-    if not produto_detectado:
-        return True, ""
+    """
+    Verifica se a cultura identificada pela IA corresponde
+    ao produto selecionado.
+    """
 
-    nome_cadastrado = (
-        str(produto.nome)
-        .strip()
-        .lower()
+    if not produto_detectado:
+        return True
+
+    produto_base = normalizar_texto(
+        produto.nome
     )
 
-    nome_detectado = (
-        str(produto_detectado)
-        .strip()
-        .lower()
+    detectado = normalizar_texto(
+        produto_detectado
     )
 
     equivalencias = {
-        "milho": "milho",
-        "corn maize": "milho",
-        "corn": "milho",
-        "maize": "milho",
-
-        "tomate": "tomate",
-        "tomato": "tomate",
-
-        "batata": "batata",
-        "potato": "batata",
-
-        "maçã": "maca",
-        "maca": "maca",
-        "apple": "maca",
-
-        "uva": "uva",
-        "grape": "uva",
-
-        "pêssego": "pessego",
-        "pessego": "pessego",
-        "peach": "pessego",
-
-        "cereja": "cereja",
-        "cherry": "cereja",
-
-        "laranja": "laranja",
-        "orange": "laranja",
-
-        "soja": "soja",
-        "soybean": "soja",
-
-        "morango": "morango",
-        "strawberry": "morango",
-
-        "framboesa": "framboesa",
-        "raspberry": "framboesa",
-
-        "mirtilo": "mirtilo",
-        "blueberry": "mirtilo",
-
-        "pimentão": "pimentao",
-        "pimentao": "pimentao",
-        "pepper bell": "pimentao",
-
-        "abóbora": "abobora",
-        "abobora": "abobora",
-        "squash": "abobora",
+        "milho": [
+            "milho",
+            "maize",
+            "corn",
+        ],
+        "feijao": [
+            "feijao",
+            "feijao comum",
+            "bean",
+            "beans",
+        ],
+        "mandioca": [
+            "mandioca",
+            "cassava",
+            "yuca",
+        ],
+        "arroz": [
+            "arroz",
+            "rice",
+        ],
+        "tomate": [
+            "tomate",
+            "tomato",
+        ],
     }
 
-    cadastrado_normalizado = equivalencias.get(
-        nome_cadastrado,
-        nome_cadastrado,
-    )
+    for cultura, nomes in equivalencias.items():
 
-    detectado_normalizado = equivalencias.get(
-        nome_detectado,
-        nome_detectado,
-    )
+        produto_correspondente = any(
+            cultura in produto_base
+            or nome in produto_base
+            for nome in nomes
+        )
+
+        detectado_correspondente = any(
+            cultura in detectado
+            or nome in detectado
+            for nome in nomes
+        )
+
+        if (
+            produto_correspondente
+            and detectado_correspondente
+        ):
+            return True
 
     if (
-        cadastrado_normalizado
-        == detectado_normalizado
+        produto_base
+        and detectado
+        and (
+            produto_base in detectado
+            or detectado in produto_base
+        )
     ):
-        return True, ""
+        return True
 
-    mensagem = (
-        "A inteligência artificial identificou a imagem como "
-        f"'{produto_detectado}', mas o produto cadastrado é "
-        f"'{produto.nome}'. Verifique se a imagem corresponde "
-        "ao produto selecionado."
-    )
-
-    return False, mensagem
+    return False
 
 
 # ============================================================
-# CONSTRUIR OBSERVAÇÕES
+# OBSERVAÇÕES
 # ============================================================
 
 def construir_observacoes(
     produto,
-    classe,
-    produto_detectado="",
-    tipo="",
-    confianca=0,
-    produto_compativel=True,
-    baixa_confianca=False,
-    mensagem_compatibilidade="",
+    resultado,
+    compativel=True,
 ):
+    """
+    Constrói observações complementares para o diagnóstico.
+    """
+
     observacoes = []
 
-    observacoes.append(
-        f"Produto analisado: {produto.nome}."
+    if not compativel:
+        observacoes.append(
+            "A cultura identificada pela inteligência artificial "
+            "não corresponde claramente ao produto selecionado. "
+            "O resultado deve ser interpretado com cautela."
+        )
+
+    if resultado.get("baixa_confianca"):
+        observacoes.append(
+            "A confiança da inteligência artificial está abaixo "
+            "do nível mínimo recomendado para uma interpretação "
+            "segura."
+        )
+
+    if resultado.get("produto"):
+        observacoes.append(
+            f"Cultura identificada pela IA: "
+            f"{resultado['produto']}."
+        )
+
+    if resultado.get("classe"):
+        observacoes.append(
+            f"Classe identificada: "
+            f"{resultado['classe']}."
+        )
+
+    if not observacoes:
+        observacoes.append(
+            "Diagnóstico processado com sucesso pela "
+            "inteligência artificial."
+        )
+
+    return "\n".join(
+        observacoes
     )
-
-    if produto_detectado:
-        observacoes.append(
-            "Produto identificado pela IA: "
-            f"{produto_detectado}."
-        )
-
-    if classe:
-        observacoes.append(
-            f"Classe identificada pela IA: {classe}."
-        )
-
-    if tipo:
-        observacoes.append(
-            f"Tipo de diagnóstico: {tipo}."
-        )
-
-    observacoes.append(
-        f"Confiança da IA: {float(confianca):.2f}%."
-    )
-
-    if not produto_compativel:
-        observacoes.append(
-            "A imagem analisada pode não corresponder "
-            "ao produto cadastrado. Verifique a imagem "
-            "e o produto selecionado."
-        )
-
-    if baixa_confianca:
-        observacoes.append(
-            "A análise apresentou confiança relativamente "
-            "baixa. Recomenda-se uma imagem mais nítida "
-            "e confirmação técnica."
-        )
-
-    if mensagem_compatibilidade:
-        observacoes.append(
-            str(mensagem_compatibilidade)
-        )
-
-    return "\n\n".join(observacoes)
 
 
 # ============================================================
-# ENVIAR IMAGEM PARA A API FASTAPI
+# API DE INTELIGÊNCIA ARTIFICIAL
 # ============================================================
 
 def enviar_para_api_ia(
     imagem_bytes,
     nome_imagem,
 ):
+    """
+    Envia a imagem para a API FastAPI.
+    """
 
     if not imagem_bytes:
         raise ValueError(
             "A imagem está vazia."
         )
 
+    tamanho = len(
+        imagem_bytes
+    )
 
-    tamanho_maximo = 10 * 1024 * 1024
-
-    if len(imagem_bytes) > tamanho_maximo:
+    if tamanho > MAX_IMAGE_SIZE:
         raise ValueError(
-            "A imagem não pode ultrapassar 10 MB."
+            "A imagem excede o limite máximo de 10 MB."
         )
-
-    # ========================================================
-    # CONTENT TYPE
-    # ========================================================
 
     content_type = obter_content_type(
         nome_imagem
     )
 
-    # ========================================================
-    # REQUEST
-    # ========================================================
+    if not content_type:
+        raise ValueError(
+            "Formato de imagem não suportado. "
+            "Utilize JPG, JPEG, PNG ou WEBP."
+        )
 
     try:
-        resposta = requests.post(
+        response = requests.post(
             API_IA_URL,
             files={
                 "imagem": (
@@ -710,565 +758,127 @@ def enviar_para_api_ia(
         )
 
     except requests.exceptions.ConnectionError as exc:
-
-        raise ValueError(
-            "Não foi possível conectar à API de "
-            "inteligência artificial. Verifique se a "
-            "AgroIA-API está em execução e se a URL "
-            f"está correta: {API_IA_URL}"
+        raise ConnectionError(
+            "Não foi possível conectar ao serviço de "
+            "inteligência artificial. Verifique se a API "
+            "está em execução."
         ) from exc
 
     except requests.exceptions.Timeout as exc:
-
-        raise ValueError(
-            "A inteligência artificial demorou demasiado "
-            "tempo para responder. Tente novamente."
+        raise TimeoutError(
+            "A análise demorou demasiado tempo e ultrapassou "
+            "o limite definido."
         ) from exc
 
     except requests.exceptions.RequestException as exc:
-
-        raise ValueError(
-            "Ocorreu um erro ao comunicar com a API "
-            "de inteligência artificial."
+        raise RuntimeError(
+            f"Erro de comunicação com a API de IA: {exc}"
         ) from exc
 
-    # ========================================================
-    # VERIFICAR STATUS HTTP
-    # ========================================================
-
-    if resposta.status_code != 200:
-
+    if response.status_code != 200:
         try:
-            erro_api = resposta.json()
+            detalhe = response.json()
         except ValueError:
-            erro_api = {}
+            detalhe = response.text
 
-        mensagem_api = (
-            erro_api.get("detail")
-            or erro_api.get("erro")
-            or "A API de inteligência artificial "
-               "não conseguiu processar a imagem."
+        raise RuntimeError(
+            f"A API de IA retornou o estado "
+            f"{response.status_code}: {detalhe}"
         )
-
-        raise ValueError(
-            str(mensagem_api)
-        )
-
-    # ========================================================
-    # LER JSON
-    # ========================================================
 
     try:
-        dados = resposta.json()
-
+        dados = response.json()
     except ValueError as exc:
-
         raise ValueError(
-            "A API de inteligência artificial devolveu "
-            "uma resposta inválida."
+            "A API de IA não retornou um JSON válido."
         ) from exc
 
-    # ========================================================
-    # VERIFICAR SUCESSO
-    # ========================================================
-
-    if not dados.get("sucesso"):
-
+    if not isinstance(dados, dict):
         raise ValueError(
-            "A API de inteligência artificial informou "
-            "que a análise não foi concluída."
+            "A resposta da API possui um formato inválido."
         )
 
-    # ========================================================
-    # OBTER RESULTADO
-    # ========================================================
+    if dados.get("sucesso") is False:
+        raise RuntimeError(
+            dados.get(
+                "erro",
+                "A inteligência artificial não conseguiu "
+                "processar a imagem."
+            )
+        )
 
     resultado = dados.get(
         "resultado"
     )
 
-    if not isinstance(
-        resultado,
-        dict,
-    ):
+    if resultado is None:
+        resultado = dados
+
+    if not isinstance(resultado, dict):
         raise ValueError(
-            "A API de inteligência artificial não "
-            "devolveu um resultado válido."
+            "O resultado recebido da IA possui formato inválido."
         )
 
     return resultado
 
 
+# ============================================================
+# PÁGINA PRINCIPAL DE DIAGNÓSTICO
+# ============================================================
 
 @login_required
-def diagnostico(request, produto_id=None):
-    """
-    Página principal de diagnóstico.
-
-    Sem produto_id:
-        Mostra todos os produtos e o histórico resumido.
-
-    Com produto_id:
-        Mostra os detalhes do produto, último diagnóstico
-        e histórico das análises desse produto.
-    """
-
-    # =========================================================
-    # ESTATÍSTICAS DO UTILIZADOR
-    # =========================================================
-
-    diagnosticos_usuario = Diagnostico.objects.filter(
-        usuario=request.user
-    )
-
-    total_diagnosticos_usuario = diagnosticos_usuario.count()
-
-    diagnosticos_concluidos = diagnosticos_usuario.filter(
-        status="concluido"
-    ).count()
-
-    confianca_media = (
-        diagnosticos_usuario
-        .filter(
-            status="concluido",
-            confianca__isnull=False,
-        )
-        .aggregate(media=Avg("confianca"))
-        .get("media")
-        or 0
-    )
-
-    # =========================================================
-    # PRODUTOS ATIVOS
-    # =========================================================
-
-    produtos = (
-        ProdutoAgricola.objects
-        .filter(ativo=True)
-        .prefetch_related("categorias")
-    )
-
-    # =========================================================
-    # MODO PRODUTO
-    # =========================================================
-
-    produto = None
-    diagnostico_atual = None
-    historico_produto = []
-
-    if produto_id is not None:
-
-        produto = get_object_or_404(
-            ProdutoAgricola,
-            id=produto_id,
-            ativo=True,
-        )
-
-        historico_produto = list(
-            Diagnostico.objects
-            .filter(
-                usuario=request.user,
-                produto=produto,
-            )
-            .order_by("-data_criacao")
-        )
-
-        if historico_produto:
-            diagnostico_atual = historico_produto[0]
-
-    # =========================================================
-    # MODO GERAL
-    # =========================================================
-    #
-    # Para cada produto, adicionamos:
-    #
-    # item.ultimo_diagnostico
-    # item.total_diagnosticos
-    #
-    # =========================================================
-
-    if produto is None:
-
-        produtos = list(produtos)
-
-        for item in produtos:
-
-            item.total_diagnosticos = (
-                Diagnostico.objects
-                .filter(
-                    usuario=request.user,
-                    produto=item,
-                )
-                .count()
-            )
-
-            item.ultimo_diagnostico = (
-                Diagnostico.objects
-                .filter(
-                    usuario=request.user,
-                    produto=item,
-                )
-                .order_by("-data_criacao")
-                .first()
-            )
-
-    # =========================================================
-    # CONTEXTO
-    # =========================================================
-
-    context = {
-        "produtos": produtos,
-
-        "produto": produto,
-
-        "diagnostico": diagnostico_atual,
-
-        "historico_produto": historico_produto,
-
-        "total_produtos": ProdutoAgricola.objects.filter(
-            ativo=True
-        ).count(),
-
-        "total_diagnosticos_usuario":
-            total_diagnosticos_usuario,
-
-        "diagnosticos_concluidos":
-            diagnosticos_concluidos,
-
-        "confianca_media":
-            confianca_media,
-    }
-
-    return render(
-        request,
-        "diagnostico/diagnostico.html",
-        context,
-    )
-
-
-
-@login_required
-def analisar(
+def diagnostico(
     request,
     produto_id=None,
 ):
-    # ========================================================
-    # SOMENTE POST
-    # ========================================================
+    """
+    Página principal de diagnóstico.
 
-    if request.method != "POST":
+    Pode funcionar de duas formas:
 
-        if produto_id is not None:
-            return redirect(
-                "diagnostico:diagnostico_produto",
-                produto_id=produto_id,
-            )
+    /diagnostico/
+        Mostra todos os produtos.
 
-        return redirect(
-            "diagnostico:diagnostico"
-        )
+    /diagnostico/produto/1/
+        Mostra o diagnóstico de um produto específico.
+    """
 
-    # ========================================================
-    # IDENTIFICAR PRODUTO
-    # ========================================================
+    contadores = obter_contadores()
 
-    produto_id_post = request.POST.get(
-        "produto_id"
+    estatisticas = obter_estatisticas_utilizador(
+        request
     )
 
-    produto_id_final = (
-        produto_id
-        or produto_id_post
+    produtos = obter_produtos_ativos(
+        request
     )
 
-    if not produto_id_final:
+    produto = None
+    diagnostico_atual = None
+    historico = []
 
-        messages.error(
-            request,
-            "Nenhum produto foi selecionado "
-            "para o diagnóstico.",
+    # --------------------------------------------------------
+    # MODO PRODUTO
+    # --------------------------------------------------------
+
+    if produto_id is not None:
+
+        produto = obter_produto(
+            produto_id
         )
 
-        return redirect(
-            "diagnostico:diagnostico"
-        )
-
-    # ========================================================
-    # BUSCAR PRODUTO
-    # ========================================================
-
-    produto = get_object_or_404(
-        ProdutoAgricola.objects.prefetch_related(
-            "categorias"
-        ),
-        pk=produto_id_final,
-        ativo=True,
-    )
-
-    # ========================================================
-    # VERIFICAR IMAGEM
-    # ========================================================
-
-    if not produto.imagem:
-
-        messages.error(
-            request,
-            "Não é possível realizar o diagnóstico "
-            "porque este produto ainda não possui "
-            "uma imagem cadastrada.",
-        )
-
-        return redirect(
-            "diagnostico:diagnostico_produto",
-            produto_id=produto.id,
-        )
-
-    diagnostico_registo = None
-
-    try:
-        # ====================================================
-        # LER IMAGEM DO PRODUTO
-        # ====================================================
-
-        imagem_bytes = obter_imagem_produto(
-            produto
-        )
-
-        nome_imagem = Path(
-            produto.imagem.name
-        ).name
-
-        # ====================================================
-        # VALIDAR FORMATO
-        # ====================================================
-
-        obter_content_type(
-            nome_imagem
-        )
-
-        # ====================================================
-        # ENVIAR PARA FASTAPI
-        # ====================================================
-
-        resultado_api = enviar_para_api_ia(
-            imagem_bytes,
-            nome_imagem,
-        )
-
-        # ====================================================
-        # NORMALIZAR RESULTADO
-        # ====================================================
-
-        dados = normalizar_resultado_ia(
-            resultado_api
-        )
-
-        classe = dados["classe"]
-
-        produto_detectado = dados[
-            "produto"
-        ]
-
-        tipo = dados[
-            "tipo"
-        ]
-
-        confianca = dados[
-            "confianca"
-        ]
-
-        resultado = dados[
-            "resultado"
-        ]
-
-        doenca = dados[
-            "doenca"
-        ]
-
-        descricao = dados[
-            "descricao"
-        ]
-
-        recomendacoes = dados[
-            "recomendacoes"
-        ]
-
-        principais_previsoes = dados[
-            "principais_previsoes"
-        ]
-
-        baixa_confianca = dados[
-            "baixa_confianca"
-        ]
-
-        # ====================================================
-        # VERIFICAR COMPATIBILIDADE
-        # ====================================================
-
-        (
-            produto_compativel,
-            mensagem_compatibilidade,
-        ) = verificar_compatibilidade(
-            produto,
-            produto_detectado,
-        )
-
-        # ====================================================
-        # CONSTRUIR OBSERVAÇÕES
-        # ====================================================
-
-        observacoes_texto = construir_observacoes(
-            produto=produto,
-            classe=classe,
-            produto_detectado=produto_detectado,
-            tipo=tipo,
-            confianca=confianca,
-            produto_compativel=produto_compativel,
-            baixa_confianca=baixa_confianca,
-            mensagem_compatibilidade=(
-                mensagem_compatibilidade
-            ),
-        )
-
-        # ====================================================
-        # GUARDAR DIAGNÓSTICO
-        # ====================================================
-
-        with transaction.atomic():
-
-            diagnostico_registo = Diagnostico(
-                usuario=request.user,
-                produto=produto,
-                classe_identificada=classe,
-                resultado=resultado,
-                doenca_identificada=doenca,
-                confianca=round(
-                    confianca,
-                    2,
-                ),
-                descricao_resultado=descricao,
-                recomendacoes=recomendacoes,
-                observacoes=observacoes_texto,
-                status="concluido",
-                erro="",
-            )
-
-            # Guardar uma cópia da imagem analisada.
-            diagnostico_registo.imagem.save(
-                nome_imagem,
-                ContentFile(
-                    imagem_bytes
-                ),
-                save=False,
-            )
-
-            diagnostico_registo.save()
-
-        # ====================================================
-        # URL DA IMAGEM DO DIAGNÓSTICO
-        # ====================================================
-
-        imagem_url = ""
-
-        if diagnostico_registo.imagem:
-            imagem_url = (
-                diagnostico_registo
-                .imagem
-                .url
-            )
-
-        elif produto.imagem:
-            imagem_url = (
-                produto
-                .imagem
-                .url
-            )
-
-        # ====================================================
-        # RESULTADO PARA A PÁGINA
-        # ====================================================
-
-        resultado_pagina = {
-            "id": diagnostico_registo.id,
-
-            "produto_id": produto.id,
-
-            "produto_nome": produto.nome,
-
-            "produto_detectado": (
-                produto_detectado
-            ),
-
-            "imagem_url": imagem_url,
-
-            "classe": classe,
-
-            "produto": produto_detectado,
-
-            "produtos": produto_detectado,
-
-            "problema": dados[
-                "problema"
-            ],
-
-            "tipo": tipo,
-
-            "confianca": round(
-                confianca,
-                2,
-            ),
-
-            "resultado": resultado,
-
-            "doenca": doenca,
-
-            "descricao": descricao,
-
-            "recomendacoes": recomendacoes,
-
-            "principais_previsoes": (
-                principais_previsoes
-            ),
-
-            "produto_compativel": (
-                produto_compativel
-            ),
-
-            "mensagem_compatibilidade": (
-                mensagem_compatibilidade
-            ),
-
-            "baixa_confianca": (
-                baixa_confianca
-            ),
-        }
-
-        # ====================================================
-        # HISTÓRICO DO PRODUTO
-        # ====================================================
-
-        ultimos_diagnosticos = (
-            obter_ultimos_diagnosticos(
+        historico = list(
+            obter_diagnosticos_produto(
                 request,
-                produto=produto,
-                limite=5,
+                produto,
             )
         )
 
-        # ====================================================
-        # HISTÓRICO GERAL
-        # ====================================================
-
-        todos_ultimos_diagnosticos = (
-            obter_ultimos_diagnosticos(
-                request,
-                limite=5,
-            )
+        diagnostico_atual = (
+            historico[0]
+            if historico
+            else None
         )
-
-        # ====================================================
-        # ESTATÍSTICAS DO PRODUTO
-        # ====================================================
 
         estatisticas_produto = (
             obter_estatisticas_produto(
@@ -1277,193 +887,338 @@ def analisar(
             )
         )
 
-        # ====================================================
-        # CONTEXTO
-        # ====================================================
+    # --------------------------------------------------------
+    # MODO GERAL
+    # --------------------------------------------------------
 
-        context = {
-            "produtos": (
-                obter_produtos_ativos()
-            ),
+    else:
 
-            "produto": produto,
+        # Não adicionamos atributos diretamente ao objeto
+        # ProdutoAgricola. Isso evita conflitos com propriedades
+        # definidas no model.
 
-            "imagem_produto": (
-                produto.imagem
-                if produto.imagem
+        produtos = list(
+            produtos
+        )
+
+        for item in produtos:
+
+            item.diagnosticos_usuario = list(
+                Diagnostico.objects
+                .filter(
+                    usuario=request.user,
+                    produto=item,
+                )
+                .order_by("-data_criacao")[:5]
+            )
+
+            item.ultimo_diagnostico_usuario = (
+                item.diagnosticos_usuario[0]
+                if item.diagnosticos_usuario
                 else None
-            ),
+            )
 
-            "resultado": resultado_pagina,
+            item.numero_diagnosticos_usuario = (
+                Diagnostico.objects
+                .filter(
+                    usuario=request.user,
+                    produto=item,
+                )
+                .count()
+            )
 
-            "diagnostico": (
-                diagnostico_registo
-            ),
+        estatisticas_produto = None
 
-            "ultimos_diagnosticos": (
-                ultimos_diagnosticos
-            ),
+    # --------------------------------------------------------
+    # CONTEXTO
+    # --------------------------------------------------------
 
-            "todos_ultimos_diagnosticos": (
-                todos_ultimos_diagnosticos
-            ),
+    contexto = {
+        "produtos": produtos,
+        "produto": produto,
+        "diagnostico": diagnostico_atual,
+        "diagnostico_atual": diagnostico_atual,
+        "historico": historico,
 
-            **estatisticas_produto,
-            **obter_contadores(),
-            **obter_estatisticas_utilizador(
-                request
+        "total_produtos": contadores[
+            "produtos_ativos"
+        ],
+
+        "total_diagnosticos": estatisticas[
+            "total"
+        ],
+
+        "diagnosticos_concluidos": estatisticas[
+            "concluidos"
+        ],
+
+        "diagnosticos_erros": estatisticas[
+            "erros"
+        ],
+
+        "diagnosticos_processando": estatisticas[
+            "processando"
+        ],
+
+        "diagnosticos_pendentes": estatisticas[
+            "pendentes"
+        ],
+
+        "total_problemas": estatisticas[
+            "problemas"
+        ],
+
+        "total_saudaveis": estatisticas[
+            "saudaveis"
+        ],
+
+        "media_confianca": estatisticas[
+            "media_confianca"
+        ],
+
+        "precisao_ia": contadores[
+            "precisao_ia"
+        ],
+
+        "ultimos_diagnosticos": obter_ultimos_diagnosticos(
+            request,
+            produto=produto,
+            limite=5,
+        ),
+
+        "estatisticas": estatisticas,
+
+        "estatisticas_produto": estatisticas_produto,
+    }
+
+    return render(
+        request,
+        "diagnostico/diagnostico.html",
+        contexto,
+    )
+
+
+# ============================================================
+# ANALISAR IMAGEM
+# ============================================================
+
+@login_required
+@require_POST
+def analisar(
+    request,
+    produto_id=None,
+):
+    """
+    Executa o diagnóstico de um produto.
+    """
+
+    produto_id_post = request.POST.get(
+        "produto_id"
+    )
+
+    if produto_id is None and produto_id_post:
+        try:
+            produto_id = int(
+                produto_id_post
+            )
+        except (
+            TypeError,
+            ValueError,
+        ):
+            messages.error(
+                request,
+                "Produto inválido."
+            )
+            return redirect(
+                "diagnostico:diagnostico"
+            )
+
+    if produto_id is None:
+        messages.error(
+            request,
+            "É necessário selecionar um produto."
+        )
+        return redirect(
+            "diagnostico:diagnostico"
+        )
+
+    produto = obter_produto(
+        produto_id
+    )
+
+    diagnostico_obj = None
+
+    try:
+
+        # ----------------------------------------------------
+        # CARREGAR IMAGEM
+        # ----------------------------------------------------
+
+        imagem_bytes = obter_imagem_produto(
+            produto
+        )
+
+        nome_imagem = obter_nome_imagem(
+            produto
+        )
+
+        # ----------------------------------------------------
+        # CRIAR DIAGNÓSTICO PENDENTE
+        # ----------------------------------------------------
+
+        diagnostico_obj = Diagnostico.objects.create(
+            usuario=request.user,
+            produto=produto,
+            imagem=ContentFile(
+                imagem_bytes,
+                name=nome_imagem,
             ),
-        }
+            status="processando",
+            resultado="indeterminado",
+        )
+
+        # ----------------------------------------------------
+        # ENVIAR PARA IA
+        # ----------------------------------------------------
+
+        resultado_ia = enviar_para_api_ia(
+            imagem_bytes,
+            nome_imagem,
+        )
+
+        resultado = normalizar_resultado_ia(
+            resultado_ia
+        )
+
+        # ----------------------------------------------------
+        # VERIFICAR CULTURA
+        # ----------------------------------------------------
+
+        compativel = verificar_compatibilidade(
+            produto,
+            resultado.get("produto"),
+        )
+
+        observacoes = construir_observacoes(
+            produto,
+            resultado,
+            compativel,
+        )
+
+        # ----------------------------------------------------
+        # GUARDAR RESULTADO
+        # ----------------------------------------------------
+
+        with transaction.atomic():
+
+            diagnostico_obj.classe_identificada = (
+                resultado.get("classe", "")
+            )
+
+            diagnostico_obj.resultado = (
+                resultado.get(
+                    "resultado",
+                    "indeterminado",
+                )
+            )
+
+            diagnostico_obj.doenca_identificada = (
+                resultado.get(
+                    "problema",
+                    "",
+                )
+            )
+
+            diagnostico_obj.confianca = (
+                resultado.get(
+                    "confianca",
+                    0,
+                )
+            )
+
+            diagnostico_obj.descricao_resultado = (
+                resultado.get(
+                    "descricao",
+                    "",
+                )
+            )
+
+            diagnostico_obj.recomendacoes = (
+                resultado.get(
+                    "recomendacoes",
+                    "",
+                )
+            )
+
+            diagnostico_obj.observacoes = (
+                observacoes
+            )
+
+            diagnostico_obj.status = (
+                "concluido"
+            )
+
+            diagnostico_obj.erro = ""
+
+            diagnostico_obj.save()
 
         messages.success(
             request,
-            "Diagnóstico concluído com sucesso.",
+            "Diagnóstico concluído com sucesso."
         )
 
-        return render(
-            request,
-            "diagnostico/diagnostico.html",
-            context,
+        return redirect(
+            "diagnostico:detalhe",
+            diagnostico_id=diagnostico_obj.pk,
         )
-
-    # ========================================================
-    # ERRO DURANTE O DIAGNÓSTICO
-    # ========================================================
 
     except Exception as exc:
 
-        # ====================================================
-        # REGISTRAR ERRO NO HISTÓRICO
-        # ====================================================
+        erro = str(exc)
 
-        try:
-            erro_registo = Diagnostico(
-                usuario=request.user,
-                produto=produto,
-                classe_identificada="",
-                resultado="indeterminado",
-                doenca_identificada="",
-                confianca=0,
-                descricao_resultado="",
-                recomendacoes="",
-                observacoes="",
-                status="erro",
-                erro=str(exc),
-            )
+        # ----------------------------------------------------
+        # REGISTAR ERRO
+        # ----------------------------------------------------
 
-            # Tentar guardar também a imagem.
+        if diagnostico_obj is not None:
+
             try:
-                imagem_erro = (
-                    obter_imagem_produto(
-                        produto
-                    )
+
+                diagnostico_obj.status = "erro"
+                diagnostico_obj.resultado = "indeterminado"
+                diagnostico_obj.erro = erro
+
+                diagnostico_obj.observacoes = (
+                    "O diagnóstico não pôde ser concluído "
+                    "devido a um erro durante o processamento."
                 )
 
-                nome_imagem_erro = Path(
-                    produto.imagem.name
-                ).name
-
-                erro_registo.imagem.save(
-                    nome_imagem_erro,
-                    ContentFile(
-                        imagem_erro
-                    ),
-                    save=False,
+                diagnostico_obj.save(
+                    update_fields=[
+                        "status",
+                        "resultado",
+                        "erro",
+                        "observacoes",
+                        "data_atualizacao",
+                    ]
                 )
 
             except Exception:
                 pass
 
-            erro_registo.save()
-
-        except Exception:
-            pass
-
-        # ====================================================
-        # MENSAGEM AMIGÁVEL
-        # ====================================================
-
-        mensagem_erro = str(exc)
-        mensagem_erro_lower = (
-            mensagem_erro.lower()
-        )
-
-        if (
-            "conectar" in mensagem_erro_lower
-            or "connection" in mensagem_erro_lower
-            or "connect" in mensagem_erro_lower
-        ):
-
-            mensagem_usuario = (
-                "Não foi possível conectar ao serviço "
-                "de inteligência artificial. Verifique "
-                "se a AgroIA-API está em execução."
-            )
-
-        elif (
-            "timeout" in mensagem_erro_lower
-            or "demorou" in mensagem_erro_lower
-        ):
-
-            mensagem_usuario = (
-                "A inteligência artificial demorou "
-                "demasiado tempo para responder. "
-                "Tente novamente."
-            )
-
-        elif (
-            "formato de imagem" in mensagem_erro_lower
-            or "imagem" in mensagem_erro_lower
-            and (
-                "suportado" in mensagem_erro_lower
-                or "válida" in mensagem_erro_lower
-                or "valida" in mensagem_erro_lower
-            )
-        ):
-
-            mensagem_usuario = (
-                "A imagem do produto não possui um "
-                "formato suportado. Utilize JPG, PNG ou WEBP."
-            )
-
-        elif "10 mb" in mensagem_erro_lower:
-
-            mensagem_usuario = (
-                "A imagem é demasiado grande. "
-                "O tamanho máximo permitido é 10 MB."
-            )
-
-        else:
-
-            mensagem_usuario = (
-                "Não foi possível concluir o diagnóstico. "
-                "Verifique se a AgroIA-API está funcionando "
-                "e tente novamente."
-            )
-
         messages.error(
             request,
-            mensagem_usuario,
+            f"Não foi possível realizar o diagnóstico: {erro}"
         )
 
-        # ====================================================
-        # VOLTAR PARA O PRODUTO
-        # ====================================================
-
-        if produto is not None:
-
-            return redirect(
-                "diagnostico:diagnostico_produto",
-                produto_id=produto.id,
-            )
-
         return redirect(
-            "diagnostico:diagnostico"
+            "diagnostico:diagnostico_produto",
+            produto_id=produto.pk,
         )
 
 
 # ============================================================
-# HISTÓRICO DE UM PRODUTO
+# HISTÓRICO DO PRODUTO
 # ============================================================
 
 @login_required
@@ -1471,172 +1226,109 @@ def historico_produto(
     request,
     produto_id,
 ):
-    produto = get_object_or_404(
-        ProdutoAgricola.objects.prefetch_related(
-            "categorias"
-        ),
-        pk=produto_id,
-        ativo=True,
+    """
+    Mostra o histórico completo de diagnósticos de um produto.
+    """
+
+    produto = obter_produto(
+        produto_id
     )
 
-    diagnosticos = (
+    diagnosticos = list(
         obter_diagnosticos_produto(
             request,
             produto,
         )
     )
 
-    estatisticas = (
-        obter_estatisticas_produto(
-            request,
-            produto,
+    estatisticas = obter_estatisticas_produto(
+        request,
+        produto,
+    )
+
+    distribuicao = (
+        Diagnostico.objects
+        .filter(
+            usuario=request.user,
+            produto=produto,
+            status="concluido",
         )
-    )
-
-    ultimo_diagnostico = (
-        estatisticas[
-            "ultimo_diagnostico"
-        ]
-    )
-
-    primeiro_diagnostico = (
-        diagnosticos
-        .order_by("data_criacao")
-        .first()
-    )
-
-    resultados = (
-        diagnosticos
-        .filter(status="concluido")
         .values("resultado")
-        .annotate(
-            total=Count("id")
-        )
+        .annotate(total=Count("id"))
         .order_by("-total")
-    )
-
-    # ========================================================
-    # DADOS PARA GRÁFICO
-    # ========================================================
-
-    diagnosticos_grafico = list(
-        diagnosticos
-        .filter(status="concluido")
-        .values(
-            "id",
-            "confianca",
-            "resultado",
-            "data_criacao",
-            "doenca_identificada",
-        )
-        .order_by("data_criacao")
     )
 
     evolucao_confianca = []
 
-    for item in diagnosticos_grafico:
+    for item in diagnosticos:
 
-        evolucao_confianca.append(
-            {
-                "id": item["id"],
+        if item.status != "concluido":
+            continue
 
-                "confianca": float(
-                    item["confianca"] or 0
-                ),
+        evolucao_confianca.append({
+            "data": item.data_criacao,
+            "confianca": float(
+                item.confianca or 0
+            ),
+            "resultado": item.resultado,
+        })
 
-                "resultado": (
-                    item["resultado"]
-                ),
-
-                "doenca": (
-                    item[
-                        "doenca_identificada"
-                    ]
-                    or ""
-                ),
-
-                "data": (
-                    item[
-                        "data_criacao"
-                    ].strftime(
-                        "%d/%m/%Y"
-                    )
-                    if item[
-                        "data_criacao"
-                    ]
-                    else ""
-                ),
-            }
-        )
-
-    # ========================================================
-    # ÚLTIMOS DIAGNÓSTICOS
-    # ========================================================
-
-    ultimos_diagnosticos = (
-        obter_ultimos_diagnosticos(
-            request,
-            produto=produto,
-            limite=5,
-        )
-    )
-
-    todos_ultimos_diagnosticos = (
-        obter_ultimos_diagnosticos(
-            request,
-            limite=5,
-        )
-    )
-
-    # ========================================================
-    # CONTEXTO
-    # ========================================================
-
-    context = {
+    contexto = {
         "produto": produto,
-
         "diagnosticos": diagnosticos,
 
-        "ultimo_diagnostico": (
-            ultimo_diagnostico
-        ),
+        "total_diagnosticos": estatisticas[
+            "total"
+        ],
 
-        "primeiro_diagnostico": (
-            primeiro_diagnostico
-        ),
+        "diagnosticos_concluidos": estatisticas[
+            "concluidos"
+        ],
 
-        "resultados": resultados,
+        "diagnosticos_erros": estatisticas[
+            "erros"
+        ],
 
-        "evolucao_confianca": (
-            evolucao_confianca
-        ),
+        "total_problemas": estatisticas[
+            "problemas"
+        ],
 
-        "ultimos_diagnosticos": (
-            ultimos_diagnosticos
-        ),
+        "total_saudaveis": estatisticas[
+            "saudaveis"
+        ],
 
-        "todos_ultimos_diagnosticos": (
-            todos_ultimos_diagnosticos
-        ),
+        "media_confianca": estatisticas[
+            "media_confianca"
+        ],
 
-        **estatisticas,
+        "primeiro_diagnostico": estatisticas[
+            "primeiro_diagnostico"
+        ],
 
-        **obter_contadores(),
+        "ultimo_diagnostico": estatisticas[
+            "ultimo_diagnostico"
+        ],
 
-        **obter_estatisticas_utilizador(
-            request
+        "distribuicao": distribuicao,
+
+        "evolucao_confianca": evolucao_confianca,
+
+        "ultimos_diagnosticos": obter_ultimos_diagnosticos(
+            request,
+            produto,
+            limite=10,
         ),
     }
 
     return render(
         request,
         "diagnostico/historico_produto.html",
-        context,
+        contexto,
     )
 
 
 # ============================================================
-# DETALHE COMPLETO DO DIAGNÓSTICO
+# DETALHE DO DIAGNÓSTICO
 # ============================================================
 
 @login_required
@@ -1644,54 +1336,58 @@ def detalhe_diagnostico(
     request,
     diagnostico_id,
 ):
+    """
+    Mostra os detalhes de um diagnóstico específico.
+    """
+
     diagnostico_obj = get_object_or_404(
-        Diagnostico.objects.select_related(
+        Diagnostico.objects
+        .select_related(
             "produto",
             "usuario",
+        )
+        .filter(
+            usuario=request.user
         ),
         pk=diagnostico_id,
-        usuario=request.user,
     )
 
     produto = diagnostico_obj.produto
 
-    context = {
+    estatisticas = obter_estatisticas_utilizador(
+        request
+    )
+
+    recentes = obter_ultimos_diagnosticos(
+        request,
+        produto=produto,
+        limite=5,
+    )
+
+    contexto = {
         "diagnostico": diagnostico_obj,
+        "diagnostico_obj": diagnostico_obj,
         "produto": produto,
 
-        **obter_contadores(),
+        "total_diagnosticos": estatisticas[
+            "total"
+        ],
 
-        **obter_estatisticas_utilizador(
-            request
-        ),
+        "diagnosticos_concluidos": estatisticas[
+            "concluidos"
+        ],
+
+        "media_confianca": estatisticas[
+            "media_confianca"
+        ],
+
+        "ultimos_diagnosticos": recentes,
+
+        "estatisticas": estatisticas,
     }
-
-    if produto is not None:
-
-        context.update(
-            obter_estatisticas_produto(
-                request,
-                produto,
-            )
-        )
-
-        context[
-            "ultimos_diagnosticos"
-        ] = obter_ultimos_diagnosticos(
-            request,
-            produto=produto,
-            limite=5,
-        )
-
-    else:
-
-        context[
-            "ultimos_diagnosticos"
-        ] = []
 
     return render(
         request,
         "diagnostico/detalhe.html",
-        context,
+        contexto,
     )
-
