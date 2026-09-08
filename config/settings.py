@@ -1,10 +1,10 @@
 from pathlib import Path
 import os
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 IS_VERCEL = bool(os.environ.get("VERCEL"))
-
 
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
@@ -36,7 +36,6 @@ if EXTRA_ALLOWED_HOSTS:
     )
 
 
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -44,8 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-
     "inicio",
     "produtos",
     "categorias",
@@ -53,47 +50,32 @@ INSTALLED_APPS = [
 ]
 
 
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-
     "whitenoise.middleware.WhiteNoiseMiddleware",
-
     "django.contrib.sessions.middleware.SessionMiddleware",
-
     "django.middleware.common.CommonMiddleware",
-
     "django.middleware.csrf.CsrfViewMiddleware",
-
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-
     "django.contrib.messages.middleware.MessageMiddleware",
-
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 
 
 ROOT_URLCONF = "config.urls"
 
 
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-
         "DIRS": [
             BASE_DIR / "templates",
         ],
-
         "APP_DIRS": True,
-
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
-
                 "django.contrib.auth.context_processors.auth",
-
                 "django.contrib.messages.context_processors.messages",
             ],
         },
@@ -101,29 +83,25 @@ TEMPLATES = [
 ]
 
 
-
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
 if IS_VERCEL:
-
-
     if not DATABASE_URL:
         raise RuntimeError(
             "DATABASE_URL não está configurada na Vercel. "
-            "Configure uma URL de PostgreSQL nas Environment Variables."
+            "Configure uma URL PostgreSQL nas Environment Variables."
         )
 
     try:
         import dj_database_url
     except ImportError as exc:
         raise ImportError(
-            "O pacote 'dj-database-url' é necessário "
-            "em produção para conectar ao PostgreSQL."
+            "O pacote 'dj-database-url' não está instalado. "
+            "Adicione 'dj-database-url' ao requirements.txt."
         ) from exc
 
     DATABASES = {
@@ -134,17 +112,13 @@ if IS_VERCEL:
             ssl_require=True,
         )
     }
-
 else:
-
-
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -154,21 +128,18 @@ AUTH_PASSWORD_VALIDATORS = [
             "UserAttributeSimilarityValidator"
         ),
     },
-
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "MinimumLengthValidator"
         ),
     },
-
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "CommonPasswordValidator"
         ),
     },
-
     {
         "NAME": (
             "django.contrib.auth.password_validation."
@@ -178,7 +149,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
 LANGUAGE_CODE = "pt-pt"
 
 TIME_ZONE = "Africa/Luanda"
@@ -186,7 +156,6 @@ TIME_ZONE = "Africa/Luanda"
 USE_I18N = True
 
 USE_TZ = True
-
 
 
 STATIC_URL = "/static/"
@@ -204,12 +173,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 if not DEBUG:
-
     STORAGES = {
         "default": {
             "BACKEND": "config.vercel_blob_storage.VercelBlobStorage",
         },
-
         "staticfiles": {
             "BACKEND": (
                 "whitenoise.storage."
@@ -226,17 +193,15 @@ AGROIA_API_URL = os.environ.get(
 
 
 try:
-
     AGROIA_API_TIMEOUT = int(
         os.environ.get(
             "AGROIA_API_TIMEOUT",
             "120",
         )
     )
-
 except (TypeError, ValueError):
-
     AGROIA_API_TIMEOUT = 120
+
 
 LOGIN_URL = "/login/"
 
@@ -260,7 +225,6 @@ SESSION_COOKIE_SAMESITE = "Lax"
 
 
 if not DEBUG:
-
     SESSION_COOKIE_SECURE = True
 
 
@@ -270,7 +234,6 @@ CSRF_COOKIE_SAMESITE = "Lax"
 
 
 if not DEBUG:
-
     CSRF_COOKIE_SECURE = True
 
 
@@ -290,7 +253,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 if IS_VERCEL:
-
     SECURE_PROXY_SSL_HEADER = (
         "HTTP_X_FORWARDED_PROTO",
         "https",
@@ -303,9 +265,7 @@ if IS_VERCEL:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
     SECURE_HSTS_PRELOAD = False
-
 else:
-
     SECURE_SSL_REDIRECT = False
 
 
@@ -316,5 +276,5 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"
 
 
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
