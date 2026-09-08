@@ -11,10 +11,10 @@ SECRET_KEY = os.environ.get(
     "django-insecure-dev-key-change-this",
 )
 
-if IS_VERCEL:
-    DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
-else:
-    DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
+DEBUG = os.environ.get(
+    "DEBUG",
+    "False" if IS_VERCEL else "True",
+).lower() == "true"
 
 
 ALLOWED_HOSTS = [
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "inicio",
     "produtos",
     "categorias",
@@ -93,7 +94,7 @@ if IS_VERCEL:
     if not DATABASE_URL:
         raise RuntimeError(
             "DATABASE_URL não está configurada na Vercel. "
-            "Configure uma URL PostgreSQL nas Environment Variables."
+            "Configure a URL do PostgreSQL nas Environment Variables."
         )
 
     try:
@@ -101,7 +102,7 @@ if IS_VERCEL:
     except ImportError as exc:
         raise ImportError(
             "O pacote 'dj-database-url' não está instalado. "
-            "Adicione 'dj-database-url' ao requirements.txt."
+            "Adicione-o ao requirements.txt."
         ) from exc
 
     DATABASES = {
@@ -112,6 +113,7 @@ if IS_VERCEL:
             ssl_require=True,
         )
     }
+
 else:
     DATABASES = {
         "default": {
@@ -180,10 +182,12 @@ if not DEBUG:
         "staticfiles": {
             "BACKEND": (
                 "whitenoise.storage."
-                "CompressedStaticFilesStorage"
+                "CompressedManifestStaticFilesStorage"
             ),
         },
     }
+
+    WHITENOISE_MANIFEST_STRICT = False
 
 
 AGROIA_API_URL = os.environ.get(
@@ -224,16 +228,13 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 
 
-if not DEBUG:
-    SESSION_COOKIE_SECURE = True
-
-
 CSRF_COOKIE_HTTPONLY = False
 
 CSRF_COOKIE_SAMESITE = "Lax"
 
 
 if not DEBUG:
+    SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
 
@@ -265,6 +266,7 @@ if IS_VERCEL:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
     SECURE_HSTS_PRELOAD = False
+
 else:
     SECURE_SSL_REDIRECT = False
 
