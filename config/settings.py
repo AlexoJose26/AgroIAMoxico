@@ -4,12 +4,15 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 IS_VERCEL = bool(os.environ.get("VERCEL"))
+
 
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "django-insecure-dev-key-change-this",
 )
+
 
 DEBUG = os.environ.get(
     "DEBUG",
@@ -23,10 +26,8 @@ ALLOWED_HOSTS = [
     ".vercel.app",
 ]
 
-EXTRA_ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS",
-    "",
-)
+
+EXTRA_ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "")
 
 if EXTRA_ALLOWED_HOSTS:
     ALLOWED_HOSTS.extend(
@@ -90,19 +91,13 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
-if IS_VERCEL:
-    if not DATABASE_URL:
-        raise RuntimeError(
-            "DATABASE_URL não está configurada na Vercel. "
-            "Configure a URL do PostgreSQL nas Environment Variables."
-        )
-
+if DATABASE_URL:
     try:
         import dj_database_url
     except ImportError as exc:
         raise ImportError(
             "O pacote 'dj-database-url' não está instalado. "
-            "Adicione-o ao requirements.txt."
+            "Adicione 'dj-database-url' ao requirements.txt."
         ) from exc
 
     DATABASES = {
@@ -113,6 +108,12 @@ if IS_VERCEL:
             ssl_require=True,
         )
     }
+
+elif IS_VERCEL:
+    raise RuntimeError(
+        "DATABASE_URL não está configurada. "
+        "Configure DATABASE_URL nas Environment Variables da Vercel."
+    )
 
 else:
     DATABASES = {
@@ -176,14 +177,14 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 if not DEBUG:
     STORAGES = {
-        "default": {
-            "BACKEND": "config.vercel_blob_storage.VercelBlobStorage",
-        },
         "staticfiles": {
             "BACKEND": (
                 "whitenoise.storage."
                 "CompressedManifestStaticFilesStorage"
             ),
+        },
+        "default": {
+            "BACKEND": "config.vercel_blob_storage.VercelBlobStorage",
         },
     }
 
@@ -279,4 +280,3 @@ SECURE_REFERRER_POLICY = "same-origin"
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-

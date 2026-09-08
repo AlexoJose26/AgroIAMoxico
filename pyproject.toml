@@ -1,0 +1,5 @@
+[project]
+name = "agroia-moxico"
+version = "1.0.0"
+description = "AgroIA Moxico - Inteligência Artificial para Agricultura"
+requires-python = "~=3.12.0"
