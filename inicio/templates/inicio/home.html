@@ -6,42 +6,23 @@
 {% block content %}
 
 <style>
-
-/* =========================================================
-   AGROIA MOXICO — HOME
-   VERSÃO PROFISSIONAL 2026
-   ========================================================= */
-
 :root {
     --agro-green: #176b45;
     --agro-green-dark: #0d4d31;
     --agro-green-deep: #073b26;
     --agro-green-light: #eaf7ef;
     --agro-green-soft: #f4faf6;
-
     --agro-mint: #dff4e7;
     --agro-mint-2: #ccebd9;
-
     --agro-gold: #d9a441;
     --agro-gold-light: #f5e7c6;
-
     --agro-text: #18352a;
     --agro-muted: #66776e;
-
     --agro-white: #fff;
-
     --agro-border: rgba(23,107,69,.11);
-
-    --agro-shadow:
-        0 25px 70px rgba(13,77,49,.11);
-
+    --agro-shadow: 0 25px 70px rgba(13,77,49,.11);
     --agro-radius: 26px;
 }
-
-
-/* =========================================================
-   GLOBAL
-   ========================================================= */
 
 .agro-home {
     overflow: hidden;
@@ -69,104 +50,66 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
     padding: 8px 14px;
-
     border-radius: 999px;
-
     background: rgba(23,107,69,.08);
-
     color: var(--agro-green);
-
     font-size: .76rem;
     font-weight: 900;
-
     letter-spacing: .08em;
     text-transform: uppercase;
 }
 
 .agro-eyebrow::before {
     content: "";
-
     width: 7px;
     height: 7px;
-
     border-radius: 50%;
-
     background: var(--agro-green);
-
-    box-shadow:
-        0 0 0 5px rgba(23,107,69,.08);
+    box-shadow: 0 0 0 5px rgba(23,107,69,.08);
 }
 
 .agro-section-title {
     margin: 18px 0 14px;
-
-    font-size:
-        clamp(2rem, 4vw, 3.2rem);
-
+    font-size: clamp(2rem, 4vw, 3.2rem);
     line-height: 1.05;
-
     font-weight: 950;
-
     letter-spacing: -.05em;
-
     color: var(--agro-green-dark);
 }
 
 .agro-section-description {
     max-width: 690px;
-
     margin: 0 auto;
-
     color: var(--agro-muted);
-
     font-size: 1.04rem;
-
     line-height: 1.8;
 }
 
-
-/* =========================================================
-   HERO
-   ========================================================= */
-
 .agro-hero {
     position: relative;
-
     min-height: 700px;
-
     display: flex;
     align-items: center;
-
     overflow: hidden;
-
     isolation: isolate;
-
     background: #082d1e;
 }
 
 .agro-hero-slides {
     position: absolute;
     inset: 0;
-
     z-index: -5;
 }
 
 .agro-hero-slide {
     position: absolute;
     inset: 0;
-
     background-position: center;
     background-size: cover;
-
     opacity: 0;
-
     transform: scale(1.07);
-
-    transition:
-        opacity 1.3s ease,
-        transform 7s ease;
+    transition: opacity 1.3s ease, transform 7s ease;
 }
 
 .agro-hero-slide.active {
@@ -177,35 +120,19 @@
 .agro-hero-overlay {
     position: absolute;
     inset: 0;
-
     z-index: -4;
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(3,31,20,.96) 0%,
-            rgba(5,47,30,.87) 42%,
-            rgba(4,39,25,.57) 72%,
-            rgba(4,30,20,.30) 100%
-        );
+    background: linear-gradient(90deg, rgba(3,31,20,.96) 0%, rgba(5,47,30,.87) 42%, rgba(4,39,25,.57) 72%, rgba(4,30,20,.30) 100%);
 }
 
 .agro-hero-glow {
     position: absolute;
-
     width: 520px;
     height: 520px;
-
     right: -200px;
     top: -170px;
-
     border-radius: 50%;
-
-    background:
-        rgba(217,164,65,.13);
-
+    background: rgba(217,164,65,.13);
     filter: blur(20px);
-
     z-index: -3;
 }
 
@@ -216,13 +143,8 @@
 
 .agro-hero-grid {
     display: grid;
-
-    grid-template-columns:
-        minmax(0,1.25fr)
-        minmax(300px,350px);
-
+    grid-template-columns: minmax(0,1.25fr) minmax(300px,350px);
     align-items: center;
-
     gap: 55px;
 }
 
@@ -234,27 +156,15 @@
     display: inline-flex;
     align-items: center;
     gap: 9px;
-
     padding: 9px 15px;
-
     margin-bottom: 22px;
-
-    border:
-        1px solid
-        rgba(255,255,255,.18);
-
+    border: 1px solid rgba(255,255,255,.18);
     border-radius: 999px;
-
-    background:
-        rgba(255,255,255,.08);
-
+    background: rgba(255,255,255,.08);
     backdrop-filter: blur(14px);
-
     color: #fff;
-
     font-size: .76rem;
     font-weight: 900;
-
     text-transform: uppercase;
     letter-spacing: .08em;
 }
@@ -262,97 +172,51 @@
 .agro-hero-badge span {
     width: 8px;
     height: 8px;
-
     border-radius: 50%;
-
     background: #74d99d;
-
-    box-shadow:
-        0 0 0 5px
-        rgba(116,217,157,.12);
+    box-shadow: 0 0 0 5px rgba(116,217,157,.12);
 }
 
 .agro-hero-title {
     margin: 0;
-
     color: #fff;
-
-    font-size:
-        clamp(3rem,6vw,5.6rem);
-
+    font-size: clamp(3rem,6vw,5.6rem);
     line-height: .96;
-
     font-weight: 950;
-
     letter-spacing: -.065em;
 }
 
 .agro-hero-title strong {
     display: block;
-
     color: #7ee0a5;
 }
 
 .agro-hero-description {
     max-width: 650px;
-
     margin: 25px 0 0;
-
-    color:
-        rgba(255,255,255,.78);
-
+    color: rgba(255,255,255,.78);
     font-size: 1.07rem;
-
     line-height: 1.8;
 }
 
-
-/* =========================================================
-   HERO — PAINEL DE INTELIGÊNCIA
-   ========================================================= */
-
 .agro-hero-panel {
     width: 100%;
-
     max-width: 345px;
-
     justify-self: end;
-
     padding: 18px;
-
-    border:
-        1px solid
-        rgba(255,255,255,.18);
-
+    border: 1px solid rgba(255,255,255,.18);
     border-radius: 23px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.16),
-            rgba(255,255,255,.055)
-        );
-
+    background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.055));
     backdrop-filter: blur(22px);
-
-    box-shadow:
-        0 25px 70px rgba(0,0,0,.28),
-        inset 0 1px 0
-        rgba(255,255,255,.12);
-
+    box-shadow: 0 25px 70px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.12);
     color: #fff;
-
-    animation:
-        agroPanelFloat 5s
-        ease-in-out infinite;
+    animation: agroPanelFloat 5s ease-in-out infinite;
 }
 
 @keyframes agroPanelFloat {
-
     0%,100% {
         transform: translateY(0);
     }
-
     50% {
         transform: translateY(-6px);
     }
@@ -360,134 +224,84 @@
 
 .agro-panel-top {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
-
     margin-bottom: 14px;
 }
 
 .agro-panel-label {
-    color:
-        rgba(255,255,255,.60);
-
+    color: rgba(255,255,255,.60);
     font-size: .68rem;
-
     font-weight: 900;
-
     text-transform: uppercase;
-
     letter-spacing: .08em;
 }
 
 .agro-panel-live {
     display: inline-flex;
-
     align-items: center;
-
     gap: 6px;
-
     padding: 5px 9px;
-
     border-radius: 999px;
-
-    background:
-        rgba(116,217,157,.12);
-
+    background: rgba(116,217,157,.12);
     color: #86e6ad;
-
     font-size: .65rem;
-
     font-weight: 900;
 }
 
 .agro-panel-live::before {
     content: "";
-
     width: 6px;
     height: 6px;
-
     border-radius: 50%;
-
     background: #78dfa1;
-
-    box-shadow:
-        0 0 0 4px
-        rgba(120,223,161,.12);
+    box-shadow: 0 0 0 4px rgba(120,223,161,.12);
 }
 
 .agro-main-metric {
     padding: 17px;
-
     border-radius: 17px;
-
-    background:
-        rgba(0,0,0,.15);
-
-    border:
-        1px solid
-        rgba(255,255,255,.08);
+    background: rgba(0,0,0,.15);
+    border: 1px solid rgba(255,255,255,.08);
 }
 
 .agro-main-metric-label {
-    color:
-        rgba(255,255,255,.60);
-
+    color: rgba(255,255,255,.60);
     font-size: .70rem;
-
     font-weight: 700;
 }
 
 .agro-main-metric-value {
     margin-top: 4px;
-
     font-size: 2.35rem;
-
     line-height: 1;
-
     font-weight: 950;
-
     letter-spacing: -.05em;
 }
 
 .agro-main-metric-value small {
     font-size: .78rem;
-
     font-weight: 800;
-
     color: #82dfa5;
 }
 
 .agro-ai-model {
     display: flex;
-
     align-items: center;
-
     gap: 9px;
-
     margin-top: 10px;
-
     padding: 10px 12px;
-
     border-radius: 13px;
-
-    background:
-        rgba(255,255,255,.07);
+    background: rgba(255,255,255,.07);
 }
 
 .agro-ai-model-icon {
     width: 31px;
     height: 31px;
-
     display: grid;
-
     place-items: center;
-
     border-radius: 9px;
-
-    background:
-        rgba(126,224,165,.15);
-
+    background: rgba(126,224,165,.15);
     color: #83dfa5;
 }
 
@@ -497,18 +311,13 @@
 
 .agro-ai-model-text strong {
     display: block;
-
     font-size: .78rem;
 }
 
 .agro-ai-model-text span {
     display: block;
-
     margin-top: 2px;
-
-    color:
-        rgba(255,255,255,.54);
-
+    color: rgba(255,255,255,.54);
     font-size: .66rem;
 }
 
@@ -518,30 +327,19 @@
 
 .agro-product-analysis-title {
     margin-bottom: 7px;
-
-    color:
-        rgba(255,255,255,.58);
-
+    color: rgba(255,255,255,.58);
     font-size: .67rem;
-
     font-weight: 900;
-
     text-transform: uppercase;
-
     letter-spacing: .07em;
 }
 
 .agro-product-row {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
-
     padding: 8px 4px;
-
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.07);
+    border-bottom: 1px solid rgba(255,255,255,.07);
 }
 
 .agro-product-row:last-child {
@@ -550,392 +348,332 @@
 
 .agro-product-name {
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
-    color:
-        rgba(255,255,255,.83);
-
+    color: rgba(255,255,255,.83);
     font-size: .74rem;
-
     font-weight: 700;
 }
 
 .agro-product-dot {
     width: 7px;
     height: 7px;
-
     flex-shrink: 0;
-
     border-radius: 50%;
-
     background: #7ee0a5;
 }
 
 .agro-product-count {
     color: #fff;
-
     font-size: .76rem;
-
     font-weight: 950;
 }
 
 .agro-hero-dots {
     position: absolute;
-
     left: 50%;
     bottom: 27px;
-
     transform: translateX(-50%);
-
     display: flex;
-
     gap: 7px;
 }
 
 .agro-hero-dot {
     width: 24px;
     height: 4px;
-
     padding: 0;
-
     border: 0;
-
     border-radius: 99px;
-
-    background:
-        rgba(255,255,255,.30);
-
+    background: rgba(255,255,255,.30);
     cursor: pointer;
-
     transition: .3s ease;
 }
 
 .agro-hero-dot.active {
     width: 42px;
-
     background: #fff;
 }
 
-
-/* =========================================================
-   PRODUTOS CULTIVADOS
-   ========================================================= */
-
 .agro-crops {
-    background:
-        radial-gradient(
-            circle at 5% 10%,
-            rgba(23,107,69,.07),
-            transparent 28%
-        ),
-        #fff;
+    background: radial-gradient(circle at 5% 10%, rgba(23,107,69,.07), transparent 28%), #fff;
 }
 
-.agro-crops-grid {
-    display: grid;
+.agro-crops-carousel {
+    position: relative;
+    width: 100%;
+}
 
-    grid-template-columns:
-        repeat(4,1fr);
+.agro-crops-viewport {
+    position: relative;
+    overflow: hidden;
+    padding: 10px 4px 35px;
+    touch-action: pan-y;
+}
 
-    gap: 20px;
+.agro-crops-track {
+    display: flex;
+    margin-left: -10px;
+    transition: transform .75s cubic-bezier(.22,.8,.24,1);
+    will-change: transform;
+}
+
+.agro-crops-slide {
+    flex: 0 0 25%;
+    min-width: 25%;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 .agro-crop-card {
     position: relative;
-
     overflow: hidden;
-
-    min-height: 315px;
-
-    border-radius: 23px;
-
+    min-height: 350px;
+    border-radius: 25px;
     background: #fff;
+    border: 1px solid var(--agro-border);
+    box-shadow: 0 14px 38px rgba(20,70,45,.08);
+    transition: transform .4s ease, box-shadow .4s ease;
+}
 
-    border:
-        1px solid
-        var(--agro-border);
-
-    box-shadow:
-        0 12px 35px
-        rgba(20,70,45,.07);
-
-    transition:
-        transform .35s ease,
-        box-shadow .35s ease;
+.agro-crop-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(255,255,255,.15);
+    pointer-events: none;
 }
 
 .agro-crop-card:hover {
-    transform: translateY(-9px);
-
-    box-shadow:
-        0 26px 55px
-        rgba(20,70,45,.15);
+    transform: translateY(-10px);
+    box-shadow: 0 28px 60px rgba(20,70,45,.17);
 }
 
 .agro-crop-image {
     position: absolute;
-
     inset: 0;
-
     overflow: hidden;
+    background: linear-gradient(135deg, #dceee2, #a9cfb8);
+}
 
-    background:
-        linear-gradient(
-            135deg,
-            #dceee2,
-            #a9cfb8
-        );
+.agro-crop-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,.12) 48%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform .9s ease;
+}
+
+.agro-crop-card:hover .agro-crop-image::before {
+    transform: translateX(120%);
 }
 
 .agro-crop-image img {
     width: 100%;
     height: 100%;
-
     display: block;
-
     object-fit: cover;
-
     object-position: center;
-
     transform: scale(1.01);
-
-    transition:
-        transform .8s ease,
-        filter .5s ease;
+    transition: transform 1s cubic-bezier(.22,.8,.24,1), filter .6s ease;
 }
 
-.agro-crop-card:hover
-.agro-crop-image img {
-    transform: scale(1.09);
-    filter: saturate(1.08);
+.agro-crop-card:hover .agro-crop-image img {
+    transform: scale(1.1);
+    filter: saturate(1.1);
 }
 
 .agro-crop-overlay {
     position: absolute;
-
     inset: 0;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(0,0,0,.02) 10%,
-            rgba(0,0,0,.08) 35%,
-            rgba(4,35,22,.95) 100%
-        );
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(0,0,0,.01) 10%, rgba(0,0,0,.08) 35%, rgba(4,35,22,.96) 100%);
 }
 
 .agro-crop-content {
     position: absolute;
-
     left: 0;
     right: 0;
     bottom: 0;
-
-    padding: 22px;
-
+    z-index: 3;
+    padding: 24px;
     color: #fff;
+    transform: translateY(5px);
+    transition: transform .4s ease;
+}
+
+.agro-crop-card:hover .agro-crop-content {
+    transform: translateY(0);
 }
 
 .agro-crop-number {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
-
-    width: 31px;
-    height: 31px;
-
-    margin-bottom: 11px;
-
-    border-radius: 9px;
-
-    background:
-        rgba(255,255,255,.17);
-
+    width: 34px;
+    height: 34px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.17);
     backdrop-filter: blur(10px);
-
     font-size: .68rem;
-
     font-weight: 950;
 }
 
 .agro-crop-name {
     margin: 0;
-
-    font-size: 1.32rem;
-
+    font-size: 1.4rem;
     font-weight: 950;
 }
 
 .agro-crop-description {
-    margin: 5px 0 0;
-
-    color:
-        rgba(255,255,255,.76);
-
-    font-size: .76rem;
-
-    line-height: 1.5;
+    margin: 6px 0 0;
+    color: rgba(255,255,255,.78);
+    font-size: .78rem;
+    line-height: 1.55;
 }
 
+.agro-crops-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 3px;
+}
 
-/* =========================================================
-   COMO FUNCIONA
-   ========================================================= */
+.agro-crops-button {
+    width: 47px;
+    height: 47px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(23,107,69,.12);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--agro-green-dark);
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 9px 25px rgba(20,90,52,.09);
+    transition: transform .25s ease, background .25s ease, color .25s ease, box-shadow .25s ease;
+}
+
+.agro-crops-button:hover {
+    transform: translateY(-3px);
+    background: var(--agro-green);
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(23,107,69,.18);
+}
+
+.agro-crops-button:active {
+    transform: scale(.94);
+}
+
+.agro-crops-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 80px;
+}
+
+.agro-crops-dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 99px;
+    background: #bdd8c6;
+    cursor: pointer;
+    transition: width .35s ease, background .35s ease;
+}
+
+.agro-crops-dot.active {
+    width: 27px;
+    background: var(--agro-green);
+}
+
+.agro-crops-counter {
+    min-width: 72px;
+    color: var(--agro-muted);
+    font-size: .72rem;
+    font-weight: 850;
+    text-align: center;
+}
 
 .agro-how {
-    background:
-        var(--agro-green-soft);
+    background: var(--agro-green-soft);
 }
 
 .agro-steps {
     display: grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
+    grid-template-columns: repeat(4,1fr);
     gap: 18px;
 }
 
 .agro-step {
     position: relative;
-
     padding: 28px;
-
     border-radius: 22px;
-
     background: #fff;
-
-    border:
-        1px solid
-        rgba(23,107,69,.09);
-
-    box-shadow:
-        0 14px 35px
-        rgba(20,70,45,.06);
-
+    border: 1px solid rgba(23,107,69,.09);
+    box-shadow: 0 14px 35px rgba(20,70,45,.06);
     transition: .3s ease;
 }
 
 .agro-step:hover {
     transform: translateY(-6px);
-
-    box-shadow:
-        0 22px 45px
-        rgba(20,70,45,.11);
+    box-shadow: 0 22px 45px rgba(20,70,45,.11);
 }
 
 .agro-step-icon {
     width: 52px;
     height: 52px;
-
     display: grid;
-
     place-items: center;
-
     margin-bottom: 22px;
-
     border-radius: 15px;
-
-    background:
-        var(--agro-green-light);
-
-    color:
-        var(--agro-green);
-
+    background: var(--agro-green-light);
+    color: var(--agro-green);
     font-size: 1.2rem;
-
     font-weight: 950;
 }
 
 .agro-step-number {
     position: absolute;
-
     top: 22px;
     right: 22px;
-
-    color:
-        rgba(23,107,69,.15);
-
+    color: rgba(23,107,69,.15);
     font-size: 1.7rem;
-
     font-weight: 950;
 }
 
 .agro-step h3 {
     margin: 0 0 9px;
-
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: 1.05rem;
 }
 
 .agro-step p {
     margin: 0;
-
-    color:
-        var(--agro-muted);
-
+    color: var(--agro-muted);
     font-size: .86rem;
-
     line-height: 1.7;
 }
 
-
-/* =========================================================
-   PRODUTOS ANALISADOS PELA IA
-   ========================================================= */
-
 .agro-ai-section {
     position: relative;
-
     overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at 90% 5%,
-            rgba(23,107,69,.11),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 0% 90%,
-            rgba(126,224,165,.14),
-            transparent 30%
-        ),
-        linear-gradient(
-            135deg,
-            #f7fcf8 0%,
-            #eaf7ef 48%,
-            #e0f3e7 100%
-        );
+    background: radial-gradient(circle at 90% 5%, rgba(23,107,69,.11), transparent 28%), radial-gradient(circle at 0% 90%, rgba(126,224,165,.14), transparent 30%), linear-gradient(135deg, #f7fcf8 0%, #eaf7ef 48%, #e0f3e7 100%);
 }
 
 .agro-ai-section::before {
     content: "";
-
     position: absolute;
-
     inset: 0;
-
     opacity: .35;
-
-    background-image:
-        linear-gradient(
-            rgba(23,107,69,.035) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(23,107,69,.035) 1px,
-            transparent 1px
-        );
-
+    background-image: linear-gradient(rgba(23,107,69,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(23,107,69,.035) 1px, transparent 1px);
     background-size: 38px 38px;
-
     pointer-events: none;
 }
 
@@ -946,148 +684,90 @@
 
 .agro-ai-carousel {
     position: relative;
-
     overflow: hidden;
-
     padding: 3px;
 }
 
 .agro-ai-track {
     display: flex;
-
-    transition:
-        transform .65s
-        cubic-bezier(.22,.8,.24,1);
+    transition: transform .65s cubic-bezier(.22,.8,.24,1);
 }
 
 .agro-ai-slide {
     min-width: 100%;
-
     padding: 0 3px;
 }
 
 .agro-ai-card {
     display: grid;
-
-    grid-template-columns:
-        minmax(280px,.85fr)
-        minmax(0,1.15fr);
-
+    grid-template-columns: minmax(280px,.85fr) minmax(0,1.15fr);
     min-height: 450px;
-
     overflow: hidden;
-
-    border:
-        1px solid
-        rgba(23,107,69,.11);
-
+    border: 1px solid rgba(23,107,69,.11);
     border-radius: 30px;
-
-    background:
-        rgba(255,255,255,.94);
-
-    box-shadow:
-        0 25px 70px
-        rgba(20,90,52,.12);
-
+    background: rgba(255,255,255,.94);
+    box-shadow: 0 25px 70px rgba(20,90,52,.12);
     backdrop-filter: blur(15px);
 }
 
 .agro-ai-image {
     position: relative;
-
     min-height: 450px;
-
     overflow: hidden;
-
     background: #dceee2;
 }
 
 .agro-ai-image img {
     width: 100%;
     height: 100%;
-
     display: block;
-
     object-fit: cover;
-
-    transition:
-        transform .8s ease;
+    transition: transform .8s ease;
 }
 
-.agro-ai-card:hover
-.agro-ai-image img {
+.agro-ai-card:hover .agro-ai-image img {
     transform: scale(1.04);
 }
 
 .agro-ai-image-overlay {
     position: absolute;
-
     inset: 0;
-
-    background:
-        linear-gradient(
-            180deg,
-            transparent 42%,
-            rgba(6,50,31,.75)
-        );
+    background: linear-gradient(180deg, transparent 42%, rgba(6,50,31,.75));
 }
 
 .agro-ai-image-badge {
     position: absolute;
-
     top: 20px;
     left: 20px;
-
     display: inline-flex;
-
     align-items: center;
-
     gap: 7px;
-
     padding: 8px 12px;
-
     border-radius: 999px;
-
-    background:
-        rgba(255,255,255,.92);
-
-    color:
-        var(--agro-green-dark);
-
+    background: rgba(255,255,255,.92);
+    color: var(--agro-green-dark);
     font-size: .70rem;
-
     font-weight: 950;
-
-    box-shadow:
-        0 8px 20px
-        rgba(0,0,0,.12);
+    box-shadow: 0 8px 20px rgba(0,0,0,.12);
 }
 
 .agro-ai-image-bottom {
     position: absolute;
-
     left: 22px;
     right: 22px;
     bottom: 20px;
-
     color: #fff;
 }
 
 .agro-ai-product-name {
     margin: 0;
-
     font-size: 1.8rem;
-
     font-weight: 950;
 }
 
 .agro-ai-result {
     margin-top: 6px;
-
-    color:
-        rgba(255,255,255,.80);
-
+    color: rgba(255,255,255,.80);
     font-size: .83rem;
 }
 
@@ -1097,53 +777,34 @@
 
 .agro-ai-content-top {
     display: flex;
-
     align-items: flex-start;
-
     justify-content: space-between;
-
     gap: 15px;
 }
 
 .agro-ai-content-label {
-    color:
-        var(--agro-green);
-
+    color: var(--agro-green);
     font-size: .71rem;
-
     font-weight: 950;
-
     text-transform: uppercase;
-
     letter-spacing: .08em;
 }
 
 .agro-ai-content h3 {
     margin: 8px 0 0;
-
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: 1.8rem;
-
     line-height: 1.1;
-
     font-weight: 950;
 }
 
 .agro-status {
     flex-shrink: 0;
-
     padding: 7px 11px;
-
     border-radius: 999px;
-
     background: #e9f8ee;
-
     color: #197043;
-
     font-size: .67rem;
-
     font-weight: 950;
 }
 
@@ -1153,64 +814,41 @@
 
 .agro-confidence-head {
     display: flex;
-
     justify-content: space-between;
-
     margin-bottom: 8px;
 }
 
 .agro-confidence-head span:first-child {
-    color:
-        var(--agro-muted);
-
+    color: var(--agro-muted);
     font-size: .75rem;
-
     font-weight: 700;
 }
 
 .agro-confidence-head span:last-child {
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: .79rem;
-
     font-weight: 950;
 }
 
 .agro-confidence-bar {
     height: 8px;
-
     overflow: hidden;
-
     border-radius: 99px;
-
     background: #e1eee6;
 }
 
 .agro-confidence-fill {
     height: 100%;
-
     border-radius: inherit;
-
-    background:
-        linear-gradient(
-            90deg,
-            #2d9b61,
-            #73d99c
-        );
-
+    background: linear-gradient(90deg, #2d9b61, #73d99c);
     transform-origin: left;
-
-    animation:
-        confidenceGrow 1s ease;
+    animation: confidenceGrow 1s ease;
 }
 
 @keyframes confidenceGrow {
-
     from {
         transform: scaleX(0);
     }
-
     to {
         transform: scaleX(1);
     }
@@ -1218,529 +856,301 @@
 
 .agro-ai-description {
     margin: 24px 0 0;
-
-    color:
-        var(--agro-muted);
-
+    color: var(--agro-muted);
     font-size: .9rem;
-
     line-height: 1.8;
 }
 
 .agro-info-grid {
     display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
-
     margin-top: 22px;
 }
 
 .agro-info-box {
     padding: 15px;
-
     border-radius: 15px;
-
     background: #f5faf7;
-
-    border:
-        1px solid
-        rgba(23,107,69,.07);
+    border: 1px solid rgba(23,107,69,.07);
 }
 
 .agro-info-box-label {
     display: block;
-
     margin-bottom: 5px;
-
     color: #829189;
-
     font-size: .65rem;
-
     font-weight: 850;
-
     text-transform: uppercase;
-
     letter-spacing: .06em;
 }
 
 .agro-info-box-value {
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: .81rem;
-
     line-height: 1.5;
-
     font-weight: 850;
 }
 
 .agro-recommendations {
     margin-top: 14px;
-
     padding: 16px;
-
     border-radius: 16px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eef9f2,
-            #f8fcf9
-        );
-
-    border:
-        1px solid
-        rgba(23,107,69,.07);
+    background: linear-gradient(135deg, #eef9f2, #f8fcf9);
+    border: 1px solid rgba(23,107,69,.07);
 }
 
 .agro-recommendations-title {
     margin-bottom: 6px;
-
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: .73rem;
-
     font-weight: 950;
 }
 
 .agro-recommendations p {
     margin: 0;
-
-    color:
-        var(--agro-muted);
-
+    color: var(--agro-muted);
     font-size: .78rem;
-
     line-height: 1.65;
 }
 
 .agro-ai-date {
     margin-top: 18px;
-
     color: #8a9991;
-
     font-size: .69rem;
 }
 
 .agro-carousel-controls {
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     gap: 13px;
-
     margin-top: 28px;
 }
 
 .agro-carousel-button {
     width: 45px;
     height: 45px;
-
     display: grid;
-
     place-items: center;
-
-    border:
-        1px solid
-        rgba(23,107,69,.12);
-
+    border: 1px solid rgba(23,107,69,.12);
     border-radius: 50%;
-
     background: #fff;
-
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: 1rem;
-
     cursor: pointer;
-
-    box-shadow:
-        0 8px 25px
-        rgba(20,90,52,.08);
-
+    box-shadow: 0 8px 25px rgba(20,90,52,.08);
     transition: .25s ease;
 }
 
 .agro-carousel-button:hover {
     transform: translateY(-2px);
-
-    background:
-        var(--agro-green);
-
+    background: var(--agro-green);
     color: #fff;
 }
 
 .agro-carousel-dots {
     display: flex;
-
     align-items: center;
-
     gap: 6px;
 }
 
 .agro-carousel-dot {
     width: 8px;
     height: 8px;
-
     padding: 0;
-
     border: 0;
-
     border-radius: 99px;
-
     background: #bdd8c6;
-
     cursor: pointer;
-
     transition: .3s ease;
 }
 
 .agro-carousel-dot.active {
     width: 25px;
-
-    background:
-        var(--agro-green);
+    background: var(--agro-green);
 }
-
-
-/* =========================================================
-   INTELIGÊNCIA APLICADA AO CAMPO
-   ========================================================= */
 
 .agro-intelligence {
     position: relative;
-
     overflow: hidden;
-
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff 0%,
-            #f4faf6 100%
-        );
+    background: linear-gradient(180deg, #ffffff 0%, #f4faf6 100%);
 }
 
 .agro-intelligence::before {
     content: "";
-
     position: absolute;
-
     width: 450px;
     height: 450px;
-
     right: -180px;
     top: -180px;
-
     border-radius: 50%;
-
-    background:
-        rgba(126,224,165,.12);
-
+    background: rgba(126,224,165,.12);
     filter: blur(20px);
 }
 
 .agro-intelligence-grid {
     position: relative;
-
     z-index: 1;
-
     display: grid;
-
-    grid-template-columns:
-        .9fr
-        1.1fr;
-
+    grid-template-columns: .9fr 1.1fr;
     align-items: center;
-
     gap: 70px;
 }
 
 .agro-feature-list {
     display: grid;
-
     gap: 12px;
-
     margin-top: 28px;
 }
 
 .agro-feature {
     display: flex;
-
     gap: 14px;
-
     padding: 17px;
-
-    border:
-        1px solid
-        rgba(23,107,69,.08);
-
+    border: 1px solid rgba(23,107,69,.08);
     border-radius: 16px;
-
-    background:
-        rgba(255,255,255,.85);
-
-    box-shadow:
-        0 7px 25px
-        rgba(20,70,45,.035);
-
+    background: rgba(255,255,255,.85);
+    box-shadow: 0 7px 25px rgba(20,70,45,.035);
     transition: .3s ease;
 }
 
 .agro-feature:hover {
-    transform:
-        translateX(5px);
-
-    border-color:
-        rgba(23,107,69,.16);
-
-    box-shadow:
-        0 14px 30px
-        rgba(20,70,45,.07);
+    transform: translateX(5px);
+    border-color: rgba(23,107,69,.16);
+    box-shadow: 0 14px 30px rgba(20,70,45,.07);
 }
 
 .agro-feature-icon {
     width: 39px;
     height: 39px;
-
     flex-shrink: 0;
-
     display: grid;
-
     place-items: center;
-
     border-radius: 11px;
-
-    background:
-        var(--agro-green-light);
-
-    color:
-        var(--agro-green);
-
+    background: var(--agro-green-light);
+    color: var(--agro-green);
     font-weight: 950;
 }
 
 .agro-feature strong {
     display: block;
-
     margin-bottom: 3px;
-
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: .88rem;
 }
 
 .agro-feature span {
-    color:
-        var(--agro-muted);
-
+    color: var(--agro-muted);
     font-size: .76rem;
-
     line-height: 1.5;
 }
 
-
-/* =========================================================
-   NOVO PAINEL TECNOLÓGICO
-   ========================================================= */
-
 .agro-tech-panel {
     position: relative;
-
     min-height: 485px;
-
     overflow: hidden;
-
     padding: 30px;
-
     border-radius: 32px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ecf9f1 0%,
-            #ffffff 48%,
-            #e0f4e8 100%
-        );
-
-    border:
-        1px solid
-        rgba(23,107,69,.12);
-
-    box-shadow:
-        0 30px 75px
-        rgba(13,77,49,.12);
+    background: linear-gradient(135deg, #ecf9f1 0%, #ffffff 48%, #e0f4e8 100%);
+    border: 1px solid rgba(23,107,69,.12);
+    box-shadow: 0 30px 75px rgba(13,77,49,.12);
 }
 
 .agro-tech-panel::before {
     content: "";
-
     position: absolute;
-
     width: 280px;
     height: 280px;
-
     right: -100px;
     top: -100px;
-
     border-radius: 50%;
-
-    background:
-        rgba(23,107,69,.09);
+    background: rgba(23,107,69,.09);
 }
 
 .agro-tech-panel::after {
     content: "";
-
     position: absolute;
-
     width: 220px;
     height: 220px;
-
     left: -100px;
     bottom: -110px;
-
     border-radius: 50%;
-
-    background:
-        rgba(217,164,65,.09);
+    background: rgba(217,164,65,.09);
 }
 
 .agro-tech-header {
     position: relative;
-
     z-index: 2;
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     gap: 15px;
 }
 
 .agro-tech-title {
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: .92rem;
-
     font-weight: 950;
 }
 
 .agro-tech-subtitle {
     margin-top: 4px;
-
-    color:
-        var(--agro-muted);
-
+    color: var(--agro-muted);
     font-size: .69rem;
 }
 
 .agro-tech-status {
     display: inline-flex;
-
     align-items: center;
-
     gap: 6px;
-
     padding: 7px 10px;
-
     border-radius: 999px;
-
-    background:
-        #e1f5e9;
-
-    color:
-        #187044;
-
+    background: #e1f5e9;
+    color: #187044;
     font-size: .65rem;
-
     font-weight: 950;
 }
 
 .agro-tech-status::before {
     content: "";
-
     width: 6px;
     height: 6px;
-
     border-radius: 50%;
-
-    background:
-        #28a35f;
-
-    box-shadow:
-        0 0 0 4px
-        rgba(40,163,95,.10);
+    background: #28a35f;
+    box-shadow: 0 0 0 4px rgba(40,163,95,.10);
 }
 
 .agro-tech-center {
     position: relative;
-
     z-index: 2;
-
     display: flex;
-
     justify-content: center;
-
     margin: 38px 0 30px;
 }
 
 .agro-ai-core {
     position: relative;
-
     width: 145px;
     height: 145px;
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
-
     border-radius: 50%;
-
-    background:
-        linear-gradient(
-            145deg,
-            #176b45,
-            #0d4d31
-        );
-
+    background: linear-gradient(145deg, #176b45, #0d4d31);
     color: #fff;
-
-    box-shadow:
-        0 20px 45px
-        rgba(23,107,69,.27);
-
-    animation:
-        agroCorePulse 4s
-        ease-in-out infinite;
+    box-shadow: 0 20px 45px rgba(23,107,69,.27);
+    animation: agroCorePulse 4s ease-in-out infinite;
 }
 
 @keyframes agroCorePulse {
-
     0%,100% {
         transform: scale(1);
     }
-
     50% {
         transform: scale(1.035);
     }
-}
-
-.agro-ai-core-icon {
-    font-size: 1.8rem;
-    margin-bottom: 5px;
 }
 
 .agro-ai-core strong {
@@ -1749,197 +1159,134 @@
 
 .agro-ai-core span {
     margin-top: 4px;
-
-    color:
-        rgba(255,255,255,.68);
-
+    color: rgba(255,255,255,.68);
     font-size: .63rem;
 }
 
 .agro-tech-flow {
     position: relative;
-
     z-index: 2;
-
     display: grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
+    grid-template-columns: repeat(3,1fr);
     gap: 10px;
 }
 
 .agro-tech-step {
     position: relative;
-
     padding: 14px 10px;
-
     text-align: center;
-
-    border:
-        1px solid
-        rgba(23,107,69,.09);
-
+    border: 1px solid rgba(23,107,69,.09);
     border-radius: 15px;
-
-    background:
-        rgba(255,255,255,.82);
-
+    background: rgba(255,255,255,.82);
     backdrop-filter: blur(8px);
 }
 
 .agro-tech-step-icon {
     width: 34px;
     height: 34px;
-
     display: grid;
-
     place-items: center;
-
     margin: 0 auto 8px;
-
     border-radius: 10px;
-
-    background:
-        var(--agro-green-light);
-
-    color:
-        var(--agro-green);
-
+    background: var(--agro-green-light);
+    color: var(--agro-green);
     font-size: .85rem;
-
     font-weight: 950;
 }
 
 .agro-tech-step strong {
     display: block;
-
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: .72rem;
 }
 
 .agro-tech-step span {
     display: block;
-
     margin-top: 3px;
-
-    color:
-        var(--agro-muted);
-
+    color: var(--agro-muted);
     font-size: .60rem;
-
     line-height: 1.4;
 }
 
 .agro-tech-connector {
     position: absolute;
-
     left: 16%;
     right: 16%;
-
     top: 50%;
-
     height: 1px;
-
     z-index: -1;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(23,107,69,.22),
-            transparent
-        );
+    background: linear-gradient(90deg, transparent, rgba(23,107,69,.22), transparent);
 }
 
 .agro-tech-metrics {
     position: relative;
-
     z-index: 2;
-
     display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
-
     margin-top: 20px;
 }
 
 .agro-tech-metric {
     display: flex;
-
     align-items: center;
-
     gap: 10px;
-
     padding: 14px;
-
     border-radius: 15px;
-
-    background:
-        rgba(255,255,255,.75);
-
-    border:
-        1px solid
-        rgba(23,107,69,.08);
+    background: rgba(255,255,255,.75);
+    border: 1px solid rgba(23,107,69,.08);
 }
 
 .agro-tech-metric-icon {
     width: 34px;
     height: 34px;
-
     display: grid;
-
     place-items: center;
-
     border-radius: 10px;
-
-    background:
-        #edf8f1;
-
-    color:
-        var(--agro-green);
+    background: #edf8f1;
+    color: var(--agro-green);
 }
 
 .agro-tech-metric strong {
     display: block;
-
-    color:
-        var(--agro-green-dark);
-
+    color: var(--agro-green-dark);
     font-size: .78rem;
 }
 
 .agro-tech-metric span {
     display: block;
-
     margin-top: 2px;
-
-    color:
-        var(--agro-muted);
-
+    color: var(--agro-muted);
     font-size: .61rem;
 }
 
+.agro-crop-card,
+.agro-step,
+.agro-feature,
+.agro-tech-panel,
+.agro-ai-card {
+    animation: agroReveal .8s ease both;
+}
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+@keyframes agroReveal {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 @media (max-width:1050px) {
-
-    .agro-crops-grid {
-        grid-template-columns:
-            repeat(3,1fr);
+    .agro-crops-slide {
+        flex-basis: 33.333333%;
+        min-width: 33.333333%;
     }
 
     .agro-steps {
-        grid-template-columns:
-            repeat(2,1fr);
+        grid-template-columns: repeat(2,1fr);
     }
 
     .agro-intelligence-grid {
@@ -1951,22 +1298,18 @@
     }
 }
 
-
 @media (max-width:850px) {
-
     .agro-hero {
         min-height: auto;
     }
 
     .agro-hero-grid {
         grid-template-columns: 1fr;
-
         gap: 45px;
     }
 
     .agro-hero-copy {
         text-align: center;
-
         margin: 0 auto;
     }
 
@@ -1977,7 +1320,6 @@
 
     .agro-hero-panel {
         justify-self: center;
-
         max-width: 380px;
     }
 
@@ -1987,7 +1329,6 @@
 
     .agro-ai-image {
         min-height: 300px;
-
         max-height: 360px;
     }
 
@@ -1996,40 +1337,58 @@
     }
 }
 
-
 @media (max-width:650px) {
-
     .agro-container {
-        width:
-            min(
-                calc(100% - 28px),
-                1180px
-            );
+        width: min(calc(100% - 28px), 1180px);
     }
 
     .agro-section {
         padding: 75px 0;
     }
 
-    .agro-crops-grid {
-        grid-template-columns:
-            1fr 1fr;
+    .agro-section-header {
+        margin-bottom: 35px;
+    }
 
-        gap: 12px;
+    .agro-crops-viewport {
+        padding: 8px 0 28px;
+    }
+
+    .agro-crops-track {
+        margin-left: -7px;
+    }
+
+    .agro-crops-slide {
+        flex-basis: 86%;
+        min-width: 86%;
+        padding: 0 7px;
     }
 
     .agro-crop-card {
-        min-height: 245px;
-
-        border-radius: 17px;
+        min-height: 390px;
+        border-radius: 22px;
     }
 
     .agro-crop-content {
-        padding: 16px;
+        padding: 20px;
     }
 
     .agro-crop-name {
-        font-size: 1.05rem;
+        font-size: 1.3rem;
+    }
+
+    .agro-crops-controls {
+        gap: 10px;
+    }
+
+    .agro-crops-button {
+        width: 43px;
+        height: 43px;
+    }
+
+    .agro-crops-counter {
+        min-width: 60px;
+        font-size: .68rem;
     }
 
     .agro-steps {
@@ -2037,17 +1396,11 @@
     }
 
     .agro-hero-title {
-        font-size:
-            clamp(
-                2.7rem,
-                14vw,
-                4rem
-            );
+        font-size: clamp(2.7rem,14vw,4rem);
     }
 
     .agro-hero-content {
-        padding:
-            65px 0 80px;
+        padding: 65px 0 80px;
     }
 
     .agro-hero-panel {
@@ -2072,9 +1425,7 @@
 
     .agro-tech-panel {
         min-height: auto;
-
         padding: 22px;
-
         border-radius: 25px;
     }
 
@@ -2091,1393 +1442,1055 @@
     }
 }
 
+@media (max-width:430px) {
+    .agro-crops-slide {
+        flex-basis: 92%;
+        min-width: 92%;
+    }
 
-@media (prefers-reduced-motion:reduce) {
+    .agro-crop-card {
+        min-height: 365px;
+    }
 
-    *,
-    *::before,
-    *::after {
-        animation-duration:
-            .01ms !important;
+    .agro-crop-description {
+        max-width: 280px;
+    }
 
-        animation-iteration-count:
-            1 !important;
-
-        scroll-behavior:
-            auto !important;
-
-        transition-duration:
-            .01ms !important;
+    .agro-crops-dots {
+        max-width: 115px;
+        overflow: hidden;
     }
 }
 
+@media (prefers-reduced-motion:reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
 </style>
 
 <div class="agro-home">
 
-
 <section class="agro-hero">
+
 <div class="agro-hero-slides">
 
-    <div
-        class="agro-hero-slide active"
-        style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85');">
-    </div>
+<div class="agro-hero-slide active" style="background-image:url(https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85)"></div>
 
-    <div
-        class="agro-hero-slide"
-        style="background-image:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=2000&q=85');">
-    </div>
+<div class="agro-hero-slide" style="background-image:url(https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=2000&q=85)"></div>
 
-    <div
-        class="agro-hero-slide"
-        style="background-image:url('https://images.unsplash.com/photo-1492496913980-501348b61469?auto=format&fit=crop&w=2000&q=85');">
-    </div>
+<div class="agro-hero-slide" style="background-image:url(https://images.unsplash.com/photo-1492496913980-501348b61469?auto=format&fit=crop&w=2000&q=85)"></div>
 
-    <div
-        class="agro-hero-slide"
-        style="background-image:url('https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=2000&q=85');">
-    </div>
+<div class="agro-hero-slide" style="background-image:url(https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=2000&q=85)"></div>
 
 </div>
 
-
 <div class="agro-hero-overlay"></div>
-
 <div class="agro-hero-glow"></div>
-
 
 <div class="agro-container agro-hero-content">
 
-    <div class="agro-hero-grid">
-
-
-        <div class="agro-hero-copy">
-
-            <div class="agro-hero-badge">
-
-                <span></span>
-
-                Agricultura +
-                Inteligência Artificial
-
-            </div>
-
-
-            <h1 class="agro-hero-title">
-
-                O futuro da agricultura
-
-                <strong>
-                    começa no campo.
-                </strong>
-
-            </h1>
-
-
-            <p class="agro-hero-description">
-
-                O AgroIA Moxico utiliza
-                Inteligência Artificial e
-                visão computacional para
-                ajudar a identificar problemas
-                nos produtos agrícolas e
-                transformar imagens em
-                informações úteis para o
-                agricultor.
-
-            </p>
-
-        </div>
-
-
-        <aside class="agro-hero-panel">
-
-            <div class="agro-panel-top">
-
-                <span class="agro-panel-label">
-                    Centro de inteligência
-                </span>
-
-                <span class="agro-panel-live">
-                    Sistema ativo
-                </span>
-
-            </div>
-
-
-            <div class="agro-main-metric">
-
-                <span class="agro-main-metric-label">
-                    Total de diagnósticos
-                </span>
-
-                <div class="agro-main-metric-value">
-
-                    {{ total_diagnosticos|default:"0" }}
-
-                    <small>
-                        análises
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="agro-ai-model">
-
-                <div class="agro-ai-model-icon">
-                    ◉
-                </div>
-
-                <div class="agro-ai-model-text">
-
-                    <strong>
-                        Visão Computacional
-                    </strong>
-
-                    <span>
-                        Rede Neural Convolucional · CNN
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="agro-product-analysis">
-
-                <div class="agro-product-analysis-title">
-                    Análises por produto
-                </div>
-
-
-                {% for produto in produtos|slice:":5" %}
-
-                <div class="agro-product-row">
-
-                    <div class="agro-product-name">
-
-                        <span class="agro-product-dot"></span>
-
-                        {{ produto.nome }}
-
-                    </div>
-
-                    <span class="agro-product-count">
-
-                        {{ produto.diagnostico_set.count }}
-
-                    </span>
-
-                </div>
-
-                {% empty %}
-
-                <div class="agro-product-row">
-
-                    <div class="agro-product-name">
-
-                        <span class="agro-product-dot"></span>
-
-                        Nenhuma análise ainda
-
-                    </div>
-
-                    <span class="agro-product-count">
-                        0
-                    </span>
-
-                </div>
-
-                {% endfor %}
-
-            </div>
-
-        </aside>
-
-    </div>
+<div class="agro-hero-grid">
+
+<div class="agro-hero-copy">
+
+<div class="agro-hero-badge">
+<span></span>
+Agricultura + Inteligência Artificial
+</div>
+
+<h1 class="agro-hero-title">
+O futuro da agricultura
+<strong>começa no campo.</strong>
+</h1>
+
+<p class="agro-hero-description">
+O AgroIA Moxico utiliza Inteligência Artificial e visão computacional para ajudar a identificar problemas nos produtos agrícolas e transformar imagens em informações úteis para o agricultor.
+</p>
 
 </div>
 
+<aside class="agro-hero-panel">
+
+<div class="agro-panel-top">
+
+<span class="agro-panel-label">
+Centro de inteligência
+</span>
+
+<span class="agro-panel-live">
+Sistema ativo
+</span>
+
+</div>
+
+<div class="agro-main-metric">
+
+<span class="agro-main-metric-label">
+Total de diagnósticos
+</span>
+
+<div class="agro-main-metric-value">
+{{ total_diagnosticos|default:"0" }}
+<small>análises</small>
+</div>
+
+</div>
+
+<div class="agro-ai-model">
+
+<div class="agro-ai-model-icon">
+◉
+</div>
+
+<div class="agro-ai-model-text">
+
+<strong>
+Visão Computacional
+</strong>
+
+<span>
+Rede Neural Convolucional · CNN
+</span>
+
+</div>
+
+</div>
+
+<div class="agro-product-analysis">
+
+<div class="agro-product-analysis-title">
+Análises por produto
+</div>
+
+{% for produto in produtos|slice:":5" %}
+
+<div class="agro-product-row">
+
+<div class="agro-product-name">
+<span class="agro-product-dot"></span>
+{{ produto.nome }}
+</div>
+
+<span class="agro-product-count">
+{{ produto.diagnostico_set.count }}
+</span>
+
+</div>
+
+{% empty %}
+
+<div class="agro-product-row">
+
+<div class="agro-product-name">
+<span class="agro-product-dot"></span>
+Nenhuma análise ainda
+</div>
+
+<span class="agro-product-count">
+0
+</span>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</aside>
+
+</div>
+
+</div>
 
 <div class="agro-hero-dots">
 
-    <button
-        class="agro-hero-dot active"
-        type="button"
-        data-hero-slide="0"
-        aria-label="Slide 1">
-    </button>
-
-    <button
-        class="agro-hero-dot"
-        type="button"
-        data-hero-slide="1"
-        aria-label="Slide 2">
-    </button>
-
-    <button
-        class="agro-hero-dot"
-        type="button"
-        data-hero-slide="2"
-        aria-label="Slide 3">
-    </button>
-
-    <button
-        class="agro-hero-dot"
-        type="button"
-        data-hero-slide="3"
-        aria-label="Slide 4">
-    </button>
+<button class="agro-hero-dot active" type="button" data-hero-slide="0" aria-label="Slide 1"></button> <button class="agro-hero-dot" type="button" data-hero-slide="1" aria-label="Slide 2"></button> <button class="agro-hero-dot" type="button" data-hero-slide="2" aria-label="Slide 3"></button> <button class="agro-hero-dot" type="button" data-hero-slide="3" aria-label="Slide 4"></button>
 
 </div>
 
 </section>
 
+<section class="agro-section agro-crops" id="produtos">
 
-
-<section
-    class="agro-section agro-crops"
-    id="produtos">
 <div class="agro-container">
 
-    <header class="agro-section-header">
+<header class="agro-section-header">
 
-        <span class="agro-eyebrow">
-            Produção agrícola
-        </span>
+<span class="agro-eyebrow">
+Produção agrícola
+</span>
 
-        <h2 class="agro-section-title">
-            Produtos cultivados em Moxico
-        </h2>
+<h2 class="agro-section-title">
+Produtos cultivados em Moxico
+</h2>
 
-        <p class="agro-section-description">
+<p class="agro-section-description">
+Conheça algumas das principais culturas agrícolas apresentadas pelo AgroIA Moxico e acompanhadas através da plataforma.
+</p>
 
-            Conheça algumas das principais
-            culturas agrícolas apresentadas
-            pelo AgroIA Moxico e acompanhadas
-            através da plataforma.
+</header>
 
-        </p>
+<div class="agro-crops-carousel" id="agroCropsCarousel">
 
-    </header>
+<div class="agro-crops-viewport">
 
+<div class="agro-crops-track" id="agroCropsTrack">
 
-    <div class="agro-crops-grid">
+<article class="agro-crops-slide">
+<div class="agro-crop-card">
 
+<div class="agro-crop-image">
 
+<img src="https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=1000&q=90" alt="Milho cultivado no campo" loading="lazy" decoding="async">
 
-        <article class="agro-crop-card">
+</div>
 
-            <div class="agro-crop-image">
+<div class="agro-crop-overlay"></div>
 
-                <img
-                    src="https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=1000&q=90"
-                    alt="Milho cultivado no campo"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://loremflickr.com/1000/800/corn,maize,field';
-                    ">
+<div class="agro-crop-content">
 
-            </div>
+<span class="agro-crop-number">01</span>
 
-            <div class="agro-crop-overlay"></div>
+<h3 class="agro-crop-name">
+Milho
+</h3>
 
-            <div class="agro-crop-content">
+<p class="agro-crop-description">
+Uma das principais culturas alimentares e agrícolas.
+</p>
 
-                <span class="agro-crop-number">
-                    01
-                </span>
+</div>
 
-                <h3 class="agro-crop-name">
-                    Milho
-                </h3>
+</div>
+</article>
 
-                <p class="agro-crop-description">
-                    Uma das principais culturas
-                    alimentares e agrícolas.
-                </p>
+<article class="agro-crops-slide">
+<div class="agro-crop-card">
 
-            </div>
+<div class="agro-crop-image">
 
-        </article>
+<img src="https://cdn8.futura-sciences.com/a1080/images/manioc-racine_01.jpg" alt="Raízes frescas de mandioca" loading="lazy" decoding="async">
 
+</div>
 
+<div class="agro-crop-overlay"></div>
 
-        <article class="agro-crop-card">
+<div class="agro-crop-content">
 
-            <div class="agro-crop-image">
+<span class="agro-crop-number">02</span>
 
-                <img
-                    src="https://cdn8.futura-sciences.com/a1080/images/manioc-racine_01.jpg"
-                    alt="Raízes frescas de mandioca"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://loremflickr.com/1000/800/cassava,manioc,yuca';
-                    ">
+<h3 class="agro-crop-name">
+Mandioca
+</h3>
 
-            </div>
+<p class="agro-crop-description">
+Raiz alimentar de grande importância para a produção rural.
+</p>
 
-            <div class="agro-crop-overlay"></div>
+</div>
 
-            <div class="agro-crop-content">
+</div>
+</article>
 
-                <span class="agro-crop-number">
-                    02
-                </span>
+<article class="agro-crops-slide">
+<div class="agro-crop-card">
 
-                <h3 class="agro-crop-name">
-                    Mandioca
-                </h3>
+<div class="agro-crop-image">
 
-                <p class="agro-crop-description">
-                    Raiz alimentar de grande
-                    importância para a produção rural.
-                </p>
+<img src="https://www.botanikus.de/fileadmin/Bilder/Giftpflanzen/Pflanzen/Bohne/Bohne3-gr.jpg" alt="Planta de feijão com vagens" loading="lazy" decoding="async">
 
-            </div>
+</div>
 
-        </article>
+<div class="agro-crop-overlay"></div>
 
+<div class="agro-crop-content">
 
-        <article class="agro-crop-card">
+<span class="agro-crop-number">03</span>
 
-            <div class="agro-crop-image">
+<h3 class="agro-crop-name">
+Feijão
+</h3>
 
-                <img
-                    src="https://www.botanikus.de/fileadmin/Bilder/Giftpflanzen/Pflanzen/Bohne/Bohne3-gr.jpg"
-                    alt="Planta de feijão com vagens"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://loremflickr.com/1000/800/beans,bean,plant';
-                    ">
+<p class="agro-crop-description">
+Cultura alimentar importante para famílias e produtores.
+</p>
 
-            </div>
+</div>
 
-            <div class="agro-crop-overlay"></div>
+</div>
+</article>
 
-            <div class="agro-crop-content">
+<article class="agro-crops-slide">
+<div class="agro-crop-card">
 
-                <span class="agro-crop-number">
-                    03
-                </span>
+<div class="agro-crop-image">
 
-                <h3 class="agro-crop-name">
-                    Feijão
-                </h3>
+<img src="https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=1000&q=90" alt="Campo de arroz" loading="lazy" decoding="async">
 
-                <p class="agro-crop-description">
-                    Cultura alimentar importante
-                    para famílias e produtores.
-                </p>
+</div>
 
-            </div>
+<div class="agro-crop-overlay"></div>
 
-        </article>
+<div class="agro-crop-content">
 
+<span class="agro-crop-number">04</span>
 
+<h3 class="agro-crop-name">
+Arroz
+</h3>
 
-        <article class="agro-crop-card">
+<p class="agro-crop-description">
+Cereal alimentar essencial para muitas comunidades.
+</p>
 
-            <div class="agro-crop-image">
+</div>
 
-                <img
-                    src="https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=1000&q=90"
-                    alt="Campo de arroz"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://loremflickr.com/1000/800/rice,field,crop';
-                    ">
+</div>
+</article>
 
-            </div>
+<article class="agro-crops-slide">
+<div class="agro-crop-card">
 
-            <div class="agro-crop-overlay"></div>
+<div class="agro-crop-image">
 
-            <div class="agro-crop-content">
+<img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=1000&q=90" alt="Tomates frescos" loading="lazy" decoding="async">
 
-                <span class="agro-crop-number">
-                    04
-                </span>
+</div>
 
-                <h3 class="agro-crop-name">
-                    Arroz
-                </h3>
+<div class="agro-crop-overlay"></div>
 
-                <p class="agro-crop-description">
-                    Cereal alimentar essencial
-                    para muitas comunidades.
-                </p>
+<div class="agro-crop-content">
 
-            </div>
+<span class="agro-crop-number">05</span>
 
-        </article>
+<h3 class="agro-crop-name">
+Tomate
+</h3>
 
+<p class="agro-crop-description">
+Hortícola de importância alimentar e comercial.
+</p>
 
+</div>
 
-        <article class="agro-crop-card">
+</div>
+</article>
 
-            <div class="agro-crop-image">
+<article class="agro-crops-slide">
+<div class="agro-crop-card">
 
-                <img
-                    src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=1000&q=90"
-                    alt="Tomates frescos"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://loremflickr.com/1000/800/tomato,crop';
-                    ">
+<div class="agro-crop-image">
 
-            </div>
+<img src="https://www.siegrointernational.com/images/products/peanuts.jpg" alt="Ginguba ou amendoim" loading="lazy" decoding="async">
 
-            <div class="agro-crop-overlay"></div>
+</div>
 
-            <div class="agro-crop-content">
+<div class="agro-crop-overlay"></div>
 
-                <span class="agro-crop-number">
-                    05
-                </span>
+<div class="agro-crop-content">
 
-                <h3 class="agro-crop-name">
-                    Tomate
-                </h3>
+<span class="agro-crop-number">06</span>
 
-                <p class="agro-crop-description">
-                    Hortícola de importância
-                    alimentar e comercial.
-                </p>
+<h3 class="agro-crop-name">
+Ginguba
+</h3>
 
-            </div>
+<p class="agro-crop-description">
+Leguminosa também conhecida como amendoim ou groundnut.
+</p>
 
-        </article>
+</div>
 
+</div>
+</article>
 
+<article class="agro-crops-slide">
+<div class="agro-crop-card">
 
-        <article class="agro-crop-card">
+<div class="agro-crop-image">
 
-            <div class="agro-crop-image">
+<img src="https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=1000&q=90" alt="Cebolas frescas" loading="lazy" decoding="async">
 
-                <img
-                    src="https://www.siegrointernational.com/images/products/peanuts.jpg"
-                    alt="Ginguba ou amendoim"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://loremflickr.com/1000/800/peanut,groundnut';
-                    ">
+</div>
 
-            </div>
+<div class="agro-crop-overlay"></div>
 
-            <div class="agro-crop-overlay"></div>
+<div class="agro-crop-content">
 
-            <div class="agro-crop-content">
+<span class="agro-crop-number">07</span>
 
-                <span class="agro-crop-number">
-                    06
-                </span>
+<h3 class="agro-crop-name">
+Cebola
+</h3>
 
-                <h3 class="agro-crop-name">
-                    Ginguba
-                </h3>
+<p class="agro-crop-description">
+Hortícola importante para alimentação e comercialização.
+</p>
 
-                <p class="agro-crop-description">
-                    Leguminosa também conhecida
-                    como amendoim ou groundnut.
-                </p>
+</div>
 
-            </div>
+</div>
+</article>
 
-        </article>
+<article class="agro-crops-slide">
+<div class="agro-crop-card">
 
+<div class="agro-crop-image">
 
-        <article class="agro-crop-card">
+<img src="https://www.fertri.com/media/fertri/images/2024/12/20/20241220112303011302.jpg" alt="Batata-doce recém-colhida" loading="lazy" decoding="async">
 
-            <div class="agro-crop-image">
+</div>
 
-                <img
-                    src="https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=1000&q=90"
-                    alt="Cebolas frescas"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://loremflickr.com/1000/800/onion,crop';
-                    ">
+<div class="agro-crop-overlay"></div>
 
-            </div>
+<div class="agro-crop-content">
 
-            <div class="agro-crop-overlay"></div>
+<span class="agro-crop-number">08</span>
 
-            <div class="agro-crop-content">
+<h3 class="agro-crop-name">
+Batata-doce
+</h3>
 
-                <span class="agro-crop-number">
-                    07
-                </span>
+<p class="agro-crop-description">
+Cultura de raiz com importância alimentar.
+</p>
 
-                <h3 class="agro-crop-name">
-                    Cebola
-                </h3>
+</div>
 
-                <p class="agro-crop-description">
-                    Hortícola importante para
-                    alimentação e comercialização.
-                </p>
+</div>
+</article>
 
-            </div>
+</div>
 
-        </article>
+</div>
 
+<div class="agro-crops-controls">
 
-        <article class="agro-crop-card">
+<button type="button" class="agro-crops-button" id="agroCropsPrev" aria-label="Produto anterior">
+←
+</button>
 
-            <div class="agro-crop-image">
+<div class="agro-crops-dots" id="agroCropsDots"></div>
 
-                <img
-                    src="https://www.fertri.com/media/fertri/images/2024/12/20/20241220112303011302.jpg"
-                    alt="Batata-doce recém-colhida"
-                    loading="lazy"
-                    decoding="async"
-                    onerror="
-                        this.onerror=null;
-                        this.src='https://loremflickr.com/1000/800/sweet,potato,crop';
-                    ">
+<div class="agro-crops-counter" id="agroCropsCounter">
+1 / 8
+</div>
 
-            </div>
+<button type="button" class="agro-crops-button" id="agroCropsNext" aria-label="Próximo produto">
+→
+</button>
 
-            <div class="agro-crop-overlay"></div>
+</div>
 
-            <div class="agro-crop-content">
-
-                <span class="agro-crop-number">
-                    08
-                </span>
-
-                <h3 class="agro-crop-name">
-                    Batata-doce
-                </h3>
-
-                <p class="agro-crop-description">
-                    Cultura de raiz com
-                    importância alimentar.
-                </p>
-
-            </div>
-
-        </article>
-
-
-    </div>
+</div>
 
 </div>
 
 </section>
-
-
 
 <section class="agro-section agro-how">
+
 <div class="agro-container">
 
-    <header class="agro-section-header">
+<header class="agro-section-header">
 
-        <span class="agro-eyebrow">
-            Tecnologia simples
-        </span>
+<span class="agro-eyebrow">
+Tecnologia simples
+</span>
 
-        <h2 class="agro-section-title">
-            Como funciona o diagnóstico por IA?
-        </h2>
+<h2 class="agro-section-title">
+Como funciona o diagnóstico por IA?
+</h2>
 
-        <p class="agro-section-description">
+<p class="agro-section-description">
+O processo foi pensado para transformar uma fotografia do produto em uma informação simples, rápida e útil.
+</p>
 
-            O processo foi pensado para transformar
-            uma fotografia do produto em uma
-            informação simples, rápida e útil.
+</header>
 
-        </p>
+<div class="agro-steps">
 
-    </header>
+<article class="agro-step">
 
+<span class="agro-step-number">
+01
+</span>
 
-    <div class="agro-steps">
+<div class="agro-step-icon">
+📷
+</div>
 
+<h3>
+Fotografar o produto
+</h3>
 
-        <article class="agro-step">
+<p>
+O utilizador envia uma fotografia da planta ou da parte do produto que deseja analisar.
+</p>
 
-            <span class="agro-step-number">
-                01
-            </span>
+</article>
 
-            <div class="agro-step-icon">
-                📷
-            </div>
+<article class="agro-step">
 
-            <h3>
-                Fotografar o produto
-            </h3>
+<span class="agro-step-number">
+02
+</span>
 
-            <p>
-                O utilizador envia uma fotografia
-                da planta ou da parte do produto
-                que deseja analisar.
-            </p>
+<div class="agro-step-icon">
+◉
+</div>
 
-        </article>
+<h3>
+Análise por IA
+</h3>
 
+<p>
+O modelo de visão computacional analisa os padrões visuais presentes na imagem.
+</p>
 
-        <article class="agro-step">
+</article>
 
-            <span class="agro-step-number">
-                02
-            </span>
+<article class="agro-step">
 
-            <div class="agro-step-icon">
-                ◉
-            </div>
+<span class="agro-step-number">
+03
+</span>
 
-            <h3>
-                Análise por IA
-            </h3>
+<div class="agro-step-icon">
+✓
+</div>
 
-            <p>
-                O modelo de visão computacional
-                analisa os padrões visuais presentes
-                na imagem.
-            </p>
+<h3>
+Diagnóstico
+</h3>
 
-        </article>
+<p>
+O sistema apresenta o resultado, o nível de confiança e informações relevantes.
+</p>
 
+</article>
 
-        <article class="agro-step">
+<article class="agro-step">
 
-            <span class="agro-step-number">
-                03
-            </span>
+<span class="agro-step-number">
+04
+</span>
 
-            <div class="agro-step-icon">
-                ✓
-            </div>
+<div class="agro-step-icon">
+↗
+</div>
 
-            <h3>
-                Diagnóstico
-            </h3>
+<h3>
+Recomendações
+</h3>
 
-            <p>
-                O sistema apresenta o resultado,
-                o nível de confiança e informações
-                relevantes.
-            </p>
+<p>
+O resultado é acompanhado por orientações que ajudam a compreender o problema.
+</p>
 
-        </article>
+</article>
 
-
-        <article class="agro-step">
-
-            <span class="agro-step-number">
-                04
-            </span>
-
-            <div class="agro-step-icon">
-                ↗
-            </div>
-
-            <h3>
-                Recomendações
-            </h3>
-
-            <p>
-                O resultado é acompanhado por
-                orientações que ajudam a compreender
-                o problema.
-            </p>
-
-        </article>
-
-
-    </div>
+</div>
 
 </div>
 
 </section>
 
+<section class="agro-section agro-ai-section" id="analises">
 
-<section
-    class="agro-section agro-ai-section"
-    id="analises">
 <div class="agro-container">
 
-    <header class="agro-section-header">
+<header class="agro-section-header">
 
-        <span class="agro-eyebrow">
-            Inteligência Artificial
-        </span>
+<span class="agro-eyebrow">
+Inteligência Artificial
+</span>
 
-        <h2 class="agro-section-title">
-            Produtos analisados pela IA
-        </h2>
+<h2 class="agro-section-title">
+Produtos analisados pela IA
+</h2>
 
-        <p class="agro-section-description">
+<p class="agro-section-description">
+Acompanhe os diagnósticos realizados na plataforma, os resultados identificados e o nível de confiança apresentado pelo modelo de Inteligência Artificial.
+</p>
 
-            Acompanhe os diagnósticos realizados
-            na plataforma, os resultados identificados
-            e o nível de confiança apresentado pelo
-            modelo de Inteligência Artificial.
+</header>
 
-        </p>
+{% if ultimos_diagnosticos %}
 
-    </header>
+<div class="agro-ai-carousel" id="agroAiCarousel">
 
+<div class="agro-ai-track" id="agroAiTrack">
 
-    {% if ultimos_diagnosticos %}
+{% for diagnostico in ultimos_diagnosticos %}
 
+<article class="agro-ai-slide">
 
-    <div
-        class="agro-ai-carousel"
-        id="agroAiCarousel">
+<div class="agro-ai-card">
 
-        <div
-            class="agro-ai-track"
-            id="agroAiTrack">
+<div class="agro-ai-image">
 
+{% if diagnostico.imagem %}
 
-            {% for diagnostico in ultimos_diagnosticos %}
+<img src="{{ diagnostico.imagem.url }}" alt="{{ diagnostico.produto.nome|default:'Produto agrícola analisado' }}" loading="lazy">
 
+{% else %}
 
-            <article class="agro-ai-slide">
+<img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1000&q=85" alt="Agricultura" loading="lazy">
 
-                <div class="agro-ai-card">
+{% endif %}
 
+<div class="agro-ai-image-overlay"></div>
 
-                    <div class="agro-ai-image">
+<span class="agro-ai-image-badge">
+◉ Análise por IA
+</span>
 
-                        {% if diagnostico.imagem %}
+<div class="agro-ai-image-bottom">
 
-                        <img
-                            src="{{ diagnostico.imagem.url }}"
-                            alt="{{ diagnostico.produto.nome|default:'Produto agrícola analisado' }}"
-                            loading="lazy"
-                            onerror="
-                                this.onerror=null;
-                                this.src='https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1000&q=85';
-                            ">
+<h3 class="agro-ai-product-name">
 
-                        {% else %}
+{% if diagnostico.produto %}
+{{ diagnostico.produto.nome }}
+{% else %}
+Produto agrícola
+{% endif %}
 
-                        <img
-                            src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1000&q=85"
-                            alt="Agricultura"
-                            loading="lazy">
+</h3>
 
-                        {% endif %}
+<div class="agro-ai-result">
 
+{% if diagnostico.doenca_identificada %}
+{{ diagnostico.doenca_identificada }}
+{% elif diagnostico.resultado %}
+{{ diagnostico.resultado }}
+{% else %}
+Resultado da análise
+{% endif %}
 
-                        <div class="agro-ai-image-overlay"></div>
+</div>
 
+</div>
 
-                        <span class="agro-ai-image-badge">
-                            ◉ Análise por IA
-                        </span>
+</div>
 
+<div class="agro-ai-content">
 
-                        <div class="agro-ai-image-bottom">
+<div class="agro-ai-content-top">
 
-                            <h3 class="agro-ai-product-name">
+<div>
 
-                                {% if diagnostico.produto %}
-                                    {{ diagnostico.produto.nome }}
-                                {% else %}
-                                    Produto agrícola
-                                {% endif %}
+<span class="agro-ai-content-label">
+Resultado do diagnóstico
+</span>
 
-                            </h3>
+<h3>
 
+{% if diagnostico.resultado %}
+{{ diagnostico.resultado }}
+{% else %}
+Análise concluída
+{% endif %}
 
-                            <div class="agro-ai-result">
+</h3>
 
-                                {% if diagnostico.doenca_identificada %}
+</div>
 
-                                    {{ diagnostico.doenca_identificada }}
+<span class="agro-status">
 
-                                {% elif diagnostico.resultado %}
+{% if diagnostico.status %}
+{{ diagnostico.status|title }}
+{% else %}
+Concluído
+{% endif %}
 
-                                    {{ diagnostico.resultado }}
+</span>
 
-                                {% else %}
+</div>
 
-                                    Resultado da análise
+<div class="agro-confidence">
 
-                                {% endif %}
+<div class="agro-confidence-head">
 
-                            </div>
+<span>
+Confiança da Inteligência Artificial
+</span>
 
-                        </div>
+<span>
+{{ diagnostico.confianca|default:"0" }}%
+</span>
 
-                    </div>
+</div>
 
+<div class="agro-confidence-bar">
 
-                    <div class="agro-ai-content">
+<div class="agro-confidence-fill" style="width:{{ diagnostico.confianca|default:0 }}%"></div>
 
+</div>
 
-                        <div class="agro-ai-content-top">
+</div>
 
-                            <div>
+{% if diagnostico.descricao_resultado %}
 
-                                <span class="agro-ai-content-label">
-                                    Resultado do diagnóstico
-                                </span>
+<p class="agro-ai-description">
+{{ diagnostico.descricao_resultado }}
+</p>
 
-                                <h3>
+{% endif %}
 
-                                    {% if diagnostico.resultado %}
+<div class="agro-info-grid">
 
-                                        {{ diagnostico.resultado }}
+<div class="agro-info-box">
 
-                                    {% else %}
+<span class="agro-info-box-label">
+Cultura
+</span>
 
-                                        Análise concluída
+<span class="agro-info-box-value">
 
-                                    {% endif %}
+{% if diagnostico.produto %}
+{{ diagnostico.produto.nome }}
+{% else %}
+Não especificada
+{% endif %}
 
-                                </h3>
+</span>
 
-                            </div>
+</div>
 
+<div class="agro-info-box">
 
-                            <span class="agro-status">
+<span class="agro-info-box-label">
+Resultado
+</span>
 
-                                {% if diagnostico.status %}
+<span class="agro-info-box-value">
 
-                                    {{ diagnostico.status|title }}
+{% if diagnostico.doenca_identificada %}
+{{ diagnostico.doenca_identificada }}
+{% else %}
+Sem identificação específica
+{% endif %}
 
-                                {% else %}
+</span>
 
-                                    Concluído
+</div>
 
-                                {% endif %}
+</div>
 
-                            </span>
+{% if diagnostico.recomendacoes %}
 
-                        </div>
+<div class="agro-recommendations">
 
+<div class="agro-recommendations-title">
+Recomendações
+</div>
 
-                        <div class="agro-confidence">
+<p>
+{{ diagnostico.recomendacoes }}
+</p>
 
-                            <div class="agro-confidence-head">
+</div>
 
-                                <span>
-                                    Confiança da Inteligência Artificial
-                                </span>
+{% endif %}
 
-                                <span>
-                                    {{ diagnostico.confianca|default:"0" }}%
-                                </span>
+{% if diagnostico.data_criacao %}
 
-                            </div>
+<div class="agro-ai-date">
+Analisado em {{ diagnostico.data_criacao|date:"d/m/Y H:i" }}
+</div>
 
+{% endif %}
 
-                            <div class="agro-confidence-bar">
+</div>
 
-                                <div
-                                    class="agro-confidence-fill"
-                                    style="
-                                        width:
-                                        {{ diagnostico.confianca|default:0 }}%;
-                                    ">
-                                </div>
+</div>
 
-                            </div>
+</article>
 
-                        </div>
+{% endfor %}
 
+</div>
 
-                        {% if diagnostico.descricao_resultado %}
+<div class="agro-carousel-controls">
 
-                        <p class="agro-ai-description">
+<button type="button" class="agro-carousel-button" id="agroAiPrev" aria-label="Diagnóstico anterior">
+←
+</button>
 
-                            {{ diagnostico.descricao_resultado }}
+<div class="agro-carousel-dots" id="agroAiDots">
 
-                        </p>
+{% for diagnostico in ultimos_diagnosticos %}
 
-                        {% endif %}
+<button type="button" class="agro-carousel-dot {% if forloop.first %}active{% endif %}" data-ai-slide="{{ forloop.counter0 }}" aria-label="Ver diagnóstico {{ forloop.counter }}"></button>
 
+{% endfor %}
 
-                        <div class="agro-info-grid">
+</div>
 
+<button type="button" class="agro-carousel-button" id="agroAiNext" aria-label="Próximo diagnóstico">
+→
+</button>
 
-                            <div class="agro-info-box">
+</div>
 
-                                <span class="agro-info-box-label">
-                                    Cultura
-                                </span>
+</div>
 
-                                <span class="agro-info-box-value">
+{% else %}
 
-                                    {% if diagnostico.produto %}
+<div style="max-width:700px;margin:0 auto;padding:55px 30px;text-align:center;border:1px solid rgba(23,107,69,.10);border-radius:28px;background:rgba(255,255,255,.90);box-shadow:0 20px 55px rgba(20,90,52,.08)">
 
-                                        {{ diagnostico.produto.nome }}
+<div style="width:70px;height:70px;display:grid;place-items:center;margin:0 auto 18px;border-radius:22px;background:#eaf7ef;color:#176b45;font-size:1.7rem">
+◉
+</div>
 
-                                    {% else %}
+<h3 style="margin:0 0 10px;color:#0d4d31;font-size:1.35rem">
+Ainda não existem diagnósticos
+</h3>
 
-                                        Não especificada
+<p style="margin:0;color:#66776e;line-height:1.7">
+Assim que forem realizadas análises através da Inteligência Artificial, os resultados aparecerão automaticamente nesta área.
+</p>
 
-                                    {% endif %}
+</div>
 
-                                </span>
-
-                            </div>
-
-
-                            <div class="agro-info-box">
-
-                                <span class="agro-info-box-label">
-                                    Resultado
-                                </span>
-
-                                <span class="agro-info-box-value">
-
-                                    {% if diagnostico.doenca_identificada %}
-
-                                        {{ diagnostico.doenca_identificada }}
-
-                                    {% else %}
-
-                                        Sem identificação específica
-
-                                    {% endif %}
-
-                                </span>
-
-                            </div>
-
-
-                        </div>
-
-
-                        {% if diagnostico.recomendacoes %}
-
-                        <div class="agro-recommendations">
-
-                            <div class="agro-recommendations-title">
-                                Recomendações
-                            </div>
-
-                            <p>
-                                {{ diagnostico.recomendacoes }}
-                            </p>
-
-                        </div>
-
-                        {% endif %}
-
-
-                        {% if diagnostico.data_criacao %}
-
-                        <div class="agro-ai-date">
-
-                            Analisado em
-                            {{ diagnostico.data_criacao|date:"d/m/Y H:i" }}
-
-                        </div>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            {% endfor %}
-
-        </div>
-
-
-        <div class="agro-carousel-controls">
-
-            <button
-                type="button"
-                class="agro-carousel-button"
-                id="agroAiPrev"
-                aria-label="Diagnóstico anterior">
-
-                ←
-
-            </button>
-
-
-            <div
-                class="agro-carousel-dots"
-                id="agroAiDots">
-
-                {% for diagnostico in ultimos_diagnosticos %}
-
-                <button
-                    type="button"
-                    class="agro-carousel-dot {% if forloop.first %}active{% endif %}"
-                    data-ai-slide="{{ forloop.counter0 }}"
-                    aria-label="Ver diagnóstico {{ forloop.counter }}">
-                </button>
-
-                {% endfor %}
-
-            </div>
-
-
-            <button
-                type="button"
-                class="agro-carousel-button"
-                id="agroAiNext"
-                aria-label="Próximo diagnóstico">
-
-                →
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-    {% else %}
-
-
-    <div
-        style="
-            max-width:700px;
-            margin:0 auto;
-            padding:55px 30px;
-            text-align:center;
-            border:1px solid rgba(23,107,69,.10);
-            border-radius:28px;
-            background:rgba(255,255,255,.90);
-            box-shadow:0 20px 55px rgba(20,90,52,.08);
-        ">
-
-        <div
-            style="
-                width:70px;
-                height:70px;
-                display:grid;
-                place-items:center;
-                margin:0 auto 18px;
-                border-radius:22px;
-                background:#eaf7ef;
-                color:#176b45;
-                font-size:1.7rem;
-            ">
-
-            ◉
-
-        </div>
-
-
-        <h3
-            style="
-                margin:0 0 10px;
-                color:#0d4d31;
-                font-size:1.35rem;
-            ">
-
-            Ainda não existem diagnósticos
-
-        </h3>
-
-
-        <p
-            style="
-                margin:0;
-                color:#66776e;
-                line-height:1.7;
-            ">
-
-            Assim que forem realizadas análises através
-            da Inteligência Artificial, os resultados
-            aparecerão automaticamente nesta área.
-
-        </p>
-
-    </div>
-
-    {% endif %}
+{% endif %}
 
 </div>
 
 </section>
 
+<section class="agro-section agro-intelligence">
 
-<section
-    class="agro-section agro-intelligence">
 <div class="agro-container">
 
-    <div class="agro-intelligence-grid">
+<div class="agro-intelligence-grid">
 
+<div>
 
-        <div>
+<span class="agro-eyebrow">
+AgroIA Moxico
+</span>
 
-            <span class="agro-eyebrow">
-                AgroIA Moxico
-            </span>
+<h2 class="agro-section-title">
+Inteligência aplicada ao campo
+</h2>
 
+<p class="agro-section-description" style="margin:0;text-align:left">
+A tecnologia aproxima a Inteligência Artificial da realidade agrícola, tornando a análise visual dos produtos mais acessível, organizada e compreensível.
+</p>
 
-            <h2 class="agro-section-title">
+<div class="agro-feature-list">
 
-                Inteligência aplicada
-                ao campo
+<div class="agro-feature">
 
-            </h2>
+<div class="agro-feature-icon">
+AI
+</div>
 
+<div>
 
-            <p
-                class="agro-section-description"
-                style="
-                    margin:0;
-                    text-align:left;
-                ">
+<strong>
+Inteligência Artificial
+</strong>
 
-                A tecnologia aproxima a Inteligência
-                Artificial da realidade agrícola,
-                tornando a análise visual dos produtos
-                mais acessível, organizada e compreensível.
+<span>
+Análise automática de imagens através de visão computacional.
+</span>
 
-            </p>
+</div>
 
+</div>
 
-            <div class="agro-feature-list">
+<div class="agro-feature">
 
+<div class="agro-feature-icon">
+✓
+</div>
 
-                <div class="agro-feature">
+<div>
 
-                    <div class="agro-feature-icon">
-                        AI
-                    </div>
+<strong>
+Diagnóstico organizado
+</strong>
 
-                    <div>
+<span>
+Os resultados ficam associados aos produtos analisados.
+</span>
 
-                        <strong>
-                            Inteligência Artificial
-                        </strong>
+</div>
 
-                        <span>
-                            Análise automática de imagens
-                            através de visão computacional.
-                        </span>
+</div>
 
-                    </div>
+<div class="agro-feature">
 
-                </div>
+<div class="agro-feature-icon">
+↗
+</div>
 
+<div>
 
-                <div class="agro-feature">
+<strong>
+Informação útil
+</strong>
 
-                    <div class="agro-feature-icon">
-                        ✓
-                    </div>
+<span>
+Resultados apresentados de forma simples e compreensível.
+</span>
 
-                    <div>
+</div>
 
-                        <strong>
-                            Diagnóstico organizado
-                        </strong>
+</div>
 
-                        <span>
-                            Os resultados ficam associados
-                            aos produtos analisados.
-                        </span>
+</div>
 
-                    </div>
+</div>
 
-                </div>
+<div class="agro-tech-panel">
 
+<div class="agro-tech-header">
 
-                <div class="agro-feature">
+<div>
 
-                    <div class="agro-feature-icon">
-                        ↗
-                    </div>
+<div class="agro-tech-title">
+Centro de processamento AgroIA
+</div>
 
-                    <div>
+<div class="agro-tech-subtitle">
+Fluxo inteligente de análise agrícola
+</div>
 
-                        <strong>
-                            Informação útil
-                        </strong>
+</div>
 
-                        <span>
-                            Resultados apresentados de forma
-                            simples e compreensível.
-                        </span>
+<span class="agro-tech-status">
+IA ativa
+</span>
 
-                    </div>
+</div>
 
-                </div>
+<div class="agro-tech-center">
 
+<div class="agro-ai-core">
 
-            </div>
+<strong>
+AgroIA
+</strong>
 
-        </div>
+<span>
+Visão computacional
+</span>
 
+</div>
 
-        <div class="agro-tech-panel">
+</div>
 
+<div class="agro-tech-flow">
 
-            <div class="agro-tech-header">
+<div class="agro-tech-connector"></div>
 
-                <div>
+<div class="agro-tech-step">
 
-                    <div class="agro-tech-title">
-                        Centro de processamento AgroIA
-                    </div>
+<div class="agro-tech-step-icon">
+📷
+</div>
 
-                    <div class="agro-tech-subtitle">
-                        Fluxo inteligente de análise agrícola
-                    </div>
+<strong>
+Imagem
+</strong>
 
-                </div>
+<span>
+Fotografia do produto
+</span>
 
+</div>
 
-                <span class="agro-tech-status">
-                    IA ativa
-                </span>
+<div class="agro-tech-step">
 
-            </div>
+<div class="agro-tech-step-icon">
+◉
+</div>
 
+<strong>
+IA
+</strong>
 
-            <div class="agro-tech-center">
+<span>
+Processamento visual
+</span>
 
-                <div class="agro-ai-core">
+</div>
 
-                    <strong>
-                        AgroIA
-                    </strong>
+<div class="agro-tech-step">
 
-                    <span>
-                        Visão computacional
-                    </span>
+<div class="agro-tech-step-icon">
+✓
+</div>
 
-                </div>
+<strong>
+Resultado
+</strong>
 
-            </div>
+<span>
+Diagnóstico e orientação
+</span>
 
+</div>
 
-            <div class="agro-tech-flow">
+</div>
 
-                <div class="agro-tech-connector"></div>
+<div class="agro-tech-metrics">
 
+<div class="agro-tech-metric">
 
-                <div class="agro-tech-step">
+<div class="agro-tech-metric-icon">
+◎
+</div>
 
-                    <div class="agro-tech-step-icon">
-                        📷
-                    </div>
+<div>
 
-                    <strong>
-                        Imagem
-                    </strong>
+<strong>
+CNN
+</strong>
 
-                    <span>
-                        Fotografia do produto
-                    </span>
+<span>
+Modelo de visão
+</span>
 
-                </div>
+</div>
 
+</div>
 
-                <div class="agro-tech-step">
+<div class="agro-tech-metric">
 
-                    <div class="agro-tech-step-icon">
-                        ◉
-                    </div>
+<div class="agro-tech-metric-icon">
+⚡
+</div>
 
-                    <strong>
-                        IA
-                    </strong>
+<div>
 
-                    <span>
-                        Processamento visual
-                    </span>
+<strong>
+Análise automática
+</strong>
 
-                </div>
+<span>
+Processamento de imagens
+</span>
 
+</div>
 
-                <div class="agro-tech-step">
+</div>
 
-                    <div class="agro-tech-step-icon">
-                        ✓
-                    </div>
+</div>
 
-                    <strong>
-                        Resultado
-                    </strong>
+</div>
 
-                    <span>
-                        Diagnóstico e orientação
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="agro-tech-metrics">
-
-
-                <div class="agro-tech-metric">
-
-                    <div class="agro-tech-metric-icon">
-                        ◎
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            CNN
-                        </strong>
-
-                        <span>
-                            Modelo de visão
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="agro-tech-metric">
-
-                    <div class="agro-tech-metric-icon">
-                        ⚡
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Análise automática
-                        </strong>
-
-                        <span>
-                            Processamento de imagens
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-    </div>
+</div>
 
 </div>
 
@@ -3486,412 +2499,503 @@
 </div>
 
 <script>
-
 (function () {
 
-    const slides =
-        document.querySelectorAll(
-            ".agro-hero-slide"
-        );
-
-    const dots =
-        document.querySelectorAll(
-            ".agro-hero-dot"
-        );
+    const slides = document.querySelectorAll(".agro-hero-slide");
+    const dots = document.querySelectorAll(".agro-hero-dot");
 
     if (!slides.length) {
         return;
     }
 
     let current = 0;
-
+    let heroTimer;
 
     function showHeroSlide(index) {
 
-        slides.forEach(
-            (slide, i) => {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle("active", i === index);
+        });
 
-                slide.classList.toggle(
-                    "active",
-                    i === index
-                );
-
-            }
-        );
-
-
-        dots.forEach(
-            (dot, i) => {
-
-                dot.classList.toggle(
-                    "active",
-                    i === index
-                );
-
-            }
-        );
-
+        dots.forEach((dot, i) => {
+            dot.classList.toggle("active", i === index);
+        });
 
         current = index;
-
     }
-
 
     function nextHeroSlide() {
-
-        showHeroSlide(
-            (current + 1) %
-            slides.length
-        );
-
+        showHeroSlide((current + 1) % slides.length);
     }
 
+    dots.forEach(dot => {
 
-    dots.forEach(
-        (dot) => {
+        dot.addEventListener("click", function () {
 
-            dot.addEventListener(
-                "click",
-                function () {
+            showHeroSlide(Number(this.dataset.heroSlide));
 
-                    const index =
-                        Number(
-                            this.dataset.heroSlide
-                        );
+            clearInterval(heroTimer);
 
-                    showHeroSlide(index);
+            heroTimer = setInterval(nextHeroSlide, 6500);
 
-                }
-            );
+        });
 
-        }
-    );
+    });
 
-
-    setInterval(
-        nextHeroSlide,
-        6500
-    );
-
+    heroTimer = setInterval(nextHeroSlide, 6500);
 
 })();
 
-
 (function () {
 
-    const images =
-        document.querySelectorAll(
-            ".agro-crop-image img"
-        );
+    const carousel = document.getElementById("agroCropsCarousel");
+    const track = document.getElementById("agroCropsTrack");
+    const prev = document.getElementById("agroCropsPrev");
+    const next = document.getElementById("agroCropsNext");
+    const dotsContainer = document.getElementById("agroCropsDots");
+    const counter = document.getElementById("agroCropsCounter");
 
-
-    images.forEach(
-        function (image) {
-
-            image.addEventListener(
-                "error",
-                function () {
-
-                    if (
-                        image.dataset.fallbackUsed
-                    ) {
-                        return;
-                    }
-
-                    image.dataset.fallbackUsed =
-                        "true";
-
-                    const keyword =
-                        image.alt
-                            .toLowerCase()
-                            .replace(
-                                /[^a-záéíóúãõç\s-]/gi,
-                                ""
-                            )
-                            .replace(
-                                /\s+/g,
-                                ","
-                            );
-
-                    image.src =
-                        "https://loremflickr.com/1000/800/" +
-                        encodeURIComponent(keyword) +
-                        "?lock=" +
-                        Math.floor(
-                            Math.random() * 9999
-                        );
-
-                }
-            );
-
-        }
-    );
-
-})();
-
-
-(function () {
-
-    const track =
-        document.getElementById(
-            "agroAiTrack"
-        );
-
-    const carousel =
-        document.getElementById(
-            "agroAiCarousel"
-        );
-
-    const prev =
-        document.getElementById(
-            "agroAiPrev"
-        );
-
-    const next =
-        document.getElementById(
-            "agroAiNext"
-        );
-
-    const dots =
-        document.querySelectorAll(
-            ".agro-carousel-dot"
-        );
-
-
-    if (!track || !carousel) {
+    if (!carousel || !track) {
         return;
     }
 
-
-    const total =
-        track.children.length;
-
+    const slides = Array.from(track.querySelectorAll(".agro-crops-slide"));
+    const total = slides.length;
 
     if (!total) {
         return;
     }
 
-
     let current = 0;
-
     let timer = null;
+    let startX = 0;
+    let endX = 0;
+    let visibleSlides = 4;
 
+    function calculateVisibleSlides() {
 
-    function updateCarousel() {
+        const width = window.innerWidth;
 
-        track.style.transform =
-            `translateX(-${current * 100}%)`;
-
-
-        dots.forEach(
-            (dot, index) => {
-
-                dot.classList.toggle(
-                    "active",
-                    index === current
-                );
-
-            }
-        );
+        if (width <= 650) {
+            visibleSlides = width <= 430 ? 1.08 : 1.16;
+        } else if (width <= 1050) {
+            visibleSlides = 3;
+        } else {
+            visibleSlides = 4;
+        }
 
     }
 
+    function getStep() {
+
+        if (window.innerWidth <= 650) {
+            return 86;
+        }
+
+        if (window.innerWidth <= 1050) {
+            return 33.333333;
+        }
+
+        return 25;
+    }
+
+    function getMaxIndex() {
+
+        if (window.innerWidth <= 650) {
+            return total - 1;
+        }
+
+        if (window.innerWidth <= 1050) {
+            return Math.max(0, total - 3);
+        }
+
+        return Math.max(0, total - 4);
+    }
+
+    function buildDots() {
+
+        dotsContainer.innerHTML = "";
+
+        const maxIndex = getMaxIndex();
+
+        for (let i = 0; i <= maxIndex; i++) {
+
+            const dot = document.createElement("button");
+
+            dot.type = "button";
+            dot.className = "agro-crops-dot";
+            dot.setAttribute("aria-label", "Ir para posição " + (i + 1));
+
+            if (i === current) {
+                dot.classList.add("active");
+            }
+
+            dot.addEventListener("click", function () {
+
+                current = i;
+
+                update();
+
+                restartAutoplay();
+
+            });
+
+            dotsContainer.appendChild(dot);
+
+        }
+
+    }
+
+    function update() {
+
+        calculateVisibleSlides();
+
+        const maxIndex = getMaxIndex();
+
+        if (current > maxIndex) {
+            current = maxIndex;
+        }
+
+        const step = getStep();
+
+        track.style.transform = "translateX(-" + (current * step) + "%)";
+
+        const dots = dotsContainer.querySelectorAll(".agro-crops-dot");
+
+        dots.forEach((dot, index) => {
+            dot.classList.toggle("active", index === current);
+        });
+
+        if (counter) {
+
+            const currentNumber = current + 1;
+            const totalPositions = maxIndex + 1;
+
+            counter.textContent = currentNumber + " / " + totalPositions;
+
+        }
+
+    }
 
     function nextSlide() {
 
-        current =
-            (current + 1) %
-            total;
+        const maxIndex = getMaxIndex();
 
-        updateCarousel();
+        if (current >= maxIndex) {
+            current = 0;
+        } else {
+            current++;
+        }
+
+        update();
 
     }
-
 
     function previousSlide() {
 
-        current =
-            (current - 1 + total) %
-            total;
+        const maxIndex = getMaxIndex();
+
+        if (current <= 0) {
+            current = maxIndex;
+        } else {
+            current--;
+        }
+
+        update();
+
+    }
+
+    function stopAutoplay() {
+
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+
+    }
+
+    function startAutoplay() {
+
+        stopAutoplay();
+
+        if (total > 1) {
+            timer = setInterval(nextSlide, 5000);
+        }
+
+    }
+
+    function restartAutoplay() {
+        startAutoplay();
+    }
+
+    if (next) {
+
+        next.addEventListener("click", function () {
+            nextSlide();
+            restartAutoplay();
+        });
+
+    }
+
+    if (prev) {
+
+        prev.addEventListener("click", function () {
+            previousSlide();
+            restartAutoplay();
+        });
+
+    }
+
+    carousel.addEventListener("mouseenter", stopAutoplay);
+    carousel.addEventListener("mouseleave", startAutoplay);
+    carousel.addEventListener("focusin", stopAutoplay);
+    carousel.addEventListener("focusout", startAutoplay);
+
+    carousel.addEventListener("touchstart", function (event) {
+
+        startX = event.touches[0].clientX;
+
+        stopAutoplay();
+
+    }, {
+        passive: true
+    });
+
+    carousel.addEventListener("touchmove", function (event) {
+
+        endX = event.touches[0].clientX;
+
+    }, {
+        passive: true
+    });
+
+    carousel.addEventListener("touchend", function (event) {
+
+        endX = event.changedTouches[0].clientX;
+
+        const distance = endX - startX;
+
+        if (Math.abs(distance) >= 45) {
+
+            if (distance < 0) {
+                nextSlide();
+            } else {
+                previousSlide();
+            }
+
+        }
+
+        startAutoplay();
+
+    }, {
+        passive: true
+    });
+
+    let resizeTimer;
+
+    window.addEventListener("resize", function () {
+
+        clearTimeout(resizeTimer);
+
+        resizeTimer = setTimeout(function () {
+
+            calculateVisibleSlides();
+
+            buildDots();
+
+            update();
+
+        }, 150);
+
+    });
+
+    calculateVisibleSlides();
+    buildDots();
+    update();
+    startAutoplay();
+
+})();
+
+(function () {
+
+    const images = document.querySelectorAll(".agro-crop-image img");
+
+    images.forEach(image => {
+
+        image.addEventListener("error", function () {
+
+            if (image.dataset.fallbackUsed) {
+                return;
+            }
+
+            image.dataset.fallbackUsed = "true";
+
+            const keyword = image.alt
+                .toLowerCase()
+                .replace(/[^a-záéíóúãõç\s-]/gi, "")
+                .replace(/\s+/g, ",");
+
+            image.src = "https://loremflickr.com/1000/800/" + encodeURIComponent(keyword) + "?lock=" + Math.floor(Math.random() * 9999);
+
+        });
+
+    });
+
+})();
+
+(function () {
+
+    const track = document.getElementById("agroAiTrack");
+    const carousel = document.getElementById("agroAiCarousel");
+    const prev = document.getElementById("agroAiPrev");
+    const next = document.getElementById("agroAiNext");
+    const dots = document.querySelectorAll(".agro-carousel-dot");
+
+    if (!track || !carousel) {
+        return;
+    }
+
+    const total = track.children.length;
+
+    if (!total) {
+        return;
+    }
+
+    let current = 0;
+    let timer = null;
+    let startX = 0;
+    let endX = 0;
+
+    function updateCarousel() {
+
+        track.style.transform = "translateX(-" + (current * 100) + "%)";
+
+        dots.forEach((dot, index) => {
+            dot.classList.toggle("active", index === current);
+        });
+
+    }
+
+    function nextSlide() {
+
+        current = (current + 1) % total;
 
         updateCarousel();
 
     }
 
+    function previousSlide() {
+
+        current = (current - 1 + total) % total;
+
+        updateCarousel();
+
+    }
 
     function stopAutoplay() {
 
         if (timer) {
 
             clearInterval(timer);
-
             timer = null;
 
         }
 
     }
 
-
     function startAutoplay() {
 
         stopAutoplay();
 
-
         if (total > 1) {
 
-            timer =
-                setInterval(
-                    nextSlide,
-                    7000
-                );
+            timer = setInterval(nextSlide, 7000);
 
         }
 
     }
-
 
     if (next) {
 
-        next.addEventListener(
-            "click",
-            function () {
+        next.addEventListener("click", function () {
 
-                nextSlide();
+            nextSlide();
+            startAutoplay();
 
-                startAutoplay();
-
-            }
-        );
+        });
 
     }
-
 
     if (prev) {
 
-        prev.addEventListener(
-            "click",
-            function () {
+        prev.addEventListener("click", function () {
 
-                previousSlide();
+            previousSlide();
+            startAutoplay();
 
-                startAutoplay();
-
-            }
-        );
+        });
 
     }
 
+    dots.forEach((dot, index) => {
 
-    dots.forEach(
-        (dot, index) => {
+        dot.addEventListener("click", function () {
 
-            dot.addEventListener(
-                "click",
-                function () {
+            current = index;
 
-                    current = index;
-
-                    updateCarousel();
-
-                    startAutoplay();
-
-                }
-            );
-
-        }
-    );
-
-
-    carousel.addEventListener(
-        "mouseenter",
-        stopAutoplay
-    );
-
-
-    carousel.addEventListener(
-        "mouseleave",
-        startAutoplay
-    );
-
-
-    carousel.addEventListener(
-        "focusin",
-        stopAutoplay
-    );
-
-
-    carousel.addEventListener(
-        "focusout",
-        startAutoplay
-    );
-
-
-    let startX = 0;
-
-    let endX = 0;
-
-
-    carousel.addEventListener(
-        "touchstart",
-        function (event) {
-
-            startX =
-                event.touches[0].clientX;
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    carousel.addEventListener(
-        "touchend",
-        function (event) {
-
-            endX =
-                event.changedTouches[0].clientX;
-
-
-            const distance =
-                endX - startX;
-
-
-            if (
-                Math.abs(distance) < 45
-            ) {
-
-                return;
-
-            }
-
-
-            if (distance < 0) {
-
-                nextSlide();
-
-            } else {
-
-                previousSlide();
-
-            }
-
+            updateCarousel();
 
             startAutoplay();
 
-        },
-        {
-            passive: true
-        }
-    );
+        });
 
+    });
+
+    carousel.addEventListener("mouseenter", stopAutoplay);
+    carousel.addEventListener("mouseleave", startAutoplay);
+    carousel.addEventListener("focusin", stopAutoplay);
+    carousel.addEventListener("focusout", startAutoplay);
+
+    carousel.addEventListener("touchstart", function (event) {
+
+        startX = event.touches[0].clientX;
+
+        stopAutoplay();
+
+    }, {
+        passive: true
+    });
+
+    carousel.addEventListener("touchend", function (event) {
+
+        endX = event.changedTouches[0].clientX;
+
+        const distance = endX - startX;
+
+        if (Math.abs(distance) < 45) {
+
+            startAutoplay();
+
+            return;
+
+        }
+
+        if (distance < 0) {
+            nextSlide();
+        } else {
+            previousSlide();
+        }
+
+        startAutoplay();
+
+    }, {
+        passive: true
+    });
 
     updateCarousel();
-
     startAutoplay();
 
 })();
-
 </script>
 
 {% endblock %}
