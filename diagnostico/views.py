@@ -1,5 +1,7 @@
 from pathlib import Path
 import mimetypes
+import os
+import unicodedata
 
 import requests
 
@@ -7,7 +9,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
-from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Avg, Count
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,18 +18,6 @@ from produtos.models import ProdutoAgricola
 from .models import Diagnostico
 
 
-API_IA_URL = getattr(
-    settings,
-    "AGROIA_API_URL",
-    "http://127.0.0.1:8001/analisar",
-)
-
-API_TIMEOUT = getattr(
-    settings,
-    "AGROIA_API_TIMEOUT",
-    120,
-)
-
 MAX_IMAGE_SIZE = 10 * 1024 * 1024
 
 FORMATOS_PERMITIDOS = {
@@ -37,6 +26,44 @@ FORMATOS_PERMITIDOS = {
     "png": "image/png",
     "webp": "image/webp",
 }
+
+API_IA_URL = os.environ.get(
+    "AGROIA_API_URL",
+    getattr(
+        settings,
+        "AGROIA_API_URL",
+        "http://127.0.0.1:8001/analisar",
+    ),
+).strip().rstrip("/")
+
+try:
+    API_TIMEOUT = int(
+        os.environ.get(
+            "AGROIA_API_TIMEOUT",
+            getattr(settings, "AGROIA_API_TIMEOUT", 120),
+        )
+    )
+except (TypeError, ValueError):
+    API_TIMEOUT = 120
+
+
+def normalizar_texto(valor):
+    if valor is None:
+        return ""
+
+    texto = str(valor).strip().lower()
+
+    texto = unicodedata.normalize(
+        "NFKD",
+        texto,
+    ).encode(
+        "ascii",
+        "ignore",
+    ).decode(
+        "ascii"
+    )
+
+    return texto
 
 
 def obter_contadores():
@@ -105,7 +132,9 @@ def obter_estatisticas_utilizador(request):
         "pendentes": pendentes,
         "problemas": problemas,
         "saudaveis": saudaveis,
-        "media_confianca": float(media_confianca or 0),
+        "media_confianca": float(
+            media_confianca or 0
+        ),
     }
 
 
@@ -160,7 +189,9 @@ def obter_estatisticas_produto(request, produto):
         "erros": erros,
         "problemas": problemas,
         "saudaveis": saudaveis,
-        "media_confianca": float(media_confianca or 0),
+        "media_confianca": float(
+            media_confianca or 0
+        ),
         "ultimo_diagnostico": ultimo_diagnostico,
         "primeiro_diagnostico": primeiro_diagnostico,
     }
@@ -174,8 +205,13 @@ def obter_ultimos_diagnosticos(
     queryset = (
         Diagnostico.objects
         .filter(usuario=request.user)
-        .select_related("produto", "usuario")
-        .order_by("-data_criacao")
+        .select_related(
+            "produto",
+            "usuario",
+        )
+        .order_by(
+            "-data_criacao"
+        )
     )
 
     if produto is not None:
@@ -193,25 +229,40 @@ def obter_diagnosticos_produto(request, produto):
             usuario=request.user,
             produto=produto,
         )
-        .select_related("produto", "usuario")
-        .order_by("-data_criacao")
+        .select_related(
+            "produto",
+            "usuario",
+        )
+        .order_by(
+            "-data_criacao"
+        )
     )
 
 
 def obter_produtos_ativos(request=None):
     return (
         ProdutoAgricola.objects
-        .filter(ativo=True)
-        .prefetch_related("categorias")
-        .order_by("nome")
+        .filter(
+            ativo=True
+        )
+        .prefetch_related(
+            "categorias"
+        )
+        .order_by(
+            "nome"
+        )
     )
 
 
 def obter_produto(produto_id):
     return get_object_or_404(
         ProdutoAgricola.objects
-        .filter(ativo=True)
-        .prefetch_related("categorias"),
+        .filter(
+            ativo=True
+        )
+        .prefetch_related(
+            "categorias"
+        ),
         pk=produto_id,
     )
 
@@ -232,11 +283,16 @@ def obter_content_type(nome_imagem):
         Path(nome_imagem)
         .suffix
         .lower()
-        .replace(".", "")
+        .replace(
+            ".",
+            "",
+        )
     )
 
     if extensao in FORMATOS_PERMITIDOS:
-        return FORMATOS_PERMITIDOS[extensao]
+        return FORMATOS_PERMITIDOS[
+            extensao
+        ]
 
     content_type, _ = mimetypes.guess_type(
         nome_imagem
@@ -245,7 +301,7 @@ def obter_content_type(nome_imagem):
     if content_type in FORMATOS_PERMITIDOS.values():
         return content_type
 
-    return None
+    return "image/jpeg"
 
 
 def obter_url_imagem_produto(produto):
@@ -266,15 +322,13 @@ def obter_url_imagem_produto(produto):
             "A imagem do produto não possui uma URL válida."
         )
 
-    if not (
+    if (
         url.startswith("http://")
         or url.startswith("https://")
     ):
-        raise ValueError(
-            "A imagem do produto não possui uma URL pública válida."
-        )
+        return url
 
-    return url
+    return None
 
 
 def baixar_imagem_da_url(url):
@@ -329,133 +383,357 @@ def obter_imagem_produto(produto):
     storage = produto.imagem.storage
     nome = produto.imagem.name
 
-    try:
-        if (
-            nome.startswith("http://")
-            or nome.startswith("https://")
-        ):
-            return baixar_imagem_da_url(nome)
-    except AttributeError:
-        pass
+    if not nome:
+        raise ValueError(
+            "A imagem do produto não possui um nome válido."
+        )
+
+    if (
+        nome.startswith("http://")
+        or nome.startswith("https://")
+    ):
+        return baixar_imagem_da_url(nome)
 
     try:
         url = obter_url_imagem_produto(
             produto
         )
 
-        return baixar_imagem_da_url(
-            url
-        )
+        if url:
+            return baixar_imagem_da_url(
+                url
+            )
+    except Exception:
+        pass
 
-    except Exception as erro_url:
-        try:
-            with storage.open(
-                nome,
-                "rb",
-            ) as arquivo:
-                imagem_bytes = arquivo.read()
+    try:
+        with storage.open(
+            nome,
+            "rb",
+        ) as arquivo:
+            imagem_bytes = arquivo.read()
 
-            if not imagem_bytes:
-                raise ValueError(
-                    "A imagem armazenada está vazia."
-                )
-
-            if len(imagem_bytes) > MAX_IMAGE_SIZE:
-                raise ValueError(
-                    "A imagem do produto excede o limite máximo de 10 MB."
-                )
-
-            return imagem_bytes
-
-        except Exception as erro_storage:
+        if not imagem_bytes:
             raise ValueError(
-                "Não foi possível carregar a imagem do produto. "
-                f"URL: {erro_url}. "
-                f"Storage: {erro_storage}."
-            ) from erro_storage
+                "A imagem armazenada está vazia."
+            )
 
+        if len(imagem_bytes) > MAX_IMAGE_SIZE:
+            raise ValueError(
+                "A imagem do produto excede o limite máximo de 10 MB."
+            )
 
-def normalizar_texto(valor):
-    if valor is None:
-        return ""
+        return imagem_bytes
 
-    return (
-        str(valor)
-        .strip()
-        .lower()
-        .replace("á", "a")
-        .replace("à", "a")
-        .replace("ã", "a")
-        .replace("â", "a")
-        .replace("é", "e")
-        .replace("ê", "e")
-        .replace("í", "i")
-        .replace("ó", "o")
-        .replace("ô", "o")
-        .replace("õ", "o")
-        .replace("ú", "u")
-        .replace("ç", "c")
-    )
-
-
-def normalizar_resultado_ia(resultado_ia):
-    if not isinstance(resultado_ia, dict):
+    except Exception as erro_storage:
         raise ValueError(
-            "A API de IA retornou um resultado inválido."
+            "Não foi possível carregar a imagem do produto. "
+            f"Storage: {erro_storage}."
+        ) from erro_storage
+
+
+def validar_imagem(imagem_bytes):
+    if not imagem_bytes:
+        raise ValueError(
+            "A imagem enviada está vazia."
         )
 
-    classe = (
-        resultado_ia.get("classe")
-        or resultado_ia.get("class")
-        or resultado_ia.get("classe_identificada")
-        or ""
+    if len(imagem_bytes) > MAX_IMAGE_SIZE:
+        raise ValueError(
+            "A imagem do produto excede o limite máximo de 10 MB."
+        )
+
+    return True
+
+
+def enviar_para_api_ia(
+    imagem_bytes,
+    nome_imagem="imagem.jpg",
+):
+    validar_imagem(
+        imagem_bytes
     )
 
-    produto_detectado = (
-        resultado_ia.get("produto")
-        or resultado_ia.get("cultura")
-        or ""
+    content_type = obter_content_type(
+        nome_imagem
     )
 
-    problema = (
-        resultado_ia.get("problema")
-        or resultado_ia.get("doenca")
-        or resultado_ia.get("doenca_identificada")
-        or ""
-    )
+    arquivos = {
+        "imagem": (
+            nome_imagem,
+            imagem_bytes,
+            content_type,
+        )
+    }
 
-    tipo = (
-        resultado_ia.get("tipo")
-        or resultado_ia.get("resultado")
-        or ""
-    )
+    try:
+        response = requests.post(
+            API_IA_URL,
+            files=arquivos,
+            timeout=API_TIMEOUT,
+        )
 
-    confianca = (
-        resultado_ia.get("confianca")
-        if resultado_ia.get("confianca") is not None
-        else resultado_ia.get("confidence")
-    )
+    except requests.exceptions.Timeout as exc:
+        raise TimeoutError(
+            "A inteligência artificial demorou demasiado tempo "
+            "para responder."
+        ) from exc
 
-    if confianca is None:
-        confianca = resultado_ia.get(
-            "precisao",
-            0,
+    except requests.exceptions.ConnectionError as exc:
+        raise ConnectionError(
+            "Não foi possível conectar ao serviço de inteligência "
+            "artificial."
+        ) from exc
+
+    except requests.exceptions.RequestException as exc:
+        raise RuntimeError(
+            f"Erro de comunicação com a inteligência artificial: {exc}"
+        ) from exc
+
+    if response.status_code >= 400:
+        try:
+            erro_api = response.json()
+        except ValueError:
+            erro_api = response.text
+
+        raise RuntimeError(
+            "A API de inteligência artificial retornou "
+            f"HTTP {response.status_code}: {erro_api}"
         )
 
     try:
-        confianca = float(confianca)
-    except (
-        TypeError,
-        ValueError,
+        dados = response.json()
+    except ValueError as exc:
+        raise ValueError(
+            "A API de inteligência artificial retornou "
+            "uma resposta que não é JSON válido."
+        ) from exc
+
+    if not isinstance(dados, dict):
+        raise ValueError(
+            "A API de inteligência artificial retornou "
+            "um formato de dados inválido."
+        )
+
+    if dados.get("sucesso") is False:
+        mensagem = (
+            dados.get("mensagem")
+            or dados.get("erro")
+            or "A inteligência artificial não conseguiu analisar a imagem."
+        )
+
+        raise RuntimeError(
+            str(mensagem)
+        )
+
+    return dados
+
+
+def identificar_produto_da_classe(classe):
+    texto = normalizar_texto(
+        classe
+    )
+
+    culturas = {
+        "milho": [
+            "corn",
+            "maize",
+            "milho",
+        ],
+        "tomate": [
+            "tomato",
+            "tomate",
+        ],
+        "batata": [
+            "potato",
+            "batata",
+        ],
+        "maca": [
+            "apple",
+            "maca",
+        ],
+        "uva": [
+            "grape",
+            "uva",
+        ],
+        "pessego": [
+            "peach",
+            "pessego",
+        ],
+        "cereja": [
+            "cherry",
+            "cereja",
+        ],
+        "laranja": [
+            "orange",
+            "laranja",
+        ],
+        "soja": [
+            "soybean",
+            "soy",
+            "soja",
+        ],
+        "morango": [
+            "strawberry",
+            "morango",
+        ],
+        "framboesa": [
+            "raspberry",
+            "framboesa",
+        ],
+        "mirtilo": [
+            "blueberry",
+            "mirtilo",
+        ],
+        "pimentao": [
+            "pepper",
+            "bell_pepper",
+            "pimentao",
+        ],
+        "abobora": [
+            "squash",
+            "pumpkin",
+            "abobora",
+        ],
+        "feijao": [
+            "bean",
+            "beans",
+            "feijao",
+        ],
+        "mandioca": [
+            "cassava",
+            "yuca",
+            "mandioca",
+        ],
+        "arroz": [
+            "rice",
+            "arroz",
+        ],
+    }
+
+    for produto, nomes in culturas.items():
+        if any(
+            nome in texto
+            for nome in nomes
+        ):
+            return produto
+
+    return ""
+
+
+def obter_nome_produto_detectado(
+    classe,
+    resultado=None,
+):
+    if isinstance(
+        resultado,
+        dict,
     ):
-        confianca = 0
+        produto = resultado.get(
+            "produto"
+        )
 
-    if confianca <= 1:
-        confianca *= 100
+        if produto:
+            return str(
+                produto
+            ).strip()
 
-    confianca = max(
-        0,
-        min(100, confianca),
+    produto = identificar_produto_da_classe(
+        classe
+    )
+
+    nomes = {
+        "milho": "Milho",
+        "tomate": "Tomate",
+        "batata": "Batata",
+        "maca": "Maçã",
+        "uva": "Uva",
+        "pessego": "Pêssego",
+        "cereja": "Cereja",
+        "laranja": "Laranja",
+        "soja": "Soja",
+        "morango": "Morango",
+        "framboesa": "Framboesa",
+        "mirtilo": "Mirtilo",
+        "pimentao": "Pimentão",
+        "abobora": "Abóbora",
+        "feijao": "Feijão",
+        "mandioca": "Mandioca",
+        "arroz": "Arroz",
+    }
+
+    return nomes.get(
+        produto,
+        "",
+    )
+
+
+def normalizar_resultado_ia(
+    dados_api,
+    produto=None,
+):
+    if not isinstance(
+        dados_api,
+        dict,
+    ):
+        raise ValueError(
+            "Resposta da API inválida."
+        )
+
+    resultado_api = dados_api.get(
+        "resultado"
+    )
+
+    if not isinstance(
+        resultado_api,
+        dict,
+    ):
+        resultado_api = dados_api
+
+    classe = (
+        resultado_api.get(
+            "classe"
+        )
+        or resultado_api.get(
+            "class"
+        )
+        or resultado_api.get(
+            "classe_identificada"
+        )
+        or ""
+    )
+
+    classe = str(
+        classe
+    ).strip()
+
+    produto_detectado = obter_nome_produto_detectado(
+        classe,
+        resultado_api,
+    )
+
+    problema = (
+        resultado_api.get(
+            "problema"
+        )
+        or resultado_api.get(
+            "doenca"
+        )
+        or resultado_api.get(
+            "doenca_identificada"
+        )
+        or ""
+    )
+
+    problema = str(
+        problema
+    ).strip()
+
+    tipo = (
+        resultado_api.get(
+            "tipo"
+        )
+        or ""
     )
 
     tipo_normalizado = normalizar_texto(
@@ -466,208 +744,353 @@ def normalizar_resultado_ia(resultado_ia):
         problema
     )
 
-    if any(
-        palavra in tipo_normalizado
-        for palavra in [
-            "saudavel",
-            "healthy",
-            "normal",
-        ]
+    resultado = (
+        resultado_api.get(
+            "resultado"
+        )
+        or ""
+    )
+
+    resultado_normalizado = normalizar_texto(
+        resultado
+    )
+
+    if resultado_normalizado in {
+        "saudavel",
+        "saude",
+        "healthy",
+        "normal",
+    }:
+        resultado_final = "saudavel"
+
+    elif resultado_normalizado in {
+        "praga",
+        "pest",
+        "pests",
+    }:
+        resultado_final = "praga"
+
+    elif resultado_normalizado in {
+        "fungo",
+        "fungica",
+        "fungico",
+        "fungal",
+        "fungal_disease",
+    }:
+        resultado_final = "fungo"
+
+    elif resultado_normalizado in {
+        "doenca",
+        "disease",
+        "viral",
+        "bacterial",
+        "bacteriana",
+        "bacteriano",
+        "virica",
+        "virico",
+    }:
+        resultado_final = "doenca"
+
+    elif resultado_normalizado in {
+        "deficiencia",
+        "deficiency",
+        "nutritional_deficiency",
+    }:
+        resultado_final = "deficiencia"
+
+    elif (
+        "fung" in tipo_normalizado
+        or "fung" in problema_normalizado
     ):
-        resultado = "saudavel"
+        resultado_final = "fungo"
 
-    elif any(
-        palavra in tipo_normalizado
-        for palavra in [
-            "praga",
-            "pest",
-            "inseto",
-        ]
+    elif (
+        "praga" in tipo_normalizado
+        or "pest" in tipo_normalizado
+        or "praga" in problema_normalizado
+        or "pest" in problema_normalizado
     ):
-        resultado = "praga"
+        resultado_final = "praga"
 
-    elif any(
-        palavra in tipo_normalizado
-        for palavra in [
-            "fungo",
-            "fungal",
-            "fungica",
-            "fungico",
-        ]
+    elif (
+        "viral" in tipo_normalizado
+        or "bacter" in tipo_normalizado
+        or "viral" in problema_normalizado
+        or "bacter" in problema_normalizado
     ):
-        resultado = "fungo"
+        resultado_final = "doenca"
 
-    elif any(
-        palavra in tipo_normalizado
-        for palavra in [
-            "deficiencia",
-            "nutricional",
-            "nutriente",
-        ]
+    elif (
+        "deficien" in tipo_normalizado
+        or "deficien" in problema_normalizado
     ):
-        resultado = "deficiencia"
+        resultado_final = "deficiencia"
 
-    elif any(
-        palavra in tipo_normalizado
-        for palavra in [
-            "doenca",
-            "disease",
-        ]
+    elif (
+        "healthy" in normalizar_texto(classe)
+        or "saudavel" in normalizar_texto(classe)
     ):
-        resultado = "doenca"
+        resultado_final = "saudavel"
 
-    elif any(
-        palavra in tipo_normalizado
-        for palavra in [
-            "viral",
-            "virus",
-        ]
-    ):
-        resultado = "doenca"
-
-    elif problema_normalizado:
-        problema_lower = problema_normalizado
-
-        if any(
-            palavra in problema_lower
-            for palavra in [
-                "acaro",
-                "inseto",
-                "praga",
-            ]
-        ):
-            resultado = "praga"
-
-        elif any(
-            palavra in problema_lower
-            for palavra in [
-                "fungo",
-                "ferrugem",
-                "oídio",
-                "oidio",
-                "podridao",
-                "mancha",
-                "requeima",
-            ]
-        ):
-            resultado = "fungo"
-
-        elif any(
-            palavra in problema_lower
-            for palavra in [
-                "virus",
-                "viral",
-            ]
-        ):
-            resultado = "doenca"
-
-        else:
-            resultado = "doenca"
+    elif problema:
+        resultado_final = "doenca"
 
     else:
-        resultado = "indeterminado"
+        resultado_final = "indeterminado"
+
+    try:
+        confianca = float(
+            resultado_api.get(
+                "confianca",
+                0,
+            )
+            or 0
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        confianca = 0.0
+
+    confianca = max(
+        0.0,
+        min(
+            100.0,
+            confianca,
+        ),
+    )
+
+    try:
+        principais_previsoes = (
+            resultado_api.get(
+                "principais_previsoes",
+                []
+            )
+            or []
+        )
+    except AttributeError:
+        principais_previsoes = []
+
+    if not isinstance(
+        principais_previsoes,
+        list,
+    ):
+        principais_previsoes = []
+
+    previsoes_normalizadas = []
+
+    for previsao in principais_previsoes:
+        if not isinstance(
+            previsao,
+            dict,
+        ):
+            continue
+
+        previsao_classe = str(
+            previsao.get(
+                "classe",
+                ""
+            )
+            or ""
+        ).strip()
+
+        previsao_produto = (
+            previsao.get(
+                "produto"
+            )
+            or obter_nome_produto_detectado(
+                previsao_classe,
+                previsao,
+            )
+        )
+
+        previsao_problema = str(
+            previsao.get(
+                "problema",
+                ""
+            )
+            or ""
+        ).strip()
+
+        try:
+            previsao_confianca = float(
+                previsao.get(
+                    "confianca",
+                    0,
+                )
+                or 0
+            )
+        except (
+            TypeError,
+            ValueError,
+        ):
+            previsao_confianca = 0.0
+
+        previsoes_normalizadas.append(
+            {
+                "classe": previsao_classe,
+                "produto": str(
+                    previsao_produto or ""
+                ),
+                "problema": previsao_problema,
+                "tipo": str(
+                    previsao.get(
+                        "tipo",
+                        ""
+                    )
+                    or ""
+                ),
+                "confianca": max(
+                    0.0,
+                    min(
+                        100.0,
+                        previsao_confianca,
+                    ),
+                ),
+            }
+        )
 
     descricao = (
-        resultado_ia.get("descricao")
-        or resultado_ia.get("descricao_resultado")
+        resultado_api.get(
+            "descricao"
+        )
+        or resultado_api.get(
+            "descricao_resultado"
+        )
         or ""
     )
 
     recomendacoes = (
-        resultado_ia.get("recomendacoes")
-        or resultado_ia.get("recomendacao")
+        resultado_api.get(
+            "recomendacoes"
+        )
         or ""
     )
 
-    principais_previsoes = (
-        resultado_ia.get("principais_previsoes")
-        or resultado_ia.get("previsoes")
-        or []
+    baixa_confianca = (
+        resultado_api.get(
+            "baixa_confianca"
+        )
     )
 
-    if not descricao:
-        if resultado == "saudavel":
-            descricao = (
-                "A análise da inteligência artificial indica "
-                "que a cultura apresenta características "
-                "compatíveis com uma condição saudável."
-            )
+    if baixa_confianca is None:
+        baixa_confianca = confianca < 40.0
 
-        elif resultado == "praga":
-            descricao = (
-                "A inteligência artificial identificou "
-                "características compatíveis com a presença "
-                "de uma possível praga."
-            )
+    produto_compativel = (
+        resultado_api.get(
+            "produto_compativel"
+        )
+    )
 
-        elif resultado == "fungo":
-            descricao = (
-                "A análise identificou características "
-                "compatíveis com uma possível doença fúngica."
-            )
+    mensagem_compatibilidade = (
+        resultado_api.get(
+            "mensagem_compatibilidade"
+        )
+        or ""
+    )
 
-        elif resultado == "deficiencia":
-            descricao = (
-                "Foram identificadas características que podem "
-                "estar relacionadas com uma deficiência nutricional."
-            )
-
-        elif resultado == "doenca":
-            descricao = (
-                "A inteligência artificial identificou "
-                "características compatíveis com uma possível doença."
-            )
-
-        else:
-            descricao = (
-                "Não foi possível determinar com segurança "
-                "a condição da cultura."
-            )
-
-    if not recomendacoes:
-        if resultado == "saudavel":
-            recomendacoes = (
-                "Continue a acompanhar regularmente a cultura, "
-                "mantenha boas práticas agrícolas e realize "
-                "novas análises sempre que observar alterações."
-            )
-
-        elif resultado in [
-            "doenca",
-            "fungo",
-            "praga",
-            "deficiencia",
-        ]:
-            recomendacoes = (
-                "Recomenda-se acompanhar a evolução dos sintomas, "
-                "verificar as condições da cultura e procurar "
-                "orientação de um técnico agrícola antes de aplicar "
-                "qualquer tratamento."
-            )
-
-        else:
-            recomendacoes = (
-                "Realize uma nova análise utilizando uma imagem "
-                "de boa qualidade e, se possível, procure "
-                "avaliação técnica."
-            )
-
-    return {
+    resultado = {
         "classe": classe,
         "produto": produto_detectado,
-        "problema": problema,
-        "tipo": tipo,
-        "resultado": resultado,
-        "confianca": round(
-            confianca,
-            2,
+        "produtos": (
+            [produto_detectado]
+            if produto_detectado
+            else []
         ),
-        "descricao": descricao,
-        "recomendacoes": recomendacoes,
-        "principais_previsoes": principais_previsoes,
-        "baixa_confianca": confianca < 40,
-        "resultado_bruto": resultado_ia,
+        "problema": problema,
+        "tipo": str(
+            tipo
+        ).strip(),
+        "confianca": confianca,
+        "resultado": resultado_final,
+        "doenca": problema,
+        "descricao": str(
+            descricao
+        ).strip(),
+        "recomendacoes": str(
+            recomendacoes
+        ).strip(),
+        "principais_previsoes": previsoes_normalizadas,
+        "produto_compativel": produto_compativel,
+        "mensagem_compatibilidade": str(
+            mensagem_compatibilidade
+        ).strip(),
+        "baixa_confianca": bool(
+            baixa_confianca
+        ),
     }
+
+    if produto is not None:
+        if produto_compativel is None:
+            produto_compativel = verificar_compatibilidade(
+                produto,
+                produto_detectado,
+            )
+
+            resultado[
+                "produto_compativel"
+            ] = produto_compativel
+
+        if not produto_compativel:
+            resultado[
+                "mensagem_compatibilidade"
+            ] = (
+                "A cultura identificada pela inteligência artificial "
+                "não corresponde claramente ao produto selecionado."
+            )
+
+    return resultado
+
+
+def analisar_imagem(
+    imagem=None,
+    produto=None,
+    nome_imagem="imagem.jpg",
+):
+    if imagem is None and produto is not None:
+        imagem = obter_imagem_produto(
+            produto
+        )
+
+    if imagem is None:
+        raise ValueError(
+            "Nenhuma imagem foi fornecida para análise."
+        )
+
+    if hasattr(
+        imagem,
+        "read",
+    ):
+        imagem_bytes = imagem.read()
+
+        if hasattr(
+            imagem,
+            "name",
+        ):
+            nome_imagem = (
+                Path(
+                    imagem.name
+                ).name
+                or nome_imagem
+            )
+    else:
+        imagem_bytes = bytes(
+            imagem
+        )
+
+    validar_imagem(
+        imagem_bytes
+    )
+
+    dados_api = enviar_para_api_ia(
+        imagem_bytes,
+        nome_imagem,
+    )
+
+    return normalizar_resultado_ia(
+        dados_api,
+        produto=produto,
+    )
 
 
 def verificar_compatibilidade(
@@ -759,7 +1182,7 @@ def verificar_compatibilidade(
         ],
     }
 
-    for cultura, nomes in equivalencias.items():
+    for nomes in equivalencias.values():
         produto_correspondente = any(
             nome in produto_base
             for nome in nomes
@@ -803,23 +1226,65 @@ def construir_observacoes(
             "O resultado deve ser interpretado com cautela."
         )
 
-    if resultado.get("baixa_confianca"):
+    if resultado.get(
+        "baixa_confianca"
+    ):
         observacoes.append(
             "A confiança da inteligência artificial está abaixo "
             "do nível mínimo recomendado para uma interpretação "
             "segura."
         )
 
-    if resultado.get("produto"):
+    produto_detectado = resultado.get(
+        "produto"
+    )
+
+    if produto_detectado:
         observacoes.append(
             "Cultura identificada pela IA: "
-            f"{resultado['produto']}."
+            f"{produto_detectado}."
         )
 
-    if resultado.get("classe"):
+    tipo = resultado.get(
+        "tipo"
+    )
+
+    if tipo:
+        observacoes.append(
+            "Tipo de resultado identificado: "
+            f"{tipo}."
+        )
+
+    classe = resultado.get(
+        "classe"
+    )
+
+    if classe:
         observacoes.append(
             "Classe identificada: "
-            f"{resultado['classe']}."
+            f"{classe}."
+        )
+
+    confianca = resultado.get(
+        "confianca"
+    )
+
+    if confianca is not None:
+        observacoes.append(
+            f"Confiança da análise: {float(confianca):.2f}%."
+        )
+
+    previsoes = resultado.get(
+        "principais_previsoes"
+    )
+
+    if isinstance(
+        previsoes,
+        list,
+    ) and previsoes:
+        observacoes.append(
+            "A análise considerou múltiplas previsões "
+            "do modelo de inteligência artificial."
         )
 
     if not observacoes:
@@ -831,127 +1296,6 @@ def construir_observacoes(
     return "\n".join(
         observacoes
     )
-
-
-def enviar_para_api_ia(
-    imagem_bytes,
-    nome_imagem,
-):
-    if not imagem_bytes:
-        raise ValueError(
-            "A imagem está vazia."
-        )
-
-    if len(imagem_bytes) > MAX_IMAGE_SIZE:
-        raise ValueError(
-            "A imagem excede o limite máximo de 10 MB."
-        )
-
-    content_type = obter_content_type(
-        nome_imagem
-    )
-
-    if not content_type:
-        raise ValueError(
-            "Formato de imagem não suportado. "
-            "Utilize JPG, JPEG, PNG ou WEBP."
-        )
-
-    if not API_IA_URL:
-        raise RuntimeError(
-            "A URL da API de inteligência artificial não está configurada."
-        )
-
-    if (
-        API_IA_URL.startswith(
-            "http://127.0.0.1"
-        )
-        or API_IA_URL.startswith(
-            "http://localhost"
-        )
-    ) and not settings.DEBUG:
-        raise RuntimeError(
-            "A API de IA está configurada para localhost. "
-            "Na Vercel, AGROIA_API_URL deve apontar para a URL "
-            "pública da API FastAPI."
-        )
-
-    try:
-        response = requests.post(
-            API_IA_URL,
-            files={
-                "imagem": (
-                    nome_imagem,
-                    imagem_bytes,
-                    content_type,
-                )
-            },
-            timeout=API_TIMEOUT,
-        )
-
-    except requests.exceptions.ConnectionError as exc:
-        raise ConnectionError(
-            "Não foi possível conectar ao serviço de inteligência "
-            "artificial. Verifique se a API FastAPI está online "
-            "e se AGROIA_API_URL aponta para a URL correta."
-        ) from exc
-
-    except requests.exceptions.Timeout as exc:
-        raise TimeoutError(
-            "A análise demorou demasiado tempo e ultrapassou "
-            "o limite definido."
-        ) from exc
-
-    except requests.exceptions.RequestException as exc:
-        raise RuntimeError(
-            f"Erro de comunicação com a API de IA: {exc}"
-        ) from exc
-
-    if response.status_code != 200:
-        try:
-            detalhe = response.json()
-        except ValueError:
-            detalhe = response.text
-
-        raise RuntimeError(
-            "A API de IA retornou o estado "
-            f"{response.status_code}: {detalhe}"
-        )
-
-    try:
-        dados = response.json()
-    except ValueError as exc:
-        raise ValueError(
-            "A API de IA não retornou um JSON válido."
-        ) from exc
-
-    if not isinstance(dados, dict):
-        raise ValueError(
-            "A resposta da API possui um formato inválido."
-        )
-
-    if dados.get("sucesso") is False:
-        raise RuntimeError(
-            dados.get(
-                "erro",
-                "A inteligência artificial não conseguiu "
-                "processar a imagem.",
-            )
-        )
-
-    resultado = dados.get(
-        "resultado"
-    )
-
-    if resultado is None:
-        resultado = dados
-
-    if not isinstance(resultado, dict):
-        raise ValueError(
-            "O resultado recebido da IA possui formato inválido."
-        )
-
-    return resultado
 
 
 @login_required
@@ -1082,6 +1426,7 @@ def diagnostico(
         ),
         "estatisticas": estatisticas,
         "estatisticas_produto": estatisticas_produto,
+        "api_ia_url": API_IA_URL,
     }
 
     return render(
@@ -1136,12 +1481,21 @@ def analisar(
     diagnostico_obj = None
 
     try:
+        if not produto.imagem:
+            raise ValueError(
+                "Este produto não possui uma imagem cadastrada."
+            )
+
         imagem_bytes = obter_imagem_produto(
             produto
         )
 
         nome_imagem = obter_nome_imagem(
             produto
+        )
+
+        validar_imagem(
+            imagem_bytes
         )
 
         diagnostico_obj = Diagnostico.objects.create(
@@ -1153,20 +1507,31 @@ def analisar(
             ),
             status="processando",
             resultado="indeterminado",
+            confianca=0,
         )
 
-        resultado_ia = enviar_para_api_ia(
-            imagem_bytes,
-            nome_imagem,
+        resultado = analisar_imagem(
+            imagem=imagem_bytes,
+            produto=produto,
+            nome_imagem=nome_imagem,
         )
 
-        resultado = normalizar_resultado_ia(
-            resultado_ia
+        if not isinstance(
+            resultado,
+            dict,
+        ):
+            raise ValueError(
+                "O serviço de inteligência artificial "
+                "retornou um resultado inválido."
+            )
+
+        produto_detectado = resultado.get(
+            "produto"
         )
 
         compativel = verificar_compatibilidade(
             produto,
-            resultado.get("produto"),
+            produto_detectado,
         )
 
         observacoes = construir_observacoes(
@@ -1241,15 +1606,26 @@ def analisar(
         )
 
     except Exception as exc:
-        erro = str(exc)
+        erro = str(
+            exc
+        ).strip()
+
+        if not erro:
+            erro = (
+                "Ocorreu um erro desconhecido durante "
+                "o processamento do diagnóstico."
+            )
 
         if diagnostico_obj is not None:
             try:
                 diagnostico_obj.status = "erro"
+
                 diagnostico_obj.resultado = (
                     "indeterminado"
                 )
+
                 diagnostico_obj.erro = erro
+
                 diagnostico_obj.observacoes = (
                     "O diagnóstico não pôde ser concluído "
                     "devido a um erro durante o processamento."
@@ -1308,11 +1684,17 @@ def historico_produto(
             produto=produto,
             status="concluido",
         )
-        .values("resultado")
-        .annotate(
-            total=Count("id")
+        .values(
+            "resultado"
         )
-        .order_by("-total")
+        .annotate(
+            total=Count(
+                "id"
+            )
+        )
+        .order_by(
+            "-total"
+        )
     )
 
     evolucao_confianca = []
