@@ -1,11 +1,11 @@
 import os
 import uuid
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import urlparse
 
-import requests
 from django.core.exceptions import SuspiciousOperation
 from django.core.files.storage import Storage
+from vercel.blob import BlobClient
 
 
 class VercelBlobStorage(Storage):
@@ -17,26 +17,15 @@ class VercelBlobStorage(Storage):
                 "BLOB_READ_WRITE_TOKEN não está configurado."
             )
 
-        self.public_url = os.environ.get("BLOB_PUBLIC_URL")
-
-        if not self.public_url:
-            raise RuntimeError(
-                "BLOB_PUBLIC_URL não está configurado."
-            )
-
-        self.public_url = self.public_url.rstrip("/")
-
-        self.api_url = "https://blob.vercel-storage.com"
-
-        self.timeout = int(
-            os.environ.get(
-                "BLOB_REQUEST_TIMEOUT",
-                "60",
-            )
+        self.client = BlobClient(
+            token=self.token
         )
 
     def _normalizar_nome(self, name):
         name = str(name).replace("\\", "/").lstrip("/")
+
+        if name.startswith("http://") or name.startswith("https://"):
+            return name
 
         partes = Path(name).parts
 
@@ -49,6 +38,9 @@ class VercelBlobStorage(Storage):
 
     def _gerar_nome_unico(self, name):
         name = self._normalizar_nome(name)
+
+        if name.startswith("http://") or name.startswith("https://"):
+            return name
 
         caminho = Path(name)
 
@@ -70,22 +62,28 @@ class VercelBlobStorage(Storage):
             f"{novo_nome}"
         )
 
-    def _blob_url(self, name):
-        name = self._normalizar_nome(name)
+    def _pathname_from_url(self, name):
+        if not name:
+            return ""
 
-        caminho = quote(
-            name,
-            safe="/",
-        )
+        name = str(name)
 
-        return f"{self.api_url}/{caminho}"
+        if not (
+            name.startswith("http://")
+            or name.startswith("https://")
+        ):
+            return self._normalizar_nome(name)
 
-    def _headers(self):
-        return {
-            "Authorization": (
-                f"Bearer {self.token}"
-            ),
-        }
+        parsed = urlparse(name)
+
+        pathname = parsed.path.lstrip("/")
+
+        if not pathname:
+            raise SuspiciousOperation(
+                "URL do Blob inválida."
+            )
+
+        return pathname
 
     def _save(self, name, content):
         name = self._gerar_nome_unico(name)
@@ -111,60 +109,42 @@ class VercelBlobStorage(Storage):
                 "application/octet-stream"
             )
 
-        headers = self._headers()
-
-        headers["Content-Type"] = content_type
-
-        headers["x-vercel-blob-access"] = "public"
-
-        headers["x-vercel-blob-add-random-suffix"] = (
-            "false"
-        )
-
         try:
-            response = requests.put(
-                self._blob_url(name),
-                data=conteudo,
-                headers=headers,
-                timeout=self.timeout,
+            resultado = self.client.put(
+                name,
+                conteudo,
+                access="public",
+                content_type=content_type,
+                add_random_suffix=False,
             )
-        except requests.RequestException as erro:
+        except Exception as erro:
             raise RuntimeError(
-                "Não foi possível comunicar com "
-                f"o Vercel Blob: {erro}"
+                "Não foi possível enviar o ficheiro "
+                f"para o Vercel Blob: {erro}"
             ) from erro
 
-        if not response.ok:
-            try:
-                detalhe = response.json()
-            except ValueError:
-                detalhe = response.text
-
-            raise RuntimeError(
-                "Erro ao enviar ficheiro para "
-                f"o Vercel Blob: {detalhe}"
-            )
-
-        try:
-            resultado = response.json()
-        except ValueError as erro:
-            raise RuntimeError(
-                "O Vercel Blob devolveu uma resposta "
-                "inválida após o upload."
-            ) from erro
-
-        pathname = resultado.get(
-            "pathname",
-            name,
+        url = getattr(
+            resultado,
+            "url",
+            None,
         )
 
-        return pathname
+        if not url and isinstance(resultado, dict):
+            url = resultado.get("url")
+
+        if not url:
+            raise RuntimeError(
+                "O Vercel Blob não devolveu a URL "
+                "do ficheiro enviado."
+            )
+
+        return url
 
     def url(self, name):
         if not name:
             return ""
 
-        name = self._normalizar_nome(name)
+        name = str(name)
 
         if name.startswith("http://"):
             return name
@@ -172,50 +152,39 @@ class VercelBlobStorage(Storage):
         if name.startswith("https://"):
             return name
 
-        return (
-            f"{self.public_url}/"
-            f"{name.lstrip('/')}"
+        raise RuntimeError(
+            "O ficheiro armazenado no Vercel Blob "
+            "não possui uma URL válida."
         )
 
     def exists(self, name):
         if not name:
             return False
 
-        name = self._normalizar_nome(name)
-
         try:
-            response = requests.head(
-                self._blob_url(name),
-                headers=self._headers(),
-                timeout=self.timeout,
+            pathname = self._pathname_from_url(name)
+
+            resultado = self.client.head(
+                pathname
             )
 
-            return response.ok
+            return resultado is not None
 
-        except requests.RequestException:
+        except Exception:
             return False
 
     def delete(self, name):
         if not name:
             return
 
-        name = self._normalizar_nome(name)
-
         try:
-            response = requests.delete(
-                self._blob_url(name),
-                headers=self._headers(),
-                timeout=self.timeout,
+            pathname = self._pathname_from_url(name)
+
+            self.client.delete(
+                pathname
             )
 
-            if response.status_code in {
-                200,
-                204,
-                404,
-            }:
-                return
-
-        except requests.RequestException:
+        except Exception:
             return
 
     def size(self, name):
@@ -224,43 +193,44 @@ class VercelBlobStorage(Storage):
                 "Nome do ficheiro não informado."
             )
 
-        name = self._normalizar_nome(name)
-
         try:
-            response = requests.head(
-                self._blob_url(name),
-                headers=self._headers(),
-                timeout=self.timeout,
+            pathname = self._pathname_from_url(name)
+
+            resultado = self.client.head(
+                pathname
             )
-        except requests.RequestException as erro:
+
+        except Exception as erro:
             raise RuntimeError(
                 "Não foi possível consultar o "
                 "Vercel Blob."
             ) from erro
 
-        if response.status_code == 404:
+        if resultado is None:
             raise FileNotFoundError(
                 "Ficheiro não encontrado no "
                 "Vercel Blob."
             )
 
-        if not response.ok:
-            raise RuntimeError(
-                "Não foi possível obter o tamanho "
-                "do ficheiro."
-            )
-
-        content_length = response.headers.get(
-            "Content-Length"
+        tamanho = getattr(
+            resultado,
+            "size",
+            None,
         )
 
-        if content_length is None:
+        if tamanho is None and isinstance(
+            resultado,
+            dict,
+        ):
+            tamanho = resultado.get("size")
+
+        if tamanho is None:
             raise NotImplementedError(
-                "O Vercel Blob não forneceu "
-                "Content-Length."
+                "O Vercel Blob não forneceu o "
+                "tamanho do ficheiro."
             )
 
-        return int(content_length)
+        return int(tamanho)
 
     def _open(self, name, mode="rb"):
         raise NotImplementedError(
