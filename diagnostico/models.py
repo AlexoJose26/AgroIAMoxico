@@ -5,25 +5,12 @@ from produtos.models import ProdutoAgricola
 
 
 class Diagnostico(models.Model):
-    """
-    Regista um diagnóstico realizado através do sistema
-    de Visão Computacional do AgroIA Moxico.
-    """
-
-    # ============================================================
-    # ESTADOS
-    # ============================================================
-
     STATUS_CHOICES = [
         ("pendente", "Pendente"),
         ("processando", "Processando"),
         ("concluido", "Concluído"),
         ("erro", "Erro"),
     ]
-
-    # ============================================================
-    # RESULTADOS
-    # ============================================================
 
     RESULTADO_CHOICES = [
         ("saudavel", "Saudável"),
@@ -35,20 +22,12 @@ class Diagnostico(models.Model):
         ("indeterminado", "Indeterminado"),
     ]
 
-    # ============================================================
-    # UTILIZADOR
-    # ============================================================
-
     usuario = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="diagnosticos",
         verbose_name="Utilizador",
     )
-
-    # ============================================================
-    # PRODUTO AGRÍCOLA
-    # ============================================================
 
     produto = models.ForeignKey(
         ProdutoAgricola,
@@ -59,28 +38,17 @@ class Diagnostico(models.Model):
         verbose_name="Produto agrícola",
     )
 
-    # ============================================================
-    # IMAGEM
-    # ============================================================
-
     imagem = models.ImageField(
         upload_to="diagnosticos/%Y/%m/%d/",
+        max_length=255,
         verbose_name="Imagem analisada",
     )
-
-    # ============================================================
-    # CLASSE DETETADA PELA IA
-    # ============================================================
 
     classe_identificada = models.CharField(
         max_length=150,
         blank=True,
         verbose_name="Classe identificada pela IA",
     )
-
-    # ============================================================
-    # RESULTADO
-    # ============================================================
 
     resultado = models.CharField(
         max_length=30,
@@ -89,19 +57,11 @@ class Diagnostico(models.Model):
         verbose_name="Resultado",
     )
 
-    # ============================================================
-    # DOENÇA
-    # ============================================================
-
     doenca_identificada = models.CharField(
         max_length=200,
         blank=True,
         verbose_name="Doença identificada",
     )
-
-    # ============================================================
-    # CONFIANÇA
-    # ============================================================
 
     confianca = models.DecimalField(
         max_digits=5,
@@ -110,36 +70,20 @@ class Diagnostico(models.Model):
         verbose_name="Confiança da IA (%)",
     )
 
-    # ============================================================
-    # DESCRIÇÃO
-    # ============================================================
-
     descricao_resultado = models.TextField(
         blank=True,
         verbose_name="Descrição do resultado",
     )
-
-    # ============================================================
-    # RECOMENDAÇÕES
-    # ============================================================
 
     recomendacoes = models.TextField(
         blank=True,
         verbose_name="Recomendações",
     )
 
-    # ============================================================
-    # OBSERVAÇÕES
-    # ============================================================
-
     observacoes = models.TextField(
         blank=True,
         verbose_name="Observações",
     )
-
-    # ============================================================
-    # STATUS
-    # ============================================================
 
     status = models.CharField(
         max_length=20,
@@ -148,18 +92,10 @@ class Diagnostico(models.Model):
         verbose_name="Estado",
     )
 
-    # ============================================================
-    # ERRO
-    # ============================================================
-
     erro = models.TextField(
         blank=True,
         verbose_name="Mensagem de erro",
     )
-
-    # ============================================================
-    # DATAS
-    # ============================================================
 
     data_criacao = models.DateTimeField(
         auto_now_add=True,
@@ -171,18 +107,10 @@ class Diagnostico(models.Model):
         verbose_name="Última atualização",
     )
 
-    # ============================================================
-    # META
-    # ============================================================
-
     class Meta:
         verbose_name = "Diagnóstico"
         verbose_name_plural = "Diagnósticos"
         ordering = ["-data_criacao"]
-
-    # ============================================================
-    # STR
-    # ============================================================
 
     def __str__(self):
         if self.produto:
@@ -196,10 +124,6 @@ class Diagnostico(models.Model):
             f"{self.usuario.username} - "
             f"Diagnóstico #{self.pk}"
         )
-
-    # ============================================================
-    # PROPRIEDADES
-    # ============================================================
 
     @property
     def confianca_formatada(self):
