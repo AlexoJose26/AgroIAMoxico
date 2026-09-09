@@ -26,6 +26,7 @@ class ProdutoAgricola(models.Model):
 
     imagem = models.ImageField(
         upload_to="produtos/",
+        max_length=255,
         blank=True,
         null=True,
         verbose_name="Imagem",

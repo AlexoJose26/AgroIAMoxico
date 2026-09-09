@@ -3,7 +3,7 @@ import logging
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import DataError, transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -16,6 +16,7 @@ from .models import ProdutoAgricola
 logger = logging.getLogger(__name__)
 
 MAX_IMAGE_SIZE = 4 * 1024 * 1024
+MAX_IMAGE_PATH_LENGTH = 255
 
 try:
     from diagnostico.models import Diagnostico
@@ -75,6 +76,44 @@ def _validar_imagem_upload(request):
             "Utilize JPG, PNG ou WEBP."
         )
 
+    nome_imagem = getattr(imagem, "name", "") or ""
+    caminho_estimado = f"produtos/{nome_imagem}"
+
+    if len(caminho_estimado) > MAX_IMAGE_PATH_LENGTH:
+        raise ValidationError(
+            "O nome da imagem é demasiado longo. "
+            "Escolha uma imagem com um nome mais curto."
+        )
+
+
+def _validar_caminho_imagem(produto):
+    imagem = getattr(produto, "imagem", None)
+
+    if not imagem:
+        return
+
+    nome = getattr(imagem, "name", "") or ""
+
+    if len(nome) > MAX_IMAGE_PATH_LENGTH:
+        raise ValidationError(
+            "O caminho da imagem ultrapassa o limite permitido. "
+            "Utilize um nome de ficheiro mais curto."
+        )
+
+
+def _guardar_produto(produto, form, request):
+    _validar_caminho_imagem(produto)
+
+    if hasattr(produto, "usuario_id"):
+        if not produto.usuario_id:
+            produto.usuario = request.user
+
+    produto.full_clean()
+    produto.save()
+    form.save_m2m()
+
+    return produto
+
 
 @login_required
 def produtos(request):
@@ -84,10 +123,7 @@ def produtos(request):
         .order_by("nome")
     )
 
-    total_produtos = (
-        ProdutoAgricola.objects
-        .count()
-    )
+    total_produtos = ProdutoAgricola.objects.count()
 
     total_disponiveis = (
         ProdutoAgricola.objects
@@ -165,14 +201,11 @@ def criar_produto(request):
                         commit=False
                     )
 
-                    if hasattr(
+                    _guardar_produto(
                         produto,
-                        "usuario_id"
-                    ):
-                        produto.usuario = request.user
-
-                    produto.save()
-                    form.save_m2m()
+                        form,
+                        request
+                    )
 
                 messages.success(
                     request,
@@ -197,6 +230,19 @@ def criar_produto(request):
                         mensagem
                     )
 
+            except DataError:
+                logger.exception(
+                    "Erro de banco de dados ao cadastrar produto."
+                )
+
+                messages.error(
+                    request,
+                    "A imagem ou algum dos dados enviados "
+                    "ultrapassa o limite permitido pelo banco "
+                    "de dados. Escolha uma imagem com nome mais "
+                    "curto e tente novamente."
+                )
+
             except Exception:
                 logger.exception(
                     "Erro ao cadastrar produto."
@@ -204,21 +250,21 @@ def criar_produto(request):
 
                 messages.error(
                     request,
-                    "Não foi possível cadastrar "
-                    "o produto. Verifique os dados "
-                    "e tente novamente."
+                    "Não foi possível cadastrar o produto. "
+                    "Verifique os dados e tente novamente."
                 )
+
     else:
         form = ProdutoForm()
+
+    categorias = _categorias_ativas()
 
     contexto = {
         "form": form,
         "titulo": "Cadastrar Produto",
         "modo": "criar",
-        "categorias": _categorias_ativas(),
-        "categorias_disponiveis": (
-            _categorias_ativas()
-        ),
+        "categorias": categorias,
+        "categorias_disponiveis": categorias,
     }
 
     return render(
@@ -321,8 +367,11 @@ def editar_produto(request, pk):
                     ):
                         produto.usuario = request.user
 
-                    produto.save()
-                    form.save_m2m()
+                    _guardar_produto(
+                        produto,
+                        form,
+                        request
+                    )
 
                 messages.success(
                     request,
@@ -347,6 +396,20 @@ def editar_produto(request, pk):
                         mensagem
                     )
 
+            except DataError:
+                logger.exception(
+                    "Erro de banco de dados ao atualizar produto %s.",
+                    produto.pk
+                )
+
+                messages.error(
+                    request,
+                    "A imagem ou algum dos dados enviados "
+                    "ultrapassa o limite permitido pelo banco "
+                    "de dados. Escolha uma imagem com nome mais "
+                    "curto e tente novamente."
+                )
+
             except Exception:
                 logger.exception(
                     "Erro ao atualizar produto %s.",
@@ -355,10 +418,10 @@ def editar_produto(request, pk):
 
                 messages.error(
                     request,
-                    "Não foi possível atualizar "
-                    "o produto. Verifique os dados "
-                    "e tente novamente."
+                    "Não foi possível atualizar o produto. "
+                    "Verifique os dados e tente novamente."
                 )
+
     else:
         form = ProdutoForm(
             instance=produto
@@ -421,8 +484,8 @@ def eliminar_produto(request, pk):
 
             messages.error(
                 request,
-                "Não foi possível eliminar "
-                "o produto. Tente novamente."
+                "Não foi possível eliminar o produto. "
+                "Tente novamente."
             )
 
         return redirect(
