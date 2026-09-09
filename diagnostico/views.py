@@ -175,13 +175,19 @@ def obter_estatisticas_produto(request, produto):
         media=Avg("confianca")
     )["media"]
 
-    ultimo_diagnostico = diagnosticos.order_by(
-        "-data_criacao"
-    ).first()
+    ultimo_diagnostico = (
+        diagnosticos
+        .filter(status="concluido")
+        .order_by("-data_criacao")
+        .first()
+    )
 
-    primeiro_diagnostico = diagnosticos.order_by(
-        "data_criacao"
-    ).first()
+    primeiro_diagnostico = (
+        diagnosticos
+        .filter(status="concluido")
+        .order_by("data_criacao")
+        .first()
+    )
 
     return {
         "total": total,
@@ -204,7 +210,10 @@ def obter_ultimos_diagnosticos(
 ):
     queryset = (
         Diagnostico.objects
-        .filter(usuario=request.user)
+        .filter(
+            usuario=request.user,
+            status="concluido",
+        )
         .select_related(
             "produto",
             "usuario",
@@ -265,6 +274,81 @@ def obter_produto(produto_id):
         ),
         pk=produto_id,
     )
+
+
+def obter_produtos_com_resumo(request):
+    produtos = list(
+        obter_produtos_ativos(request)
+    )
+
+    diagnosticos = list(
+        Diagnostico.objects
+        .filter(
+            usuario=request.user,
+            status="concluido",
+        )
+        .select_related(
+            "produto"
+        )
+        .order_by(
+            "-data_criacao"
+        )
+    )
+
+    diagnosticos_por_produto = {}
+
+    for diagnostico in diagnosticos:
+        if diagnostico.produto_id not in diagnosticos_por_produto:
+            diagnosticos_por_produto[
+                diagnostico.produto_id
+            ] = []
+
+        diagnosticos_por_produto[
+            diagnostico.produto_id
+        ].append(diagnostico)
+
+    historico_recente = []
+
+    for produto in produtos:
+        historico = diagnosticos_por_produto.get(
+            produto.id,
+            []
+        )
+
+        produto.diagnosticos_usuario = historico
+        produto.numero_diagnosticos_usuario = len(
+            historico
+        )
+        produto.total_diagnosticos = len(
+            historico
+        )
+
+        produto.ultimo_diagnostico_usuario = (
+            historico[0]
+            if historico
+            else None
+        )
+
+        produto.ultimo_diagnostico = (
+            historico[0]
+            if historico
+            else None
+        )
+
+        if historico:
+            historico_recente.append(
+                {
+                    "produto": produto,
+                    "diagnostico": historico[0],
+                }
+            )
+
+    historico_recente.sort(
+        key=lambda item: item["diagnostico"].data_criacao,
+        reverse=True,
+    )
+
+    return produtos, historico_recente
 
 
 def obter_nome_imagem(produto):
@@ -342,12 +426,10 @@ def baixar_imagem_da_url(url):
         raise TimeoutError(
             "O carregamento da imagem do produto demorou demasiado tempo."
         ) from exc
-
     except requests.exceptions.ConnectionError as exc:
         raise ConnectionError(
             "Não foi possível conectar ao armazenamento da imagem."
         ) from exc
-
     except requests.exceptions.RequestException as exc:
         raise RuntimeError(
             f"Erro ao carregar a imagem do armazenamento: {exc}"
@@ -403,6 +485,7 @@ def obter_imagem_produto(produto):
             return baixar_imagem_da_url(
                 url
             )
+
     except Exception:
         pass
 
@@ -509,7 +592,10 @@ def enviar_para_api_ia(
             "uma resposta que não é JSON válido."
         ) from exc
 
-    if not isinstance(dados, dict):
+    if not isinstance(
+        dados,
+        dict,
+    ):
         raise ValueError(
             "A API de inteligência artificial retornou "
             "um formato de dados inválido."
@@ -860,16 +946,13 @@ def normalizar_resultado_ia(
         ),
     )
 
-    try:
-        principais_previsoes = (
-            resultado_api.get(
-                "principais_previsoes",
-                []
-            )
-            or []
+    principais_previsoes = (
+        resultado_api.get(
+            "principais_previsoes",
+            [],
         )
-    except AttributeError:
-        principais_previsoes = []
+        or []
+    )
 
     if not isinstance(
         principais_previsoes,
@@ -889,7 +972,7 @@ def normalizar_resultado_ia(
         previsao_classe = str(
             previsao.get(
                 "classe",
-                ""
+                "",
             )
             or ""
         ).strip()
@@ -907,7 +990,7 @@ def normalizar_resultado_ia(
         previsao_problema = str(
             previsao.get(
                 "problema",
-                ""
+                "",
             )
             or ""
         ).strip()
@@ -936,7 +1019,7 @@ def normalizar_resultado_ia(
                 "tipo": str(
                     previsao.get(
                         "tipo",
-                        ""
+                        "",
                     )
                     or ""
                 ),
@@ -967,19 +1050,15 @@ def normalizar_resultado_ia(
         or ""
     )
 
-    baixa_confianca = (
-        resultado_api.get(
-            "baixa_confianca"
-        )
+    baixa_confianca = resultado_api.get(
+        "baixa_confianca"
     )
 
     if baixa_confianca is None:
         baixa_confianca = confianca < 40.0
 
-    produto_compativel = (
-        resultado_api.get(
-            "produto_compativel"
-        )
+    produto_compativel = resultado_api.get(
+        "produto_compativel"
     )
 
     mensagem_compatibilidade = (
@@ -1309,13 +1388,16 @@ def diagnostico(
         request
     )
 
-    produtos = obter_produtos_ativos(
-        request
+    produtos, historico_recente = (
+        obter_produtos_com_resumo(
+            request
+        )
     )
 
     produto = None
     diagnostico_atual = None
     historico = []
+    estatisticas_produto = None
 
     if produto_id is not None:
         produto = obter_produto(
@@ -1342,46 +1424,9 @@ def diagnostico(
             )
         )
 
-    else:
-        produtos = list(
-            produtos
-        )
-
-        for item in produtos:
-            diagnosticos_usuario = list(
-                Diagnostico.objects
-                .filter(
-                    usuario=request.user,
-                    produto=item,
-                )
-                .select_related(
-                    "produto"
-                )
-                .order_by(
-                    "-data_criacao"
-                )[:5]
-            )
-
-            item.diagnosticos_usuario = (
-                diagnosticos_usuario
-            )
-
-            item.ultimo_diagnostico_usuario = (
-                diagnosticos_usuario[0]
-                if diagnosticos_usuario
-                else None
-            )
-
-            item.numero_diagnosticos_usuario = (
-                Diagnostico.objects
-                .filter(
-                    usuario=request.user,
-                    produto=item,
-                )
-                .count()
-            )
-
-        estatisticas_produto = None
+    confianca_media = estatisticas[
+        "media_confianca"
+    ]
 
     contexto = {
         "produtos": produtos,
@@ -1389,43 +1434,73 @@ def diagnostico(
         "diagnostico": diagnostico_atual,
         "diagnostico_atual": diagnostico_atual,
         "historico": historico,
+
+        "historico_produto": historico,
+
+        "historico_recente": historico_recente,
+
         "total_produtos": contadores[
             "produtos_ativos"
         ],
+
         "total_diagnosticos": estatisticas[
             "total"
         ],
+
+        "total_diagnosticos_usuario": estatisticas[
+            "concluidos"
+        ],
+
+        "diagnosticos_realizados": estatisticas[
+            "concluidos"
+        ],
+
         "diagnosticos_concluidos": estatisticas[
             "concluidos"
         ],
+
         "diagnosticos_erros": estatisticas[
             "erros"
         ],
+
         "diagnosticos_processando": estatisticas[
             "processando"
         ],
+
         "diagnosticos_pendentes": estatisticas[
             "pendentes"
         ],
+
         "total_problemas": estatisticas[
             "problemas"
         ],
+
         "total_saudaveis": estatisticas[
             "saudaveis"
         ],
-        "media_confianca": estatisticas[
-            "media_confianca"
-        ],
+
+        "media_confianca": confianca_media,
+
+        "confianca_media": confianca_media,
+
         "precisao_ia": contadores[
             "precisao_ia"
         ],
-        "ultimos_diagnosticos": obter_ultimos_diagnosticos(
-            request,
-            produto=produto,
-            limite=5,
+
+        "ultimos_diagnosticos": (
+            obter_ultimos_diagnosticos(
+                request,
+                produto=produto,
+                limite=5,
+            )
         ),
+
         "estatisticas": estatisticas,
-        "estatisticas_produto": estatisticas_produto,
+
+        "estatisticas_produto": (
+            estatisticas_produto
+        ),
+
         "api_ia_url": API_IA_URL,
     }
 
@@ -1688,9 +1763,7 @@ def historico_produto(
             "resultado"
         )
         .annotate(
-            total=Count(
-                "id"
-            )
+            total=Count("id")
         )
         .order_by(
             "-total"
@@ -1716,36 +1789,49 @@ def historico_produto(
     contexto = {
         "produto": produto,
         "diagnosticos": diagnosticos,
+
         "total_diagnosticos": estatisticas[
             "total"
         ],
+
         "diagnosticos_concluidos": estatisticas[
             "concluidos"
         ],
+
         "diagnosticos_erros": estatisticas[
             "erros"
         ],
+
         "total_problemas": estatisticas[
             "problemas"
         ],
+
         "total_saudaveis": estatisticas[
             "saudaveis"
         ],
+
         "media_confianca": estatisticas[
             "media_confianca"
         ],
+
         "primeiro_diagnostico": estatisticas[
             "primeiro_diagnostico"
         ],
+
         "ultimo_diagnostico": estatisticas[
             "ultimo_diagnostico"
         ],
+
         "distribuicao": distribuicao,
+
         "evolucao_confianca": evolucao_confianca,
-        "ultimos_diagnosticos": obter_ultimos_diagnosticos(
-            request,
-            produto=produto,
-            limite=10,
+
+        "ultimos_diagnosticos": (
+            obter_ultimos_diagnosticos(
+                request,
+                produto=produto,
+                limite=10,
+            )
         ),
     }
 
@@ -1789,16 +1875,25 @@ def detalhe_diagnostico(
         "diagnostico": diagnostico_obj,
         "diagnostico_obj": diagnostico_obj,
         "produto": produto,
+
         "total_diagnosticos": estatisticas[
             "total"
         ],
+
         "diagnosticos_concluidos": estatisticas[
             "concluidos"
         ],
+
         "media_confianca": estatisticas[
             "media_confianca"
         ],
+
+        "confianca_media": estatisticas[
+            "media_confianca"
+        ],
+
         "ultimos_diagnosticos": recentes,
+
         "estatisticas": estatisticas,
     }
 

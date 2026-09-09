@@ -1,2064 +1,1592 @@
 {% extends "base.html" %}
 
 {% block title %}
-Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
+Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 {% endblock %}
 
 {% block extra_css %}
-
 <style>
-  /* ============================================================
-   AGROIA MOXICO — DETALHE INDIVIDUAL DO DIAGNÓSTICO
-   Página exclusivamente para visualização da análise
-   ============================================================ */
-
   :root {
-    --diag-green: #176b45;
-    --diag-green-dark: #0d4d31;
-    --diag-green-light: #eaf7ef;
-    --diag-green-soft: #f5fbf7;
-
+    --diag-primary: #176b45;
+    --diag-primary-dark: #0d4d31;
+    --diag-primary-deep: #062a1c;
+    --diag-primary-soft: #eaf7ef;
     --diag-gold: #d9a441;
-    --diag-blue: #2874a6;
-
-    --diag-danger: #c0392b;
-    --diag-warning: #b7791f;
-
-    --diag-text: #1f2937;
-    --diag-muted: #6b7280;
-
-    --diag-border: #e3e9e5;
-    --diag-bg: #f4f7f5;
+    --diag-gold-soft: #fff7df;
+    --diag-blue: #2878c8;
+    --diag-blue-soft: #edf6ff;
+    --diag-danger: #c74646;
+    --diag-danger-soft: #fff0f0;
+    --diag-warning: #c38a18;
+    --diag-warning-soft: #fff8e7;
+    --diag-text: #17352a;
+    --diag-muted: #71867c;
+    --diag-border: rgba(23, 107, 69, .12);
     --diag-white: #ffffff;
-
-    --diag-radius: 22px;
-    --diag-shadow: 0 18px 50px rgba(13, 77, 49, .08);
+    --diag-background: #f4f8f5;
+    --diag-shadow: 0 24px 70px rgba(6, 42, 28, .11);
+    --diag-radius: 28px;
   }
 
-
-  /* ============================================================
-   PÁGINA
-   ============================================================ */
-
   .diagnostico-detalhe {
-    position: relative;
-    min-height: calc(100vh - 68px);
-    padding: 35px 20px 80px;
-
+    width: 100%;
     background:
-      radial-gradient(circle at 4% 0%,
-        rgba(23, 107, 69, .11),
-        transparent 27%),
-      radial-gradient(circle at 97% 4%,
-        rgba(217, 164, 65, .11),
-        transparent 23%),
-      linear-gradient(180deg,
-        #fbfdfb 0%,
-        #f1f6f3 100%);
-
+      radial-gradient(circle at 10% 10%, rgba(23, 107, 69, .055), transparent 28%),
+      radial-gradient(circle at 90% 20%, rgba(217, 164, 65, .055), transparent 25%),
+      var(--diag-background);
+    min-height: 100vh;
+    padding-bottom: 60px;
     overflow: hidden;
   }
 
+  .diag-hero {
+    position: relative;
+    min-height: 430px;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    background:
+      linear-gradient(120deg, rgba(3, 31, 20, .96), rgba(6, 42, 28, .76)),
+      linear-gradient(180deg, #062a1c, #176b45);
+  }
 
-  /* Elementos decorativos */
+  .diag-hero-image {
+    position: absolute;
+    inset: -5%;
+    width: 110%;
+    height: 110%;
+    background-image: url("https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?auto=format&fit=crop&w=2200&q=90");
+    background-size: cover;
+    background-position: center;
+    opacity: .78;
+    transform: scale(1.05);
+    animation: diagHeroZoom 18s ease-in-out infinite alternate;
+  }
 
-  .diagnostico-detalhe::before {
+  .diag-hero-image::after {
     content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(3, 31, 20, .94) 0%, rgba(3, 31, 20, .72) 48%, rgba(3, 31, 20, .36) 100%),
+      linear-gradient(0deg, rgba(3, 31, 20, .82), transparent 65%);
+  }
+
+  .diag-hero-grid {
+    position: absolute;
+    inset: 0;
+    opacity: .14;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, .18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, .18) 1px, transparent 1px);
+    background-size: 70px 70px;
+    transform: perspective(500px) rotateX(58deg) scale(1.5) translateY(35%);
+    transform-origin: center bottom;
+    animation: diagGridMove 16s linear infinite;
+  }
+
+  .diag-hero-orb {
     position: absolute;
     width: 320px;
     height: 320px;
-    right: -170px;
-    top: 180px;
-
+    right: -110px;
+    top: -130px;
     border-radius: 50%;
-    background: rgba(23, 107, 69, .035);
-
-    pointer-events: none;
+    background: radial-gradient(circle, rgba(217, 164, 65, .28), rgba(217, 164, 65, 0) 68%);
+    filter: blur(2px);
+    animation: diagOrbFloat 8s ease-in-out infinite;
   }
 
-  .diagnostico-detalhe::after {
-    content: "";
+  .diag-hero-orb-two {
     position: absolute;
-    width: 250px;
-    height: 250px;
-    left: -150px;
-    bottom: 80px;
-
+    width: 260px;
+    height: 260px;
+    left: -130px;
+    bottom: -170px;
     border-radius: 50%;
-    background: rgba(217, 164, 65, .035);
-
-    pointer-events: none;
+    background: radial-gradient(circle, rgba(43, 182, 115, .3), rgba(43, 182, 115, 0) 70%);
+    animation: diagOrbFloatTwo 10s ease-in-out infinite;
   }
 
-
-  .diagnostico-container {
+  .diag-hero-content {
     position: relative;
-    z-index: 2;
-
-    width: 100%;
-    max-width: 1260px;
+    z-index: 4;
+    width: min(1240px, calc(100% - 40px));
     margin: 0 auto;
+    padding: 76px 0 62px;
+    color: #fff;
   }
 
-
-  /* ============================================================
-   ANIMAÇÕES
-   ============================================================ */
-
-  @keyframes diagFadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(24px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-
-  @keyframes diagFadeRight {
-    from {
-      opacity: 0;
-      transform: translateX(-18px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-
-  @keyframes diagFloat {
-
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-5px);
-    }
-  }
-
-
-  @keyframes diagPulse {
-
-    0%,
-    100% {
-      box-shadow: 0 0 0 0 rgba(23, 107, 69, .14);
-    }
-
-    50% {
-      box-shadow: 0 0 0 9px rgba(23, 107, 69, 0);
-    }
-  }
-
-
-  @keyframes diagConfidence {
-    from {
-      width: 0;
-    }
-
-    to {
-      width: var(--confidence-width);
-    }
-  }
-
-
-  @keyframes diagShimmer {
-    0% {
-      transform: translateX(-100%);
-    }
-
-    100% {
-      transform: translateX(100%);
-    }
-  }
-
-
-  .diag-animate {
-    animation: diagFadeUp .7s ease both;
-  }
-
-
-  .diag-animate-right {
-    animation: diagFadeRight .6s ease both;
-  }
-
-
-  /* ============================================================
-   BARRA SUPERIOR DE NAVEGAÇÃO
-   ============================================================ */
-
-  .diag-top-navigation {
+  .diag-hero-topline {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    gap: 20px;
+    gap: 24px;
     margin-bottom: 28px;
   }
 
+  .diag-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 16px;
+    border: 1px solid rgba(255, 255, 255, .2);
+    background: rgba(255, 255, 255, .09);
+    backdrop-filter: blur(14px);
+    border-radius: 999px;
+    font-size: .82rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
 
-  .diag-navigation-button {
+  .diag-hero-eyebrow i {
+    font-size: .55rem;
+    color: #7de0ad;
+    animation: diagPulse 2s infinite;
+  }
+
+  .diag-hero-number {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: .92rem;
+    font-weight: 800;
+    padding: 10px 15px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .11);
+    border: 1px solid rgba(255, 255, 255, .18);
+    backdrop-filter: blur(12px);
+  }
+
+  .diag-hero-number span {
+    color: rgba(255, 255, 255, .68);
+    font-weight: 600;
+  }
+
+  .diag-hero-content h1 {
+    max-width: 760px;
+    margin: 0;
+    font-size: clamp(2.2rem, 5vw, 4.7rem);
+    line-height: .98;
+    letter-spacing: -.055em;
+    font-weight: 900;
+  }
+
+  .diag-hero-content p {
+    max-width: 680px;
+    margin: 24px 0 0;
+    color: rgba(255, 255, 255, .78);
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  .diag-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .diag-hero-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .14);
+    backdrop-filter: blur(12px);
+    border-radius: 13px;
+    color: rgba(255, 255, 255, .9);
+    font-size: .83rem;
+    font-weight: 700;
+  }
+
+  .diag-hero-meta-item i {
+    color: #8ee2b4;
+  }
+
+  .diag-actions {
+    width: min(1240px, calc(100% - 40px));
+    margin: 24px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 17px;
+    background: rgba(255, 255, 255, .94);
+    border: 1px solid var(--diag-border);
+    border-radius: 22px;
+    box-shadow: 0 16px 45px rgba(6, 42, 28, .07);
+    position: relative;
+    z-index: 5;
+  }
+
+  .diag-actions-left,
+  .diag-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .diag-action-button {
+    min-height: 46px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     gap: 9px;
-
-    min-height: 45px;
-    padding: 0 16px;
-
-    border-radius: 13px;
-
-    text-decoration: none;
-
-    font-size: .79rem;
-    font-weight: 850;
-
-    transition:
-      transform .25s ease,
-      box-shadow .25s ease,
-      background .25s ease,
-      border-color .25s ease;
-  }
-
-
-  .diag-navigation-button:hover {
-    transform: translateY(-3px);
-  }
-
-
-  .diag-back-button {
-    color: var(--diag-green-dark);
-
-    background: rgba(255, 255, 255, .94);
-
-    border: 1px solid var(--diag-border);
-
-    box-shadow:
-      0 8px 22px rgba(0, 0, 0, .045);
-  }
-
-
-  .diag-back-button:hover {
-    color: var(--diag-green-dark);
-
-    background: var(--diag-green-light);
-
-    border-color: #c9e0d2;
-
-    box-shadow:
-      0 12px 25px rgba(23, 107, 69, .09);
-  }
-
-
-  .diag-history-button {
-    color: #fff;
-
-    background:
-      linear-gradient(135deg,
-        var(--diag-green),
-        var(--diag-green-dark));
-
-    border: 1px solid var(--diag-green);
-
-    box-shadow:
-      0 9px 24px rgba(23, 107, 69, .18);
-  }
-
-
-  .diag-history-button:hover {
-    color: #fff;
-
-    box-shadow:
-      0 13px 30px rgba(23, 107, 69, .25);
-  }
-
-
-  .diag-history-button i {
-    animation: diagFloat 2.8s ease-in-out infinite;
-  }
-
-
-  /* ============================================================
-   CABEÇALHO
-   ============================================================ */
-
-  .diag-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 25px;
-
-    margin-bottom: 27px;
-  }
-
-
-  .diag-header-main {
-    display: flex;
-    align-items: center;
-
-    gap: 16px;
-
-    min-width: 0;
-  }
-
-
-  .diag-header-icon {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 62px;
-    height: 62px;
-
-    flex-shrink: 0;
-
-    color: #fff;
-
-    background:
-      linear-gradient(135deg,
-        var(--diag-green),
-        var(--diag-green-dark));
-
-    border-radius: 18px;
-
-    font-size: 24px;
-
-    box-shadow:
-      0 12px 28px rgba(23, 107, 69, .22);
-
-    animation: diagFloat 3.2s ease-in-out infinite;
-  }
-
-
-  .diag-header-icon::after {
-    content: "";
-
-    position: absolute;
-
-    inset: -6px;
-
+    padding: 0 17px;
     border: 1px solid rgba(23, 107, 69, .13);
-
-    border-radius: 22px;
-
-    animation: diagPulse 3s infinite;
+    border-radius: 13px;
+    background: #fff;
+    color: var(--diag-primary-dark);
+    text-decoration: none;
+    font-size: .85rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
+    font-family: inherit;
   }
 
-
-  .diag-header-text {
-    min-width: 0;
+  .diag-action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(6, 42, 28, .1);
+    color: var(--diag-primary);
   }
 
-
-  .diag-header-eyebrow {
-    display: block;
-
-    margin-bottom: 5px;
-
-    color: var(--diag-green);
-
-    font-size: .65rem;
-    font-weight: 900;
-
-    letter-spacing: .11em;
-    text-transform: uppercase;
+  .diag-action-button-primary {
+    color: #fff;
+    border-color: var(--diag-primary);
+    background: linear-gradient(135deg, #176b45, #0d4d31);
+    box-shadow: 0 9px 22px rgba(23, 107, 69, .2);
   }
 
-
-  .diag-header h1 {
-    margin: 0 0 5px;
-
-    color: var(--diag-green-dark);
-
-    font-size: clamp(1.55rem, 3vw, 2.25rem);
-
-    font-weight: 950;
-
-    line-height: 1.15;
-
-    letter-spacing: -.035em;
+  .diag-action-button-primary:hover {
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(23, 107, 69, .28);
   }
 
-
-  .diag-header p {
-    margin: 0;
-
-    color: var(--diag-muted);
-
-    font-size: .84rem;
-
-    line-height: 1.5;
+  .diag-action-button-dark {
+    color: #fff;
+    background: #17352a;
+    border-color: #17352a;
   }
 
+  .diag-action-button-dark:hover {
+    color: #fff;
+    background: #0d4d31;
+  }
 
-  /* ============================================================
-   PRODUTO ANALISADO
-   ============================================================ */
+  .diag-action-button:disabled {
+    opacity: .65;
+    cursor: wait;
+    transform: none;
+  }
 
   .diag-product {
-    position: relative;
-
-    overflow: hidden;
-
-    display: grid;
-
-    grid-template-columns: minmax(0, 1fr) auto;
-
+    width: min(1240px, calc(100% - 40px));
+    margin: 24px auto 0;
+    padding: 25px;
+    border-radius: var(--diag-radius);
+    background: linear-gradient(135deg, rgba(234, 247, 239, .96), rgba(255, 255, 255, .98));
+    border: 1px solid rgba(23, 107, 69, .1);
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-
     gap: 25px;
-
-    padding: 24px 26px;
-
-    margin-bottom: 25px;
-
-    background:
-      linear-gradient(135deg,
-        #ffffff 0%,
-        #f0faf4 100%);
-
-    border: 1px solid #d7e8de;
-
-    border-radius: 22px;
-
-    box-shadow: var(--diag-shadow);
+    box-shadow: 0 15px 50px rgba(6, 42, 28, .06);
   }
-
-
-  .diag-product::before {
-    content: "";
-
-    position: absolute;
-
-    width: 260px;
-    height: 260px;
-
-    right: -125px;
-    top: -145px;
-
-    border-radius: 50%;
-
-    background: rgba(23, 107, 69, .055);
-  }
-
-
-  .diag-product::after {
-    content: "";
-
-    position: absolute;
-
-    width: 120px;
-    height: 120px;
-
-    left: 35%;
-    bottom: -95px;
-
-    border-radius: 50%;
-
-    background: rgba(217, 164, 65, .045);
-  }
-
 
   .diag-product-left {
-    position: relative;
-
-    z-index: 1;
-
     display: flex;
     align-items: center;
-
-    gap: 15px;
-
+    gap: 17px;
     min-width: 0;
   }
 
-
   .diag-product-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 59px;
-    height: 59px;
-
-    flex-shrink: 0;
-
-    color: var(--diag-green);
-
-    background: var(--diag-green-light);
-
-    border: 1px solid #d1e8d9;
-
-    border-radius: 17px;
-
-    font-size: 24px;
-
-    animation: diagFloat 4s ease-in-out infinite;
+    width: 62px;
+    height: 62px;
+    flex: 0 0 62px;
+    border-radius: 19px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 1.45rem;
+    background: linear-gradient(145deg, #2bb673, #176b45);
+    box-shadow: 0 12px 26px rgba(23, 107, 69, .2);
   }
-
 
   .diag-product-label {
     display: block;
-
-    margin-bottom: 4px;
-
     color: var(--diag-muted);
-
-    font-size: .63rem;
-    font-weight: 900;
-
+    font-size: .73rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: .1em;
+    letter-spacing: .08em;
+    margin-bottom: 5px;
   }
-
 
   .diag-product-name {
     display: block;
-
-    color: var(--diag-green-dark);
-
-    font-size: clamp(1.05rem, 2vw, 1.38rem);
-
-    font-weight: 950;
-
-    word-break: break-word;
+    color: var(--diag-primary-deep);
+    font-size: 1.35rem;
+    font-weight: 900;
   }
-
 
   .diag-product-description {
-    margin-top: 5px;
-
+    max-width: 650px;
+    margin-top: 6px;
     color: var(--diag-muted);
-
-    font-size: .75rem;
-
-    line-height: 1.5;
+    line-height: 1.55;
+    font-size: .86rem;
   }
-
 
   .diag-product-stats {
-    position: relative;
-
-    z-index: 1;
-
     display: flex;
-    align-items: center;
-
-    gap: 9px;
-
-    flex-wrap: wrap;
+    align-items: stretch;
+    border-radius: 17px;
+    overflow: hidden;
+    border: 1px solid var(--diag-border);
+    background: #fff;
   }
-
 
   .diag-stat {
-    min-width: 112px;
-
-    padding: 11px 14px;
-
+    min-width: 105px;
+    padding: 14px 17px;
     text-align: center;
-
-    background: rgba(255, 255, 255, .86);
-
-    border: 1px solid var(--diag-border);
-
-    border-radius: 13px;
-
-    backdrop-filter: blur(9px);
-
-    transition: transform .25s ease, box-shadow .25s ease;
+    border-right: 1px solid var(--diag-border);
   }
 
-
-  .diag-stat:hover {
-    transform: translateY(-3px);
-
-    box-shadow:
-      0 10px 22px rgba(23, 107, 69, .07);
+  .diag-stat:last-child {
+    border-right: 0;
   }
-
 
   .diag-stat strong {
     display: block;
-
-    color: var(--diag-green-dark);
-
+    color: var(--diag-primary-dark);
     font-size: 1rem;
-
-    font-weight: 950;
+    font-weight: 900;
   }
-
 
   .diag-stat span {
+    display: block;
+    margin-top: 3px;
     color: var(--diag-muted);
-
-    font-size: .59rem;
-
-    font-weight: 850;
-
-    text-transform: uppercase;
-
-    letter-spacing: .04em;
+    font-size: .7rem;
+    font-weight: 700;
   }
 
-
-  /* ============================================================
-   CARD PRINCIPAL
-   ============================================================ */
+  .diag-report {
+    width: min(1240px, calc(100% - 40px));
+    margin: 24px auto 0;
+  }
 
   .diag-result-card {
-    overflow: hidden;
-
     background: #fff;
-
     border: 1px solid var(--diag-border);
-
     border-radius: var(--diag-radius);
-
     box-shadow: var(--diag-shadow);
-
-    animation:
-      diagFadeUp .8s ease both;
+    overflow: hidden;
   }
 
-
   .diag-result-header {
+    padding: 24px 27px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    gap: 15px;
-
-    padding: 18px 23px;
-
-    background:
-      linear-gradient(180deg,
-        #ffffff,
-        #fafdfb);
-
-    border-bottom: 1px solid var(--diag-border);
-
-    flex-wrap: wrap;
+    gap: 20px;
+    border-bottom: 1px solid rgba(23, 107, 69, .09);
+    background: linear-gradient(180deg, #fff, #fbfdfc);
   }
-
 
   .diag-result-title {
     display: flex;
     align-items: center;
-
-    gap: 10px;
+    gap: 14px;
   }
-
 
   .diag-result-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 40px;
-    height: 40px;
-
-    color: var(--diag-green);
-
-    background: var(--diag-green-light);
-
-    border-radius: 11px;
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    color: var(--diag-primary);
+    background: var(--diag-primary-soft);
+    font-size: 1.15rem;
   }
-
 
   .diag-result-title h2 {
     margin: 0;
-
-    color: var(--diag-green-dark);
-
-    font-size: .98rem;
-
-    font-weight: 950;
+    color: var(--diag-primary-deep);
+    font-size: 1.22rem;
+    font-weight: 900;
   }
-
-
-  /* ============================================================
-   STATUS
-   ============================================================ */
 
   .diag-status {
     display: inline-flex;
     align-items: center;
-
-    gap: 6px;
-
-    padding: 7px 11px;
-
+    gap: 7px;
+    padding: 9px 13px;
     border-radius: 999px;
-
-    font-size: .66rem;
-
+    font-size: .76rem;
     font-weight: 900;
-
-    white-space: nowrap;
   }
-
 
   .diag-status-concluido {
-    color: #167143;
-    background: #e8f7ee;
+    color: #137243;
+    background: #e9f8ef;
   }
-
 
   .diag-status-erro {
-    color: #a93226;
-    background: #fdecea;
+    color: #a52e2e;
+    background: var(--diag-danger-soft);
   }
-
 
   .diag-status-processando {
-    color: #9a6700;
-    background: #fff5df;
+    color: #9b6910;
+    background: var(--diag-warning-soft);
   }
-
 
   .diag-status-pendente {
-    color: #52606d;
-    background: #eef2f7;
+    color: #66736d;
+    background: #f1f4f2;
   }
-
-
-  /* ============================================================
-   GRID DO RESULTADO
-   ============================================================ */
 
   .diag-result-grid {
     display: grid;
-
-    grid-template-columns:
-      minmax(330px, 390px) minmax(0, 1fr);
+    grid-template-columns: minmax(330px, .88fr) minmax(0, 1.25fr);
   }
-
-
-  /* ============================================================
-   PAINEL DA IMAGEM
-   ============================================================ */
 
   .diag-image-panel {
-    padding: 23px;
-
-    background:
-      linear-gradient(180deg,
-        #f8fbf9,
-        #f0f6f3);
-
-    border-right: 1px solid var(--diag-border);
+    padding: 26px;
+    background: #f7faf8;
+    border-right: 1px solid rgba(23, 107, 69, .08);
   }
-
 
   .diag-image-wrapper {
     position: relative;
-
+    min-height: 430px;
+    border-radius: 22px;
     overflow: hidden;
-
-    background: #e8efeb;
-
-    border: 1px solid var(--diag-border);
-
-    border-radius: 18px;
-
-    box-shadow:
-      0 12px 28px rgba(0, 0, 0, .07);
+    background: #eaf0ec;
+    box-shadow: inset 0 0 0 1px rgba(23, 107, 69, .08);
   }
-
 
   .diag-image {
-    display: block;
-
     width: 100%;
-    height: 360px;
-
+    height: 430px;
+    display: block;
     object-fit: cover;
-
-    transition:
-      transform .65s cubic-bezier(.2, .8, .2, 1);
   }
-
-
-  .diag-image-wrapper:hover .diag-image {
-    transform: scale(1.045);
-  }
-
 
   .diag-image-overlay {
     position: absolute;
-
-    left: 12px;
-    bottom: 12px;
-
+    left: 14px;
+    bottom: 14px;
     display: inline-flex;
     align-items: center;
-
-    gap: 7px;
-
-    padding: 8px 11px;
-
+    gap: 8px;
+    padding: 10px 13px;
+    border-radius: 12px;
     color: #fff;
-
-    background:
-      rgba(13, 77, 49, .88);
-
-    border-radius: 10px;
-
-    font-size: .66rem;
-
-    font-weight: 850;
-
-    backdrop-filter: blur(9px);
-
-    box-shadow:
-      0 6px 18px rgba(0, 0, 0, .15);
+    background: rgba(6, 42, 28, .78);
+    backdrop-filter: blur(12px);
+    font-size: .76rem;
+    font-weight: 800;
   }
-
 
   .diag-image-caption {
-    margin-top: 12px;
-
-    color: var(--diag-muted);
-
-    font-size: .72rem;
-
-    line-height: 1.6;
-  }
-
-
-  .diag-image-caption i {
-    margin-right: 4px;
-
-    color: var(--diag-green);
-  }
-
-
-  .diag-image-empty {
-    min-height: 360px;
-
     display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 25px;
-
-    text-align: center;
-
-    background: #f8faf9;
-
-    border: 1px dashed #ccd9d1;
-
-    border-radius: 18px;
-  }
-
-
-  .diag-image-empty i {
-    display: block;
-
-    margin-bottom: 11px;
-
-    color: var(--diag-green);
-
-    font-size: 34px;
-  }
-
-
-  .diag-image-empty strong {
-    display: block;
-
-    margin-bottom: 5px;
-
-    color: var(--diag-green-dark);
-
-    font-size: .9rem;
-  }
-
-
-  .diag-image-empty p {
-    margin: 0;
-
-    color: var(--diag-muted);
-
-    font-size: .75rem;
-
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 13px 14px;
+    border-radius: 14px;
+    color: #60756a;
+    background: #fff;
+    border: 1px solid rgba(23, 107, 69, .08);
+    font-size: .78rem;
     line-height: 1.55;
   }
 
-
-  /* ============================================================
-   PAINEL DE INFORMAÇÕES
-   ============================================================ */
-
-  .diag-info-panel {
-    min-width: 0;
-
-    padding: 28px;
+  .diag-image-caption i {
+    margin-top: 2px;
+    color: var(--diag-primary);
   }
 
+  .diag-image-empty {
+    min-height: 430px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 30px;
+    border: 1px dashed rgba(23, 107, 69, .2);
+    border-radius: 22px;
+    background: #f0f6f2;
+  }
 
-  /* ============================================================
-   RESULTADO PRINCIPAL
-   ============================================================ */
+  .diag-image-empty i {
+    font-size: 3rem;
+    color: #9bb5a7;
+  }
+
+  .diag-image-empty strong {
+    display: block;
+    margin-top: 15px;
+    color: var(--diag-primary-deep);
+  }
+
+  .diag-image-empty p {
+    margin: 7px 0 0;
+    color: var(--diag-muted);
+    font-size: .84rem;
+  }
+
+  .diag-info-panel {
+    padding: 29px;
+  }
 
   .diag-main-result {
     position: relative;
-
     overflow: hidden;
-
-    padding: 22px;
-
-    margin-bottom: 20px;
-
+    padding: 23px;
+    border-radius: 21px;
+    color: #fff;
     background:
-      linear-gradient(135deg,
-        #eaf7ef,
-        #f9fcfa);
-
-    border: 1px solid #cce6d6;
-
-    border-radius: 17px;
+      radial-gradient(circle at 90% 20%, rgba(217, 164, 65, .28), transparent 25%),
+      linear-gradient(135deg, #0d4d31, #176b45);
+    box-shadow: 0 18px 38px rgba(13, 77, 49, .18);
   }
-
-
-  .diag-main-result::before {
-    content: "";
-
-    position: absolute;
-
-    width: 170px;
-    height: 170px;
-
-    right: -75px;
-    top: -85px;
-
-    border-radius: 50%;
-
-    background: rgba(23, 107, 69, .055);
-  }
-
 
   .diag-main-result::after {
     content: "";
-
     position: absolute;
-
-    top: 0;
-    bottom: 0;
-    left: 0;
-
-    width: 4px;
-
-    background:
-      linear-gradient(180deg,
-        var(--diag-green),
-        var(--diag-gold));
+    width: 170px;
+    height: 170px;
+    right: -70px;
+    bottom: -90px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .08);
   }
-
 
   .diag-main-label {
     position: relative;
-
-    z-index: 1;
-
-    margin-bottom: 7px;
-
-    color: var(--diag-green);
-
-    font-size: .64rem;
-
+    z-index: 2;
+    color: rgba(255, 255, 255, .68);
+    font-size: .72rem;
     font-weight: 900;
-
     text-transform: uppercase;
-
-    letter-spacing: .1em;
+    letter-spacing: .08em;
   }
-
 
   .diag-main-result h3 {
     position: relative;
-
-    z-index: 1;
-
-    margin: 0;
-
-    color: var(--diag-green-dark);
-
-    font-size: clamp(1.12rem, 2vw, 1.48rem);
-
-    font-weight: 950;
-
-    line-height: 1.35;
-
-    word-break: break-word;
+    z-index: 2;
+    margin: 9px 0 0;
+    color: #fff;
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    line-height: 1.18;
+    font-weight: 900;
   }
-
-
-  /* ============================================================
-   GRID DE DADOS
-   ============================================================ */
 
   .diag-info-grid {
     display: grid;
-
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 11px;
-
-    margin-bottom: 21px;
+    margin-top: 19px;
   }
-
 
   .diag-info-item {
-    position: relative;
-
     padding: 15px;
-
-    background: #f8faf9;
-
-    border: 1px solid var(--diag-border);
-
-    border-radius: 13px;
-
-    transition:
-      transform .25s ease,
-      border-color .25s ease,
-      box-shadow .25s ease;
+    border: 1px solid rgba(23, 107, 69, .09);
+    border-radius: 15px;
+    background: #fbfdfc;
   }
-
-
-  .diag-info-item:hover {
-    transform: translateY(-3px);
-
-    border-color: #cde2d6;
-
-    box-shadow:
-      0 9px 22px rgba(23, 107, 69, .07);
-  }
-
 
   .diag-info-label {
     display: block;
-
-    margin-bottom: 6px;
-
-    color: var(--diag-muted);
-
-    font-size: .6rem;
-
-    font-weight: 900;
-
+    color: #809188;
+    font-size: .68rem;
+    font-weight: 800;
     text-transform: uppercase;
-
-    letter-spacing: .07em;
+    letter-spacing: .06em;
   }
-
 
   .diag-info-value {
     display: block;
-
+    margin-top: 5px;
     color: var(--diag-text);
-
-    font-size: .82rem;
-
-    font-weight: 850;
-
-    line-height: 1.45;
-
-    word-break: break-word;
+    font-size: .88rem;
+    line-height: 1.4;
+    font-weight: 800;
+    overflow-wrap: anywhere;
   }
-
-
-  /* ============================================================
-   CONFIANÇA
-   ============================================================ */
 
   .diag-confidence {
-    padding: 17px;
-
-    margin-bottom: 21px;
-
-    background:
-      linear-gradient(180deg,
-        #fbfcfb,
-        #f8faf9);
-
-    border: 1px solid var(--diag-border);
-
-    border-radius: 14px;
+    margin-top: 19px;
+    padding: 18px;
+    border-radius: 17px;
+    background: var(--diag-blue-soft);
+    border: 1px solid rgba(40, 120, 200, .09);
   }
-
 
   .diag-confidence-top {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-
+    align-items: center;
     gap: 15px;
-
-    margin-bottom: 10px;
   }
-
 
   .diag-confidence-label {
-    color: var(--diag-text);
-
-    font-size: .75rem;
-
-    font-weight: 850;
+    color: #54718b;
+    font-size: .76rem;
+    font-weight: 800;
   }
-
 
   .diag-confidence-value {
-    color: var(--diag-green);
-
-    font-size: .88rem;
-
-    font-weight: 950;
+    color: #1f68a8;
+    font-size: .95rem;
+    font-weight: 900;
   }
-
 
   .diag-confidence-bar {
-    position: relative;
-
-    width: 100%;
     height: 9px;
-
+    margin-top: 12px;
     overflow: hidden;
-
-    background: #e2eae5;
-
     border-radius: 999px;
+    background: rgba(40, 120, 200, .12);
   }
-
 
   .diag-confidence-fill {
-    height: 100%;
-
     width: 0;
-
-    background:
-      linear-gradient(90deg,
-        var(--diag-green-dark),
-        var(--diag-green),
-        #3b986b);
-
+    height: 100%;
     border-radius: inherit;
-
-    animation:
-      diagConfidence 1.25s cubic-bezier(.2, .8, .2, 1) forwards;
-
-    position: relative;
-
-    overflow: hidden;
+    background: linear-gradient(90deg, #2878c8, #48a8f2);
+    transition: width 1.2s cubic-bezier(.22, 1, .36, 1);
   }
-
-
-  .diag-confidence-fill::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    bottom: 0;
-
-    width: 70px;
-
-    background:
-      linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, .28),
-        transparent);
-
-    animation:
-      diagShimmer 2.2s ease infinite;
-  }
-
-
-  /* ============================================================
-   SEÇÕES DE TEXTO
-   ============================================================ */
 
   .diag-content-section {
-    position: relative;
-
-    padding-top: 19px;
-    margin-top: 19px;
-
-    border-top: 1px solid #edf1ee;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 18px;
+    background: #f9fbfa;
+    border: 1px solid rgba(23, 107, 69, .08);
   }
-
 
   .diag-content-section h3 {
     display: flex;
     align-items: center;
-
-    gap: 8px;
-
-    margin: 0 0 9px;
-
-    color: var(--diag-green-dark);
-
-    font-size: .91rem;
-
-    font-weight: 950;
+    gap: 9px;
+    margin: 0 0 10px;
+    color: var(--diag-primary-dark);
+    font-size: .94rem;
+    font-weight: 900;
   }
-
 
   .diag-content-section h3 i {
-    color: var(--diag-green);
-
-    font-size: .88rem;
+    color: var(--diag-primary);
   }
-
 
   .diag-content-section p {
     margin: 0;
-
-    color: #4b5563;
-
-    font-size: .82rem;
-
-    line-height: 1.78;
-
+    color: #52685e;
+    line-height: 1.75;
+    font-size: .86rem;
     white-space: pre-line;
   }
 
-
-  /* ============================================================
-   RECOMENDAÇÕES
-   ============================================================ */
-
   .diag-recommendations {
-    padding: 16px 17px;
-
-    margin-top: 20px;
-
-    background:
-      linear-gradient(135deg,
-        #f1faf4,
-        #fbfdfb);
-
-    border: 1px solid #d2e9da;
-
-    border-radius: 14px;
+    background: linear-gradient(135deg, #f3faf5, #fbfdfb);
   }
 
-
-  .diag-recommendations h3 {
-    margin-top: 0;
+  .diag-recommendations h3 i {
+    color: #2d9b62;
   }
-
-
-  .diag-recommendations p {
-    color: #405a4b;
-  }
-
-
-  /* ============================================================
-   OBSERVAÇÕES
-   ============================================================ */
 
   .diag-alert {
-    padding: 15px 17px;
-
     margin-top: 20px;
-
-    color: #765600;
-
-    background:
-      linear-gradient(135deg,
-        #fff8e8,
-        #fffdf7);
-
-    border: 1px solid #efd28b;
-
-    border-radius: 13px;
-
-    font-size: .79rem;
-
+    padding: 17px 18px;
+    border-radius: 17px;
+    background: var(--diag-gold-soft);
+    border: 1px solid rgba(217, 164, 65, .2);
+    color: #745b1c;
+    font-size: .84rem;
     line-height: 1.65;
   }
-
 
   .diag-alert strong {
     display: flex;
     align-items: center;
-
-    gap: 7px;
-
-    margin-bottom: 7px;
-
-    font-size: .8rem;
+    gap: 8px;
+    margin-bottom: 6px;
+    color: #8b6a18;
   }
-
-
-  /* ============================================================
-   ERRO
-   ============================================================ */
 
   .diag-error {
-    padding: 17px;
-
     margin-top: 20px;
-
-    background: #fff4f3;
-
-    border: 1px solid #efc7c3;
-
-    border-radius: 14px;
+    padding: 19px;
+    border-radius: 17px;
+    background: var(--diag-danger-soft);
+    border: 1px solid rgba(199, 70, 70, .15);
   }
-
 
   .diag-error h3 {
     display: flex;
     align-items: center;
-
-    gap: 8px;
-
+    gap: 9px;
     margin: 0 0 8px;
-
     color: var(--diag-danger);
-
-    font-size: .9rem;
+    font-size: .94rem;
   }
-
 
   .diag-error p {
     margin: 0;
-
-    color: #7f2d24;
-
-    font-size: .8rem;
-
+    color: #774646;
+    font-size: .84rem;
     line-height: 1.65;
-
     white-space: pre-line;
   }
-
-
-  /* ============================================================
-   PROCESSANDO / PENDENTE
-   ============================================================ */
 
   .diag-processing,
   .diag-pending {
     display: flex;
     align-items: center;
-
-    gap: 13px;
-
-    padding: 17px;
-
-    margin-bottom: 20px;
-
-    border-radius: 14px;
+    gap: 15px;
+    padding: 20px;
+    border-radius: 18px;
+    background: var(--diag-warning-soft);
+    border: 1px solid rgba(195, 138, 24, .15);
   }
-
-
-  .diag-processing {
-    background:
-      linear-gradient(135deg,
-        #fff9e9,
-        #fffdf7);
-
-    border: 1px solid #f0d99b;
-  }
-
-
-  .diag-pending {
-    background: #f5f7fa;
-
-    border: 1px solid #dfe4ea;
-  }
-
 
   .diag-processing-icon,
   .diag-pending-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 44px;
-    height: 44px;
-
-    flex-shrink: 0;
-
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    color: #a67513;
+    background: rgba(195, 138, 24, .12);
   }
-
-
-  .diag-processing-icon {
-    color: #9a6700;
-    background: #fff0c7;
-  }
-
-
-  .diag-pending-icon {
-    color: #52606d;
-    background: #e9edf2;
-  }
-
 
   .diag-processing strong,
   .diag-pending strong {
     display: block;
-
-    margin-bottom: 3px;
-
-    font-size: .82rem;
+    color: #745717;
+    font-size: .9rem;
   }
-
-
-  .diag-processing strong {
-    color: #795900;
-  }
-
-
-  .diag-pending strong {
-    color: #374151;
-  }
-
 
   .diag-processing p,
   .diag-pending p {
-    margin: 0;
-
-    font-size: .74rem;
+    margin: 4px 0 0;
+    color: #8b7545;
+    font-size: .8rem;
   }
-
-
-  .diag-processing p {
-    color: #927329;
-  }
-
-
-  .diag-pending p {
-    color: #6b7280;
-  }
-
-
-  /* ============================================================
-   RODAPÉ INFORMATIVO
-   ============================================================ */
 
   .diag-footer-note {
+    width: min(1240px, calc(100% - 40px));
+    margin: 20px auto 0;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    gap: 8px;
-
-    margin-top: 28px;
-
-    color: var(--diag-muted);
-
-    font-size: .68rem;
-
+    gap: 9px;
+    color: #82938b;
+    font-size: .76rem;
     text-align: center;
   }
 
-
   .diag-footer-note i {
-    color: var(--diag-green);
+    color: var(--diag-primary);
   }
 
+  .diag-export-report {
+    position: fixed;
+    left: -100000px;
+    top: 0;
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    max-height: 297mm;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: #fff;
+    color: #17352a;
+    padding: 10mm;
+    z-index: -1;
+    opacity: 0;
+    pointer-events: none;
+    font-family: Arial, Helvetica, sans-serif;
+  }
 
-  /* ============================================================
-   RESPONSIVIDADE
-   ============================================================ */
+  .diag-export-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 17px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid #176b45;
+  }
 
-  @media (max-width: 950px) {
+  .diag-export-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
 
+  .diag-export-brand-mark {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    color: #fff;
+    background: #176b45;
+  }
+
+  .diag-export-brand-name {
+    color: #0d4d31;
+    font-size: 17px;
+    font-weight: 900;
+  }
+
+  .diag-export-brand-subtitle {
+    margin-top: 2px;
+    color: #71867c;
+    font-size: 8px;
+  }
+
+  .diag-export-title {
+    text-align: right;
+  }
+
+  .diag-export-title strong {
+    display: block;
+    color: #0d4d31;
+    font-size: 13px;
+  }
+
+  .diag-export-title span {
+    display: block;
+    margin-top: 2px;
+    color: #71867c;
+    font-size: 8px;
+  }
+
+  .diag-export-image {
+    width: 100%;
+    height: 48mm;
+    object-fit: cover;
+    border-radius: 13px;
+    display: block;
+    margin-bottom: 13px;
+  }
+
+  .diag-export-placeholder {
+    height: 48mm;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: #eaf7ef;
+    color: #176b45;
+    font-size: 36px;
+    margin-bottom: 13px;
+  }
+
+  .diag-export-product {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 11px;
+    background: #eaf7ef;
+    border: 1px solid #d6ebdd;
+  }
+
+  .diag-export-label {
+    color: #71867c;
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 800;
+  }
+
+  .diag-export-product-name {
+    margin-top: 4px;
+    color: #0d4d31;
+    font-size: 15px;
+    font-weight: 900;
+  }
+
+  .diag-export-product-description {
+    margin-top: 4px;
+    color: #52685e;
+    font-size: 8px;
+    line-height: 1.35;
+  }
+
+  .diag-export-result {
+    padding: 14px;
+    margin-bottom: 10px;
+    border-radius: 11px;
+    background: #0d4d31;
+    color: #fff;
+  }
+
+  .diag-export-result-label {
+    color: rgba(255, 255, 255, .65);
+    font-size: 7px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 800;
+  }
+
+  .diag-export-result h2 {
+    margin: 5px 0 0;
+    color: #fff;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  .diag-export-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+
+  .diag-export-item {
+    padding: 9px;
+    min-height: 42px;
+    box-sizing: border-box;
+    border: 1px solid #e1eae5;
+    border-radius: 9px;
+    background: #fff;
+  }
+
+  .diag-export-item span {
+    display: block;
+    color: #819188;
+    font-size: 6.8px;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
+  .diag-export-item strong {
+    display: block;
+    margin-top: 3px;
+    color: #17352a;
+    font-size: 8.5px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .diag-export-section {
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 9px;
+    background: #f7faf8;
+    border: 1px solid #e2ebe6;
+  }
+
+  .diag-export-section h3 {
+    margin: 0 0 5px;
+    color: #0d4d31;
+    font-size: 9px;
+  }
+
+  .diag-export-section p,
+  .diag-export-section div {
+    margin: 0;
+    color: #52685e;
+    font-size: 7.5px;
+    line-height: 1.42;
+    white-space: pre-line;
+  }
+
+  .diag-export-footer {
+    position: absolute;
+    left: 10mm;
+    right: 10mm;
+    bottom: 7mm;
+    padding-top: 9px;
+    border-top: 1px solid #dfe8e3;
+    display: flex;
+    justify-content: space-between;
+    color: #82938b;
+    font-size: 6.8px;
+  }
+
+  .detail-animate {
+    animation: diagFadeUp .7s ease both;
+  }
+
+  @keyframes diagFadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes diagHeroZoom {
+    0% {
+      transform: scale(1.05);
+    }
+
+    100% {
+      transform: scale(1.14);
+    }
+  }
+
+  @keyframes diagGridMove {
+    from {
+      background-position: 0 0;
+    }
+
+    to {
+      background-position: 70px 70px;
+    }
+  }
+
+  @keyframes diagOrbFloat {
+
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    50% {
+      transform: translate3d(-25px, 25px, 0);
+    }
+  }
+
+  @keyframes diagOrbFloatTwo {
+
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    50% {
+      transform: translate3d(30px, -25px, 0);
+    }
+  }
+
+  @keyframes diagPulse {
+
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: .45;
+      transform: scale(.7);
+    }
+  }
+
+  @media (max-width: 900px) {
     .diag-result-grid {
       grid-template-columns: 1fr;
     }
 
-
     .diag-image-panel {
-      border-right: none;
-      border-bottom: 1px solid var(--diag-border);
+      border-right: 0;
+      border-bottom: 1px solid rgba(23, 107, 69, .08);
     }
 
-
+    .diag-image-wrapper,
     .diag-image {
-      height: 350px;
+      min-height: 360px;
+      height: 360px;
     }
-
 
     .diag-product {
-      grid-template-columns: 1fr;
+      align-items: flex-start;
+      flex-direction: column;
     }
 
-
     .diag-product-stats {
-      justify-content: flex-start;
+      width: 100%;
+    }
+
+    .diag-stat {
+      flex: 1;
     }
   }
 
+  @media (max-width: 720px) {
 
-  @media (max-width: 700px) {
-
-    .diagnostico-detalhe {
-      padding: 24px 13px 60px;
+    .diag-actions,
+    .diag-product,
+    .diag-report,
+    .diag-footer-note {
+      width: calc(100% - 24px);
     }
 
+    .diag-hero {
+      min-height: 520px;
+    }
 
-    .diag-header {
+    .diag-hero-content {
+      width: calc(100% - 24px);
+      padding: 55px 0 42px;
+    }
+
+    .diag-hero-topline {
       align-items: flex-start;
+      flex-direction: column;
     }
 
-
-    .diag-header-main {
-      align-items: flex-start;
+    .diag-hero-content h1 {
+      font-size: clamp(2.25rem, 12vw, 3.5rem);
     }
 
+    .diag-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .diag-actions-left,
+    .diag-actions-right {
+      width: 100%;
+    }
+
+    .diag-action-button {
+      flex: 1;
+    }
 
     .diag-product {
-      padding: 19px;
-    }
-
-
-    .diag-info-panel {
       padding: 20px;
     }
 
-
+    .diag-info-panel,
     .diag-image-panel {
       padding: 18px;
     }
 
-
     .diag-result-header {
-      padding: 17px 18px;
+      padding: 19px;
+      align-items: flex-start;
+      flex-direction: column;
     }
-
-
-    .diag-top-navigation {
-      gap: 10px;
-    }
-
-
-    .diag-navigation-button {
-      min-height: 42px;
-      padding: 0 13px;
-    }
-  }
-
-
-  @media (max-width: 480px) {
-
-    .diagnostico-detalhe {
-      padding: 20px 10px 50px;
-    }
-
-
-    .diag-top-navigation {
-      width: 100%;
-    }
-
-
-    .diag-navigation-button {
-      flex: 1;
-
-      font-size: .72rem;
-    }
-
-
-    .diag-header-icon {
-      width: 50px;
-      height: 50px;
-
-      border-radius: 14px;
-
-      font-size: 20px;
-    }
-
-
-    .diag-header h1 {
-      font-size: 1.43rem;
-    }
-
-
-    .diag-header p {
-      font-size: .77rem;
-    }
-
 
     .diag-info-grid {
       grid-template-columns: 1fr;
     }
 
-
+    .diag-image-wrapper,
     .diag-image {
-      height: 270px;
+      min-height: 300px;
+      height: 300px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+
+    .diag-hero-image,
+    .diag-hero-grid,
+    .diag-hero-orb,
+    .diag-hero-orb-two,
+    .detail-animate {
+      animation: none !important;
     }
 
+    .diag-confidence-fill {
+      transition: none;
+    }
+  }
 
-    .diag-image-empty {
-      min-height: 270px;
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 0;
     }
 
-
-    .diag-product-left {
-      align-items: flex-start;
+    html,
+    body {
+      width: 210mm !important;
+      height: 297mm !important;
+      min-height: 297mm !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #fff !important;
     }
 
-
-    .diag-product-stats {
-      display: grid;
-
-      grid-template-columns:
-        repeat(2, 1fr);
-
-      width: 100%;
+    body {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
     }
 
-
-    .diag-stat {
-      min-width: 0;
+    body>* {
+      display: none !important;
     }
 
+    body>.diagnostico-detalhe {
+      display: block !important;
+      width: 210mm !important;
+      height: 297mm !important;
+      min-height: 297mm !important;
+      max-height: 297mm !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      background: #fff !important;
+    }
 
-    .diag-confidence-top {
-      align-items: flex-start;
+    .diagnostico-detalhe>* {
+      display: none !important;
+    }
+
+    .diagnostico-detalhe>.diag-export-report {
+      display: block !important;
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 210mm !important;
+      height: 297mm !important;
+      min-height: 297mm !important;
+      max-height: 297mm !important;
+      margin: 0 !important;
+      padding: 10mm !important;
+      overflow: hidden !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: none !important;
+      z-index: 999999 !important;
+      background: #fff !important;
+      box-sizing: border-box !important;
+    }
+
+    .diag-export-report * {
+      visibility: visible !important;
     }
   }
 </style>
-
 {% endblock %}
 
 {% block content %}
-
 <main class="diagnostico-detalhe">
 
-  <div class="diagnostico-container">
-
-
-    <nav class="diag-top-navigation diag-animate-right" aria-label="Navegação do diagnóstico">
-
-
-      <a href="{% url 'inicio:home' %}" class="diag-navigation-button diag-back-button" onclick="
-                if (window.history.length > 1) {
-                    event.preventDefault();
-                    window.history.back();
-                }
-            ">
-        <i class="fas fa-arrow-left"></i>
-        <span>Voltar</span>
-      </a>
-
-
-
-      {% if diagnostico.produto %}
-      <a href="{% url 'diagnostico:historico_produto' diagnostico.produto.id %}"
-        class="diag-navigation-button diag-history-button">
-        <i class="fas fa-history"></i>
-        <span>Ver histórico</span>
-      </a>
-      {% endif %}
-
-    </nav>
-
-
-
-    <header class="diag-header diag-animate">
-
-      <div class="diag-header-main">
-
-        <div class="diag-header-icon">
-          <i class="fas fa-microscope"></i>
-        </div>
-
-        <div class="diag-header-text">
-
-          <span class="diag-header-eyebrow">
-            AgroIA Moxico · Análise individual
-          </span>
-
-          <h1>
-            Resultado do diagnóstico
-          </h1>
-
-          <p>
-            Visualização detalhada da análise realizada pela
-            inteligência artificial.
-          </p>
-
-        </div>
-
-      </div>
-
-    </header>
-
-
-
-    {% if diagnostico.produto %}
-
-    <section class="diag-product diag-animate">
-
-      <div class="diag-product-left">
-
-        <div class="diag-product-icon">
-          <i class="fas fa-seedling"></i>
-        </div>
-
-        <div>
-
-          <span class="diag-product-label">
-            Produto agrícola analisado
-          </span>
-
-          <span class="diag-product-name">
-            {{ diagnostico.produto.nome }}
-          </span>
-
-          {% if diagnostico.produto.descricao %}
-
-          <div class="diag-product-description">
-            {{ diagnostico.produto.descricao|truncatechars:150 }}
-          </div>
-
-          {% endif %}
-
-        </div>
-
-      </div>
-
-
-      <div class="diag-product-stats">
-
-        <div class="diag-stat">
-
-          <strong>
-            #{{ diagnostico.id }}
-          </strong>
-
-          <span>
-            Análise
-          </span>
-
-        </div>
-
-
-        <div class="diag-stat">
-
-          <strong>
-            {{ diagnostico.data_criacao|date:"d/m/Y" }}
-          </strong>
-
-          <span>
-            Data
-          </span>
-
-        </div>
-
-      </div>
-
-    </section>
-
+  <section class="diag-hero detail-animate">
+    {% if diagnostico.imagem %}
+    <div class="diag-hero-image" style="background-image:url('{{ diagnostico.imagem.url }}');"></div>
+    {% else %}
+    <div class="diag-hero-image"></div>
     {% endif %}
 
+    <div class="diag-hero-grid"></div>
+    <div class="diag-hero-orb"></div>
+    <div class="diag-hero-orb-two"></div>
 
-    <section class="diag-result-card">
+    <div class="diag-hero-content">
+      <div class="diag-hero-topline">
+        <span class="diag-hero-eyebrow">
+          <i class="fas fa-circle"></i>
+          AgroIA Moxico · Diagnóstico inteligente
+        </span>
 
+        <span class="diag-hero-number">
+          <span>Diagnóstico</span>
+          {{ diagnostico.id }}
+        </span>
+      </div>
 
+      <h1>Resultado da análise agrícola</h1>
+
+      <p>
+        Uma leitura detalhada realizada pela inteligência artificial do AgroIA Moxico para apoiar a análise da cultura
+        agrícola.
+      </p>
+
+      <div class="diag-hero-meta">
+        {% if diagnostico.produto %}
+        <span class="diag-hero-meta-item">
+          <i class="fas fa-seedling"></i>
+          {{ diagnostico.produto.nome }}
+        </span>
+        {% endif %}
+
+        <span class="diag-hero-meta-item">
+          <i class="fas fa-calendar-alt"></i>
+          {{ diagnostico.data_criacao|date:"d/m/Y H:i" }}
+        </span>
+
+        {% if diagnostico.status == "concluido" %}
+        <span class="diag-hero-meta-item">
+          <i class="fas fa-check-circle"></i>
+          Análise concluída
+        </span>
+        {% elif diagnostico.status == "erro" %}
+        <span class="diag-hero-meta-item">
+          <i class="fas fa-exclamation-circle"></i>
+          Análise com erro
+        </span>
+        {% elif diagnostico.status == "processando" %}
+        <span class="diag-hero-meta-item">
+          <i class="fas fa-spinner fa-spin"></i>
+          Em processamento
+        </span>
+        {% else %}
+        <span class="diag-hero-meta-item">
+          <i class="fas fa-clock"></i>
+          Pendente
+        </span>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <div class="diag-actions detail-animate">
+    <div class="diag-actions-left">
+      <a href="{% url 'inicio:home' %}" class="diag-action-button">
+        <i class="fas fa-arrow-left"></i>
+        Voltar
+      </a>
+
+      {% if diagnostico.produto %}
+      <a href="{% url 'diagnostico:historico_produto' diagnostico.produto.id %}" class="diag-action-button">
+        <i class="fas fa-history"></i>
+        Ver histórico
+      </a>
+      {% endif %}
+    </div>
+
+    <div class="diag-actions-right">
+      <button type="button" class="diag-action-button diag-action-button-dark" id="printDiagnosisButton">
+        <i class="fas fa-print"></i>
+        Imprimir
+      </button>
+
+      <button type="button" class="diag-action-button diag-action-button-primary" id="downloadDiagnosisButton">
+        <i class="fas fa-file-pdf"></i>
+        Baixar PDF
+      </button>
+    </div>
+  </div>
+
+  {% if diagnostico.produto %}
+  <section class="diag-product detail-animate">
+    <div class="diag-product-left">
+      <div class="diag-product-icon">
+        <i class="fas fa-seedling"></i>
+      </div>
+
+      <div>
+        <span class="diag-product-label">
+          Produto agrícola analisado
+        </span>
+
+        <span class="diag-product-name">
+          {{ diagnostico.produto.nome }}
+        </span>
+
+        {% if diagnostico.produto.descricao %}
+        <div class="diag-product-description">
+          {{ diagnostico.produto.descricao|truncatechars:180 }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="diag-product-stats">
+      <div class="diag-stat">
+        <strong>{{ diagnostico.id }}</strong>
+        <span>Análise</span>
+      </div>
+
+      <div class="diag-stat">
+        <strong>{{ diagnostico.data_criacao|date:"d/m/Y" }}</strong>
+        <span>Data</span>
+      </div>
+
+      {% if diagnostico.confianca != None %}
+      <div class="diag-stat">
+        <strong>{{ diagnostico.confianca|floatformat:1 }}%</strong>
+        <span>Confiança</span>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  <div class="diag-report">
+    <section class="diag-result-card detail-animate" id="diagnosisReport">
 
       <div class="diag-result-header">
-
         <div class="diag-result-title">
-
           <div class="diag-result-icon">
             <i class="fas fa-file-medical"></i>
           </div>
 
           <h2>
-            Diagnóstico #{{ diagnostico.id }}
+            Diagnóstico {{ diagnostico.id }}
           </h2>
-
         </div>
 
-
-
-
-        {% if diagnostico.status == "concluido" %}
-
-        <span class="diag-status diag-status-concluido">
-          <i class="fas fa-check-circle"></i>
-          Concluído
-        </span>
-
-        {% elif diagnostico.status == "erro" %}
-
-        <span class="diag-status diag-status-erro">
-          <i class="fas fa-exclamation-circle"></i>
-          Erro
-        </span>
-
-        {% elif diagnostico.status == "processando" %}
-
-        <span class="diag-status diag-status-processando">
-          <i class="fas fa-spinner fa-spin"></i>
-          Processando
-        </span>
-
-        {% else %}
-
-        <span class="diag-status diag-status-pendente">
-          <i class="fas fa-clock"></i>
-          Pendente
-        </span>
-
-        {% endif %}
-
+        <div>
+          {% if diagnostico.status == "concluido" %}
+          <span class="diag-status diag-status-concluido">
+            <i class="fas fa-check-circle"></i>
+            Concluído
+          </span>
+          {% elif diagnostico.status == "erro" %}
+          <span class="diag-status diag-status-erro">
+            <i class="fas fa-exclamation-circle"></i>
+            Erro
+          </span>
+          {% elif diagnostico.status == "processando" %}
+          <span class="diag-status diag-status-processando">
+            <i class="fas fa-spinner fa-spin"></i>
+            Processando
+          </span>
+          {% else %}
+          <span class="diag-status diag-status-pendente">
+            <i class="fas fa-clock"></i>
+            Pendente
+          </span>
+          {% endif %}
+        </div>
       </div>
-
-
 
       <div class="diag-result-grid">
 
-
-
         <div class="diag-image-panel">
-
           {% if diagnostico.imagem %}
-
           <div class="diag-image-wrapper">
-
-            <img src="{{ diagnostico.imagem.url }}" alt="Imagem analisada no diagnóstico #{{ diagnostico.id }}"
-              class="diag-image" loading="lazy">
+            <img src="{{ diagnostico.imagem.url }}" alt="Imagem analisada no diagnóstico {{ diagnostico.id }}"
+              class="diag-image">
 
             <div class="diag-image-overlay">
-
               <i class="fas fa-camera"></i>
-
               Imagem analisada
-
             </div>
-
           </div>
-
 
           <div class="diag-image-caption">
-
             <i class="fas fa-robot"></i>
-
-            Esta é a imagem utilizada pelo AgroIA
-            Moxico para realizar a análise.
-
+            <span>
+              Imagem utilizada pelo AgroIA Moxico como base para a análise.
+            </span>
           </div>
-
           {% else %}
-
           <div class="diag-image-empty">
-
             <div>
-
               <i class="fas fa-image"></i>
-
-              <strong>
-                Imagem não disponível
-              </strong>
-
+              <strong>Imagem não disponível</strong>
               <p>
-                Não existe uma imagem associada
-                a esta análise.
+                Não existe uma imagem associada a esta análise.
               </p>
-
             </div>
-
           </div>
-
           {% endif %}
-
         </div>
-
-
 
         <div class="diag-info-panel">
 
-
-
-
           {% if diagnostico.status == "processando" %}
-
           <div class="diag-processing">
-
             <div class="diag-processing-icon">
               <i class="fas fa-spinner fa-spin"></i>
             </div>
 
             <div>
-
-              <strong>
-                A inteligência artificial está analisando
-              </strong>
-
+              <strong>A inteligência artificial está analisando</strong>
               <p>
                 O AgroIA está processando a imagem.
               </p>
-
             </div>
-
           </div>
-
           {% endif %}
 
-
-
           {% if diagnostico.status == "pendente" %}
-
           <div class="diag-pending">
-
             <div class="diag-pending-icon">
               <i class="fas fa-clock"></i>
             </div>
 
             <div>
-
-              <strong>
-                Diagnóstico aguardando processamento
-              </strong>
-
+              <strong>Diagnóstico aguardando processamento</strong>
               <p>
                 Esta análise ainda não foi concluída.
               </p>
-
             </div>
-
           </div>
-
           {% endif %}
 
-
-
           {% if diagnostico.status == "concluido" %}
-
           <div class="diag-main-result">
-
             <div class="diag-main-label">
               Resultado identificado
             </div>
 
             <h3>
-
               {% if diagnostico.doenca_identificada %}
-
               {{ diagnostico.doenca_identificada }}
-
               {% elif diagnostico.resultado %}
-
               {{ diagnostico.resultado }}
-
               {% else %}
-
               Resultado não identificado
-
               {% endif %}
-
             </h3>
-
           </div>
-
           {% endif %}
-
-
 
           <div class="diag-info-grid">
 
-
-
-
             <div class="diag-info-item">
-
               <span class="diag-info-label">
                 Produto agrícola
               </span>
 
               <span class="diag-info-value">
-
                 {% if diagnostico.produto %}
-
                 {{ diagnostico.produto.nome }}
-
                 {% else %}
-
                 Produto removido
-
                 {% endif %}
-
               </span>
-
             </div>
 
-
-    
             <div class="diag-info-item">
-
               <span class="diag-info-label">
                 Resultado
               </span>
 
               <span class="diag-info-value">
-
                 {% if diagnostico.doenca_identificada %}
-
                 {{ diagnostico.doenca_identificada }}
-
                 {% elif diagnostico.resultado %}
-
                 {{ diagnostico.resultado }}
-
                 {% else %}
-
                 Não identificado
-
                 {% endif %}
-
               </span>
-
             </div>
 
-
-            <!-- CONFIANÇA -->
-
             <div class="diag-info-item">
-
               <span class="diag-info-label">
                 Confiança da IA
               </span>
 
               <span class="diag-info-value">
-
-                {% if diagnostico.confianca %}
-
-                {{ diagnostico.confianca }}%
-
+                {% if diagnostico.confianca != None %}
+                {{ diagnostico.confianca|floatformat:1 }}%
                 {% else %}
-
                 Não disponível
-
                 {% endif %}
-
               </span>
-
             </div>
 
-
-            <!-- DATA -->
-
             <div class="diag-info-item">
-
               <span class="diag-info-label">
                 Realizado em
               </span>
@@ -2066,14 +1594,9 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
               <span class="diag-info-value">
                 {{ diagnostico.data_criacao|date:"d/m/Y H:i" }}
               </span>
-
             </div>
 
-
-            <!-- ATUALIZAÇÃO -->
-
             <div class="diag-info-item">
-
               <span class="diag-info-label">
                 Última atualização
               </span>
@@ -2081,329 +1604,1528 @@ Diagnóstico #{{ diagnostico.id }} | AgroIA Moxico
               <span class="diag-info-value">
                 {{ diagnostico.data_atualizacao|date:"d/m/Y H:i" }}
               </span>
-
             </div>
 
-
-            <!-- ESTADO -->
-
             <div class="diag-info-item">
-
               <span class="diag-info-label">
                 Estado da análise
               </span>
 
               <span class="diag-info-value">
-
                 {% if diagnostico.status == "concluido" %}
-
                 Concluído
-
                 {% elif diagnostico.status == "processando" %}
-
                 Processando
-
                 {% elif diagnostico.status == "erro" %}
-
                 Erro
-
                 {% else %}
-
                 Pendente
-
                 {% endif %}
-
               </span>
-
             </div>
 
           </div>
 
-
-          <!-- =================================================
-                     BARRA DE CONFIANÇA
-                     ================================================= -->
-
-          {% if diagnostico.status == "concluido" and diagnostico.confianca %}
-
+          {% if diagnostico.status == "concluido" and diagnostico.confianca != None %}
           <div class="diag-confidence">
-
             <div class="diag-confidence-top">
-
               <span class="diag-confidence-label">
                 Confiança da inteligência artificial
               </span>
 
               <span class="diag-confidence-value">
-                {{ diagnostico.confianca }}%
+                {{ diagnostico.confianca|floatformat:1 }}%
               </span>
-
             </div>
 
             <div class="diag-confidence-bar">
-
-              <div class="diag-confidence-fill" style="
-                                --confidence-width:
-                                {{ diagnostico.confianca }}%;
-                            "></div>
-
+              <div class="diag-confidence-fill" data-confidence="{{ diagnostico.confianca }}">
+              </div>
             </div>
-
           </div>
-
           {% endif %}
-
-
-          <!-- =================================================
-                     DESCRIÇÃO
-                     ================================================= -->
 
           {% if diagnostico.descricao_resultado %}
-
           <div class="diag-content-section">
-
             <h3>
-
               <i class="fas fa-info-circle"></i>
-
               Descrição do resultado
-
             </h3>
 
-            <p>
-              {{ diagnostico.descricao_resultado }}
-            </p>
-
+            <p>{{ diagnostico.descricao_resultado }}</p>
           </div>
-
           {% endif %}
-
-
-          <!-- =================================================
-                     RECOMENDAÇÕES
-                     ================================================= -->
 
           {% if diagnostico.recomendacoes %}
-
           <div class="diag-content-section diag-recommendations">
-
             <h3>
-
               <i class="fas fa-leaf"></i>
-
               Recomendações
-
             </h3>
 
-            <p>
-              {{ diagnostico.recomendacoes }}
-            </p>
-
+            <p>{{ diagnostico.recomendacoes }}</p>
           </div>
-
           {% endif %}
-
-
-          <!-- =================================================
-                     OBSERVAÇÕES
-                     ================================================= -->
 
           {% if diagnostico.observacoes %}
-
           <div class="diag-alert">
-
             <strong>
-
               <i class="fas fa-exclamation-triangle"></i>
-
               Observações
-
             </strong>
 
-            <div>
-              {{ diagnostico.observacoes }}
-            </div>
-
+            <div>{{ diagnostico.observacoes }}</div>
           </div>
-
           {% endif %}
 
-
-          <!-- =================================================
-                     ERRO
-                     ================================================= -->
-
           {% if diagnostico.status == "erro" %}
-
           <div class="diag-error">
-
             <h3>
-
               <i class="fas fa-exclamation-circle"></i>
-
               Erro durante o diagnóstico
-
             </h3>
 
             <p>
-
               {% if diagnostico.erro %}
-
               {{ diagnostico.erro }}
-
               {% else %}
-
-              Ocorreu um erro durante o processamento
-              deste diagnóstico.
-
+              Ocorreu um erro durante o processamento deste diagnóstico.
               {% endif %}
-
             </p>
-
           </div>
-
           {% endif %}
 
         </div>
+      </div>
+    </section>
+  </div>
 
+  <div class="diag-footer-note">
+    <i class="fas fa-shield-alt"></i>
+    <span>
+      Resultado gerado pelo sistema de inteligência artificial AgroIA Moxico.
+    </span>
+  </div>
+
+  <section class="diag-export-report" id="pdfReport">
+
+    <div class="diag-export-header">
+      <div class="diag-export-brand">
+        <div class="diag-export-brand-mark">
+          <i class="fas fa-seedling"></i>
+        </div>
+
+        <div>
+          <div class="diag-export-brand-name">
+            AgroIA Moxico
+          </div>
+
+          <div class="diag-export-brand-subtitle">
+            Inteligência Artificial aplicada à agricultura
+          </div>
+        </div>
       </div>
 
-    </section>
+      <div class="diag-export-title">
+        <strong>Relatório de Diagnóstico</strong>
+        <span>Diagnóstico {{ diagnostico.id }}</span>
+        <span>{{ diagnostico.data_criacao|date:"d/m/Y H:i" }}</span>
+      </div>
+    </div>
 
+    {% if diagnostico.imagem %}
+    <img src="{{ diagnostico.imagem.url }}" alt="Imagem analisada" class="diag-export-image" id="exportDiagnosisImage">
+    {% else %}
+    <div class="diag-export-placeholder">
+      <i class="fas fa-seedling"></i>
+    </div>
+    {% endif %}
 
-    <!-- =====================================================
-         NOTA FINAL
-         ===================================================== -->
+    <div class="diag-export-product">
+      <div class="diag-export-label">
+        Produto agrícola analisado
+      </div>
 
-    <div class="diag-footer-note">
+      <div class="diag-export-product-name">
+        {% if diagnostico.produto %}
+        {{ diagnostico.produto.nome }}
+        {% else %}
+        Produto removido
+        {% endif %}
+      </div>
 
-      <i class="fas fa-shield-alt"></i>
+      {% if diagnostico.produto and diagnostico.produto.descricao %}
+      <div class="diag-export-product-description">
+        {{ diagnostico.produto.descricao|truncatechars:250 }}
+      </div>
+      {% endif %}
+    </div>
 
-      <span>
-        Resultado gerado pelo sistema de inteligência artificial
-        AgroIA Moxico.
-      </span>
+    <div class="diag-export-result">
+      <div class="diag-export-result-label">
+        Resultado identificado
+      </div>
+
+      <h2>
+        {% if diagnostico.doenca_identificada %}
+        {{ diagnostico.doenca_identificada }}
+        {% elif diagnostico.resultado %}
+        {{ diagnostico.resultado }}
+        {% else %}
+        Resultado não identificado
+        {% endif %}
+      </h2>
+    </div>
+
+    <div class="diag-export-grid">
+
+      <div class="diag-export-item">
+        <span>Número do diagnóstico</span>
+        <strong>{{ diagnostico.id }}</strong>
+      </div>
+
+      <div class="diag-export-item">
+        <span>Estado</span>
+        <strong>
+          {% if diagnostico.status == "concluido" %}
+          Concluído
+          {% elif diagnostico.status == "processando" %}
+          Processando
+          {% elif diagnostico.status == "erro" %}
+          Erro
+          {% else %}
+          Pendente
+          {% endif %}
+        </strong>
+      </div>
+
+      <div class="diag-export-item">
+        <span>Confiança da IA</span>
+        <strong>
+          {% if diagnostico.confianca != None %}
+          {{ diagnostico.confianca|floatformat:1 }}%
+          {% else %}
+          Não disponível
+          {% endif %}
+        </strong>
+      </div>
+
+      <div class="diag-export-item">
+        <span>Data da análise</span>
+        <strong>
+          {{ diagnostico.data_criacao|date:"d/m/Y H:i" }}
+        </strong>
+      </div>
+
+      <div class="diag-export-item">
+        <span>Última atualização</span>
+        <strong>
+          {{ diagnostico.data_atualizacao|date:"d/m/Y H:i" }}
+        </strong>
+      </div>
+
+      <div class="diag-export-item">
+        <span>Resultado</span>
+        <strong>
+          {% if diagnostico.doenca_identificada %}
+          {{ diagnostico.doenca_identificada }}
+          {% elif diagnostico.resultado %}
+          {{ diagnostico.resultado }}
+          {% else %}
+          Não identificado
+          {% endif %}
+        </strong>
+      </div>
 
     </div>
 
-  </div>
+    {% if diagnostico.descricao_resultado %}
+    <div class="diag-export-section">
+      <h3>Descrição do resultado</h3>
+      <p>{{ diagnostico.descricao_resultado }}</p>
+    </div>
+    {% endif %}
+
+    {% if diagnostico.recomendacoes %}
+    <div class="diag-export-section">
+      <h3>Recomendações</h3>
+      <p>{{ diagnostico.recomendacoes }}</p>
+    </div>
+    {% endif %}
+
+    {% if diagnostico.observacoes %}
+    <div class="diag-export-section">
+      <h3>Observações</h3>
+      <p>{{ diagnostico.observacoes }}</p>
+    </div>
+    {% endif %}
+
+    {% if diagnostico.status == "erro" %}
+    <div class="diag-export-section">
+      <h3>Erro durante o diagnóstico</h3>
+      <p>
+        {% if diagnostico.erro %}
+        {{ diagnostico.erro }}
+        {% else %}
+        Ocorreu um erro durante o processamento deste diagnóstico.
+        {% endif %}
+      </p>
+    </div>
+    {% endif %}
+
+    <div class="diag-export-footer">
+      <span>
+        AgroIA Moxico · Relatório de diagnóstico individual
+      </span>
+
+      <span>
+        Diagnóstico {{ diagnostico.id }}
+      </span>
+    </div>
+
+  </section>
 
 </main>
-
 {% endblock %}
 
 {% block extra_js %}
-
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+  (function () {
+    "use strict";
 
-    /*
-     * ============================================================
-     * ANIMAÇÃO DOS ELEMENTOS
-     * ============================================================
-     */
+    const printButton = document.getElementById("printDiagnosisButton");
+    const downloadButton = document.getElementById("downloadDiagnosisButton");
+    const confidenceFill = document.querySelector(".diag-confidence-fill");
+    const exportReport = document.getElementById("pdfReport");
+    const exportImage = document.getElementById("exportDiagnosisImage");
 
-    const animatedElements = document.querySelectorAll(
-      ".diag-info-item, .diag-content-section, .diag-confidence"
-    );
-
-    animatedElements.forEach(function (element, index) {
-
-      element.style.opacity = "0";
-      element.style.transform = "translateY(12px)";
-
-      setTimeout(function () {
-
-        element.style.transition =
-          "opacity .55s ease, transform .55s ease";
-
-        element.style.opacity = "1";
-        element.style.transform = "translateY(0)";
-
-      }, 100 + (index * 60));
-
-    });
-
-
-    /*
-     * ============================================================
-     * SEGURANÇA DA BARRA DE CONFIANÇA
-     * ============================================================
-     */
-
-    const confidenceFill =
-      document.querySelector(".diag-confidence-fill");
-
-    if (confidenceFill) {
-
-      const rawWidth =
-        getComputedStyle(
-          confidenceFill
-        ).getPropertyValue("--confidence-width");
-
-      let value =
-        parseFloat(rawWidth);
-
-      if (isNaN(value)) {
-        value = 0;
+    function setConfidence() {
+      if (!confidenceFill) {
+        return;
       }
 
-      value =
-        Math.max(
-          0,
-          Math.min(
-            100,
-            value
-          )
+      const value = parseFloat(
+        confidenceFill.getAttribute("data-confidence") || "0"
+      );
+
+      const safeValue = Math.max(0, Math.min(100, value));
+
+      requestAnimationFrame(function () {
+        confidenceFill.style.width = safeValue + "%";
+      });
+    }
+
+    function loadJsPDF() {
+      if (
+        window.jspdf &&
+        typeof window.jspdf.jsPDF === "function"
+      ) {
+        return Promise.resolve();
+      }
+
+      return new Promise(function (resolve, reject) {
+        const existing = document.querySelector(
+          "script[data-agroia-jspdf]"
         );
 
-      confidenceFill.style.setProperty(
-        "--confidence-width",
-        value + "%"
+        if (existing) {
+          existing.addEventListener(
+            "load",
+            function () {
+              if (
+                window.jspdf &&
+                typeof window.jspdf.jsPDF === "function"
+              ) {
+                resolve();
+              } else {
+                reject(new Error("jsPDF indisponível."));
+              }
+            },
+            { once: true }
+          );
+
+          existing.addEventListener(
+            "error",
+            function () {
+              reject(new Error("Falha ao carregar jsPDF."));
+            },
+            { once: true }
+          );
+
+          return;
+        }
+
+        const script = document.createElement("script");
+
+        script.src =
+          "https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.0.0/jspdf.umd.min.js";
+
+        script.async = true;
+        script.setAttribute(
+          "data-agroia-jspdf",
+          "true"
+        );
+
+        script.onload = function () {
+          if (
+            window.jspdf &&
+            typeof window.jspdf.jsPDF === "function"
+          ) {
+            resolve();
+          } else {
+            reject(new Error("jsPDF indisponível."));
+          }
+        };
+
+        script.onerror = function () {
+          reject(new Error("Falha ao carregar jsPDF."));
+        };
+
+        document.head.appendChild(script);
+      });
+    }
+
+    function cleanText(value) {
+      if (value === null || value === undefined) {
+        return "";
+      }
+
+      return String(value)
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function getElementText(selector, fallback) {
+      if (!exportReport) {
+        return fallback || "";
+      }
+
+      const element = exportReport.querySelector(selector);
+
+      if (!element) {
+        return fallback || "";
+      }
+
+      return cleanText(element.textContent);
+    }
+
+    function getSections() {
+      if (!exportReport) {
+        return [];
+      }
+
+      return Array.from(
+        exportReport.querySelectorAll(
+          ".diag-export-section"
+        )
+      )
+        .map(function (section) {
+          const title = section.querySelector("h3");
+          const content = section.querySelector("p, div");
+
+          return {
+            title: title
+              ? cleanText(title.textContent)
+              : "",
+            content: content
+              ? cleanText(content.textContent)
+              : ""
+          };
+        })
+        .filter(function (section) {
+          return section.content;
+        });
+    }
+
+    function getReportData() {
+      return {
+        id: "{{ diagnostico.id }}",
+        product: getElementText(
+          ".diag-export-product-name",
+          "Produto removido"
+        ),
+        productDescription: getElementText(
+          ".diag-export-product-description",
+          ""
+        ),
+        result: getElementText(
+          ".diag-export-result h2",
+          "Resultado não identificado"
+        ),
+        status: getElementText(
+          ".diag-export-item:nth-child(2) strong",
+          "Pendente"
+        ),
+        confidence: getElementText(
+          ".diag-export-item:nth-child(3) strong",
+          "Não disponível"
+        ),
+        created: "{{ diagnostico.data_criacao|date:'d/m/Y H:i' }}",
+        updated: "{{ diagnostico.data_atualizacao|date:'d/m/Y H:i' }}",
+        sections: getSections()
+      };
+    }
+
+    function imageToDataURL(imageElement) {
+      if (
+        !imageElement ||
+        !imageElement.src
+      ) {
+        return Promise.resolve(null);
+      }
+
+      return new Promise(function (resolve) {
+        const image = new Image();
+
+        image.crossOrigin = "anonymous";
+
+        image.onload = function () {
+          try {
+            const width =
+              image.naturalWidth || 1200;
+
+            const height =
+              image.naturalHeight || 800;
+
+            const canvas =
+              document.createElement("canvas");
+
+            const context =
+              canvas.getContext("2d");
+
+            if (!context) {
+              resolve(null);
+              return;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            context.drawImage(
+              image,
+              0,
+              0,
+              width,
+              height
+            );
+
+            resolve(
+              canvas.toDataURL(
+                "image/jpeg",
+                .9
+              )
+            );
+          } catch (error) {
+            resolve(null);
+          }
+        };
+
+        image.onerror = function () {
+          resolve(null);
+        };
+
+        image.src = imageElement.src;
+      });
+    }
+
+    function roundedCard(
+      pdf,
+      x,
+      y,
+      width,
+      height,
+      fill,
+      stroke
+    ) {
+      pdf.setFillColor(
+        fill[0],
+        fill[1],
+        fill[2]
+      );
+
+      pdf.setDrawColor(
+        stroke[0],
+        stroke[1],
+        stroke[2]
+      );
+
+      pdf.setLineWidth(.25);
+
+      pdf.roundedRect(
+        x,
+        y,
+        width,
+        height,
+        3,
+        3,
+        "FD"
       );
     }
 
-
-    /*
-     * ============================================================
-     * PREVENÇÃO DE CLIQUE DUPLO NO HISTÓRICO
-     * ============================================================
-     */
-
-    const historyButton =
-      document.querySelector(".diag-history-button");
-
-    if (historyButton) {
-
-      historyButton.addEventListener("click", function () {
-
-        historyButton.style.pointerEvents = "none";
-        historyButton.style.opacity = ".75";
-
-      });
-
-    }
-
-
-    /*
-     * ============================================================
-     * TECLA ESC — VOLTAR
-     * ============================================================
-     */
-
-    document.addEventListener("keydown", function (event) {
-
-      if (event.key === "Escape") {
-
-        if (window.history.length > 1) {
-          window.history.back();
-        }
-
+    function wrappedText(
+      pdf,
+      text,
+      x,
+      y,
+      width,
+      lineHeight,
+      maxLines
+    ) {
+      if (!text) {
+        return y;
       }
 
-    });
+      const lines =
+        pdf.splitTextToSize(
+          String(text),
+          width
+        );
 
-  });
+      const visible =
+        maxLines
+          ? lines.slice(0, maxLines)
+          : lines;
+
+      visible.forEach(function (line) {
+        pdf.text(
+          line,
+          x,
+          y
+        );
+
+        y += lineHeight;
+      });
+
+      if (
+        maxLines &&
+        lines.length > maxLines
+      ) {
+        pdf.text(
+          "...",
+          x + width - 4,
+          y - lineHeight
+        );
+      }
+
+      return y;
+    }
+
+    function setPdfFont(
+      pdf,
+      style,
+      size,
+      color
+    ) {
+      pdf.setFont(
+        "helvetica",
+        style
+      );
+
+      pdf.setFontSize(size);
+
+      if (color) {
+        pdf.setTextColor(
+          color[0],
+          color[1],
+          color[2]
+        );
+      }
+    }
+
+    async function buildPdf() {
+      await loadJsPDF();
+
+      const jsPDF =
+        window.jspdf.jsPDF;
+
+      const pdf =
+        new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+          compress: true
+        });
+
+      const data =
+        getReportData();
+
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 10;
+      const contentWidth =
+        pageWidth - margin * 2;
+
+      pdf.setProperties({
+        title:
+          "AgroIA Moxico - Diagnóstico {{ diagnostico.id }}",
+        subject:
+          "Relatório de diagnóstico agrícola",
+        author:
+          "AgroIA Moxico",
+        creator:
+          "AgroIA Moxico"
+      });
+
+      pdf.setFillColor(
+        255,
+        255,
+        255
+      );
+
+      pdf.rect(
+        0,
+        0,
+        pageWidth,
+        pageHeight,
+        "F"
+      );
+
+      pdf.setDrawColor(
+        23,
+        107,
+        69
+      );
+
+      pdf.setLineWidth(.7);
+
+      pdf.line(
+        margin,
+        30,
+        pageWidth - margin,
+        30
+      );
+
+      pdf.setFillColor(
+        23,
+        107,
+        69
+      );
+
+      pdf.roundedRect(
+        margin,
+        margin,
+        12,
+        12,
+        3,
+        3,
+        "F"
+      );
+
+      setPdfFont(
+        pdf,
+        "bold",
+        12,
+        [255, 255, 255]
+      );
+
+      pdf.text(
+        "A",
+        margin + 6,
+        margin + 8.5,
+        {
+          align: "center"
+        }
+      );
+
+      setPdfFont(
+        pdf,
+        "bold",
+        16,
+        [13, 77, 49]
+      );
+
+      pdf.text(
+        "AgroIA Moxico",
+        margin + 16,
+        margin + 6.5
+      );
+
+      setPdfFont(
+        pdf,
+        "normal",
+        7,
+        [113, 134, 124]
+      );
+
+      pdf.text(
+        "Inteligência Artificial aplicada à agricultura",
+        margin + 16,
+        margin + 11
+      );
+
+      setPdfFont(
+        pdf,
+        "bold",
+        10,
+        [13, 77, 49]
+      );
+
+      pdf.text(
+        "RELATÓRIO DE DIAGNÓSTICO",
+        pageWidth - margin,
+        margin + 4,
+        {
+          align: "right"
+        }
+      );
+
+      setPdfFont(
+        pdf,
+        "normal",
+        7,
+        [113, 134, 124]
+      );
+
+      pdf.text(
+        "Diagnóstico {{ diagnostico.id }}",
+        pageWidth - margin,
+        margin + 9,
+        {
+          align: "right"
+        }
+      );
+
+      pdf.text(
+        "{{ diagnostico.data_criacao|date:'d/m/Y H:i' }}",
+        pageWidth - margin,
+        margin + 13.5,
+        {
+          align: "right"
+        }
+      );
+
+      let y = 36;
+
+      let imageData = null;
+
+      if (exportImage) {
+        imageData =
+          await imageToDataURL(
+            exportImage
+          );
+      }
+
+      if (imageData) {
+        try {
+          pdf.addImage(
+            imageData,
+            "JPEG",
+            margin,
+            y,
+            contentWidth,
+            48,
+            undefined,
+            "FAST"
+          );
+        } catch (error) {
+          pdf.setFillColor(
+            234,
+            247,
+            239
+          );
+
+          pdf.roundedRect(
+            margin,
+            y,
+            contentWidth,
+            48,
+            4,
+            4,
+            "F"
+          );
+
+          setPdfFont(
+            pdf,
+            "bold",
+            11,
+            [23, 107, 69]
+          );
+
+          pdf.text(
+            "Imagem analisada",
+            pageWidth / 2,
+            y + 25,
+            {
+              align: "center"
+            }
+          );
+        }
+      } else {
+        pdf.setFillColor(
+          234,
+          247,
+          239
+        );
+
+        pdf.roundedRect(
+          margin,
+          y,
+          contentWidth,
+          48,
+          4,
+          4,
+          "F"
+        );
+
+        setPdfFont(
+          pdf,
+          "bold",
+          11,
+          [23, 107, 69]
+        );
+
+        pdf.text(
+          "Imagem não disponível",
+          pageWidth / 2,
+          y + 25,
+          {
+            align: "center"
+          }
+        );
+      }
+
+      y += 52;
+
+      roundedCard(
+        pdf,
+        margin,
+        y,
+        contentWidth,
+        23,
+        [234, 247, 239],
+        [214, 235, 221]
+      );
+
+      setPdfFont(
+        pdf,
+        "bold",
+        6.5,
+        [113, 134, 124]
+      );
+
+      pdf.text(
+        "PRODUTO AGRÍCOLA ANALISADO",
+        margin + 6,
+        y + 7
+      );
+
+      setPdfFont(
+        pdf,
+        "bold",
+        12,
+        [13, 77, 49]
+      );
+
+      pdf.text(
+        data.product,
+        margin + 6,
+        y + 14
+      );
+
+      if (
+        data.productDescription
+      ) {
+        setPdfFont(
+          pdf,
+          "normal",
+          6.3,
+          [82, 104, 94]
+        );
+
+        const descriptionLines =
+          pdf.splitTextToSize(
+            data.productDescription,
+            contentWidth - 12
+          );
+
+        pdf.text(
+          descriptionLines.slice(
+            0,
+            1
+          ),
+          margin + 6,
+          y + 19
+        );
+      }
+
+      y += 27;
+
+      pdf.setFillColor(
+        13,
+        77,
+        49
+      );
+
+      pdf.roundedRect(
+        margin,
+        y,
+        contentWidth,
+        27,
+        4,
+        4,
+        "F"
+      );
+
+      setPdfFont(
+        pdf,
+        "bold",
+        6.5,
+        [190, 221, 205]
+      );
+
+      pdf.text(
+        "RESULTADO IDENTIFICADO",
+        margin + 7,
+        y + 8
+      );
+
+      setPdfFont(
+        pdf,
+        "bold",
+        13,
+        [255, 255, 255]
+      );
+
+      const resultLines =
+        pdf.splitTextToSize(
+          data.result,
+          contentWidth - 14
+        );
+
+      pdf.text(
+        resultLines.slice(
+          0,
+          2
+        ),
+        margin + 7,
+        y + 17
+      );
+
+      y += 31;
+
+      const cardGap = 3;
+
+      const cardWidth =
+        (contentWidth -
+          cardGap * 2) / 3;
+
+      const infoItems = [
+        [
+          "NÚMERO DO DIAGNÓSTICO",
+          data.id
+        ],
+        [
+          "ESTADO",
+          data.status
+        ],
+        [
+          "CONFIANÇA DA IA",
+          data.confidence
+        ],
+        [
+          "DATA DA ANÁLISE",
+          data.created
+        ],
+        [
+          "ÚLTIMA ATUALIZAÇÃO",
+          data.updated
+        ],
+        [
+          "RESULTADO",
+          data.result
+        ]
+      ];
+
+      const itemHeight = 18;
+
+      infoItems.forEach(
+        function (item, index) {
+          const row =
+            Math.floor(
+              index / 3
+            );
+
+          const col =
+            index % 3;
+
+          const x =
+            margin +
+            col *
+            (cardWidth +
+              cardGap);
+
+          const itemY =
+            y +
+            row *
+            (itemHeight +
+              cardGap);
+
+          roundedCard(
+            pdf,
+            x,
+            itemY,
+            cardWidth,
+            itemHeight,
+            [255, 255, 255],
+            [225, 234, 229]
+          );
+
+          setPdfFont(
+            pdf,
+            "bold",
+            5.5,
+            [129, 145, 136]
+          );
+
+          pdf.text(
+            item[0],
+            x + 4,
+            itemY + 5
+          );
+
+          setPdfFont(
+            pdf,
+            "bold",
+            7.3,
+            [23, 53, 42]
+          );
+
+          const valueLines =
+            pdf.splitTextToSize(
+              String(item[1]),
+              cardWidth - 8
+            );
+
+          pdf.text(
+            valueLines.slice(
+              0,
+              2
+            ),
+            x + 4,
+            itemY + 11
+          );
+        }
+      );
+
+      y +=
+        itemHeight * 2 +
+        cardGap +
+        5;
+
+      data.sections.forEach(
+        function (section) {
+          if (!section.content) {
+            return;
+          }
+
+          if (y > 260) {
+            return;
+          }
+
+          const sectionHeight =
+            Math.min(
+              38,
+              297 - y - 22
+            );
+
+          if (
+            sectionHeight <
+            20
+          ) {
+            return;
+          }
+
+          roundedCard(
+            pdf,
+            margin,
+            y,
+            contentWidth,
+            sectionHeight,
+            [247, 250, 248],
+            [226, 235, 230]
+          );
+
+          setPdfFont(
+            pdf,
+            "bold",
+            7.5,
+            [13, 77, 49]
+          );
+
+          pdf.text(
+            section.title,
+            margin + 5,
+            y + 7
+          );
+
+          setPdfFont(
+            pdf,
+            "normal",
+            6.4,
+            [82, 104, 94]
+          );
+
+          wrappedText(
+            pdf,
+            section.content,
+            margin + 5,
+            y + 13,
+            contentWidth - 10,
+            3.5,
+            Math.max(
+              2,
+              Math.floor(
+                (sectionHeight - 16) /
+                3.5
+              )
+            )
+          );
+
+          y +=
+            sectionHeight + 5;
+        }
+      );
+
+      pdf.setDrawColor(
+        223,
+        232,
+        227
+      );
+
+      pdf.setLineWidth(.3);
+
+      pdf.line(
+        margin,
+        pageHeight - 14,
+        pageWidth - margin,
+        pageHeight - 14
+      );
+
+      setPdfFont(
+        pdf,
+        "normal",
+        6.3,
+        [130, 147, 139]
+      );
+
+      pdf.text(
+        "AgroIA Moxico · Relatório de diagnóstico individual",
+        margin,
+        pageHeight - 8
+      );
+
+      pdf.text(
+        "Diagnóstico {{ diagnostico.id }} · Página 1 de 1",
+        pageWidth - margin,
+        pageHeight - 8,
+        {
+          align: "right"
+        }
+      );
+
+      return pdf;
+    }
+
+    function setButtonLoading(
+      button,
+      loading,
+      text
+    ) {
+      if (!button) {
+        return;
+      }
+
+      if (loading) {
+        if (!button.dataset.originalHtml) {
+          button.dataset.originalHtml =
+            button.innerHTML;
+        }
+
+        button.disabled = true;
+
+        button.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> ' +
+          text;
+      } else {
+        button.disabled = false;
+
+        button.innerHTML =
+          button.dataset.originalHtml ||
+          "";
+      }
+    }
+
+    async function downloadDiagnosis() {
+      if (!downloadButton) {
+        return;
+      }
+
+      setButtonLoading(
+        downloadButton,
+        true,
+        "A gerar PDF..."
+      );
+
+      try {
+        const pdf =
+          await buildPdf();
+
+        pdf.save(
+          "agroia-moxico-diagnostico-{{ diagnostico.id }}.pdf"
+        );
+      } catch (error) {
+        console.error(
+          "Erro ao gerar PDF:",
+          error
+        );
+
+        window.alert(
+          "Não foi possível gerar o PDF. Verifique a ligação à internet e tente novamente."
+        );
+      } finally {
+        setButtonLoading(
+          downloadButton,
+          false
+        );
+      }
+    }
+
+    function copyExportStyles() {
+      let styles = "";
+
+      document
+        .querySelectorAll("style")
+        .forEach(function (style) {
+          styles +=
+            style.textContent || "";
+        });
+
+      return styles;
+    }
+
+    async function printDiagnosis() {
+      if (!exportReport) {
+        return;
+      }
+
+      if (!printButton) {
+        return;
+      }
+
+      setButtonLoading(
+        printButton,
+        true,
+        "A preparar..."
+      );
+
+      try {
+        const printWindow =
+          window.open(
+            "",
+            "_blank",
+            "width=900,height=1200"
+          );
+
+        if (!printWindow) {
+          window.alert(
+            "O navegador bloqueou a janela de impressão. Permita pop-ups para este site e tente novamente."
+          );
+
+          return;
+        }
+
+        const report =
+          exportReport.cloneNode(true);
+
+        report.removeAttribute("id");
+
+        const clonedImage =
+          report.querySelector(
+            "#exportDiagnosisImage"
+          );
+
+        const imageData =
+          exportImage
+            ? await imageToDataURL(
+              exportImage
+            )
+            : null;
+
+        if (
+          clonedImage &&
+          imageData
+        ) {
+          clonedImage.src =
+            imageData;
+        }
+
+        const styles =
+          copyExportStyles();
+
+        printWindow.document.open();
+
+        printWindow.document.write(
+          `
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroIA Moxico - Diagnóstico {{ diagnostico.id }}</title>
+
+<style>
+${styles}
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+html,
+body {
+  width: 210mm !important;
+  height: 297mm !important;
+  min-height: 297mm !important;
+  max-height: 297mm !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #fff !important;
+  overflow: hidden !important;
+}
+
+body {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.diag-export-report {
+  display: block !important;
+  position: relative !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 210mm !important;
+  height: 297mm !important;
+  min-height: 297mm !important;
+  max-height: 297mm !important;
+  margin: 0 !important;
+  padding: 10mm !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  background: #fff !important;
+  box-sizing: border-box !important;
+}
+
+.diag-export-report * {
+  visibility: visible !important;
+}
+
+.diag-export-image {
+  height: 48mm !important;
+  width: 100% !important;
+  object-fit: cover !important;
+}
+
+.diag-export-footer {
+  position: absolute !important;
+  left: 10mm !important;
+  right: 10mm !important;
+  bottom: 7mm !important;
+}
+
+</style>
+</head>
+
+<body>
+
+${report.outerHTML}
+
+<script>
+window.addEventListener("load", function () {
+  setTimeout(function () {
+    window.focus();
+    window.print();
+
+    setTimeout(function () {
+      window.close();
+    }, 700);
+  }, 500);
+});
+<\/script>
+
+</body>
+</html>
+`
+        );
+
+        printWindow.document.close();
+
+      } catch (error) {
+        console.error(
+          "Erro ao preparar impressão:",
+          error
+        );
+
+        window.alert(
+          "Não foi possível preparar o relatório para impressão."
+        );
+      } finally {
+        setButtonLoading(
+          printButton,
+          false
+        );
+      }
+    }
+
+    if (downloadButton) {
+      downloadButton.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault();
+
+          if (
+            downloadButton.disabled
+          ) {
+            return;
+          }
+
+          downloadDiagnosis();
+        }
+      );
+    }
+
+    if (printButton) {
+      printButton.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault();
+
+          if (
+            printButton.disabled
+          ) {
+            return;
+          }
+
+          printDiagnosis();
+        }
+      );
+    }
+
+    if (
+      document.readyState ===
+      "loading"
+    ) {
+      document.addEventListener(
+        "DOMContentLoaded",
+        setConfidence
+      );
+    } else {
+      setConfidence();
+    }
+
+  })();
 </script>
-
 {% endblock %}
