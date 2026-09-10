@@ -10,241 +10,215 @@ Sobre | AgroIA Moxico
 
 <style>
   /* ============================================================
-   AGROIA MOXICO — PÁGINA SOBRE
-   VERSÃO PREMIUM / PROFISSIONAL
-============================================================ */
+     AGROIA MOXICO — SOBRE
+     DESIGN LIMPO / MODERNO / PROFISSIONAL
+  ============================================================ */
 
   .about-page {
+    --about-primary: #176b45;
+    --about-primary-dark: #0d4d31;
+    --about-primary-deep: #062a1c;
+    --about-primary-soft: #eaf7ef;
+    --about-gold: #d9a441;
+    --about-text: #173226;
+    --about-muted: #6b7d74;
+    --about-border: rgba(23, 107, 69, .10);
+
     position: relative;
     overflow: hidden;
+    color: var(--about-text);
     background:
       linear-gradient(180deg,
         #f7faf8 0%,
-        #ffffff 42%,
-        #f4f9f6 100%);
-    color: var(--text);
+        #ffffff 28%,
+        #f5faf7 100%);
   }
 
-  /* ============================================================
-   CONTAINER
-============================================================ */
-
   .about-container {
-    width: min(1180px, calc(100% - 40px));
+    width: min(1160px, calc(100% - 40px));
     margin: 0 auto;
   }
 
   /* ============================================================
-   INTRODUÇÃO
-============================================================ */
+     HERO
+  ============================================================ */
 
-  .about-intro {
+  .about-hero {
     position: relative;
-    padding: 90px 0 82px;
+    padding: 92px 0 85px;
+    overflow: hidden;
     background:
-      radial-gradient(circle at 90% 10%,
-        rgba(217, 164, 65, .10),
+      radial-gradient(circle at 90% 5%,
+        rgba(217, 164, 65, .14),
+        transparent 28%),
+      radial-gradient(circle at 5% 85%,
+        rgba(23, 107, 69, .07),
         transparent 30%),
       linear-gradient(180deg,
         #ffffff 0%,
-        #f7faf8 100%);
-    overflow: hidden;
+        #f4faf6 100%);
   }
 
-  .about-intro::before {
+  .about-hero::before {
     content: "";
     position: absolute;
-    width: 360px;
-    height: 360px;
-    top: -180px;
-    right: -120px;
+    width: 420px;
+    height: 420px;
+    right: -210px;
+    top: -220px;
     border-radius: 50%;
     background:
       radial-gradient(circle,
         rgba(23, 107, 69, .08),
-        transparent 70%);
+        transparent 68%);
     pointer-events: none;
   }
 
-  .about-intro-grid {
+  .about-hero-grid {
     position: relative;
     z-index: 2;
+
     display: grid;
-    grid-template-columns: 1.18fr .82fr;
+    grid-template-columns: 1.12fr .88fr;
     gap: 70px;
     align-items: center;
   }
 
-  /* ============================================================
-   LABEL
-============================================================ */
-
-  .about-section-label {
+  .about-eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    color: var(--primary);
-    font-size: .70rem;
+
+    color: var(--about-primary);
+    font-size: .69rem;
     font-weight: 800;
+    letter-spacing: .13em;
     text-transform: uppercase;
-    letter-spacing: .12em;
   }
 
-  .about-section-label::before {
+  .about-eyebrow::before {
     content: "";
-    width: 24px;
+    width: 25px;
     height: 2px;
-    border-radius: 20px;
-    background: var(--secondary);
+    border-radius: 10px;
+    background: var(--about-gold);
   }
 
-  /* ============================================================
-   INTRO — TÍTULO
-============================================================ */
-
-  .about-intro-heading h1,
-  .about-intro-heading h2 {
-    max-width: 500px;
+  .about-hero h1 {
+    max-width: 650px;
     margin: 15px 0 0;
-    color: var(--primary-deep);
-    font-size: clamp(2.1rem, 4vw, 3.25rem);
-    line-height: 1.04;
-    font-weight: 800;
-    letter-spacing: -.055em;
+
+    color: var(--about-primary-deep);
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    line-height: .99;
+    letter-spacing: -.065em;
+    font-weight: 850;
   }
 
-  .about-intro-heading h1 span,
-  .about-intro-heading h2 span {
-    color: var(--primary);
+  .about-hero h1 span {
+    color: var(--about-primary);
   }
 
-  /* ============================================================
-   INTRO — TEXTO
-============================================================ */
+  .about-hero-description {
+    max-width: 650px;
+    margin-top: 22px;
 
-  .about-intro-text {
-    max-width: 720px;
-  }
-
-  .about-intro-text p {
-    color: var(--text-light);
-    font-size: .91rem;
+    color: var(--about-muted);
+    font-size: .95rem;
     line-height: 1.9;
   }
 
-  .about-intro-text p+p {
-    margin-top: 17px;
-  }
-
-  .about-intro-text strong {
-    color: var(--text);
-  }
-
-  /* ============================================================
-   CARD DESTAQUE — PARA QUEM É
-============================================================ */
-
-  .about-intro-card {
+  .about-hero-card {
     position: relative;
-    min-height: 270px;
-    padding: 32px;
+    padding: 34px;
     overflow: hidden;
-    border-radius: 25px;
-    border: 1px solid rgba(23, 107, 69, .10);
+
+    border: 1px solid rgba(23, 107, 69, .11);
+    border-radius: 28px;
+
     background:
       linear-gradient(145deg,
-        #ffffff 0%,
-        #f3f9f5 100%);
+        rgba(255, 255, 255, .96),
+        rgba(238, 248, 242, .96));
+
     box-shadow:
-      0 22px 55px rgba(13, 77, 49, .10);
+      0 25px 65px rgba(13, 77, 49, .11);
+
     transition:
       transform .35s ease,
       box-shadow .35s ease;
   }
 
-  .about-intro-card:hover {
-    transform: translateY(-5px);
+  .about-hero-card:hover {
+    transform: translateY(-6px);
     box-shadow:
-      0 30px 70px rgba(13, 77, 49, .14);
+      0 32px 75px rgba(13, 77, 49, .15);
   }
 
-  .about-intro-card::before {
+  .about-hero-card::after {
     content: "";
     position: absolute;
-    width: 180px;
-    height: 180px;
-    right: -80px;
-    top: -80px;
+    width: 190px;
+    height: 190px;
+    right: -100px;
+    top: -100px;
     border-radius: 50%;
     background:
       radial-gradient(circle,
-        rgba(217, 164, 65, .16),
+        rgba(217, 164, 65, .18),
         transparent 70%);
   }
 
-  .about-intro-card-icon {
+  .about-hero-icon {
     position: relative;
     z-index: 2;
+
     display: grid;
     place-items: center;
-    width: 52px;
-    height: 52px;
-    margin-bottom: 24px;
-    border-radius: 15px;
-    color: var(--primary);
-    background: var(--primary-light);
+
+    width: 58px;
+    height: 58px;
+    margin-bottom: 23px;
+
+    border-radius: 17px;
+
+    color: var(--about-primary);
+    background: var(--about-primary-soft);
     border: 1px solid rgba(23, 107, 69, .08);
   }
 
-  .about-intro-card-icon svg {
-    width: 25px;
-    height: 25px;
+  .about-hero-icon svg {
+    width: 27px;
+    height: 27px;
   }
 
-  .about-intro-card h3 {
+  .about-hero-card h2 {
     position: relative;
     z-index: 2;
-    color: var(--primary-deep);
-    font-size: 1.25rem;
-    font-weight: 800;
+
+    color: var(--about-primary-deep);
+    font-size: 1.35rem;
     letter-spacing: -.025em;
+    font-weight: 800;
   }
 
-  .about-intro-card p {
+  .about-hero-card p {
     position: relative;
     z-index: 2;
-    max-width: 500px;
+
     margin-top: 10px;
-    color: var(--text-light);
-    font-size: .80rem;
-    line-height: 1.75;
-  }
 
-  .about-intro-card-tags {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 18px;
-  }
-
-  .about-intro-card-tags span {
-    padding: 6px 12px;
-    border-radius: 20px;
-    background: var(--primary-light);
-    color: var(--primary-deep);
-    font-size: .70rem;
-    font-weight: 700;
-    border: 1px solid rgba(23, 107, 69, .10);
+    color: var(--about-muted);
+    font-size: .81rem;
+    line-height: 1.8;
   }
 
   /* ============================================================
-   SEÇÕES
-============================================================ */
+     SEÇÕES
+  ============================================================ */
 
   .about-section {
-    padding: 78px 0;
+    padding: 82px 0;
   }
 
   .about-section-white {
@@ -257,610 +231,501 @@ Sobre | AgroIA Moxico
     background:
       linear-gradient(180deg,
         #f5faf7,
-        #eef7f2);
+        #edf7f1);
   }
 
-  /* ============================================================
-   O DESAFIO
-============================================================ */
-
-  .about-challenge {
-    padding: 82px 0;
-    background: #fff;
+  .about-section-heading {
+    max-width: 700px;
+    margin-bottom: 38px;
   }
 
-  .about-challenge-grid {
-    display: grid;
-    grid-template-columns: 1.05fr .95fr;
-    gap: 55px;
-    align-items: center;
+  .about-section-heading h2 {
+    margin-top: 13px;
+
+    color: var(--about-primary-deep);
+    font-size: clamp(1.9rem, 3.5vw, 2.65rem);
+    line-height: 1.08;
+    letter-spacing: -.05em;
+    font-weight: 850;
   }
 
-  .about-challenge-text h2 {
-    margin-top: 14px;
-    color: var(--primary-deep);
-    font-size: clamp(1.9rem, 3vw, 2.55rem);
-    line-height: 1.1;
-    letter-spacing: -.045em;
-  }
+  .about-section-heading p {
+    max-width: 650px;
+    margin-top: 13px;
 
-  .about-challenge-text p {
-    margin-top: 16px;
-    color: var(--text-light);
-    font-size: .89rem;
+    color: var(--about-muted);
+    font-size: .88rem;
     line-height: 1.85;
   }
 
-  .about-challenge-facts {
-    display: grid;
-    gap: 14px;
-  }
-
-  .about-challenge-fact {
-    display: flex;
-    gap: 15px;
-    padding: 20px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background:
-      linear-gradient(145deg,
-        #f7fbf8,
-        #eef7f2);
-    transition: transform .3s ease, box-shadow .3s ease;
-  }
-
-  .about-challenge-fact:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .about-challenge-fact-icon {
-    display: grid;
-    place-items: center;
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    color: var(--primary);
-    background: #fff;
-    border: 1px solid var(--border);
-  }
-
-  .about-challenge-fact-icon svg {
-    width: 19px;
-    height: 19px;
-  }
-
-  .about-challenge-fact strong {
-    display: block;
-    color: var(--text);
-    font-size: .83rem;
-    font-weight: 800;
-  }
-
-  .about-challenge-fact p {
-    margin-top: 4px;
-    color: var(--text-light);
-    font-size: .76rem;
-    line-height: 1.65;
-  }
-
   /* ============================================================
-   OBJETIVOS
-============================================================ */
+     SOBRE A PLATAFORMA
+  ============================================================ */
 
-  .about-objectives {
-    padding: 82px 0;
-    background: #fff;
+  .about-purpose-grid {
+    display: grid;
+    grid-template-columns: .9fr 1.1fr;
+    gap: 65px;
+    align-items: center;
   }
 
-  .about-objectives-header {
-    max-width: 700px;
-    margin-bottom: 34px;
+  .about-purpose-text h2 {
+    margin-top: 13px;
+
+    color: var(--about-primary-deep);
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    line-height: 1.06;
+    letter-spacing: -.055em;
   }
 
-  .about-objectives-header h2 {
-    margin-top: 14px;
-    color: var(--primary-deep);
-    font-size: clamp(1.9rem, 3vw, 2.55rem);
-    letter-spacing: -.045em;
+  .about-purpose-text h2 span {
+    color: var(--about-primary);
   }
 
-  .about-objective-general {
+  .about-purpose-text p {
+    margin-top: 17px;
+
+    color: var(--about-muted);
+    font-size: .88rem;
+    line-height: 1.9;
+  }
+
+  .about-purpose-highlight {
     position: relative;
+    padding: 31px;
     overflow: hidden;
-    padding: 30px 34px;
-    margin-bottom: 32px;
-    border-radius: 22px;
-    color: #fff;
+
+    border-radius: 23px;
     background:
       linear-gradient(135deg,
-        #0d4d31 0%,
-        #083a25 100%);
+        var(--about-primary-dark),
+        #083a25);
+
+    color: #ffffff;
+
+    box-shadow:
+      0 25px 55px rgba(13, 77, 49, .14);
   }
 
-  .about-objective-general::before {
+  .about-purpose-highlight::after {
     content: "";
     position: absolute;
-    width: 220px;
-    height: 220px;
-    top: -110px;
-    right: -80px;
+
+    width: 210px;
+    height: 210px;
+
+    right: -105px;
+    bottom: -115px;
+
     border-radius: 50%;
+
     background:
       radial-gradient(circle,
-        rgba(217, 164, 65, .18),
+        rgba(217, 164, 65, .20),
         transparent 70%);
   }
 
-  .about-objective-general-label {
+  .about-purpose-highlight-label {
     position: relative;
     z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    color: var(--secondary);
+
+    color: var(--about-gold);
     font-size: .68rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .12em;
   }
 
-  .about-objective-general-label::before {
-    content: "";
-    width: 22px;
-    height: 2px;
-    border-radius: 20px;
-    background: var(--secondary);
-  }
-
-  .about-objective-general p {
+  .about-purpose-highlight h3 {
     position: relative;
     z-index: 2;
-    max-width: 780px;
+
     margin-top: 12px;
-    color: rgba(255, 255, 255, .82);
-    font-size: .93rem;
-    line-height: 1.85;
+
+    font-size: 1.25rem;
+    font-weight: 800;
   }
 
-  .about-objectives-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 13px;
-  }
+  .about-purpose-highlight p {
+    position: relative;
+    z-index: 2;
 
-  .about-objective-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 13px;
-    padding: 18px 19px;
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    background:
-      linear-gradient(145deg,
-        #f7fbf8,
-        #eef7f2);
-    transition: transform .3s ease, box-shadow .3s ease;
-  }
+    margin-top: 10px;
 
-  .about-objective-item:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .about-objective-item-icon {
-    display: grid;
-    place-items: center;
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    margin-top: 1px;
-    border-radius: 9px;
-    color: #fff;
-    background: var(--primary);
-  }
-
-  .about-objective-item-icon svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .about-objective-item p {
-    color: var(--text-light);
-    font-size: .80rem;
-    line-height: 1.7;
-  }
-
-  /* ============================================================
-   COMO FUNCIONA
-============================================================ */
-
-  .about-how {
-    padding: 82px 0;
-    background:
-      linear-gradient(180deg,
-        #f5faf7,
-        #eef7f2);
-  }
-
-  .about-how-header {
-    max-width: 700px;
-    margin-bottom: 38px;
-  }
-
-  .about-how-header h2 {
-    margin-top: 14px;
-    color: var(--primary-deep);
-    font-size: clamp(1.9rem, 3vw, 2.55rem);
-    letter-spacing: -.045em;
-  }
-
-  .about-how-header p {
-    max-width: 640px;
-    margin-top: 12px;
-    color: var(--text-light);
-    font-size: .89rem;
+    color: rgba(255, 255, 255, .70);
+    font-size: .81rem;
     line-height: 1.8;
   }
 
-  .about-how-steps {
+  /* ============================================================
+     MISSÃO / VISÃO / PROPÓSITO
+  ============================================================ */
+
+  .about-values {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 18px;
   }
 
-  .about-how-step {
+  .about-value {
     position: relative;
-    padding: 27px 22px;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    background: #fff;
-    box-shadow: var(--shadow);
-    transition: transform .3s ease, box-shadow .3s ease;
-  }
-
-  .about-how-step:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .about-how-step-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    margin-bottom: 17px;
-    border-radius: 50%;
-    background: var(--primary-dark);
-    color: #fff;
-    font-weight: 800;
-    font-size: .8rem;
-  }
-
-  .about-how-step h3 {
-    color: var(--text);
-    font-size: .91rem;
-    font-weight: 800;
-  }
-
-  .about-how-step p {
-    margin-top: 8px;
-    color: var(--text-light);
-    font-size: .78rem;
-    line-height: 1.7;
-  }
-
-  /* ============================================================
-   MISSÃO / VISÃO / PROPÓSITO
-============================================================ */
-
-  .about-values-header {
-    max-width: 700px;
-    margin-bottom: 38px;
-  }
-
-  .about-values-header h2 {
-    margin-top: 14px;
-    color: var(--primary-deep);
-    font-size: clamp(1.9rem, 3vw, 2.6rem);
-    line-height: 1.08;
-    letter-spacing: -.045em;
-  }
-
-  .about-values-header p {
-    max-width: 640px;
-    margin-top: 12px;
-    color: var(--text-light);
-    font-size: .89rem;
-    line-height: 1.8;
-  }
-
-  .about-values-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .about-value-card {
-    position: relative;
-    padding: 29px;
+    padding: 28px;
     overflow: hidden;
-    border: 1px solid var(--border);
+
+    border: 1px solid var(--about-border);
     border-radius: 20px;
-    background: #fff;
-    box-shadow: var(--shadow);
+    background: #ffffff;
+
+    box-shadow:
+      0 12px 35px rgba(13, 77, 49, .055);
+
     transition:
       transform .35s ease,
-      box-shadow .35s ease,
-      border-color .35s ease;
+      box-shadow .35s ease;
   }
 
-  .about-value-card::after {
+  .about-value:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      0 22px 48px rgba(13, 77, 49, .10);
+  }
+
+  .about-value::after {
     content: "";
+
     position: absolute;
-    width: 100px;
-    height: 100px;
-    right: -48px;
-    bottom: -48px;
+    width: 120px;
+    height: 120px;
+
+    right: -60px;
+    bottom: -60px;
+
     border-radius: 50%;
+
     background: rgba(23, 107, 69, .045);
   }
 
-  .about-value-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-hover);
-    border-color: var(--border-hover);
-  }
-
   .about-value-icon {
-    position: relative;
-    z-index: 2;
     display: grid;
     place-items: center;
+
     width: 47px;
     height: 47px;
-    margin-bottom: 20px;
+    margin-bottom: 19px;
+
     border-radius: 14px;
-    color: var(--primary);
-    background: var(--primary-light);
+
+    color: var(--about-primary);
+    background: var(--about-primary-soft);
   }
 
   .about-value-icon svg {
-    width: 21px;
-    height: 21px;
+    width: 22px;
+    height: 22px;
   }
 
-  .about-value-card h3 {
-    position: relative;
-    z-index: 2;
-    color: var(--text);
-    font-size: 1.03rem;
+  .about-value h3 {
+    color: var(--about-text);
+    font-size: 1rem;
     font-weight: 800;
   }
 
-  .about-value-card p {
-    position: relative;
-    z-index: 2;
+  .about-value p {
     margin-top: 9px;
-    color: var(--text-light);
+
+    color: var(--about-muted);
     font-size: .79rem;
     line-height: 1.75;
   }
 
   /* ============================================================
-   FUNCIONALIDADES
-============================================================ */
+     FUNCIONALIDADES
+  ============================================================ */
 
-  .about-features-header {
-    max-width: 700px;
-    margin-bottom: 36px;
-  }
-
-  .about-features-header h2 {
-    margin-top: 14px;
-    color: var(--primary-deep);
-    font-size: clamp(1.9rem, 3vw, 2.55rem);
-    letter-spacing: -.045em;
-  }
-
-  .about-features-grid {
+  .about-features {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 17px;
   }
 
   .about-feature {
-    padding: 25px 21px;
-    border: 1px solid var(--border);
+    position: relative;
+    padding: 25px 22px;
+
+    border: 1px solid var(--about-border);
     border-radius: 18px;
+
     background:
       linear-gradient(145deg,
-        #f7fbf8,
+        #f8fbf9,
         #eef7f2);
+
     transition:
       transform .35s ease,
-      background .35s ease,
-      box-shadow .35s ease;
+      box-shadow .35s ease,
+      background .35s ease;
   }
 
   .about-feature:hover {
     transform: translateY(-5px);
+
     background:
       linear-gradient(145deg,
-        #f1f9f4,
-        #e8f5ed);
+        #ffffff,
+        #edf8f2);
+
     box-shadow:
-      0 18px 40px rgba(13, 77, 49, .08);
+      0 18px 42px rgba(13, 77, 49, .08);
   }
 
   .about-feature-icon {
     display: grid;
     place-items: center;
-    width: 41px;
-    height: 41px;
+
+    width: 43px;
+    height: 43px;
     margin-bottom: 17px;
-    border-radius: 11px;
-    color: var(--primary);
-    background: #fff;
-    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    color: var(--about-primary);
+    background: #ffffff;
+
+    border: 1px solid var(--about-border);
   }
 
   .about-feature-icon svg {
-    width: 19px;
-    height: 19px;
+    width: 20px;
+    height: 20px;
   }
 
   .about-feature h3 {
-    color: var(--text);
+    color: var(--about-text);
     font-size: .91rem;
     font-weight: 800;
   }
 
   .about-feature p {
     margin-top: 7px;
-    color: var(--text-light);
+
+    color: var(--about-muted);
     font-size: .76rem;
     line-height: 1.7;
   }
 
   /* ============================================================
-   DESENVOLVEDOR
-============================================================ */
+     HISTÓRICO / DOCUMENTAÇÃO
+  ============================================================ */
 
-  .about-developer {
+  .about-history {
     position: relative;
-    padding: 90px 0;
     overflow: hidden;
-    color: #fff;
+
+    padding: 84px 0;
+
+    color: #ffffff;
+
     background:
       linear-gradient(135deg,
         #0d4d31 0%,
-        #083a25 55%,
+        #083a25 58%,
         #062f1f 100%);
   }
 
-  .about-developer::before {
+  .about-history::before {
     content: "";
+
     position: absolute;
-    width: 500px;
-    height: 500px;
-    top: -290px;
-    right: -170px;
+
+    width: 430px;
+    height: 430px;
+
+    right: -220px;
+    top: -230px;
+
     border-radius: 50%;
+
     background:
       radial-gradient(circle,
         rgba(217, 164, 65, .17),
         transparent 68%);
   }
 
-  .about-developer::after {
-    content: "";
-    position: absolute;
-    width: 420px;
-    height: 420px;
-    bottom: -280px;
-    left: -180px;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle,
-        rgba(114, 210, 155, .08),
-        transparent 70%);
-  }
-
-  .about-developer-grid {
+  .about-history-grid {
     position: relative;
     z-index: 2;
+
     display: grid;
-    grid-template-columns:
-      minmax(330px, .72fr) minmax(0, 1.28fr);
-    gap: 70px;
+    grid-template-columns: 1fr 1fr;
+    gap: 55px;
     align-items: center;
   }
 
-  /* ============================================================
-   FOTO
-============================================================ */
+  .about-history h2 {
+    margin-top: 13px;
 
-  .about-developer-profile {
+    color: #ffffff;
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    line-height: 1.06;
+    letter-spacing: -.055em;
+  }
+
+  .about-history-description {
+    max-width: 620px;
+    margin-top: 15px;
+
+    color: rgba(255, 255, 255, .68);
+    font-size: .87rem;
+    line-height: 1.85;
+  }
+
+  .about-history-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    color: var(--about-gold);
+    font-size: .69rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+  }
+
+  .about-history-label::before {
+    content: "";
+
+    width: 24px;
+    height: 2px;
+
+    border-radius: 20px;
+    background: var(--about-gold);
+  }
+
+  .about-history-cards {
+    display: grid;
+    gap: 13px;
+  }
+
+  .about-history-card {
     display: flex;
-    justify-content: center;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 20px;
+
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 17px;
+
+    background: rgba(255, 255, 255, .055);
+
+    transition:
+      transform .3s ease,
+      background .3s ease;
+  }
+
+  .about-history-card:hover {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, .085);
+  }
+
+  .about-history-card-icon {
+    display: grid;
+    place-items: center;
+
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    color: var(--about-gold);
+    background: rgba(255, 255, 255, .08);
+  }
+
+  .about-history-card-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .about-history-card h3 {
+    color: #ffffff;
+    font-size: .88rem;
+    font-weight: 800;
+  }
+
+  .about-history-card p {
+    margin-top: 5px;
+
+    color: rgba(255, 255, 255, .58);
+    font-size: .75rem;
+    line-height: 1.65;
+  }
+
+  /* ============================================================
+     DESENVOLVEDOR
+  ============================================================ */
+
+  .about-developer {
+    padding: 82px 0;
+    background: #ffffff;
+  }
+
+  .about-developer-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 50px;
+    align-items: center;
   }
 
   .about-developer-photo-wrapper {
     position: relative;
-    width: 100%;
-    max-width: 390px;
-    padding: 9px;
-    border-radius: 30px;
+
+    padding: 7px;
+
+    border-radius: 25px;
+
     background:
       linear-gradient(145deg,
-        rgba(255, 255, 255, .18),
-        rgba(255, 255, 255, .035));
-    border: 1px solid rgba(255, 255, 255, .13);
+        rgba(23, 107, 69, .14),
+        rgba(217, 164, 65, .18));
+
     box-shadow:
-      0 35px 80px rgba(0, 0, 0, .26);
+      0 20px 45px rgba(13, 77, 49, .10);
   }
 
   .about-developer-photo {
-    position: relative;
-    width: 100%;
     aspect-ratio: 4 / 5;
+
     overflow: hidden;
-    border-radius: 23px;
-    background:
-      linear-gradient(145deg,
-        #164f36,
-        #092e1e);
+
+    border-radius: 19px;
+
+    background: var(--about-primary-dark);
   }
 
   .about-developer-photo img {
     display: block;
+
     width: 100%;
     height: 100%;
+
     object-fit: cover;
-    object-position: center center;
-    transition:
-      transform .8s ease,
-      filter .8s ease;
+
+    transition: transform .7s ease;
   }
 
-  .about-developer-photo-wrapper:hover .about-developer-photo img {
+  .about-developer-photo-wrapper:hover img {
     transform: scale(1.035);
-    filter: brightness(1.04) contrast(1.03);
-  }
-
-  .about-developer-photo-wrapper::after {
-    content: "";
-    position: absolute;
-    left: 28px;
-    right: 28px;
-    bottom: -9px;
-    height: 2px;
-    border-radius: 20px;
-    background:
-      linear-gradient(90deg,
-        transparent,
-        var(--secondary),
-        transparent);
-    opacity: .75;
-  }
-
-  /* ============================================================
-   INFORMAÇÃO DO DESENVOLVEDOR
-============================================================ */
-
-  .about-developer-info {
-    max-width: 700px;
   }
 
   .about-developer-label {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    color: var(--secondary);
-    font-size: .70rem;
+
+    color: var(--about-primary);
+
+    font-size: .69rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .12em;
@@ -868,511 +733,230 @@ Sobre | AgroIA Moxico
 
   .about-developer-label::before {
     content: "";
-    width: 23px;
+
+    width: 24px;
     height: 2px;
+
     border-radius: 20px;
-    background: var(--secondary);
+    background: var(--about-gold);
   }
 
   .about-developer-info h2 {
-    margin-top: 14px;
-    color: #fff;
-    font-size: clamp(2.2rem, 4vw, 3.4rem);
-    line-height: 1.02;
+    margin-top: 13px;
+
+    color: var(--about-primary-deep);
+
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    line-height: 1.05;
     letter-spacing: -.055em;
   }
 
   .about-developer-info h2 span {
-    color: #d9eac0;
+    color: var(--about-primary);
   }
 
-  .about-developer-description {
-    max-width: 650px;
-    margin-top: 18px;
-    color: rgba(255, 255, 255, .67);
-    font-size: .89rem;
+  .about-developer-info p {
+    max-width: 690px;
+    margin-top: 15px;
+
+    color: var(--about-muted);
+    font-size: .86rem;
     line-height: 1.85;
   }
 
   /* ============================================================
-   DETALHES
-============================================================ */
-
-  .about-developer-details {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 13px;
-    margin-top: 29px;
-  }
-
-  .about-developer-detail {
-    padding: 17px;
-    border: 1px solid rgba(255, 255, 255, .10);
-    border-radius: 15px;
-    background: rgba(255, 255, 255, .045);
-    transition:
-      background .3s ease,
-      border-color .3s ease;
-  }
-
-  .about-developer-detail:hover {
-    background: rgba(255, 255, 255, .065);
-    border-color: rgba(255, 255, 255, .15);
-  }
-
-  .about-developer-detail-title {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    color: #fff;
-    font-size: .77rem;
-    font-weight: 800;
-  }
-
-  .about-developer-detail-title svg {
-    width: 17px;
-    height: 17px;
-    flex-shrink: 0;
-    color: var(--secondary);
-  }
-
-  .about-developer-detail p {
-    margin-top: 8px;
-    color: rgba(255, 255, 255, .55);
-    font-size: .70rem;
-    line-height: 1.65;
-  }
-
-  /* ============================================================
-   CONTACTOS
-============================================================ */
-
-  .about-developer-contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 20px;
-  }
-
-  .about-developer-contact a {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 13px;
-    border-radius: 10px;
-    color: rgba(255, 255, 255, .78);
-    background: rgba(255, 255, 255, .055);
-    border: 1px solid rgba(255, 255, 255, .10);
-    text-decoration: none;
-    font-size: .69rem;
-    transition:
-      transform .3s ease,
-      background .3s ease,
-      color .3s ease;
-  }
-
-  .about-developer-contact a:hover {
-    transform: translateY(-2px);
-    color: #fff;
-    background: rgba(255, 255, 255, .10);
-  }
-
-  .about-developer-contact svg {
-    width: 15px;
-    height: 15px;
-    color: var(--secondary);
-  }
-
-  /* ============================================================
-   FORMAÇÃO
-============================================================ */
-
-  .about-education {
-    padding: 82px 0;
-    background: #fff;
-  }
-
-  .about-education-header {
-    max-width: 700px;
-    margin-bottom: 36px;
-  }
-
-  .about-education-header h2 {
-    margin-top: 14px;
-    color: var(--primary-deep);
-    font-size: clamp(1.9rem, 3vw, 2.55rem);
-    letter-spacing: -.045em;
-  }
-
-  .about-education-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .about-education-card {
-    position: relative;
-    padding: 28px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: 19px;
-    background:
-      linear-gradient(145deg,
-        #fff,
-        #f6faf8);
-    box-shadow: var(--shadow);
-    transition:
-      transform .35s ease,
-      box-shadow .35s ease;
-  }
-
-  .about-education-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .about-education-card::after {
-    content: "";
-    position: absolute;
-    width: 130px;
-    height: 130px;
-    right: -60px;
-    bottom: -60px;
-    border-radius: 50%;
-    background: rgba(23, 107, 69, .045);
-  }
-
-  .about-education-icon {
-    display: grid;
-    place-items: center;
-    width: 45px;
-    height: 45px;
-    margin-bottom: 18px;
-    border-radius: 13px;
-    color: var(--primary);
-    background: var(--primary-light);
-  }
-
-  .about-education-icon svg {
-    width: 21px;
-    height: 21px;
-  }
-
-  .about-education-card h3 {
-    color: var(--text);
-    font-size: 1rem;
-    font-weight: 800;
-  }
-
-  .about-education-card p {
-    margin-top: 9px;
-    color: var(--text-light);
-    font-size: .79rem;
-    line-height: 1.75;
-  }
-
-  .about-education-card strong {
-    color: var(--text);
-  }
-
-  /* ============================================================
-   COMPETÊNCIAS / SOFTWARES
-============================================================ */
-
-  .about-skills {
-    padding: 78px 0;
-    background:
-      linear-gradient(180deg,
-        #f5faf7,
-        #eef7f2);
-  }
-
-  .about-skills-grid {
-    display: grid;
-    grid-template-columns: .72fr 1.28fr;
-    gap: 55px;
-    align-items: center;
-  }
-
-  .about-skills h2 {
-    margin-top: 14px;
-    color: var(--primary-deep);
-    font-size: clamp(1.9rem, 3vw, 2.55rem);
-    letter-spacing: -.045em;
-  }
-
-  .about-skills-description {
-    max-width: 520px;
-    margin-top: 13px;
-    color: var(--text-light);
-    font-size: .87rem;
-    line-height: 1.8;
-  }
-
-  .about-skills-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 13px;
-  }
-
-  .about-skill {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 17px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: #fff;
-    box-shadow: var(--shadow);
-    transition:
-      transform .3s ease,
-      box-shadow .3s ease;
-  }
-
-  .about-skill:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .about-skill-icon {
-    display: grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-    border-radius: 10px;
-    color: var(--primary);
-    background: var(--primary-light);
-  }
-
-  .about-skill-icon svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .about-skill strong {
-    display: block;
-    color: var(--text);
-    font-size: .79rem;
-  }
-
-  .about-skill span {
-    display: block;
-    margin-top: 3px;
-    color: var(--text-light);
-    font-size: .66rem;
-  }
-
-  /* ============================================================
-   TRANSPARÊNCIA / AVISO
-============================================================ */
+     AVISO
+  ============================================================ */
 
   .about-disclaimer {
-    padding: 66px 0 70px;
-    background: #fff;
+    padding: 60px 0 72px;
+
+    background:
+      linear-gradient(180deg,
+        #f7faf8,
+        #ffffff);
   }
 
   .about-disclaimer-box {
     display: flex;
-    gap: 22px;
-    padding: 32px;
-    border-radius: 22px;
-    border: 1px solid rgba(217, 164, 65, .32);
+    align-items: flex-start;
+    gap: 20px;
+
+    padding: 28px 30px;
+
+    border: 1px solid rgba(217, 164, 65, .28);
+    border-radius: 21px;
+
     background:
       linear-gradient(145deg,
-        #fdf8ee,
-        #fbf2df);
+        #fffaf0,
+        #fbf3e1);
   }
 
   .about-disclaimer-icon {
     display: grid;
     place-items: center;
-    width: 48px;
-    height: 48px;
+
+    width: 47px;
+    height: 47px;
     flex-shrink: 0;
-    border-radius: 14px;
+
+    border-radius: 13px;
+
     color: #9a6b0c;
-    background: #fff;
-    border: 1px solid rgba(217, 164, 65, .35);
+    background: #ffffff;
+
+    border: 1px solid rgba(217, 164, 65, .28);
   }
 
   .about-disclaimer-icon svg {
-    width: 22px;
-    height: 22px;
+    width: 21px;
+    height: 21px;
   }
 
   .about-disclaimer-box h3 {
-    color: var(--text);
-    font-size: 1.02rem;
+    color: var(--about-text);
+    font-size: .98rem;
     font-weight: 800;
   }
 
   .about-disclaimer-box p {
-    margin-top: 9px;
-    color: var(--text-light);
-    font-size: .83rem;
-    line-height: 1.85;
-  }
+    margin-top: 8px;
 
-  .about-disclaimer-box p+p {
-    margin-top: 10px;
+    color: var(--about-muted);
+    font-size: .79rem;
+    line-height: 1.8;
   }
 
   /* ============================================================
-   RODAPÉ VISUAL
-============================================================ */
+     FINAL
+  ============================================================ */
 
   .about-ending {
-    position: relative;
-    padding: 75px 0;
+    padding: 68px 0 80px;
+
     text-align: center;
-    background: #fff;
+
+    background: #ffffff;
+
     border-top: 1px solid rgba(23, 107, 69, .05);
   }
 
   .about-ending-inner {
-    max-width: 720px;
+    max-width: 700px;
     margin: 0 auto;
   }
 
   .about-ending-icon {
     display: grid;
     place-items: center;
-    width: 54px;
-    height: 54px;
-    margin: 0 auto 20px;
+
+    width: 53px;
+    height: 53px;
+
+    margin: 0 auto 19px;
+
     border-radius: 16px;
-    color: var(--secondary);
-    background: var(--primary-dark);
+
+    color: var(--about-gold);
+    background: var(--about-primary-dark);
+
     box-shadow:
       0 15px 30px rgba(13, 77, 49, .15);
   }
 
   .about-ending-icon svg {
-    width: 25px;
-    height: 25px;
+    width: 24px;
+    height: 24px;
   }
 
   .about-ending h2 {
-    color: var(--primary-deep);
+    color: var(--about-primary-deep);
+
     font-size: clamp(1.8rem, 3vw, 2.45rem);
-    letter-spacing: -.045em;
+    letter-spacing: -.05em;
   }
 
   .about-ending p {
-    margin-top: 12px;
-    color: var(--text-light);
-    font-size: .88rem;
+    margin-top: 11px;
+
+    color: var(--about-muted);
+
+    font-size: .86rem;
     line-height: 1.8;
   }
 
   /* ============================================================
-   RESPONSIVIDADE
-============================================================ */
+     RESPONSIVIDADE
+  ============================================================ */
 
-  @media (max-width: 1000px) {
+  @media (max-width: 950px) {
 
-    .about-intro-grid {
+    .about-hero-grid,
+    .about-purpose-grid,
+    .about-history-grid {
       grid-template-columns: 1fr;
       gap: 40px;
     }
 
-    .about-intro-card {
-      min-height: auto;
+    .about-hero-card {
+      max-width: 600px;
     }
 
-    .about-challenge-grid {
-      grid-template-columns: 1fr;
-      gap: 35px;
-    }
-
-    .about-objectives-list {
-      grid-template-columns: 1fr;
-    }
-
-    .about-how-steps {
+    .about-values {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    .about-values-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .about-features-grid {
+    .about-features {
       grid-template-columns: repeat(2, 1fr);
     }
 
     .about-developer-grid {
-      grid-template-columns: 1fr;
-      gap: 50px;
-    }
-
-    .about-developer-profile {
-      justify-content: flex-start;
-    }
-
-    .about-developer-photo-wrapper {
-      max-width: 370px;
-    }
-
-    .about-skills-grid {
-      grid-template-columns: 1fr;
-      gap: 35px;
+      grid-template-columns: 220px 1fr;
     }
   }
 
   @media (max-width: 650px) {
 
     .about-container {
-      width: min(100% - 28px, 1180px);
+      width: calc(100% - 28px);
     }
 
-    .about-intro,
+    .about-hero,
     .about-section,
-    .about-challenge,
-    .about-how,
-    .about-education,
-    .about-skills,
+    .about-history,
     .about-developer,
     .about-disclaimer,
     .about-ending {
       padding: 55px 0;
     }
 
-    .about-intro-heading h1,
-    .about-intro-heading h2 {
-      font-size: clamp(2rem, 10vw, 2.8rem);
+    .about-hero h1 {
+      font-size: clamp(2.2rem, 11vw, 3rem);
     }
 
-    .about-how-steps,
-    .about-values-grid,
-    .about-features-grid,
-    .about-education-grid,
-    .about-developer-details,
-    .about-skills-list {
+    .about-values,
+    .about-features {
       grid-template-columns: 1fr;
     }
 
-    .about-developer-profile {
-      justify-content: center;
+    .about-developer-grid {
+      grid-template-columns: 1fr;
+      text-align: center;
     }
 
     .about-developer-photo-wrapper {
-      width: 100%;
-      max-width: 330px;
+      width: 220px;
+      margin: 0 auto;
     }
 
-    .about-developer-info h2 {
-      font-size: 2.45rem;
-    }
-
-    .about-developer-contact {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .about-developer-contact a {
+    .about-developer-label {
       justify-content: center;
+    }
+
+    .about-developer-info p {
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .about-disclaimer-box {
@@ -1386,265 +970,78 @@ Sobre | AgroIA Moxico
       width: calc(100% - 24px);
     }
 
-    .about-intro-card {
-      padding: 25px;
-      border-radius: 20px;
-    }
-
-    .about-value-card,
-    .about-education-card {
+    .about-hero-card,
+    .about-value {
       padding: 24px;
     }
 
-    .about-developer-photo-wrapper {
-      max-width: 290px;
+    .about-purpose-highlight {
+      padding: 25px;
     }
 
-    .about-developer-info h2 {
-      font-size: 2.15rem;
+    .about-history-card {
+      padding: 17px;
+    }
+
+    .about-developer-photo-wrapper {
+      width: 195px;
     }
   }
 </style>
 
-
 <div class="about-page">
 
 
-  <section class="about-intro">
+  <section class="about-hero">
     <div class="about-container">
-      <div class="about-intro-grid">
 
+      <div class="about-hero-grid">
 
-        <div class="about-intro-heading">
+        <div>
 
-          <span class="about-section-label">
-            A plataforma
+          <span class="about-eyebrow">
+            Sobre o AgroIA Moxico
           </span>
 
           <h1>
-            Tecnologia e
-            <span>informação agrícola.</span>
+            Tecnologia que aproxima
+            <span>informação e agricultura.</span>
           </h1>
 
-          <div class="about-intro-text">
+          <p class="about-hero-description">
+            O AgroIA Moxico é uma plataforma digital criada
+            para aproximar tecnologia, informação agrícola e
+            inteligência artificial dos utilizadores da província
+            do Moxico, em Angola.
+          </p>
 
-            <p>
-              O <strong>AgroIA Moxico</strong> é uma
-              plataforma digital dedicada à agricultura,
-              criada para aproximar informação,
-              tecnologia e inteligência artificial
-              das necessidades do contexto agrícola
-              da província do Moxico, em Angola.
-            </p>
-
-            <p>
-              A plataforma reúne diferentes recursos
-              num ambiente simples, moderno e acessível,
-              permitindo aos utilizadores consultar
-              conteúdos sobre culturas como o milho,
-              a mandioca e o feijão, produtos agrícolas
-              e ferramentas digitais de apoio à decisão.
-            </p>
-
-            <p>
-              Entre os seus recursos encontra-se
-              o apoio de inteligência artificial
-              para análise de imagens de folhas,
-              ajudando a identificar possíveis
-              doenças nas culturas agrícolas.
-            </p>
-
-          </div>
         </div>
 
-        <div class="about-intro-card">
 
-          <div class="about-intro-card-icon">
+        <div class="about-hero-card">
 
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+          <div class="about-hero-icon">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
               stroke-linejoin="round">
 
-              <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
-              <circle cx="10" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              <path d="M12 3v18" />
+              <path d="M3 12h18" />
+              <circle cx="12" cy="12" r="9" />
 
             </svg>
 
           </div>
 
-          <h3>
-            Para quem é o AgroIA Moxico
-          </h3>
-
-          <p>
-            A plataforma foi pensada para ser útil
-            a qualquer pessoa ligada à agricultura,
-            independentemente do nível de conhecimento
-            técnico.
-          </p>
-
-          <div class="about-intro-card-tags">
-
-            <span>Produtores</span>
-            <span>Agrónomos</span>
-            <span>Estudantes</span>
-            <span>Entusiastas</span>
-
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-
-
-  </section>
-
-
-  <section class="about-challenge">
-
-
-    <div class="about-container">
-
-      <div class="about-challenge-grid">
-
-        <div class="about-challenge-text">
-
-          <span class="about-section-label">
-            O contexto
-          </span>
-
           <h2>
-            Um desafio real na
-            agricultura do Moxico.
+            Agricultura mais informada
           </h2>
 
           <p>
-            A agricultura de subsistência é a
-            principal fonte de sustento de muitas
-            famílias na província do Moxico. No
-            entanto, doenças e pragas continuam
-            a comprometer a produtividade das
-            culturas, sobretudo pela falta de
-            acompanhamento técnico regular.
+            A plataforma reúne informação sobre produtos
+            agrícolas e ferramentas digitais de apoio à análise
+            de possíveis problemas nas culturas.
           </p>
-
-          <p>
-            Sem apoio especializado facilmente
-            acessível, muitos agricultores só
-            identificam uma doença quando esta já
-            está numa fase avançada — altura em
-            que a produção já foi afetada e as
-            opções de tratamento se tornam mais
-            limitadas e dispendiosas. O AgroIA
-            Moxico nasce para responder a este
-            problema, aproximando tecnologia e
-            conhecimento do agricultor.
-          </p>
-
-        </div>
-
-
-        <div class="about-challenge-facts">
-
-          <!-- DETEÇÃO TARDIA -->
-
-          <div class="about-challenge-fact">
-
-            <div class="about-challenge-fact-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
-                stroke-linejoin="round">
-
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 7v5l3 2" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Deteção tardia, prejuízo maior
-              </strong>
-
-              <p>
-                Quanto mais tarde uma doença é
-                identificada, mais limitadas e
-                caras se tornam as opções de
-                tratamento.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- POUCO ACOMPANHAMENTO -->
-
-          <div class="about-challenge-fact">
-
-            <div class="about-challenge-fact-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
-                stroke-linejoin="round">
-
-                <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
-                <circle cx="10" cy="7" r="4" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Pouco acompanhamento técnico
-              </strong>
-
-              <p>
-                A escassez de agrónomos e técnicos
-                disponíveis dificulta o apoio
-                regular aos agricultores da região.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- CULTURAS PRIORITÁRIAS -->
-
-          <div class="about-challenge-fact">
-
-            <div class="about-challenge-fact-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
-                stroke-linejoin="round">
-
-                <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Culturas prioritárias
-              </strong>
-
-              <p>
-                O sistema tem como foco culturas
-                centrais na região, como o milho,
-                a mandioca e o feijão.
-              </p>
-
-            </div>
-
-          </div>
 
         </div>
 
@@ -1652,213 +1049,56 @@ Sobre | AgroIA Moxico
 
     </div>
 
-
   </section>
 
-  <!-- ==========================================================
-       OBJETIVOS
-  =========================================================== -->
 
-  <section class="about-objectives">
-
+  <section class="about-section about-section-white">
 
     <div class="about-container">
 
-      <div class="about-objectives-header">
+      <div class="about-purpose-grid">
 
-        <span class="about-section-label">
-          Objetivos do projeto
-        </span>
+        <div class="about-purpose-text">
 
-        <h2>
-          O que o AgroIA Moxico
-          se propõe a alcançar.
-        </h2>
-
-      </div>
-
-
-      <!-- OBJETIVO GERAL -->
-
-      <div class="about-objective-general">
-
-        <span class="about-objective-general-label">
-          Objetivo geral
-        </span>
-
-        <p>
-          Desenvolver um sistema inteligente, com
-          recurso a Visão Computacional e Redes
-          Neuronais Convolucionais, capaz de identificar
-          automaticamente possíveis doenças em culturas
-          agrícolas a partir de fotografias, recomendando
-          ações preventivas ou curativas aos agricultores
-          da província do Moxico.
-        </p>
-
-      </div>
-
-
-      <!-- OBJETIVOS ESPECÍFICOS -->
-
-      <div class="about-objectives-list">
-
-        <div class="about-objective-item">
-
-          <span class="about-objective-item-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-
+          <span class="about-eyebrow">
+            O projeto
           </span>
 
+          <h2>
+            Uma solução pensada para
+            <span>necessidades reais.</span>
+          </h2>
+
           <p>
-            Selecionar e preparar um conjunto de dados
-            de imagens de plantas saudáveis e doentes,
-            adequado às culturas mais relevantes para
-            o Moxico (milho, mandioca, feijão).
+            O AgroIA Moxico procura tornar o acesso à informação
+            agrícola mais simples e apoiar o utilizador na
+            identificação de possíveis problemas nas suas culturas.
+          </p>
+
+          <p>
+            Através da análise de imagens e da apresentação de
+            informações e recomendações, a plataforma oferece
+            um recurso digital complementar para o acompanhamento
+            das culturas agrícolas.
           </p>
 
         </div>
 
 
-        <div class="about-objective-item">
+        <div class="about-purpose-highlight">
 
-          <span class="about-objective-item-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-
+          <span class="about-purpose-highlight-label">
+            Propósito
           </span>
 
-          <p>
-            Desenvolver e treinar um modelo de Rede
-            Neuronal Convolucional para a classificação
-            de doenças a partir de imagens de folhas.
-          </p>
-
-        </div>
-
-
-        <div class="about-objective-item">
-
-          <span class="about-objective-item-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-
-          </span>
+          <h3>
+            Tecnologia ao serviço da agricultura
+          </h3>
 
           <p>
-            Avaliar o desempenho do modelo através de
-            métricas adequadas (acurácia, precisão,
-            recall e matriz de confusão).
-          </p>
-
-        </div>
-
-
-        <div class="about-objective-item">
-
-          <span class="about-objective-item-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-
-          </span>
-
-          <p>
-            Desenvolver uma API REST, em Django, que
-            disponibilize o modelo treinado para uso
-            em aplicações Web e/ou móveis.
-          </p>
-
-        </div>
-
-
-        <div class="about-objective-item">
-
-          <span class="about-objective-item-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-
-          </span>
-
-          <p>
-            Desenvolver uma interface simples que
-            permita ao agricultor fotografar a planta
-            e visualizar o diagnóstico e as recomendações.
-          </p>
-
-        </div>
-
-
-        <div class="about-objective-item">
-
-          <span class="about-objective-item-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-
-          </span>
-
-          <p>
-            Construir uma base de conhecimento de
-            doenças e respetivas recomendações de
-            ação preventiva ou curativa.
-          </p>
-
-        </div>
-
-
-        <div class="about-objective-item">
-
-          <span class="about-objective-item-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-
-          </span>
-
-          <p>
-            Implementar um mecanismo de feedback que
-            permita ao agricultor confirmar a correção
-            do diagnóstico, apoiando a monitorização
-            contínua da qualidade do modelo.
-          </p>
-
-        </div>
-
-
-        <div class="about-objective-item">
-
-          <span class="about-objective-item-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-
-          </span>
-
-          <p>
-            Testar e validar o sistema desenvolvido,
-            corrigindo eventuais falhas identificadas.
+            Utilizar recursos digitais e inteligência artificial
+            para facilitar o acesso à informação e apoiar decisões
+            relacionadas com a saúde das culturas.
           </p>
 
         </div>
@@ -1867,166 +1107,33 @@ Sobre | AgroIA Moxico
 
     </div>
 
-
   </section>
-
-  <!-- ==========================================================
-       COMO FUNCIONA
-  =========================================================== -->
-
-  <section class="about-how">
-
-
-    <div class="about-container">
-
-      <div class="about-how-header">
-
-        <span class="about-section-label">
-          A solução
-        </span>
-
-        <h2>
-          Como funciona o
-          diagnóstico por IA.
-        </h2>
-
-        <p>
-          O processo foi pensado para ser simples
-          de usar, mesmo num telemóvel de baixo
-          custo e sem necessidade de conhecimento
-          técnico prévio.
-        </p>
-
-      </div>
-
-
-      <div class="about-how-steps">
-
-        <article class="about-how-step">
-
-          <span class="about-how-step-number">
-            1
-          </span>
-
-          <h3>
-            Fotografar o produto agrícola
-          </h3>
-
-          <p>
-            O agricultor tira uma fotografia da
-            folha ou da parte afetada do produto agrícola,
-            diretamente pelo telemóvel.
-          </p>
-
-        </article>
-
-
-        <!-- PASSO 2 -->
-
-        <article class="about-how-step">
-
-          <span class="about-how-step-number">
-            2
-          </span>
-
-          <h3>
-            Análise por Inteligência Artificial
-          </h3>
-
-          <p>
-            A imagem é processada por um modelo
-            de Visão Computacional (Rede Neuronal
-            Convolucional), treinado para reconhecer
-            padrões de doenças agrícolas.
-          </p>
-
-        </article>
-
-
-        <!-- PASSO 3 -->
-
-        <article class="about-how-step">
-
-          <span class="about-how-step-number">
-            3
-          </span>
-
-          <h3>
-            Diagnóstico e recomendações
-          </h3>
-
-          <p>
-            O sistema apresenta a doença mais
-            provável e sugere ações preventivas
-            ou curativas adequadas à situação.
-          </p>
-
-        </article>
-
-
-        <!-- PASSO 4 -->
-
-        <article class="about-how-step">
-
-          <span class="about-how-step-number">
-            4
-          </span>
-
-          <h3>
-            Feedback do agricultor
-          </h3>
-
-          <p>
-            O utilizador pode confirmar se o
-            diagnóstico esteve correto, ajudando
-            a melhorar continuamente a precisão
-            do sistema.
-          </p>
-
-        </article>
-
-      </div>
-
-    </div>
-
-
-  </section>
-
-  <!-- ==========================================================
-       MISSÃO / VISÃO / PROPÓSITO
-  =========================================================== -->
 
   <section class="about-section about-section-soft">
 
-
     <div class="about-container">
 
-      <div class="about-values-header">
+      <div class="about-section-heading">
 
-        <span class="about-section-label">
+        <span class="about-eyebrow">
           O que nos orienta
         </span>
 
         <h2>
-          Uma plataforma construída
-          com propósito.
+          Uma plataforma com propósito.
         </h2>
 
         <p>
-          O AgroIA Moxico procura unir conhecimento,
-          tecnologia e acessibilidade para fortalecer
-          o acesso à informação agrícola e reduzir
-          as perdas causadas por diagnósticos tardios.
+          O AgroIA Moxico foi pensado para unir simplicidade,
+          informação e tecnologia numa única experiência.
         </p>
 
       </div>
 
 
-      <div class="about-values-grid">
+      <div class="about-values">
 
-        <!-- MISSÃO -->
-
-        <article class="about-value-card">
+        <article class="about-value">
 
           <div class="about-value-icon">
 
@@ -2045,17 +1152,15 @@ Sobre | AgroIA Moxico
           </h3>
 
           <p>
-            Facilitar o acesso à informação agrícola
-            e a ferramentas digitais de apoio ao
-            conhecimento e à tomada de decisões.
+            Facilitar o acesso à informação agrícola e a
+            ferramentas digitais de apoio ao conhecimento
+            e à tomada de decisões.
           </p>
 
         </article>
 
 
-        <!-- VISÃO -->
-
-        <article class="about-value-card">
+        <article class="about-value">
 
           <div class="about-value-icon">
 
@@ -2074,17 +1179,15 @@ Sobre | AgroIA Moxico
           </h3>
 
           <p>
-            Contribuir para uma agricultura em que
-            tecnologia e conhecimento sejam cada vez
-            mais acessíveis aos seus utilizadores.
+            Contribuir para uma agricultura onde a tecnologia
+            e o conhecimento sejam cada vez mais acessíveis
+            aos seus utilizadores.
           </p>
 
         </article>
 
 
-        <!-- PROPÓSITO -->
-
-        <article class="about-value-card">
+        <article class="about-value">
 
           <div class="about-value-icon">
 
@@ -2104,9 +1207,9 @@ Sobre | AgroIA Moxico
           </h3>
 
           <p>
-            Colocar tecnologia, conhecimento e
-            inteligência artificial ao serviço de
-            uma agricultura mais preparada para o futuro.
+            Colocar tecnologia e inteligência artificial
+            ao serviço de uma agricultura mais preparada
+            para o futuro.
           </p>
 
         </article>
@@ -2115,35 +1218,31 @@ Sobre | AgroIA Moxico
 
     </div>
 
-
   </section>
-
-  <!-- ==========================================================
-       FUNCIONALIDADES
-  =========================================================== -->
 
   <section class="about-section about-section-white">
 
-
     <div class="about-container">
 
-      <div class="about-features-header">
+      <div class="about-section-heading">
 
-        <span class="about-section-label">
+        <span class="about-eyebrow">
           Plataforma
         </span>
 
         <h2>
-          Recursos disponíveis no
-          AgroIA Moxico.
+          O que é possível fazer no AgroIA Moxico.
         </h2>
+
+        <p>
+          Recursos essenciais reunidos numa plataforma simples
+          e orientada para a utilização prática.
+        </p>
 
       </div>
 
 
-      <div class="about-features-grid">
-
-        <!-- PRODUTOS -->
+      <div class="about-features">
 
         <article class="about-feature">
 
@@ -2164,14 +1263,12 @@ Sobre | AgroIA Moxico
           </h3>
 
           <p>
-            Consulta de produtos e informações
-            relevantes para o contexto agrícola.
+            Consulte informações relacionadas com produtos
+            agrícolas relevantes para a plataforma.
           </p>
 
         </article>
 
-
-        <!-- IA -->
 
         <article class="about-feature">
 
@@ -2189,18 +1286,16 @@ Sobre | AgroIA Moxico
           </div>
 
           <h3>
-            Diagnóstico IA
+            Análise por IA
           </h3>
 
           <p>
-            Identificação de doenças em culturas
-            a partir de uma simples fotografia.
+            Envie uma imagem e obtenha uma análise automática
+            sobre possíveis problemas identificados na cultura.
           </p>
 
         </article>
 
-
-        <!-- BASE DE CONHECIMENTO -->
 
         <article class="about-feature">
 
@@ -2216,18 +1311,16 @@ Sobre | AgroIA Moxico
           </div>
 
           <h3>
-            Base de conhecimento
+            Informação agrícola
           </h3>
 
           <p>
-            Informação sobre doenças e as respetivas
-            recomendações preventivas ou curativas.
+            Aceda a informações e recomendações relacionadas
+            com problemas e cuidados das culturas.
           </p>
 
         </article>
 
-
-        <!-- FEEDBACK -->
 
         <article class="about-feature">
 
@@ -2235,75 +1328,77 @@ Sobre | AgroIA Moxico
 
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 
-              <path
-                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" />
+              <path d="M4 5h16v14H4z" />
+              <path d="M8 9h8" />
+              <path d="M8 13h5" />
 
             </svg>
 
           </div>
 
           <h3>
-            Feedback e melhoria contínua
+            Histórico de análises
           </h3>
 
           <p>
-            O agricultor pode confirmar se o
-            diagnóstico esteve correto, ajudando
-            a melhorar o sistema.
+            Consulte as análises realizadas anteriormente
+            através do histórico da sua conta.
           </p>
 
         </article>
 
 
-        <!-- CULTURAS -->
-
         <article class="about-feature">
 
           <div class="about-feature-icon">
 
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
 
-              <path d="M11 20A7 7 0 0 1 4 13V8h7v5a7 7 0 0 1-7 7" />
-              <path d="M13 20a7 7 0 0 0 7-7V8h-7v5a7 7 0 0 0 7 7" />
+              <path d="M12 3v12" />
+              <path d="m7 10 5 5 5-5" />
+              <path d="M5 21h14" />
 
             </svg>
 
           </div>
 
           <h3>
-            Culturas do Moxico
+            Download dos resultados
           </h3>
 
           <p>
-            Foco em culturas relevantes para a
-            região, como milho, mandioca e feijão.
+            É possível baixar o histórico e os detalhes
+            de cada análise realizada em formato adequado
+            para guardar ou consultar posteriormente.
           </p>
 
         </article>
 
 
-        <!-- PERFIL -->
-
         <article class="about-feature">
 
           <div class="about-feature-icon">
 
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
 
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+              <path d="M6 9V2h12v7" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <path d="M6 14h12v8H6z" />
 
             </svg>
 
           </div>
 
           <h3>
-            Perfil
+            Impressão dos resultados
           </h3>
 
           <p>
-            Área personalizada para utilização
-            dos recursos da plataforma.
+            Os detalhes das análises e o histórico também
+            podem ser impressos para consulta física ou
+            documentação.
           </p>
 
         </article>
@@ -2312,599 +1407,207 @@ Sobre | AgroIA Moxico
 
     </div>
 
+  </section>
+
+  <section class="about-history">
+
+    <div class="about-container">
+
+      <div class="about-history-grid">
+
+        <div>
+
+          <span class="about-history-label">
+            Histórico e documentação
+          </span>
+
+          <h2>
+            As suas análises ficam organizadas.
+          </h2>
+
+          <p class="about-history-description">
+            O AgroIA Moxico permite consultar o histórico das
+            análises realizadas e abrir os detalhes de cada
+            resultado. Dessa forma, o utilizador pode acompanhar
+            as suas análises e manter os resultados organizados.
+          </p>
+
+        </div>
+
+
+        <div class="about-history-cards">
+
+          <div class="about-history-card">
+
+            <div class="about-history-card-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M4 5h16v14H4z" />
+                <path d="M8 9h8" />
+                <path d="M8 13h6" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <h3>
+                Histórico completo
+              </h3>
+
+              <p>
+                Consulte as análises realizadas anteriormente
+                a partir da área de histórico.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="about-history-card">
+
+            <div class="about-history-card-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M6 3h9l4 4v14H6z" />
+                <path d="M14 3v5h5" />
+                <path d="M9 13h6" />
+                <path d="M9 17h5" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <h3>
+                Detalhes de cada análise
+              </h3>
+
+              <p>
+                Abra uma análise individual para consultar
+                todas as informações disponibilizadas pelo sistema.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="about-history-card">
+
+            <div class="about-history-card-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M12 3v12" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M5 21h14" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <h3>
+                Baixar os resultados
+              </h3>
+
+              <p>
+                O histórico e os detalhes das análises podem
+                ser baixados para guardar os resultados.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="about-history-card">
+
+            <div class="about-history-card-icon">
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M6 9V2h12v7" />
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <path d="M6 14h12v8H6z" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <h3>
+                Imprimir
+              </h3>
+
+              <p>
+                Os resultados também podem ser impressos
+                diretamente para consulta ou documentação.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </section>
 
-  <!-- ==========================================================
-       DESENVOLVEDOR
-  =========================================================== -->
-
   <section class="about-developer">
-
 
     <div class="about-container">
 
       <div class="about-developer-grid">
 
-        <!-- FOTO -->
+        <div class="about-developer-photo-wrapper">
 
-        <div class="about-developer-profile">
+          <div class="about-developer-photo">
 
-          <div class="about-developer-photo-wrapper">
-
-            <div class="about-developer-photo">
-
-              <img src="{% static 'images/foto-Alexo.png' %}" alt="Alexo Salvador José">
-
-            </div>
+            <img src="{% static 'images/foto-Alexo.png' %}" alt="Alexo Salvador José">
 
           </div>
 
         </div>
 
-
-        <!-- INFORMAÇÃO -->
 
         <div class="about-developer-info">
 
           <span class="about-developer-label">
-            Desenvolvedor
+            Desenvolvimento
           </span>
 
           <h2>
-            Alexo
-            <span>Salvador José</span>
+            Criado por
+            <span>Alexo Salvador José.</span>
           </h2>
 
-          <p class="about-developer-description">
-            Desenvolvedor do AgroIA Moxico e estudante
-            de Ciências da Computação. A plataforma
-            nasceu como Trabalho de Fim de Curso (TFC),
-            com o objetivo de aplicar tecnologia e
-            inteligência artificial a um problema real
-            da agricultura do Moxico.
-          </p>
-
-
-          <div class="about-developer-details">
-
-            <!-- FORMAÇÃO -->
-
-            <div class="about-developer-detail">
-
-              <div class="about-developer-detail-title">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                  <path d="M4 4h16v16H4z" />
-                  <path d="M8 8h8" />
-                  <path d="M8 12h8" />
-                  <path d="M8 16h5" />
-
-                </svg>
-
-                Formação
-
-              </div>
-
-              <p>
-                12ª Classe concluída no
-                Complexo Escolar CD Tchifuchi
-                nº 338, no curso de Ciências
-                Físicas e Biológicas.
-              </p>
-
-            </div>
-
-
-            <!-- ENSINO SUPERIOR -->
-
-            <div class="about-developer-detail">
-
-              <div class="about-developer-detail-title">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                  <path d="M4 19h16" />
-                  <path d="M6 17V5h12v12" />
-                  <path d="M9 9h6" />
-                  <path d="M9 12h6" />
-
-                </svg>
-
-                Ensino superior
-
-              </div>
-
-              <p>
-                4º ano concluído no Instituto
-                Superior Politécnico do Moxico,
-                na especialidade de Ciências
-                da Computação.
-              </p>
-
-            </div>
-
-
-            <!-- ATUALMENTE -->
-
-            <div class="about-developer-detail">
-
-              <div class="about-developer-detail-title">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v5l3 2" />
-
-                </svg>
-
-                Atualmente
-
-              </div>
-
-              <p>
-                Frequentando o 5º ano do curso
-                de Ciências da Computação, na
-                realização do TFC.
-              </p>
-
-            </div>
-
-
-            <!-- CONTACTO -->
-
-            <div class="about-developer-detail">
-
-              <div class="about-developer-detail-title">
-
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                  <rect x="3" y="5" width="18" height="14" rx="2" />
-
-                  <path d="m3 7 9 6 9-6" />
-
-                </svg>
-
-                Contacto
-
-              </div>
-
-              <p>
-                Disponível através dos contactos
-                apresentados abaixo.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- CONTACTOS -->
-
-          <div class="about-developer-contact">
-
-            <a href="mailto:alexosalvadorjose2612@gmail.com">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-
-                <path d="m3 7 9 6 9-6" />
-
-              </svg>
-
-              alexosalvadorjose2612@gmail.com
-
-            </a>
-
-
-            <a href="tel:+244927607160">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-
-                <path
-                  d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7A2 2 0 0 1 22 16.9Z" />
-
-              </svg>
-
-              +244 927 607 160
-
-            </a>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-  </section>
-
-  <!-- ==========================================================
-       FORMAÇÃO
-  =========================================================== -->
-
-  <section class="about-education">
-
-    <div class="about-container">
-
-      <div class="about-education-header">
-
-        <span class="about-section-label">
-          Percurso académico
-        </span>
-
-        <h2>
-          Formação e percurso.
-        </h2>
-
-      </div>
-
-
-      <div class="about-education-grid">
-
-        <!-- ENSINO MÉDIO -->
-
-        <article class="about-education-card">
-
-          <div class="about-education-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-              <path d="M3 10 12 5l9 5-9 5-9-5Z" />
-              <path d="M7 12v5c3 2 7 2 10 0v-5" />
-              <path d="M21 10v6" />
-
-            </svg>
-
-          </div>
-
-          <h3>
-            Ensino médio
-          </h3>
+          <p>
+            <span>O AgroIA Moxico</span> é um projeto desenvolvido com foco de ajudar os agricultores, produtores,
+            agrónomos, cooperativas, e entusiastas, no âmbito
+            da utilização de tecnologias digitais e inteligência
+            artificial para responder a uma necessidade relacionada
+            com a agricultura.
 
           <p>
-
-            <strong>
-              Complexo Escolar CD Tchifuchi nº 338
-            </strong>
-
-            <br>
-
-            Curso de Ciências Físicas e Biológicas,
-            com conclusão da 12ª classe.
-
+            <span>Desenvolvido pelo Alexo Salvador José, esudante da área de Ciências da Computação...</span>
           </p>
-
-        </article>
-
-
-        <!-- CIÊNCIAS DA COMPUTAÇÃO -->
-
-        <article class="about-education-card">
-
-          <div class="about-education-icon">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-              <path d="M4 19h16" />
-              <path d="M6 17V5h12v12" />
-              <path d="M9 9h6" />
-              <path d="M9 12h6" />
-
-            </svg>
-
-          </div>
-
-          <h3>
-            Ciências da Computação
-          </h3>
-
-          <p>
-
-            <strong>
-              Instituto Superior Politécnico do Moxico
-            </strong>
-
-            <br>
-
-            4º ano concluído e atualmente a
-            frequentar o 5º ano na especialidade
-            de Ciências da Computação.
-
           </p>
-
-        </article>
-
-      </div>
-
-    </div>
-
-
-  </section>
-
-  <!-- ==========================================================
-       FERRAMENTAS E SOFTWARES
-  =========================================================== -->
-
-  <section class="about-skills">
-
-
-    <div class="about-container">
-
-      <div class="about-skills-grid">
-
-        <div>
-
-          <span class="about-section-label">
-            Competências
-          </span>
-
-          <h2>
-            Ferramentas e software.
-          </h2>
-
-          <p class="about-skills-description">
-            Entre as ferramentas utilizadas no
-            percurso académico e profissional
-            encontram-se os seguintes softwares,
-            utilizados para programação, bases de
-            dados, produtividade, documentação,
-            apresentações e edição gráfica.
-          </p>
-
-        </div>
-
-
-        <div class="about-skills-list">
-
-
-          <!-- ==================================================
-           APACHE NETBEANS
-      =================================================== -->
-
-          <div class="about-skill">
-
-            <div class="about-skill-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-
-                <rect x="4" y="3" width="16" height="18" rx="2" />
-
-                <path d="M8 7h8" />
-                <path d="M8 11h5" />
-                <path d="M8 15h8" />
-                <path d="M8 18h4" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Apache NetBeans
-              </strong>
-
-              <span>
-                Desenvolvimento de aplicações
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <!-- ==================================================
-           VISUAL STUDIO CODE
-      =================================================== -->
-
-          <div class="about-skill">
-
-            <div class="about-skill-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-
-                <path d="M8 8 4 12l4 4" />
-                <path d="m16 8 4 4-4 4" />
-                <path d="m14 5-4 14" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Visual Studio Code
-              </strong>
-
-              <span>
-                Programação e desenvolvimento web
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <!-- ==================================================
-           MYSQL WORKBENCH
-      =================================================== -->
-
-          <div class="about-skill">
-
-            <div class="about-skill-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-
-                <ellipse cx="12" cy="6" rx="7" ry="3" />
-
-                <path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6" />
-                <path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                MySQL Workbench
-              </strong>
-
-              <span>
-                Gestão e modelação de bases de dados
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <!-- ==================================================
-           MICROSOFT EXCEL
-      =================================================== -->
-
-          <div class="about-skill">
-
-            <div class="about-skill-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-
-                <path d="M7 8h10" />
-                <path d="M7 12h10" />
-                <path d="M7 16h6" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Microsoft Excel
-              </strong>
-
-              <span>
-                Organização e análise de dados
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <!-- ==================================================
-           MICROSOFT POWERPOINT
-      =================================================== -->
-
-          <div class="about-skill">
-
-            <div class="about-skill-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-
-                <path d="m8 15 3-3 2 2 3-4" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Microsoft PowerPoint
-              </strong>
-
-              <span>
-                Apresentações e conteúdos visuais
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <!-- ==================================================
-           MICROSOFT WORD
-      =================================================== -->
-
-          <div class="about-skill">
-
-            <div class="about-skill-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                <path d="M6 3h12v18H6z" />
-                <path d="M9 7h6" />
-                <path d="M9 11h6" />
-                <path d="M9 15h4" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Microsoft Word
-              </strong>
-
-              <span>
-                Documentação e produção de textos
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <!-- ==================================================
-           ADOBE PHOTOSHOP
-      =================================================== -->
-
-          <div class="about-skill">
-
-            <div class="about-skill-icon">
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-
-                <rect x="3" y="3" width="18" height="18" rx="3" />
-
-                <circle cx="9" cy="9" r="2" />
-
-                <path d="m4 18 5-5 3 3 3-4 5 6" />
-
-              </svg>
-
-            </div>
-
-            <div>
-
-              <strong>
-                Adobe Photoshop
-              </strong>
-
-              <span>
-                Edição e tratamento de imagens
-              </span>
-
-            </div>
-
-          </div>
-
 
         </div>
 
@@ -2912,12 +1615,9 @@ Sobre | AgroIA Moxico
 
     </div>
 
-
   </section>
 
-  <!-- ==========================================================
-       TRANSPARÊNCIA / AVISO
-  =========================================================== -->
+
 
   <section class="about-disclaimer">
 
@@ -2941,25 +1641,13 @@ Sobre | AgroIA Moxico
         <div>
 
           <h3>
-            Projeto académico em desenvolvimento
+            Informação importante
           </h3>
 
           <p>
-            O AgroIA Moxico é o Trabalho de Fim de
-            Curso (TFC) de um estudante de Ciências
-            da Computação, desenvolvido com fins
-            académicos e sociais. O sistema encontra-se
-            em constante evolução e melhoria.
-          </p>
-
-          <p>
-            Os diagnósticos fornecidos pela
-            Inteligência Artificial devem ser
-            entendidos como um apoio à decisão —
-            e não como substituto da avaliação de
-            um agrónomo ou técnico agrícola
-            qualificado, especialmente em situações
-            críticas para a produção.
+            Os resultados apresentados pela inteligência artificial
+            representam um apoio à análise e não substituem a
+            avaliação de um agrónomo ou técnico agrícola qualificado.
           </p>
 
         </div>
@@ -2970,12 +1658,8 @@ Sobre | AgroIA Moxico
 
   </section>
 
-  <!-- ==========================================================
-       ENCERRAMENTO
-  =========================================================== -->
 
   <section class="about-ending">
-
 
     <div class="about-container">
 
@@ -2999,18 +1683,13 @@ Sobre | AgroIA Moxico
         </h2>
 
         <p>
-          O AgroIA Moxico representa a união entre
-          conhecimento, desenvolvimento de software
-          e inteligência artificial para criar
-          soluções digitais que ajudam a agricultura
-          da província do Moxico a enfrentar os seus
-          desafios reais.
+          AgroIA Moxico — informação, tecnologia e inteligência
+          artificial para apoiar uma agricultura mais informada.
         </p>
 
       </div>
 
     </div>
-
 
   </section>
 

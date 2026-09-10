@@ -196,6 +196,7 @@
   }
 
   @keyframes historyPulse {
+
     0%,
     100% {
       transform: scale(1);
@@ -942,17 +943,17 @@
     display: none;
   }
 
-  .history-details summary > span {
+  .history-details summary>span {
     display: inline-flex;
     align-items: center;
     gap: 8px;
   }
 
-  .history-details summary > i {
+  .history-details summary>i {
     transition: transform .25s ease;
   }
 
-  .history-details[open] summary > i {
+  .history-details[open] summary>i {
     transform: rotate(180deg);
   }
 
@@ -1027,7 +1028,7 @@
   }
 
   .history-empty-icon,
-  .history-no-results > i {
+  .history-no-results>i {
     width: 76px;
     height: 76px;
     margin: 0 auto 20px;
@@ -1265,7 +1266,6 @@
   }
 
   @media print {
-
     @page {
       size: A4 portrait;
       margin: 7mm 8mm 7mm;
@@ -1331,57 +1331,62 @@
     .print-pages {
       display: block !important;
       width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
       visibility: visible !important;
     }
 
-    .print-product-page {
+    .print-diagnosis-page {
       position: relative !important;
-      display: block !important;
+      display: flex !important;
+      flex-direction: column !important;
       width: 100% !important;
       height: 282mm !important;
       min-height: 282mm !important;
       max-height: 282mm !important;
-      overflow: hidden !important;
       margin: 0 !important;
       padding: 0 !important;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
       page-break-after: always !important;
       break-after: page !important;
       page-break-inside: avoid !important;
       break-inside: avoid !important;
+      background: #fff !important;
+      color: #183328 !important;
     }
 
-    .print-product-page:last-child {
+    .print-diagnosis-page:last-child {
       page-break-after: auto !important;
       break-after: auto !important;
     }
 
-    .print-product-header {
+    .print-report-header {
       display: flex !important;
       align-items: center !important;
       justify-content: space-between !important;
       gap: 8mm !important;
       padding: 0 0 4mm !important;
       border-bottom: 1px solid #176b45 !important;
+      flex: 0 0 auto !important;
     }
 
-    .print-product-brand {
+    .print-report-brand {
       display: flex !important;
       align-items: center !important;
       gap: 3mm !important;
+      min-width: 0 !important;
     }
 
-    .print-product-logo {
-      width: 11mm !important;
-      height: 11mm !important;
-      border-radius: 3mm !important;
-      display: grid !important;
-      place-items: center !important;
-      color: #fff !important;
-      background: #176b45 !important;
-      font-size: 14px !important;
+    .print-report-logo-svg {
+      width: 13mm !important;
+      height: 13mm !important;
+      display: block !important;
+      flex: 0 0 13mm !important;
+      color: #176b45 !important;
     }
 
-    .print-product-brand-name {
+    .print-report-brand-name {
       margin: 0 !important;
       color: #0d4d31 !important;
       font-size: 15px !important;
@@ -1389,21 +1394,22 @@
       font-weight: 900 !important;
     }
 
-    .print-product-brand-subtitle {
+    .print-report-brand-subtitle {
       margin: 1.5mm 0 0 !important;
       color: #6d7973 !important;
       font-size: 6px !important;
-      line-height: 1.1 !important;
+      line-height: 1.15 !important;
     }
 
-    .print-product-meta {
+    .print-report-meta {
       text-align: right !important;
       color: #6d7973 !important;
       font-size: 6.5px !important;
-      line-height: 1.4 !important;
+      line-height: 1.45 !important;
+      flex: 0 0 auto !important;
     }
 
-    .print-product-title {
+    .print-report-title {
       margin: 4mm 0 1mm !important;
       color: #0d4d31 !important;
       font-size: 17px !important;
@@ -1411,65 +1417,29 @@
       font-weight: 900 !important;
     }
 
-    .print-product-subtitle {
-      margin: 0 !important;
+    .print-report-subtitle {
+      margin: 0 0 3mm !important;
       color: #69776f !important;
       font-size: 7px !important;
       line-height: 1.3 !important;
     }
 
-    .print-product-summary {
+    .print-report-product {
       display: grid !important;
-      grid-template-columns: repeat(3, 1fr) !important;
-      gap: 3mm !important;
-      margin: 4mm 0 !important;
-    }
-
-    .print-summary-card {
-      min-height: 16mm !important;
-      padding: 3mm !important;
-      border: 1px solid #dce6df !important;
-      border-radius: 2.5mm !important;
-      background: #f7faf8 !important;
-      box-sizing: border-box !important;
-    }
-
-    .print-summary-card-label {
-      display: block !important;
-      color: #718078 !important;
-      font-size: 5.8px !important;
-      font-weight: 700 !important;
-      line-height: 1.1 !important;
-      text-transform: uppercase !important;
-    }
-
-    .print-summary-card-value {
-      display: block !important;
-      margin-top: 1.5mm !important;
-      color: #176b45 !important;
-      font-size: 12px !important;
-      line-height: 1 !important;
-      font-weight: 900 !important;
-    }
-
-    .print-product-main {
-      display: grid !important;
-      grid-template-columns: 42mm minmax(0, 1fr) !important;
+      grid-template-columns: 43mm minmax(0, 1fr) !important;
       gap: 4mm !important;
-      margin-bottom: 4mm !important;
-      padding: 4mm !important;
+      padding: 3.5mm !important;
+      margin-bottom: 3mm !important;
       border: 1px solid #d6e1da !important;
       border-radius: 3mm !important;
-      background: #fff !important;
+      background: #f9fbfa !important;
       box-sizing: border-box !important;
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
+      flex: 0 0 auto !important;
     }
 
-    .print-product-image {
-      width: 42mm !important;
-      height: 42mm !important;
-      min-height: 42mm !important;
+    .print-report-product-image {
+      width: 43mm !important;
+      height: 43mm !important;
       border-radius: 2.5mm !important;
       overflow: hidden !important;
       background: #edf4ef !important;
@@ -1477,23 +1447,26 @@
       place-items: center !important;
     }
 
-    .print-product-image img {
+    .print-report-product-image img {
       width: 100% !important;
       height: 100% !important;
-      object-fit: cover !important;
+      object-fit: contain !important;
       display: block !important;
     }
 
-    .print-product-image-placeholder {
+    .print-report-product-placeholder {
       color: #9bb9a8 !important;
       font-size: 23px !important;
     }
 
-    .print-product-information {
+    .print-report-product-info {
       min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
     }
 
-    .print-product-label {
+    .print-report-label {
       color: #718078 !important;
       font-size: 6px !important;
       font-weight: 800 !important;
@@ -1501,7 +1474,7 @@
       letter-spacing: .05em !important;
     }
 
-    .print-product-name {
+    .print-report-product-name {
       margin: 1mm 0 2mm !important;
       color: #0d4d31 !important;
       font-size: 15px !important;
@@ -1509,230 +1482,173 @@
       font-weight: 900 !important;
     }
 
-    .print-product-description {
+    .print-report-product-copy {
       margin: 0 !important;
       color: #4d5d55 !important;
       font-size: 7px !important;
       line-height: 1.45 !important;
     }
 
-    .print-diagnoses-title {
+    .print-report-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 2.5mm !important;
+      margin-bottom: 3mm !important;
+      flex: 0 0 auto !important;
+    }
+
+    .print-report-field {
+      min-width: 0 !important;
+      min-height: 15mm !important;
+      padding: 2.5mm !important;
+      border: 1px solid #dfe7e2 !important;
+      border-radius: 2.5mm !important;
+      background: #fff !important;
+      box-sizing: border-box !important;
+    }
+
+    .print-report-field-label {
+      display: block !important;
+      color: #718078 !important;
+      font-size: 5.7px !important;
+      font-weight: 800 !important;
+      line-height: 1.1 !important;
+      text-transform: uppercase !important;
+    }
+
+    .print-report-field-value {
+      display: block !important;
+      margin-top: 1.4mm !important;
+      color: #183328 !important;
+      font-size: 7.2px !important;
+      line-height: 1.25 !important;
+      font-weight: 800 !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .print-report-confidence {
+      padding: 3mm !important;
+      margin-bottom: 3mm !important;
+      border: 1px solid #dfe7e2 !important;
+      border-radius: 2.5mm !important;
+      background: #f7faf8 !important;
+      flex: 0 0 auto !important;
+    }
+
+    .print-report-confidence-head {
       display: flex !important;
       align-items: center !important;
       justify-content: space-between !important;
-      gap: 5mm !important;
-      margin: 0 0 2.5mm !important;
-      padding-bottom: 1.5mm !important;
-      border-bottom: 1px solid #dfe7e2 !important;
+      gap: 4mm !important;
+      margin-bottom: 1.8mm !important;
     }
 
-    .print-diagnoses-title-main {
-      color: #0d4d31 !important;
-      font-size: 9px !important;
+    .print-report-confidence-label {
+      color: #718078 !important;
+      font-size: 6px !important;
+      font-weight: 800 !important;
+      text-transform: uppercase !important;
+    }
+
+    .print-report-confidence-value {
+      color: #176b45 !important;
+      font-size: 8px !important;
       font-weight: 900 !important;
     }
 
-    .print-diagnoses-title-count {
-      color: #176b45 !important;
-      font-size: 6.5px !important;
-      font-weight: 800 !important;
+    .print-report-confidence-track {
+      width: 100% !important;
+      height: 3mm !important;
+      overflow: hidden !important;
+      border-radius: 2mm !important;
+      background: #e4ece7 !important;
     }
 
-    .print-diagnosis {
+    .print-report-confidence-fill {
+      height: 100% !important;
+      border-radius: inherit !important;
+      background: #176b45 !important;
+    }
+
+    .print-report-details {
       display: grid !important;
-      grid-template-columns: 20mm minmax(0, 1fr) !important;
-      gap: 3mm !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 2.5mm !important;
+      flex: 0 0 auto !important;
+    }
+
+    .print-report-detail {
+      min-width: 0 !important;
       padding: 3mm !important;
-      margin-bottom: 2.5mm !important;
       border: 1px solid #dfe7e2 !important;
       border-radius: 2.5mm !important;
-      background: #f9fbfa !important;
+      background: #fff !important;
       box-sizing: border-box !important;
       break-inside: avoid !important;
       page-break-inside: avoid !important;
     }
 
-    .print-diagnosis:last-child {
-      margin-bottom: 0 !important;
+    .print-report-detail.full {
+      grid-column: 1 / -1 !important;
     }
 
-    .print-diagnosis-number {
+    .print-report-detail-label {
       display: flex !important;
-      flex-direction: column !important;
-      justify-content: flex-start !important;
-      gap: 1mm !important;
-    }
-
-    .print-diagnosis-number-label {
-      color: #718078 !important;
-      font-size: 5.5px !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-    }
-
-    .print-diagnosis-number-value {
+      align-items: center !important;
+      gap: 1.5mm !important;
+      margin-bottom: 1.5mm !important;
       color: #176b45 !important;
-      font-size: 13px !important;
-      line-height: 1 !important;
+      font-size: 6.2px !important;
       font-weight: 900 !important;
-    }
-
-    .print-diagnosis-date {
-      color: #718078 !important;
-      font-size: 5.5px !important;
-      line-height: 1.25 !important;
-    }
-
-    .print-diagnosis-content {
-      min-width: 0 !important;
-    }
-
-    .print-diagnosis-top {
-      display: grid !important;
-      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-      gap: 2mm !important;
-      margin-bottom: 2mm !important;
-    }
-
-    .print-diagnosis-field {
-      min-width: 0 !important;
-      padding: 2mm !important;
-      border: 1px solid #e0e8e3 !important;
-      border-radius: 1.8mm !important;
-      background: #fff !important;
-      box-sizing: border-box !important;
-    }
-
-    .print-diagnosis-field-label {
-      display: block !important;
-      margin-bottom: .8mm !important;
-      color: #77837d !important;
-      font-size: 5px !important;
-      line-height: 1 !important;
-      font-weight: 700 !important;
+      line-height: 1.1 !important;
       text-transform: uppercase !important;
+      letter-spacing: .03em !important;
     }
 
-    .print-diagnosis-field-value {
-      display: block !important;
-      color: #193d2c !important;
-      font-size: 6.4px !important;
-      line-height: 1.25 !important;
-      font-weight: 800 !important;
+    .print-report-detail-text {
+      margin: 0 !important;
+      color: #394b43 !important;
+      font-size: 7.1px !important;
+      line-height: 1.48 !important;
+      white-space: pre-line !important;
       overflow-wrap: anywhere !important;
     }
 
-    .print-diagnosis-confidence {
-      margin: 1mm 0 2mm !important;
+    .print-report-observation {
+      border-left: 2.5mm solid #d9a441 !important;
+      background: #fffaf0 !important;
     }
 
-    .print-diagnosis-confidence-head {
+    .print-report-observation .print-report-detail-label {
+      color: #9a721e !important;
+    }
+
+    .print-report-error {
+      border-left: 2.5mm solid #b42318 !important;
+      background: #fff5f4 !important;
+    }
+
+    .print-report-error .print-report-detail-label {
+      color: #a32921 !important;
+    }
+
+    .print-report-footer {
       display: flex !important;
       align-items: center !important;
       justify-content: space-between !important;
       gap: 4mm !important;
-      margin-bottom: 1mm !important;
+      margin-top: auto !important;
+      padding-top: 3mm !important;
+      border-top: 1px solid #dfe7e2 !important;
+      color: #78857f !important;
+      font-size: 5.8px !important;
+      line-height: 1.2 !important;
+      flex: 0 0 auto !important;
     }
 
-    .print-diagnosis-confidence-label,
-    .print-diagnosis-confidence-value {
-      color: #617068 !important;
-      font-size: 5.5px !important;
-      line-height: 1 !important;
-      font-weight: 700 !important;
-    }
-
-    .print-diagnosis-confidence-value {
+    .print-report-footer strong {
       color: #176b45 !important;
-      font-weight: 900 !important;
-    }
-
-    .print-diagnosis-confidence-track {
-      height: 2mm !important;
-      width: 100% !important;
-      border-radius: 99px !important;
-      overflow: hidden !important;
-      background: #e5ece7 !important;
-    }
-
-    .print-diagnosis-confidence-fill {
-      height: 100% !important;
-      border-radius: inherit !important;
-      background: linear-gradient(90deg, #176b45, #2bb673, #d9a441) !important;
-    }
-
-    .print-diagnosis-details {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 2mm !important;
-    }
-
-    .print-detail-box {
-      min-width: 0 !important;
-      padding: 2.2mm !important;
-      border: 1px solid #e1e8e3 !important;
-      border-radius: 1.8mm !important;
-      background: #fff !important;
-      box-sizing: border-box !important;
-    }
-
-    .print-detail-box.full {
-      grid-column: 1 / -1 !important;
-    }
-
-    .print-detail-label {
-      display: flex !important;
-      align-items: center !important;
-      gap: 1mm !important;
-      margin-bottom: 1mm !important;
-      color: #176b45 !important;
-      font-size: 5.5px !important;
-      line-height: 1.05 !important;
-      font-weight: 900 !important;
-    }
-
-    .print-detail-text {
-      margin: 0 !important;
-      color: #405149 !important;
-      font-size: 5.6px !important;
-      line-height: 1.3 !important;
-      overflow-wrap: anywhere !important;
-    }
-
-    .print-error {
-      padding: 2mm !important;
-      border: 1px solid #eccaca !important;
-      border-radius: 1.8mm !important;
-      background: #fff5f5 !important;
-      color: #8d3333 !important;
-    }
-
-    .print-error-title {
-      margin-bottom: 1mm !important;
-      font-size: 5.5px !important;
-      font-weight: 900 !important;
-    }
-
-    .print-error-text {
-      margin: 0 !important;
-      font-size: 5.5px !important;
-      line-height: 1.25 !important;
-    }
-
-    .print-product-footer {
-      position: absolute !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: space-between !important;
-      gap: 5mm !important;
-      padding-top: 2.5mm !important;
-      border-top: 1px solid #dce5df !important;
-      color: #7b857f !important;
-      font-size: 5.5px !important;
-      line-height: 1 !important;
+      font-weight: 800 !important;
     }
   }
 </style>
@@ -1743,7 +1659,6 @@
 
 <div class="history-page">
   <div class="history-container">
-
     <section class="history-hero">
 
       <div class="history-hero-decoration"></div>
@@ -1850,9 +1765,9 @@
           <span class="history-stat-value" style="font-size:1.45rem;">
 
             {% if ultimo_diagnostico %}
-              {{ ultimo_diagnostico.data_criacao|date:"d/m/Y" }}
+            {{ ultimo_diagnostico.data_criacao|date:"d/m/Y" }}
             {% else %}
-              —
+            —
             {% endif %}
 
           </span>
@@ -1876,34 +1791,28 @@
           Ações do histórico
         </span>
 
-        <a href="{% url 'diagnostico:diagnostico' %}"
-           class="history-action history-action-back">
+        <a href="{% url 'diagnostico:diagnostico' %}" class="history-action history-action-back">
 
           <i class="fas fa-arrow-left"></i>
           Voltar
 
         </a>
 
-        <a href="{% url 'diagnostico:diagnostico' %}"
-           class="history-action history-action-primary">
+        <a href="{% url 'diagnostico:diagnostico' %}" class="history-action history-action-primary">
 
           <i class="fas fa-microscope"></i>
           Novo diagnóstico
 
         </a>
 
-        <button type="button"
-                class="history-action history-action-print"
-                onclick="imprimirHistorico()">
+        <button type="button" class="history-action history-action-print" onclick="imprimirHistorico()">
 
           <i class="fas fa-print"></i>
           Imprimir
 
         </button>
 
-        <button type="button"
-                class="history-action history-action-download"
-                onclick="baixarHistoricoCompleto()">
+        <button type="button" class="history-action history-action-download" onclick="baixarHistoricoCompleto()">
 
           <i class="fas fa-file-pdf"></i>
           Baixar PDF
@@ -1922,11 +1831,8 @@
 
           <i class="fas fa-search"></i>
 
-          <input type="search"
-                 id="historySearch"
-                 class="history-input"
-                 placeholder="Pesquisar produto, doença, resultado ou ID..."
-                 autocomplete="off">
+          <input type="search" id="historySearch" class="history-input"
+            placeholder="Pesquisar produto, doença, resultado ou ID..." autocomplete="off">
 
         </div>
 
@@ -1970,9 +1876,7 @@
 
         </select>
 
-        <button type="button"
-                id="clearFilters"
-                class="history-clear">
+        <button type="button" id="clearFilters" class="history-clear">
 
           <i class="fas fa-rotate-left"></i>
           Limpar
@@ -2009,10 +1913,8 @@
         data-product-id="{% if item.produto %}{{ item.produto.id }}{% else %}sem-produto{% endif %}"
         data-product-name="{% if item.produto %}{{ item.produto.nome|default:''|lower }}{% endif %}"
         data-disease="{{ item.doenca_identificada|default:''|lower }}"
-        data-result="{{ item.resultado|default:''|lower }}"
-        data-status="{{ item.status|default:''|lower }}"
-        data-confidence="{{ item.confianca|default:0 }}"
-        data-date="{{ item.data_criacao|date:'U'|default:0 }}"
+        data-result="{{ item.resultado|default:''|lower }}" data-status="{{ item.status|default:''|lower }}"
+        data-confidence="{{ item.confianca|default:0 }}" data-date="{{ item.data_criacao|date:'U'|default:0 }}"
         data-id="{{ item.id }}"
         data-product-original="{% if item.produto %}{{ item.produto.nome }}{% else %}Produto não identificado{% endif %}"
         data-result-original="{{ item.resultado|default:'Não identificado' }}"
@@ -2038,31 +1940,27 @@
 
               {% if item.imagem %}
 
-                <img src="{{ item.imagem.url }}"
-                     alt="Imagem analisada no diagnóstico {{ item.id }}"
-                     loading="lazy">
+              <img src="{{ item.imagem.url }}" alt="Imagem analisada no diagnóstico {{ item.id }}" loading="lazy">
 
-                <span class="history-image-label">
-                  <i class="fas fa-image"></i>
-                  Imagem analisada
-                </span>
+              <span class="history-image-label">
+                <i class="fas fa-image"></i>
+                Imagem analisada
+              </span>
 
               {% elif item.produto and item.produto.imagem %}
 
-                <img src="{{ item.produto.imagem.url }}"
-                     alt="{{ item.produto.nome }}"
-                     loading="lazy">
+              <img src="{{ item.produto.imagem.url }}" alt="{{ item.produto.nome }}" loading="lazy">
 
-                <span class="history-image-label">
-                  <i class="fas fa-seedling"></i>
-                  Imagem do produto
-                </span>
+              <span class="history-image-label">
+                <i class="fas fa-seedling"></i>
+                Imagem do produto
+              </span>
 
               {% else %}
 
-                <div class="history-image-placeholder">
-                  <i class="fas fa-leaf"></i>
-                </div>
+              <div class="history-image-placeholder">
+                <i class="fas fa-leaf"></i>
+              </div>
 
               {% endif %}
 
@@ -2082,9 +1980,9 @@
                   <h2 class="history-card-title">
 
                     {% if item.produto %}
-                      {{ item.produto.nome }}
+                    {{ item.produto.nome }}
                     {% else %}
-                      Produto não identificado
+                    Produto não identificado
                     {% endif %}
 
                   </h2>
@@ -2101,12 +1999,12 @@
 
                     {% if item.data_atualizacao %}
 
-                      <span>•</span>
+                    <span>•</span>
 
-                      <i class="fas fa-rotate"></i>
+                    <i class="fas fa-rotate"></i>
 
-                      Atualizado
-                      {{ item.data_atualizacao|date:"d/m/Y H:i" }}
+                    Atualizado
+                    {{ item.data_atualizacao|date:"d/m/Y H:i" }}
 
                     {% endif %}
 
@@ -2116,38 +2014,38 @@
 
                 {% if item.status == "concluido" %}
 
-                  <span class="history-status history-status-concluido">
-                    <i class="fas fa-circle-check"></i>
-                    Concluído
-                  </span>
+                <span class="history-status history-status-concluido">
+                  <i class="fas fa-circle-check"></i>
+                  Concluído
+                </span>
 
                 {% elif item.status == "erro" %}
 
-                  <span class="history-status history-status-erro">
-                    <i class="fas fa-circle-xmark"></i>
-                    Erro
-                  </span>
+                <span class="history-status history-status-erro">
+                  <i class="fas fa-circle-xmark"></i>
+                  Erro
+                </span>
 
                 {% elif item.status == "processando" %}
 
-                  <span class="history-status history-status-processando">
-                    <i class="fas fa-spinner"></i>
-                    Processando
-                  </span>
+                <span class="history-status history-status-processando">
+                  <i class="fas fa-spinner"></i>
+                  Processando
+                </span>
 
                 {% elif item.status == "pendente" %}
 
-                  <span class="history-status history-status-pendente">
-                    <i class="fas fa-clock"></i>
-                    Pendente
-                  </span>
+                <span class="history-status history-status-pendente">
+                  <i class="fas fa-clock"></i>
+                  Pendente
+                </span>
 
                 {% else %}
 
-                  <span class="history-status history-status-default">
-                    <i class="fas fa-circle-info"></i>
-                    {{ item.status|default:"Registado"|title }}
-                  </span>
+                <span class="history-status history-status-default">
+                  <i class="fas fa-circle-info"></i>
+                  {{ item.status|default:"Registado"|title }}
+                </span>
 
                 {% endif %}
 
@@ -2194,9 +2092,9 @@
                   <span class="history-confidence-value">
 
                     {% if item.confianca != None %}
-                      {{ item.confianca|floatformat:1 }}%
+                    {{ item.confianca|floatformat:1 }}%
                     {% else %}
-                      Não disponível
+                    Não disponível
                     {% endif %}
 
                   </span>
@@ -2205,8 +2103,7 @@
 
                 <div class="history-confidence-track">
 
-                  <div class="history-confidence-fill"
-                       data-confidence="{{ item.confianca|default:0 }}">
+                  <div class="history-confidence-fill" data-confidence="{{ item.confianca|default:0 }}">
                   </div>
 
                 </div>
@@ -2224,20 +2121,20 @@
 
                   {% if item.produto %}
 
-                    <span>
-                      <i class="fas fa-seedling"></i>
-                      Produto #{{ item.produto.id }}
-                    </span>
+                  <span>
+                    <i class="fas fa-seedling"></i>
+                    Produto #{{ item.produto.id }}
+                  </span>
 
                   {% endif %}
 
                   {% if item.data_atualizacao %}
 
-                    <span>
-                      <i class="fas fa-clock"></i>
-                      Atualizado
-                      {{ item.data_atualizacao|date:"H:i" }}
-                    </span>
+                  <span>
+                    <i class="fas fa-clock"></i>
+                    Atualizado
+                    {{ item.data_atualizacao|date:"H:i" }}
+                  </span>
 
                   {% endif %}
 
@@ -2245,18 +2142,15 @@
 
                 <div class="history-footer-actions">
 
-                  <button type="button"
-                          class="history-download"
-                          onclick="baixarAnalise(this)"
-                          title="Baixar esta análise em PDF">
+                  <button type="button" class="history-download" onclick="baixarAnalise(this)"
+                    title="Baixar esta análise em PDF">
 
                     <i class="fas fa-file-pdf"></i>
                     Baixar PDF
 
                   </button>
 
-                  <a href="{% url 'diagnostico:detalhe' item.id %}"
-                     class="history-detail">
+                  <a href="{% url 'diagnostico:detalhe' item.id %}" class="history-detail">
 
                     Ver diagnóstico
                     <i class="fas fa-arrow-right"></i>
@@ -2296,9 +2190,9 @@
                 <p class="history-info-text">
 
                   {% if item.descricao_resultado %}
-                    {{ item.descricao_resultado|linebreaksbr }}
+                  {{ item.descricao_resultado|linebreaksbr }}
                   {% else %}
-                    Não foi registada uma descrição para esta análise.
+                  Não foi registada uma descrição para esta análise.
                   {% endif %}
 
                 </p>
@@ -2315,9 +2209,9 @@
                 <p class="history-info-text">
 
                   {% if item.recomendacoes %}
-                    {{ item.recomendacoes|linebreaksbr }}
+                  {{ item.recomendacoes|linebreaksbr }}
                   {% else %}
-                    Não foram registadas recomendações para esta análise.
+                  Não foram registadas recomendações para esta análise.
                   {% endif %}
 
                 </p>
@@ -2334,9 +2228,9 @@
                 <p class="history-info-text">
 
                   {% if item.observacoes %}
-                    {{ item.observacoes|linebreaksbr }}
+                  {{ item.observacoes|linebreaksbr }}
                   {% else %}
-                    Não existem observações adicionais registadas.
+                  Não existem observações adicionais registadas.
                   {% endif %}
 
                 </p>
@@ -2366,9 +2260,9 @@
                 <p class="history-info-text">
 
                   {% if item.data_atualizacao %}
-                    {{ item.data_atualizacao|date:"d/m/Y H:i:s" }}
+                  {{ item.data_atualizacao|date:"d/m/Y H:i:s" }}
                   {% else %}
-                    Sem atualização registada.
+                  Sem atualização registada.
                   {% endif %}
 
                 </p>
@@ -2385,9 +2279,9 @@
                 <p class="history-info-text">
 
                   {% if item.confianca != None %}
-                    {{ item.confianca|floatformat:2 }}%
+                  {{ item.confianca|floatformat:2 }}%
                   {% else %}
-                    Não disponível.
+                  Não disponível.
                   {% endif %}
 
                 </p>
@@ -2396,22 +2290,22 @@
 
               {% if item.erro %}
 
-                <div class="history-info-section full">
+              <div class="history-info-section full">
 
-                  <div class="history-error">
+                <div class="history-error">
 
-                    <strong>
-                      <i class="fas fa-triangle-exclamation"></i>
-                      Informação de erro
-                    </strong>
+                  <strong>
+                    <i class="fas fa-triangle-exclamation"></i>
+                    Informação de erro
+                  </strong>
 
-                    <p>
-                      {{ item.erro|linebreaksbr }}
-                    </p>
-
-                  </div>
+                  <p>
+                    {{ item.erro|linebreaksbr }}
+                  </p>
 
                 </div>
+
+              </div>
 
               {% endif %}
 
@@ -2459,8 +2353,7 @@
         para começar a construir o histórico dos seus produtos.
       </p>
 
-      <a href="{% url 'diagnostico:diagnostico' %}"
-         class="history-empty-action">
+      <a href="{% url 'diagnostico:diagnostico' %}" class="history-empty-action">
 
         <i class="fas fa-microscope"></i>
         Fazer primeiro diagnóstico
@@ -2481,873 +2374,1205 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.0.0/jspdf.umd.min.js"></script>
 
 <script>
-(function () {
+  (function () {
 
-  const historyList = document.getElementById("historyList");
-  const searchInput = document.getElementById("historySearch");
-  const statusFilter = document.getElementById("statusFilter");
-  const sortFilter = document.getElementById("sortFilter");
-  const clearFilters = document.getElementById("clearFilters");
-  const visibleCount = document.getElementById("visibleCount");
-  const noResults = document.getElementById("historyNoResults");
+    const historyList = document.getElementById("historyList");
+    const searchInput = document.getElementById("historySearch");
+    const statusFilter = document.getElementById("statusFilter");
+    const sortFilter = document.getElementById("sortFilter");
+    const clearFilters = document.getElementById("clearFilters");
+    const visibleCount = document.getElementById("visibleCount");
+    const noResults = document.getElementById("historyNoResults");
 
-  const productsCounter = document.getElementById("produtosAnalisados");
-  const totalCounter = document.getElementById("totalAnalises");
-  const concludedCounter = document.getElementById("diagnosticosConcluidos");
+    const productsCounter = document.getElementById("produtosAnalisados");
+    const totalCounter = document.getElementById("totalAnalises");
+    const concludedCounter = document.getElementById("diagnosticosConcluidos");
 
-  function normalizarTexto(value) {
-    return String(value || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .trim();
-  }
+    function normalizarTexto(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
 
-  function textoLimpo(value) {
-    return String(value || "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
+    function textoLimpo(value) {
+      return String(value || "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
 
-  function getItems() {
-    return historyList
-      ? Array.from(historyList.querySelectorAll(".history-item"))
-      : [];
-  }
+    function gerarObservacoesDasRecomendacoes(recomendacoes, resultado, doenca) {
+      const texto = textoLimpo(recomendacoes);
+      const base = normalizarTexto(texto);
+      const observacoes = [];
 
-  function atualizarEstatisticas() {
+      if (!texto || base === "nao registadas." || base === "nao registada.") {
+        if (normalizarTexto(resultado) === "saudavel") {
+          return "Manter a monitorização regular da cultura e as boas práticas agrícolas recomendadas.";
+        }
+        return "Acompanhar a evolução da cultura e observar qualquer alteração relacionada com o diagnóstico.";
+      }
 
-    const items = getItems();
-    const produtos = new Set();
+      if (/rega|irrig|humidade|umidade|agua|água/.test(base)) {
+        observacoes.push("Acompanhar a humidade do solo e ajustar a rega conforme a necessidade da cultura.");
+      }
 
-    items.forEach(item => {
-      produtos.add(
-        item.dataset.productId || "sem-produto"
+      if (/adubo|adubacao|adubação|fertiliz|nutriente|nutric/.test(base)) {
+        observacoes.push("Observar a resposta da planta após a correção nutricional e manter o acompanhamento do desenvolvimento.");
+      }
+
+      if (/poda|remover|eliminar|retirar|parte afetada|partes afetadas/.test(base)) {
+        observacoes.push("Inspecionar periodicamente a planta e verificar se as partes afetadas foram devidamente removidas.");
+      }
+
+      if (/praga|inseto|insecto|pulgao|pulgão|lagarta|ácaro|acaro|mosca|besouro/.test(base)) {
+        observacoes.push("Monitorizar a presença de pragas nas plantas e verificar a evolução após a aplicação das medidas recomendadas.");
+      }
+
+      if (/fung|doenca|doença|infecc|infecç|sintoma|lesao|lesão/.test(base)) {
+        observacoes.push("Observar a evolução dos sintomas e evitar condições que favoreçam a propagação do problema identificado.");
+      }
+
+      if (/solo|terreno|drenagem|cobertura|palhada/.test(base)) {
+        observacoes.push("Acompanhar as condições do solo e verificar se as medidas recomendadas estão a melhorar o ambiente da cultura.");
+      }
+
+      if (/monitor|acompan|verificar|inspec/.test(base)) {
+        observacoes.push("Manter inspeções regulares para avaliar a evolução da cultura e a eficácia das recomendações.");
+      }
+
+      if (!observacoes.length) {
+        if (normalizarTexto(resultado) === "saudavel") {
+          observacoes.push("Manter a monitorização regular da cultura e continuar as boas práticas agrícolas indicadas.");
+        } else if (doenca && normalizarTexto(doenca) !== "nenhuma doenca identificada") {
+          observacoes.push("Acompanhar a evolução dos sintomas e verificar regularmente a resposta da cultura às recomendações.");
+        } else {
+          observacoes.push("Acompanhar a execução das recomendações e observar a evolução da cultura nas próximas inspeções.");
+        }
+      }
+
+      return observacoes.join(" ");
+    }
+
+    function getItems() {
+      return historyList
+        ? Array.from(historyList.querySelectorAll(".history-item"))
+        : [];
+    }
+
+    function atualizarEstatisticas() {
+
+      const items = getItems();
+      const produtos = new Set();
+
+      items.forEach(item => {
+        produtos.add(
+          item.dataset.productId || "sem-produto"
+        );
+      });
+
+      const concluidos = items.filter(item =>
+        normalizarTexto(item.dataset.status) === "concluido"
+      ).length;
+
+      if (productsCounter) {
+        productsCounter.textContent = produtos.size;
+      }
+
+      if (totalCounter) {
+        totalCounter.textContent = items.length;
+      }
+
+      if (concludedCounter) {
+        concludedCounter.textContent = concluidos;
+      }
+    }
+
+    function ordenarItems() {
+
+      if (!historyList || !sortFilter) {
+        return;
+      }
+
+      const items = getItems();
+
+      items.sort((a, b) => {
+
+        if (sortFilter.value === "oldest") {
+          return Number(a.dataset.date || 0) -
+            Number(b.dataset.date || 0);
+        }
+
+        if (sortFilter.value === "confidence") {
+          return Number(b.dataset.confidence || 0) -
+            Number(a.dataset.confidence || 0);
+        }
+
+        return Number(b.dataset.date || 0) -
+          Number(a.dataset.date || 0);
+      });
+
+      items.forEach(item => {
+        historyList.appendChild(item);
+      });
+    }
+
+    function aplicarFiltros() {
+
+      const query = normalizarTexto(
+        searchInput ? searchInput.value : ""
       );
-    });
 
-    const concluidos = items.filter(item =>
-      normalizarTexto(item.dataset.status) === "concluido"
-    ).length;
-
-    if (productsCounter) {
-      productsCounter.textContent = produtos.size;
-    }
-
-    if (totalCounter) {
-      totalCounter.textContent = items.length;
-    }
-
-    if (concludedCounter) {
-      concludedCounter.textContent = concluidos;
-    }
-  }
-
-  function ordenarItems() {
-
-    if (!historyList || !sortFilter) {
-      return;
-    }
-
-    const items = getItems();
-
-    items.sort((a, b) => {
-
-      if (sortFilter.value === "oldest") {
-        return Number(a.dataset.date || 0) -
-               Number(b.dataset.date || 0);
-      }
-
-      if (sortFilter.value === "confidence") {
-        return Number(b.dataset.confidence || 0) -
-               Number(a.dataset.confidence || 0);
-      }
-
-      return Number(b.dataset.date || 0) -
-             Number(a.dataset.date || 0);
-    });
-
-    items.forEach(item => {
-      historyList.appendChild(item);
-    });
-  }
-
-  function aplicarFiltros() {
-
-    const query = normalizarTexto(
-      searchInput ? searchInput.value : ""
-    );
-
-    const status = normalizarTexto(
-      statusFilter ? statusFilter.value : "all"
-    );
-
-    let visible = 0;
-
-    getItems().forEach(item => {
-
-      const searchable = normalizarTexto([
-        item.dataset.productName,
-        item.dataset.disease,
-        item.dataset.result,
-        item.dataset.id,
-        item.dataset.productOriginal,
-        item.dataset.resultOriginal,
-        item.dataset.diseaseOriginal
-      ].join(" "));
-
-      const itemStatus = normalizarTexto(
-        item.dataset.status
+      const status = normalizarTexto(
+        statusFilter ? statusFilter.value : "all"
       );
 
-      const matchesSearch =
-        !query ||
-        searchable.includes(query);
+      let visible = 0;
 
-      const matchesStatus =
-        status === "all" ||
-        itemStatus === status;
+      getItems().forEach(item => {
 
-      const show =
-        matchesSearch &&
-        matchesStatus;
+        const searchable = normalizarTexto([
+          item.dataset.productName,
+          item.dataset.disease,
+          item.dataset.result,
+          item.dataset.id,
+          item.dataset.productOriginal,
+          item.dataset.resultOriginal,
+          item.dataset.diseaseOriginal
+        ].join(" "));
 
-      item.style.display = show ? "" : "none";
-
-      if (show) {
-        visible++;
-      }
-    });
-
-    if (visibleCount) {
-      visibleCount.textContent = visible;
-    }
-
-    if (noResults) {
-      noResults.style.display =
-        visible === 0 && getItems().length > 0
-          ? "block"
-          : "none";
-    }
-  }
-
-  function animarConfiancas() {
-
-    document
-      .querySelectorAll(".history-confidence-fill")
-      .forEach(fill => {
-
-        const value = Math.max(
-          0,
-          Math.min(
-            100,
-            Number(fill.dataset.confidence || 0)
-          )
+        const itemStatus = normalizarTexto(
+          item.dataset.status
         );
 
-        requestAnimationFrame(() => {
-          fill.style.width = value + "%";
-        });
-      });
-  }
+        const matchesSearch =
+          !query ||
+          searchable.includes(query);
 
-  function animarContadores() {
+        const matchesStatus =
+          status === "all" ||
+          itemStatus === status;
 
-    document
-      .querySelectorAll(".history-stat-value")
-      .forEach(element => {
+        const show =
+          matchesSearch &&
+          matchesStatus;
 
-        const text = element.textContent.trim();
+        item.style.display = show ? "" : "none";
 
-        if (!/^\d+$/.test(text)) {
-          return;
+        if (show) {
+          visible++;
         }
+      });
 
-        const target = Number(text);
-        const duration = 900;
-        const start = performance.now();
+      if (visibleCount) {
+        visibleCount.textContent = visible;
+      }
 
-        function update(now) {
+      if (noResults) {
+        noResults.style.display =
+          visible === 0 && getItems().length > 0
+            ? "block"
+            : "none";
+      }
+    }
 
-          const progress = Math.min(
-            (now - start) / duration,
-            1
+    function animarConfiancas() {
+
+      document
+        .querySelectorAll(".history-confidence-fill")
+        .forEach(fill => {
+
+          const value = Math.max(
+            0,
+            Math.min(
+              100,
+              Number(fill.dataset.confidence || 0)
+            )
           );
 
-          const eased =
-            1 - Math.pow(1 - progress, 3);
+          requestAnimationFrame(() => {
+            fill.style.width = value + "%";
+          });
+        });
+    }
 
-          element.textContent =
-            Math.floor(target * eased);
+    function animarContadores() {
 
-          if (progress < 1) {
-            requestAnimationFrame(update);
-          } else {
-            element.textContent = target;
+      document
+        .querySelectorAll(".history-stat-value")
+        .forEach(element => {
+
+          const text = element.textContent.trim();
+
+          if (!/^\d+$/.test(text)) {
+            return;
           }
+
+          const target = Number(text);
+          const duration = 900;
+          const start = performance.now();
+
+          function update(now) {
+
+            const progress = Math.min(
+              (now - start) / duration,
+              1
+            );
+
+            const eased =
+              1 - Math.pow(1 - progress, 3);
+
+            element.textContent =
+              Math.floor(target * eased);
+
+            if (progress < 1) {
+              requestAnimationFrame(update);
+            } else {
+              element.textContent = target;
+            }
+          }
+
+          requestAnimationFrame(update);
+        });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener(
+        "input",
+        aplicarFiltros
+      );
+    }
+
+    if (statusFilter) {
+      statusFilter.addEventListener(
+        "change",
+        aplicarFiltros
+      );
+    }
+
+    if (sortFilter) {
+      sortFilter.addEventListener(
+        "change",
+        function () {
+          ordenarItems();
+          aplicarFiltros();
         }
+      );
+    }
 
-        requestAnimationFrame(update);
-      });
-  }
+    if (clearFilters) {
+      clearFilters.addEventListener(
+        "click",
+        function () {
 
-  if (searchInput) {
-    searchInput.addEventListener(
-      "input",
-      aplicarFiltros
-    );
-  }
+          if (searchInput) {
+            searchInput.value = "";
+          }
 
-  if (statusFilter) {
-    statusFilter.addEventListener(
-      "change",
-      aplicarFiltros
-    );
-  }
+          if (statusFilter) {
+            statusFilter.value = "all";
+          }
 
-  if (sortFilter) {
-    sortFilter.addEventListener(
-      "change",
-      function () {
-        ordenarItems();
-        aplicarFiltros();
-      }
-    );
-  }
+          if (sortFilter) {
+            sortFilter.value = "recent";
+          }
 
-  if (clearFilters) {
-    clearFilters.addEventListener(
-      "click",
-      function () {
-
-        if (searchInput) {
-          searchInput.value = "";
+          ordenarItems();
+          aplicarFiltros();
         }
+      );
+    }
 
-        if (statusFilter) {
-          statusFilter.value = "all";
-        }
+    function obterInformacoesAnalise(item) {
 
-        if (sortFilter) {
-          sortFilter.value = "recent";
-        }
+      const details =
+        item.querySelector(".history-details-content");
 
-        ordenarItems();
-        aplicarFiltros();
-      }
-    );
-  }
-
-  function obterInformacoesAnalise(item) {
-
-    const details =
-      item.querySelector(".history-details-content");
-
-    const secoes =
-      details
-        ? Array.from(
+      const secoes =
+        details
+          ? Array.from(
             details.querySelectorAll(
               ".history-info-section"
             )
           )
-        : [];
+          : [];
 
-    const valores = {};
+      const valores = {};
 
-    secoes.forEach(secao => {
+      secoes.forEach(secao => {
 
-      const titulo =
-        secao.querySelector(
-          ".history-info-title"
-        );
-
-      const texto =
-        secao.querySelector(
-          ".history-info-text"
-        );
-
-      if (titulo && texto) {
-
-        valores[
-          textoLimpo(titulo.textContent)
-        ] =
-          textoLimpo(
-            texto.innerText ||
-            texto.textContent
+        const titulo =
+          secao.querySelector(
+            ".history-info-title"
           );
-      }
 
-      const erro =
-        secao.querySelector(
-          ".history-error"
-        );
-
-      if (erro) {
-        valores["Informação de erro"] =
-          textoLimpo(
-            erro.innerText ||
-            erro.textContent
+        const texto =
+          secao.querySelector(
+            ".history-info-text"
           );
-      }
-    });
 
-    const imagem =
-      item.querySelector(
-        ".history-image img"
-      );
-
-    return {
-
-      id:
-        item.dataset.id ||
-        "—",
-
-      produto:
-        textoLimpo(
-          item.dataset.productOriginal
-        ) ||
-        "Produto não identificado",
-
-      produtoId:
-        item.dataset.productId ||
-        "sem-produto",
-
-      resultado:
-        textoLimpo(
-          item.dataset.resultOriginal
-        ) ||
-        "Não identificado",
-
-      doenca:
-        textoLimpo(
-          item.dataset.diseaseOriginal
-        ) ||
-        "Nenhuma doença identificada",
-
-      status:
-        textoLimpo(
-          item.dataset.statusOriginal
-        ) ||
-        "Registado",
-
-      confianca:
-        textoLimpo(
-          item.dataset.confidenceOriginal
-        ) ||
-        "Não disponível",
-
-      confiancaNumero:
-        Number(
-          item.dataset.confidence || 0
-        ),
-
-      criacao:
-        textoLimpo(
-          item.dataset.createdOriginal
-        ) ||
-        "Não disponível",
-
-      atualizacao:
-        textoLimpo(
-          item.dataset.updatedOriginal
-        ) ||
-        "Não disponível",
-
-      descricao:
-        valores["Descrição do resultado"] ||
-        "Não registada.",
-
-      recomendacoes:
-        valores["Recomendações"] ||
-        "Não registadas.",
-
-      observacoes:
-        valores["Observações"] ||
-        "Não registadas.",
-
-      erro:
-        valores["Informação de erro"] ||
-        "",
-
-      imagem:
-        imagem ? imagem.src : ""
-    };
-  }
-
-  function agruparPorProduto(items) {
-
-    const grupos = new Map();
-
-    items.forEach(item => {
-
-      const info =
-        obterInformacoesAnalise(item);
-
-      const chave =
-        info.produtoId ||
-        "sem-produto";
-
-      if (!grupos.has(chave)) {
-
-        grupos.set(chave, {
-          id: chave,
-          produto: info.produto,
-          imagem: info.imagem,
-          analises: []
-        });
-
-      }
-
-      const grupo = grupos.get(chave);
-
-      if (!grupo.imagem && info.imagem) {
-        grupo.imagem = info.imagem;
-      }
-
-      grupo.analises.push(info);
-    });
-
-    return Array.from(grupos.values());
-  }
-
-  function desenharLogoPDF(doc, x, y) {
-
-    doc.setFillColor(23, 107, 69);
-
-    doc.roundedRect(
-      x,
-      y,
-      11,
-      11,
-      2.5,
-      2.5,
-      "F"
-    );
-
-    doc.setDrawColor(
-      255,
-      255,
-      255
-    );
-
-    doc.setLineWidth(.8);
-
-    doc.line(
-      x + 5.5,
-      y + 8.8,
-      x + 5.5,
-      y + 3.8
-    );
-
-    doc.line(
-      x + 5.5,
-      y + 5.7,
-      x + 3.1,
-      y + 4
-    );
-
-    doc.line(
-      x + 5.5,
-      y + 6.9,
-      x + 8,
-      y + 5.1
-    );
-
-    doc.setFillColor(
-      255,
-      255,
-      255
-    );
-
-    doc.ellipse(
-      x + 3.5,
-      y + 3.2,
-      2.4,
-      1.4,
-      "F"
-    );
-
-    doc.ellipse(
-      x + 7.5,
-      y + 4.4,
-      2.4,
-      1.4,
-      "F"
-    );
-  }
-
-  function textoPDF(doc, texto, largura) {
-
-    return doc.splitTextToSize(
-      String(texto || "Não registado."),
-      largura
-    );
-  }
-
-  function desenharCabecalhoProdutoPDF(
-    doc,
-    produto,
-    pagina,
-    totalPaginas
-  ) {
-
-    doc.setFillColor(
-      255,
-      255,
-      255
-    );
-
-    doc.rect(
-      0,
-      0,
-      210,
-      297,
-      "F"
-    );
-
-    doc.setFillColor(
-      247,
-      250,
-      248
-    );
-
-    doc.roundedRect(
-      14,
-      9,
-      182,
-      31,
-      4,
-      4,
-      "F"
-    );
-
-    desenharLogoPDF(
-      doc,
-      20,
-      14
-    );
-
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
-
-    doc.setFontSize(15);
-
-    doc.setTextColor(
-      13,
-      77,
-      49
-    );
-
-    doc.text(
-      "AgroIA Moxico",
-      35,
-      20
-    );
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.setFontSize(7);
-
-    doc.setTextColor(
-      101,
-      117,
-      109
-    );
-
-    doc.text(
-      "Inteligência Artificial aplicada à agricultura",
-      35,
-      26
-    );
-
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
-
-    doc.setFontSize(6.5);
-
-    doc.setTextColor(
-      23,
-      107,
-      69
-    );
-
-    doc.text(
-      "RELATÓRIO OFICIAL",
-      190,
-      18,
-      {
-        align: "right"
-      }
-    );
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.setFontSize(6);
-
-    doc.setTextColor(
-      105,
-      117,
-      110
-    );
-
-    doc.text(
-      "Página " +
-      pagina +
-      " de " +
-      totalPaginas,
-      190,
-      25,
-      {
-        align: "right"
-      }
-    );
-
-    doc.text(
-      new Date().toLocaleString(
-        "pt-PT",
-        {
-          dateStyle: "short",
-          timeStyle: "short"
+        if (titulo && texto) {
+
+          valores[
+            textoLimpo(titulo.textContent)
+          ] =
+            textoLimpo(
+              texto.innerText ||
+              texto.textContent
+            );
         }
-      ),
-      190,
-      31,
-      {
-        align: "right"
-      }
-    );
 
-    doc.setDrawColor(
-      23,
-      107,
-      69
-    );
+        const erro =
+          secao.querySelector(
+            ".history-error"
+          );
 
-    doc.setLineWidth(.5);
+        if (erro) {
+          valores["Informação de erro"] =
+            textoLimpo(
+              erro.innerText ||
+              erro.textContent
+            );
+        }
+      });
 
-    doc.line(
-      14,
-      44,
-      196,
-      44
-    );
+      const imagem =
+        item.querySelector(
+          ".history-image img"
+        );
 
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
+      return {
 
-    doc.setFontSize(16);
+        id:
+          item.dataset.id ||
+          "—",
 
-    doc.setTextColor(
-      13,
-      77,
-      49
-    );
+        produto:
+          textoLimpo(
+            item.dataset.productOriginal
+          ) ||
+          "Produto não identificado",
 
-    const titulo =
-      textoPDF(
-        doc,
-        produto,
-        155
-      );
+        produtoId:
+          item.dataset.productId ||
+          "sem-produto",
 
-    doc.text(
-      titulo,
-      14,
-      54
-    );
+        resultado:
+          textoLimpo(
+            item.dataset.resultOriginal
+          ) ||
+          "Não identificado",
 
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
+        doenca:
+          textoLimpo(
+            item.dataset.diseaseOriginal
+          ) ||
+          "Nenhuma doença identificada",
 
-    doc.setFontSize(7);
+        status:
+          textoLimpo(
+            item.dataset.statusOriginal
+          ) ||
+          "Registado",
 
-    doc.setTextColor(
-      105,
-      117,
-      110
-    );
+        confianca:
+          textoLimpo(
+            item.dataset.confidenceOriginal
+          ) ||
+          "Não disponível",
 
-    doc.text(
-      "Histórico completo das análises realizadas neste produto",
-      14,
-      63
-    );
-
-    return 70;
-  }
-
-  function desenharProdutoPDF(
-    doc,
-    grupo,
-    pagina,
-    totalPaginas
-  ) {
-
-    let y =
-      desenharCabecalhoProdutoPDF(
-        doc,
-        grupo.produto,
-        pagina,
-        totalPaginas
-      );
-
-    const totalAnalises =
-      grupo.analises.length;
-
-    const concluidos =
-      grupo.analises.filter(
-        item =>
-          normalizarTexto(
-            item.status
-          ) === "concluido"
-      ).length;
-
-    const maiorConfianca =
-      grupo.analises.reduce(
-        (maior, item) =>
-          Math.max(
-            maior,
-            item.confiancaNumero || 0
+        confiancaNumero:
+          Number(
+            item.dataset.confidence || 0
           ),
-        0
-      );
 
-    doc.setFillColor(
-      247,
-      250,
-      248
-    );
+        criacao:
+          textoLimpo(
+            item.dataset.createdOriginal
+          ) ||
+          "Não disponível",
 
-    doc.setDrawColor(
-      220,
-      230,
-      223
-    );
+        atualizacao:
+          textoLimpo(
+            item.dataset.updatedOriginal
+          ) ||
+          "Não disponível",
 
-    doc.roundedRect(
-      14,
-      y,
-      182,
-      20,
-      4,
-      4,
-      "FD"
-    );
+        descricao:
+          valores["Descrição do resultado"] ||
+          "Não registada.",
 
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
+        recomendacoes:
+          valores["Recomendações"] ||
+          "Não registadas.",
 
-    doc.setFontSize(6.5);
+        observacoes:
+          gerarObservacoesDasRecomendacoes(
+            valores["Recomendações"] || "",
+            item.dataset.resultOriginal || item.dataset.result || "",
+            item.dataset.diseaseOriginal || item.dataset.disease || ""
+          ),
 
-    doc.setTextColor(
-      105,
-      117,
-      110
-    );
+        erro:
+          valores["Informação de erro"] ||
+          "",
 
-    doc.text(
-      "ANÁLISES",
-      20,
-      y + 7
-    );
+        imagem:
+          imagem ? imagem.src : ""
+      };
+    }
 
-    doc.text(
-      "CONCLUÍDAS",
-      82,
-      y + 7
-    );
+    function escaparHTML(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
-    doc.text(
-      "MAIOR CONFIANÇA",
-      144,
-      y + 7
-    );
+    function carregarImagemComoDataURL(src) {
+      return new Promise(resolve => {
+        if (!src) {
+          resolve("");
+          return;
+        }
 
-    doc.setFontSize(12);
+        const img = new Image();
+        img.crossOrigin = "anonymous";
 
-    doc.setTextColor(
-      23,
-      107,
-      69
-    );
+        img.onload = function () {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth || img.width || 1;
+            canvas.height = img.naturalHeight || img.height || 1;
 
-    doc.text(
-      String(totalAnalises),
-      20,
-      y + 15
-    );
+            const ctx = canvas.getContext("2d");
 
-    doc.text(
-      String(concluidos),
-      82,
-      y + 15
-    );
+            if (!ctx) {
+              resolve("");
+              return;
+            }
 
-    doc.text(
-      maiorConfianca > 0
-        ? maiorConfianca.toFixed(1) + "%"
-        : "—",
-      144,
-      y + 15
-    );
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL("image/png"));
+          } catch (error) {
+            resolve("");
+          }
+        };
 
-    y += 27;
+        img.onerror = function () {
+          resolve("");
+        };
 
-    if (grupo.imagem) {
+        img.src = src;
+      });
+    }
 
-      doc.setFillColor(
-        247,
-        250,
-        248
-      );
+    function carregarImagemDoHistoricoComoDataURL(src) {
+      return carregarImagemComoDataURL(src);
+    }
 
-      doc.setDrawColor(
-        220,
-        230,
-        223
-      );
-
-      doc.roundedRect(
-        14,
-        y,
-        182,
-        39,
-        4,
-        4,
-        "FD"
-      );
+    function adicionarImagemProporcional(doc, dataURL, x, y, largura, altura) {
+      if (!dataURL) {
+        return false;
+      }
 
       try {
+        const props = doc.getImageProperties(dataURL);
+        const proporcao = props.width / props.height;
+        const caixa = largura / altura;
+
+        let w = largura;
+        let h = altura;
+
+        if (proporcao > caixa) {
+          h = largura / proporcao;
+        } else {
+          w = altura * proporcao;
+        }
+
+        const px = x + (largura - w) / 2;
+        const py = y + (altura - h) / 2;
+
+        const formato =
+          String(dataURL).startsWith("data:image/jpeg")
+            ? "JPEG"
+            : "PNG";
 
         doc.addImage(
-          grupo.imagem,
-          "JPEG",
-          19,
-          y + 4,
-          31,
-          31,
+          dataURL,
+          formato,
+          px,
+          py,
+          w,
+          h,
           undefined,
           "FAST"
         );
 
+        return true;
+
       } catch (error) {
+        return false;
       }
+    }
+
+    function desenharLogoAgroIAPDF(doc, x, y, tamanho) {
+
+      const escala = tamanho / 48;
+
+      const cx = x + 24 * escala;
+      const cy = y + 24 * escala;
+
+      doc.setDrawColor(23, 107, 69);
+      doc.setLineWidth(.45);
+
+      doc.circle(
+        cx,
+        cy,
+        20 * escala,
+        "S"
+      );
+
+      doc.setDrawColor(23, 107, 69);
+      doc.setLineWidth(.8);
+
+      doc.line(
+        cx,
+        y + 35 * escala,
+        cx,
+        y + 17 * escala
+      );
+
+      doc.setFillColor(23, 107, 69);
+
+      const folhaEsquerda = [
+        [24, 25],
+        [18, 25],
+        [13, 21.5],
+        [13, 15],
+        [19.5, 15],
+        [24, 18.5],
+        [24, 25]
+      ];
+
+      const folhaDireita = [
+        [24, 29],
+        [30, 29],
+        [35, 25.5],
+        [35, 19],
+        [28.5, 19],
+        [24, 22.5],
+        [24, 29]
+      ];
+
+      function desenharFolha(pontos, opacidade) {
+
+        doc.setFillColor(
+          23,
+          107,
+          69
+        );
+
+        const inicio = pontos[0];
+
+        doc.moveTo(
+          x + inicio[0] * escala,
+          y + inicio[1] * escala
+        );
+
+        for (let i = 1; i < pontos.length; i++) {
+
+          doc.lineTo(
+            x + pontos[i][0] * escala,
+            y + pontos[i][1] * escala
+          );
+
+        }
+
+        doc.lineTo(
+          x + inicio[0] * escala,
+          y + inicio[1] * escala
+        );
+
+        doc.fill();
+      }
+
+      desenharFolha(
+        folhaEsquerda,
+        .92
+      );
+
+      desenharFolha(
+        folhaDireita,
+        .72
+      );
+
+      doc.setDrawColor(23, 107, 69);
+      doc.setLineWidth(.75);
+
+      doc.line(
+        x + 14 * escala,
+        y + 36 * escala,
+        x + 34 * escala,
+        y + 36 * escala
+      );
+    }
+
+    function textoPDF(doc, texto, largura) {
+      return doc.splitTextToSize(
+        String(texto || "Não registado."),
+        largura
+      );
+    }
+
+    function normalizarStatus(status) {
+      const valor = normalizarTexto(status);
+
+      if (valor === "concluido" || valor === "concluida") {
+        return "Concluído";
+      }
+
+      if (valor === "erro") {
+        return "Erro";
+      }
+
+      if (valor === "processando") {
+        return "Processando";
+      }
+
+      if (valor === "pendente") {
+        return "Pendente";
+      }
+
+      return status || "Registado";
+    }
+
+    function obterCorStatus(status) {
+      const valor = normalizarTexto(status);
+
+      if (valor === "erro") {
+        return [164, 45, 38];
+      }
+
+      if (valor === "concluido" || valor === "concluida") {
+        return [23, 107, 69];
+      }
+
+      return [122, 99, 34];
+    }
+
+    function desenharCabecalhoPDF(doc, info, numeroPagina, totalPaginas) {
+
+      doc.setFillColor(255, 255, 255);
+      doc.rect(
+        0,
+        0,
+        210,
+        297,
+        "F"
+      );
+
+      doc.setFillColor(247, 250, 248);
+
+      doc.roundedRect(
+        14,
+        9,
+        182,
+        30,
+        4,
+        4,
+        "F"
+      );
+
+      desenharLogoAgroIAPDF(
+        doc,
+        19,
+        12,
+        14
+      );
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(15);
+
+      doc.setTextColor(
+        13,
+        77,
+        49
+      );
+
+      doc.text(
+        "AgroIA Moxico",
+        38,
+        19.5
+      );
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.setFontSize(6.5);
+
+      doc.setTextColor(
+        101,
+        117,
+        109
+      );
+
+      doc.text(
+        "Inteligência Artificial aplicada à agricultura",
+        38,
+        25.5
+      );
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(6.5);
+
+      doc.setTextColor(
+        23,
+        107,
+        69
+      );
+
+      doc.text(
+        "RELATÓRIO DE DIAGNÓSTICO",
+        190,
+        17.5,
+        {
+          align: "right"
+        }
+      );
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.setFontSize(6);
+
+      doc.setTextColor(
+        105,
+        117,
+        110
+      );
+
+      doc.text(
+        `Página ${numeroPagina} de ${totalPaginas}`,
+        190,
+        23.5,
+        {
+          align: "right"
+        }
+      );
+
+      doc.text(
+        new Date().toLocaleString(
+          "pt-PT",
+          {
+            dateStyle: "short",
+            timeStyle: "short"
+          }
+        ),
+        190,
+        29.5,
+        {
+          align: "right"
+        }
+      );
+
+      doc.setDrawColor(
+        23,
+        107,
+        69
+      );
+
+      doc.setLineWidth(.5);
+
+      doc.line(
+        14,
+        42,
+        196,
+        42
+      );
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(16);
+
+      doc.setTextColor(
+        13,
+        77,
+        49
+      );
+
+      doc.text(
+        "Diagnóstico agrícola",
+        14,
+        51
+      );
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.setFontSize(7);
+
+      doc.setTextColor(
+        105,
+        117,
+        110
+      );
+
+      doc.text(
+        "Registo individual da análise realizada no AgroIA Moxico",
+        14,
+        57
+      );
+
+      return 64;
+    }
+
+    function desenharBlocoPDF(
+      doc,
+      titulo,
+      valor,
+      x,
+      y,
+      largura,
+      altura,
+      opcoes = {}
+    ) {
+
+      const fundo =
+        opcoes.fundo ||
+        [255, 255, 255];
+
+      const borda =
+        opcoes.borda ||
+        [223, 231, 226];
+
+      const tituloCor =
+        opcoes.tituloCor ||
+        [113, 128, 120];
+
+      const valorCor =
+        opcoes.valorCor ||
+        [57, 75, 67];
+
+      doc.setFillColor(...fundo);
+      doc.setDrawColor(...borda);
+
+      doc.roundedRect(
+        x,
+        y,
+        largura,
+        altura,
+        2.5,
+        2.5,
+        "FD"
+      );
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(5.8);
+
+      doc.setTextColor(...tituloCor);
+
+      doc.text(
+        String(titulo).toUpperCase(),
+        x + 3,
+        y + 5
+      );
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.setFontSize(
+        opcoes.tamanho || 6.8
+      );
+
+      doc.setTextColor(...valorCor);
+
+      const linhas =
+        textoPDF(
+          doc,
+          valor,
+          largura - 6
+        );
+
+      doc.text(
+        linhas,
+        x + 3,
+        y + 10,
+        {
+          maxWidth: largura - 6,
+          lineHeightFactor: 1.25
+        }
+      );
+    }
+
+    function desenharDetalheTextoPDF(
+      doc,
+      titulo,
+      valor,
+      x,
+      y,
+      largura,
+      altura,
+      opcoes = {}
+    ) {
+
+      const fundo =
+        opcoes.fundo ||
+        [255, 255, 255];
+
+      const borda =
+        opcoes.borda ||
+        [223, 231, 226];
+
+      const tituloCor =
+        opcoes.tituloCor ||
+        [23, 107, 69];
+
+      const valorCor =
+        opcoes.valorCor ||
+        [57, 75, 67];
+
+      doc.setFillColor(...fundo);
+      doc.setDrawColor(...borda);
+
+      doc.roundedRect(
+        x,
+        y,
+        largura,
+        altura,
+        2.5,
+        2.5,
+        "FD"
+      );
+
+      if (opcoes.acento) {
+
+        doc.setFillColor(
+          ...opcoes.acento
+        );
+
+        doc.roundedRect(
+          x,
+          y,
+          2.5,
+          altura,
+          1.2,
+          1.2,
+          "F"
+        );
+      }
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(6.2);
+
+      doc.setTextColor(
+        ...tituloCor
+      );
+
+      doc.text(
+        String(titulo).toUpperCase(),
+        x + 5,
+        y + 6
+      );
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.setFontSize(
+        opcoes.tamanho || 6.7
+      );
+
+      doc.setTextColor(
+        ...valorCor
+      );
+
+      const linhas =
+        textoPDF(
+          doc,
+          valor,
+          largura - 10
+        );
+
+      doc.text(
+        linhas,
+        x + 5,
+        y + 12,
+        {
+          maxWidth: largura - 10,
+          lineHeightFactor: 1.35
+        }
+      );
+    }
+
+    async function gerarPDFAnalise(item) {
+
+      if (!item) {
+        return;
+      }
+
+      if (
+        !window.jspdf ||
+        !window.jspdf.jsPDF
+      ) {
+
+        prepararPaginasImpressao([item]);
+
+        window.print();
+
+        return;
+      }
+
+      const info =
+        obterInformacoesAnalise(item);
+
+      const {
+        jsPDF
+      } = window.jspdf;
+
+      const doc =
+        new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+          compress: true
+        });
+
+      const imagemDataURL =
+        await carregarImagemDoHistoricoComoDataURL(
+          info.imagem
+        );
+
+      desenharDiagnosticoPDF(
+        doc,
+        info,
+        1,
+        1,
+        imagemDataURL
+      );
+
+      const nome =
+        normalizarTexto(info.produto)
+          .replace(
+            /[^a-z0-9]+/g,
+            "-"
+          )
+          .replace(
+            /^-|-$/g,
+            ""
+          )
+          .substring(
+            0,
+            45
+          ) ||
+        "diagnostico";
+
+      doc.save(
+        `agroia-diagnostico-${nome}-${info.id}.pdf`
+      );
+    }
+
+    window.baixarAnalise =
+      function (button) {
+
+        const item =
+          button
+            ? button.closest(
+              ".history-item"
+            )
+            : null;
+
+        if (!item) {
+          return;
+        }
+
+        gerarPDFAnalise(item);
+      };
+
+    function desenharDiagnosticoPDF(
+      doc,
+      info,
+      pagina,
+      total,
+      imagemDataURL
+    ) {
+
+      let y =
+        desenharCabecalhoPDF(
+          doc,
+          info,
+          pagina,
+          total
+        );
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(7);
+
+      doc.setTextColor(
+        105,
+        117,
+        110
+      );
+
+      doc.text(
+        "NÚMERO DO DIAGNÓSTICO",
+        14,
+        y
+      );
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(13);
+
+      doc.setTextColor(
+        23,
+        107,
+        69
+      );
+
+      doc.text(
+        String(info.id),
+        14,
+        y + 7
+      );
 
       doc.setFont(
         "helvetica",
@@ -3364,11 +3589,16 @@
 
       doc.text(
         "PRODUTO AGRÍCOLA",
-        58,
-        y + 9
+        55,
+        y
       );
 
-      doc.setFontSize(12);
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(10.5);
 
       doc.setTextColor(
         13,
@@ -3376,287 +3606,57 @@
         49
       );
 
-      const nome =
+      doc.text(
         textoPDF(
           doc,
-          grupo.produto,
-          125
-        );
-
-      doc.text(
-        nome,
-        58,
-        y + 16
+          info.produto,
+          88
+        ).slice(0, 2),
+        55,
+        y + 7
       );
+
+      const corStatus =
+        obterCorStatus(
+          info.status
+        );
 
       doc.setFont(
         "helvetica",
-        "normal"
+        "bold"
       );
 
       doc.setFontSize(7);
 
       doc.setTextColor(
-        80,
-        94,
-        87
+        105,
+        117,
+        110
       );
 
       doc.text(
-        "Produto com " +
-        totalAnalises +
-        (totalAnalises === 1
-          ? " diagnóstico registado."
-          : " diagnósticos registados."),
-        58,
-        y + 29
+        "ESTADO",
+        154,
+        y
       );
 
-      y += 46;
-    }
+      doc.setTextColor(
+        ...corStatus
+      );
 
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
+      doc.setFontSize(8);
 
-    doc.setFontSize(10);
+      doc.text(
+        normalizarStatus(
+          info.status
+        ),
+        154,
+        y + 7
+      );
 
-    doc.setTextColor(
-      13,
-      77,
-      49
-    );
+      y += 12;
 
-    doc.text(
-      "Diagnósticos deste produto",
-      14,
-      y
-    );
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.setFontSize(6.5);
-
-    doc.setTextColor(
-      105,
-      117,
-      110
-    );
-
-    doc.text(
-      totalAnalises +
-      (totalAnalises === 1
-        ? " análise"
-        : " análises"),
-      196,
-      y,
-      {
-        align: "right"
-      }
-    );
-
-    y += 5;
-
-    grupo.analises.forEach(
-      (info, index) => {
-
-        const descricao =
-          textoPDF(
-            doc,
-            info.descricao,
-            74
-          );
-
-        const recomendacoes =
-          textoPDF(
-            doc,
-            info.recomendacoes,
-            74
-          );
-
-        const observacoes =
-          textoPDF(
-            doc,
-            info.observacoes,
-            74
-          );
-
-        const alturaTexto =
-          Math.max(
-            descricao.length,
-            recomendacoes.length,
-            observacoes.length
-          );
-
-        const altura =
-          31 +
-          Math.min(
-            35,
-            alturaTexto * 2.8
-          );
-
-        if (y + altura > 273) {
-          return;
-        }
-
-        doc.setFillColor(
-          249,
-          251,
-          250
-        );
-
-        doc.setDrawColor(
-          220,
-          230,
-          223
-        );
-
-        doc.roundedRect(
-          14,
-          y,
-          182,
-          altura,
-          3,
-          3,
-          "FD"
-        );
-
-        doc.setFont(
-          "helvetica",
-          "bold"
-        );
-
-        doc.setFontSize(8);
-
-        doc.setTextColor(
-          23,
-          107,
-          69
-        );
-
-        doc.text(
-          "DIAGNÓSTICO #" +
-          info.id,
-          20,
-          y + 7
-        );
-
-        doc.setFont(
-          "helvetica",
-          "normal"
-        );
-
-        doc.setFontSize(6);
-
-        doc.setTextColor(
-          105,
-          117,
-          110
-        );
-
-        doc.text(
-          info.criacao,
-          190,
-          y + 7,
-          {
-            align: "right"
-          }
-        );
-
-        const campos = [
-          [
-            "RESULTADO",
-            info.resultado
-          ],
-          [
-            "DOENÇA IDENTIFICADA",
-            info.doenca
-          ],
-          [
-            "STATUS",
-            info.status
-          ]
-        ];
-
-        campos.forEach(
-          (campo, campoIndex) => {
-
-            const x =
-              20 +
-              campoIndex * 58;
-
-            doc.setFillColor(
-              255,
-              255,
-              255
-            );
-
-            doc.setDrawColor(
-              226,
-              233,
-              228
-            );
-
-            doc.roundedRect(
-              x,
-              y + 11,
-              55,
-              13,
-              2,
-              2,
-              "FD"
-            );
-
-            doc.setFont(
-              "helvetica",
-              "bold"
-            );
-
-            doc.setFontSize(5.2);
-
-            doc.setTextColor(
-              119,
-              131,
-              125
-            );
-
-            doc.text(
-              campo[0],
-              x + 3,
-              y + 16
-            );
-
-            doc.setFont(
-              "helvetica",
-              "normal"
-            );
-
-            doc.setFontSize(6.2);
-
-            doc.setTextColor(
-              35,
-              61,
-              47
-            );
-
-            const valor =
-              textoPDF(
-                doc,
-                campo[1],
-                49
-              );
-
-            doc.text(
-              valor.slice(0, 2),
-              x + 3,
-              y + 20
-            );
-          }
-        );
+      if (imagemDataURL) {
 
         doc.setFillColor(
           247,
@@ -3665,46 +3665,28 @@
         );
 
         doc.setDrawColor(
-          226,
-          233,
-          228
+          214,
+          225,
+          218
         );
 
         doc.roundedRect(
-          20,
-          y + 26,
-          172,
-          6,
-          2,
-          2,
+          14,
+          y,
+          182,
+          48,
+          3,
+          3,
           "FD"
         );
 
-        doc.setFillColor(
-          23,
-          107,
-          69
-        );
-
-        const confianca =
-          Math.max(
-            0,
-            Math.min(
-              100,
-              Number(
-                info.confiancaNumero || 0
-              )
-            )
-          );
-
-        doc.roundedRect(
-          20,
-          y + 26,
-          172 * (confianca / 100),
-          6,
-          2,
-          2,
-          "F"
+        adicionarImagemProporcional(
+          doc,
+          imagemDataURL,
+          18,
+          y + 4,
+          40,
+          40
         );
 
         doc.setFont(
@@ -3712,864 +3694,944 @@
           "bold"
         );
 
-        doc.setFontSize(5.5);
+        doc.setFontSize(6);
 
         doc.setTextColor(
-          23,
-          107,
-          69
+          113,
+          128,
+          120
         );
 
         doc.text(
-          "CONFIANÇA DA IA",
-          20,
-          y + 39
+          "IMAGEM DO PRODUTO",
+          64,
+          y + 10
+        );
+
+        doc.setFont(
+          "helvetica",
+          "bold"
+        );
+
+        doc.setFontSize(11);
+
+        doc.setTextColor(
+          13,
+          77,
+          49
         );
 
         doc.text(
-          info.confianca,
-          192,
-          y + 39,
+          textoPDF(
+            doc,
+            info.produto,
+            122
+          ).slice(0, 2),
+          64,
+          y + 18
+        );
+
+        doc.setFont(
+          "helvetica",
+          "normal"
+        );
+
+        doc.setFontSize(6.7);
+
+        doc.setTextColor(
+          77,
+          93,
+          85
+        );
+
+        doc.text(
+          textoPDF(
+            doc,
+            "Imagem utilizada como referência visual para este diagnóstico.",
+            122
+          ).slice(0, 2),
+          64,
+          y + 28,
           {
-            align: "right"
+            lineHeightFactor: 1.3
           }
         );
 
-        const blocos = [
-          [
-            "Descrição",
-            info.descricao
-          ],
-          [
-            "Recomendações",
-            info.recomendacoes
-          ],
-          [
-            "Observações",
-            info.observacoes
-          ]
-        ];
+        y += 54;
+      }
 
-        let blocoY =
-          y + 44;
+      const larguraCampo =
+        56.67;
 
-        blocos.forEach(
-          ([titulo, valor]) => {
+      desenharBlocoPDF(
+        doc,
+        "Resultado",
+        info.resultado,
+        14,
+        y,
+        larguraCampo,
+        19
+      );
 
-            const linhas =
-              textoPDF(
-                doc,
-                valor,
-                165
-              );
+      desenharBlocoPDF(
+        doc,
+        "Doença identificada",
+        info.doenca,
+        76.67,
+        y,
+        larguraCampo,
+        19
+      );
 
-            const alturaBloco =
-              Math.min(
-                18,
-                8 +
-                linhas.length * 2.8
-              );
-
-            if (
-              blocoY +
-              alturaBloco <
-              y + altura
-            ) {
-
-              doc.setFont(
-                "helvetica",
-                "bold"
-              );
-
-              doc.setFontSize(5.5);
-
-              doc.setTextColor(
-                23,
-                107,
-                69
-              );
-
-              doc.text(
-                titulo.toUpperCase(),
-                20,
-                blocoY
-              );
-
-              doc.setFont(
-                "helvetica",
-                "normal"
-              );
-
-              doc.setFontSize(5.8);
-
-              doc.setTextColor(
-                57,
-                72,
-                64
-              );
-
-              doc.text(
-                linhas.slice(0, 4),
-                20,
-                blocoY + 4
-              );
-
-              blocoY +=
-                alturaBloco;
-            }
-          }
-        );
-
-        if (info.erro) {
-
-          doc.setFont(
-            "helvetica",
-            "bold"
-          );
-
-          doc.setFontSize(5.5);
-
-          doc.setTextColor(
-            141,
-            51,
-            51
-          );
-
-          doc.text(
-            "ERRO",
-            20,
-            y + altura - 5
-          );
-
-          doc.setFont(
-            "helvetica",
-            "normal"
-          );
-
-          doc.text(
-            textoPDF(
-              doc,
-              info.erro,
-              150
-            ).slice(0, 1),
-            32,
-            y + altura - 5
-          );
+      desenharBlocoPDF(
+        doc,
+        "Estado",
+        normalizarStatus(
+          info.status
+        ),
+        139.34,
+        y,
+        larguraCampo,
+        19,
+        {
+          valorCor:
+            corStatus
         }
+      );
 
-        y +=
-          altura +
-          4;
+      y += 23;
+
+      doc.setFillColor(
+        247,
+        250,
+        248
+      );
+
+      doc.setDrawColor(
+        223,
+        231,
+        226
+      );
+
+      doc.roundedRect(
+        14,
+        y,
+        182,
+        18,
+        2.5,
+        2.5,
+        "FD"
+      );
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(6);
+
+      doc.setTextColor(
+        113,
+        128,
+        120
+      );
+
+      doc.text(
+        "CONFIANÇA DA INTELIGÊNCIA ARTIFICIAL",
+        19,
+        y + 6
+      );
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setFontSize(8);
+
+      doc.setTextColor(
+        23,
+        107,
+        69
+      );
+
+      doc.text(
+        info.confianca ||
+        "Não disponível",
+        191,
+        y + 6,
+        {
+          align: "right"
+        }
+      );
+
+      const confianca =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            Number(
+              info.confiancaNumero ||
+              0
+            )
+          )
+        );
+
+      doc.setFillColor(
+        226,
+        236,
+        230
+      );
+
+      doc.roundedRect(
+        19,
+        y + 9,
+        172,
+        3.2,
+        1.6,
+        1.6,
+        "F"
+      );
+
+      doc.setFillColor(
+        23,
+        107,
+        69
+      );
+
+      if (confianca > 0) {
+
+        doc.roundedRect(
+          19,
+          y + 9,
+          172 * (
+            confianca / 100
+          ),
+          3.2,
+          1.6,
+          1.6,
+          "F"
+        );
       }
-    );
 
-    doc.setDrawColor(
-      220,
-      228,
-      223
-    );
+      y += 22;
 
-    doc.line(
-      14,
-      282,
-      196,
-      282
-    );
+      const larguraDetalhe =
+        88.5;
 
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
+      const alturaDescricao =
+        39;
 
-    doc.setFontSize(6);
+      desenharDetalheTextoPDF(
+        doc,
+        "Descrição do resultado",
+        info.descricao,
+        14,
+        y,
+        larguraDetalhe,
+        alturaDescricao,
+        {
+          tamanho: 6.55
+        }
+      );
 
-    doc.setTextColor(
-      125,
-      135,
-      130
-    );
+      desenharDetalheTextoPDF(
+        doc,
+        "Recomendações",
+        info.recomendacoes,
+        107.5,
+        y,
+        larguraDetalhe,
+        alturaDescricao,
+        {
+          tamanho: 6.55
+        }
+      );
 
-    doc.text(
-      "AgroIA Moxico · Inteligência Artificial aplicada à agricultura",
-      14,
-      287
-    );
+      y +=
+        alturaDescricao +
+        3;
 
-    doc.text(
-      "Relatório oficial",
-      105,
-      287,
-      {
-        align: "center"
+      const alturaObservacao =
+        34;
+
+      desenharDetalheTextoPDF(
+        doc,
+        "Observações de acompanhamento",
+        info.observacoes,
+        14,
+        y,
+        182,
+        alturaObservacao,
+        {
+          fundo: [
+            255,
+            250,
+            240
+          ],
+          tituloCor: [
+            154,
+            114,
+            30
+          ],
+          acento: [
+            217,
+            164,
+            65
+          ],
+          tamanho: 6.65
+        }
+      );
+
+      y +=
+        alturaObservacao +
+        3;
+
+      desenharDetalheTextoPDF(
+        doc,
+        "Data de criação",
+        info.criacao,
+        14,
+        y,
+        larguraDetalhe,
+        20,
+        {
+          tamanho: 7
+        }
+      );
+
+      desenharDetalheTextoPDF(
+        doc,
+        "Última atualização",
+        info.atualizacao,
+        107.5,
+        y,
+        larguraDetalhe,
+        20,
+        {
+          tamanho: 7
+        }
+      );
+
+      y += 23;
+
+      if (info.erro) {
+
+        desenharDetalheTextoPDF(
+          doc,
+          "Informação de erro",
+          info.erro,
+          14,
+          y,
+          182,
+          27,
+          {
+            fundo: [
+              255,
+              245,
+              244
+            ],
+            tituloCor: [
+              163,
+              41,
+              33
+            ],
+            acento: [
+              180,
+              35,
+              24
+            ],
+            tamanho: 6.6
+          }
+        );
+
+        y += 30;
       }
-    );
 
-    doc.text(
-      "Página " +
-      pagina +
-      " de " +
-      totalPaginas,
-      196,
-      287,
-      {
-        align: "right"
-      }
-    );
-  }
+      doc.setDrawColor(
+        223,
+        231,
+        226
+      );
 
-  function gerarPDFAnalise(item) {
+      doc.setLineWidth(.35);
 
-    if (
-      !window.jspdf ||
-      !window.jspdf.jsPDF
-    ) {
-      window.print();
-      return;
+      doc.line(
+        14,
+        284,
+        196,
+        284
+      );
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.setFontSize(5.7);
+
+      doc.setTextColor(
+        120,
+        133,
+        126
+      );
+
+      doc.text(
+        "AgroIA Moxico · Inteligência Artificial aplicada à agricultura",
+        14,
+        289
+      );
+
+      doc.text(
+        "Relatório oficial",
+        196,
+        289,
+        {
+          align: "right"
+        }
+      );
     }
 
-    const info =
-      obterInformacoesAnalise(item);
+    function criarLogoHTMLImpressao() {
 
-    const {
-      jsPDF
-    } = window.jspdf;
+      return `
+        <svg
+          class="print-report-logo-svg"
+          viewBox="0 0 48 48"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <circle
+            cx="24"
+            cy="24"
+            r="20"
+            stroke="currentColor"
+            stroke-width="1.5"
+            opacity=".22"
+          />
 
-    const doc =
-      new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4"
-      });
+          <path
+            d="M24 35V17"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          />
 
-    const grupo = {
-      id: info.produtoId,
-      produto: info.produto,
-      imagem: info.imagem,
-      analises: [info]
-    };
+          <path
+            d="M24 25C18 25 13 21.5 13 15C19.5 15 24 18.5 24 25Z"
+            fill="currentColor"
+            opacity=".92"
+          />
 
-    desenharProdutoPDF(
-      doc,
-      grupo,
-      1,
-      1
-    );
+          <path
+            d="M24 29C30 29 35 25.5 35 19C28.5 19 24 22.5 24 29Z"
+            fill="currentColor"
+            opacity=".72"
+          />
 
-    const nome =
-      normalizarTexto(
-        info.produto
-      )
-        .replace(
-          /[^a-z0-9]+/g,
-          "-"
-        )
-        .replace(
-          /^-|-$/g,
-          ""
-        )
-        .substring(
-          0,
-          45
-        ) ||
-      "diagnostico";
+          <path
+            d="M14 36H34"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            opacity=".65"
+          />
+        </svg>
+      `;
+    }
 
-    doc.save(
-      "agroia-diagnostico-" +
-      nome +
-      "-" +
-      info.id +
-      ".pdf"
-    );
-  }
+    function criarPaginaImpressao(
+      info,
+      index,
+      total
+    ) {
 
-  window.baixarAnalise =
-    function (button) {
-
-      const item =
-        button.closest(
-          ".history-item"
+      const page =
+        document.createElement(
+          "section"
         );
 
-      if (!item) {
-        return;
-      }
+      page.className =
+        "print-diagnosis-page";
 
-      gerarPDFAnalise(
-        item
-      );
-    };
+      const confianca =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            Number(
+              info.confiancaNumero ||
+              0
+            )
+          )
+        );
 
-  function criarPaginaImpressao(
-    grupo,
-    index,
-    total
-  ) {
+      const logoHTML =
+        criarLogoHTMLImpressao();
 
-    const page =
-      document.createElement(
-        "section"
-      );
-
-    page.className =
-      "print-product-page";
-
-    const analises =
-      grupo.analises;
-
-    const concluidos =
-      analises.filter(
-        item =>
-          normalizarTexto(
-            item.status
-          ) === "concluido"
-      ).length;
-
-    const maiorConfianca =
-      analises.reduce(
-        (maior, item) =>
-          Math.max(
-            maior,
-            item.confiancaNumero || 0
-          ),
-        0
-      );
-
-    const imagemHTML =
-      grupo.imagem
-        ? `
-          <div class="print-product-image">
-            <img src="${grupo.imagem}" alt="${grupo.produto}">
-          </div>
-        `
-        : `
-          <div class="print-product-image">
-            <div class="print-product-image-placeholder">
-              <i class="fas fa-leaf"></i>
+      const imagemHTML =
+        info.imagem
+          ? `
+            <div class="print-report-product-image">
+              <img
+                src="${escaparHTML(info.imagem)}"
+                alt="${escaparHTML(info.produto)}"
+              >
             </div>
-          </div>
-        `;
-
-    const analisesHTML =
-      analises.map(
-        info => {
-
-          const confianca =
-            Math.max(
-              0,
-              Math.min(
-                100,
-                Number(
-                  info.confiancaNumero || 0
-                )
-              )
-            );
-
-          return `
-            <article class="print-diagnosis">
-
-              <div class="print-diagnosis-number">
-
-                <span class="print-diagnosis-number-label">
-                  Diagnóstico
-                </span>
-
-                <span class="print-diagnosis-number-value">
-                  #${info.id}
-                </span>
-
-                <span class="print-diagnosis-date">
-                  ${info.criacao}
-                </span>
-
+          `
+          : `
+            <div class="print-report-product-image">
+              <div class="print-report-product-placeholder">
+                <i class="fas fa-leaf"></i>
               </div>
-
-              <div class="print-diagnosis-content">
-
-                <div class="print-diagnosis-top">
-
-                  <div class="print-diagnosis-field">
-
-                    <span class="print-diagnosis-field-label">
-                      Resultado
-                    </span>
-
-                    <span class="print-diagnosis-field-value">
-                      ${info.resultado}
-                    </span>
-
-                  </div>
-
-                  <div class="print-diagnosis-field">
-
-                    <span class="print-diagnosis-field-label">
-                      Doença identificada
-                    </span>
-
-                    <span class="print-diagnosis-field-value">
-                      ${info.doenca}
-                    </span>
-
-                  </div>
-
-                  <div class="print-diagnosis-field">
-
-                    <span class="print-diagnosis-field-label">
-                      Estado
-                    </span>
-
-                    <span class="print-diagnosis-field-value">
-                      ${info.status}
-                    </span>
-
-                  </div>
-
-                </div>
-
-                <div class="print-diagnosis-confidence">
-
-                  <div class="print-diagnosis-confidence-head">
-
-                    <span class="print-diagnosis-confidence-label">
-                      Confiança da Inteligência Artificial
-                    </span>
-
-                    <span class="print-diagnosis-confidence-value">
-                      ${info.confianca}
-                    </span>
-
-                  </div>
-
-                  <div class="print-diagnosis-confidence-track">
-
-                    <div
-                      class="print-diagnosis-confidence-fill"
-                      style="width:${confianca}%;">
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div class="print-diagnosis-details">
-
-                  <div class="print-detail-box">
-
-                    <div class="print-detail-label">
-                      <i class="fas fa-stethoscope"></i>
-                      Descrição
-                    </div>
-
-                    <p class="print-detail-text">
-                      ${info.descricao}
-                    </p>
-
-                  </div>
-
-                  <div class="print-detail-box">
-
-                    <div class="print-detail-label">
-                      <i class="fas fa-list-check"></i>
-                      Recomendações
-                    </div>
-
-                    <p class="print-detail-text">
-                      ${info.recomendacoes}
-                    </p>
-
-                  </div>
-
-                  <div class="print-detail-box">
-
-                    <div class="print-detail-label">
-                      <i class="fas fa-note-sticky"></i>
-                      Observações
-                    </div>
-
-                    <p class="print-detail-text">
-                      ${info.observacoes}
-                    </p>
-
-                  </div>
-
-                  <div class="print-detail-box">
-
-                    <div class="print-detail-label">
-                      <i class="fas fa-calendar-plus"></i>
-                      Data de criação
-                    </div>
-
-                    <p class="print-detail-text">
-                      ${info.criacao}
-                    </p>
-
-                  </div>
-
-                  <div class="print-detail-box">
-
-                    <div class="print-detail-label">
-                      <i class="fas fa-calendar-pen"></i>
-                      Última atualização
-                    </div>
-
-                    <p class="print-detail-text">
-                      ${info.atualizacao}
-                    </p>
-
-                  </div>
-
-                  ${
-                    info.erro
-                      ? `
-                        <div class="print-detail-box full">
-
-                          <div class="print-error">
-
-                            <div class="print-error-title">
-                              <i class="fas fa-triangle-exclamation"></i>
-                              Informação de erro
-                            </div>
-
-                            <p class="print-error-text">
-                              ${info.erro}
-                            </p>
-
-                          </div>
-
-                        </div>
-                      `
-                      : ""
-                  }
-
-                </div>
-
-              </div>
-
-            </article>
+            </div>
           `;
-        }
-      ).join("");
 
-    page.innerHTML = `
+      const status =
+        normalizarStatus(
+          info.status
+        );
 
-      <div class="print-product-header">
+      const erroHTML =
+        info.erro
+          ? `
+            <div class="print-report-detail full print-report-error">
+              <div class="print-report-detail-label">
+                <i class="fas fa-triangle-exclamation"></i>
+                Informação de erro
+              </div>
+              <p class="print-report-detail-text">${escaparHTML(info.erro)}</p>
+            </div>
+          `
+          : "";
 
-        <div class="print-product-brand">
+      page.innerHTML = `
+        <div class="print-report-header">
 
-          <div class="print-product-logo">
-            <i class="fas fa-seedling"></i>
+          <div class="print-report-brand">
+
+            ${logoHTML}
+
+            <div>
+              <h1 class="print-report-brand-name">
+                AgroIA Moxico
+              </h1>
+
+              <p class="print-report-brand-subtitle">
+                Inteligência Artificial aplicada à agricultura
+              </p>
+            </div>
+
           </div>
 
-          <div>
+          <div class="print-report-meta">
 
-            <h1 class="print-product-brand-name">
-              AgroIA Moxico
-            </h1>
+            <strong>
+              RELATÓRIO DE DIAGNÓSTICO
+            </strong>
 
-            <p class="print-product-brand-subtitle">
-              Inteligência Artificial aplicada à agricultura
+            <br>
+
+            Página ${index + 1} de ${total}
+
+            <br>
+
+            ${escaparHTML(
+        new Date().toLocaleString(
+          "pt-PT",
+          {
+            dateStyle: "short",
+            timeStyle: "short"
+          }
+        )
+      )}
+
+          </div>
+
+        </div>
+
+        <h2 class="print-report-title">
+          Diagnóstico agrícola
+        </h2>
+
+        <p class="print-report-subtitle">
+          Registo individual da análise realizada no AgroIA Moxico
+        </p>
+
+        <div class="print-report-product">
+
+          ${imagemHTML}
+
+          <div class="print-report-product-info">
+
+            <span class="print-report-label">
+              Produto agrícola
+            </span>
+
+            <h3 class="print-report-product-name">
+              ${escaparHTML(info.produto)}
+            </h3>
+
+            <p class="print-report-product-copy">
+              Imagem, identificação e resultado reunidos num único relatório A4.
             </p>
 
           </div>
 
         </div>
 
-        <div class="print-product-meta">
+        <div class="print-report-grid">
 
-          <strong>
-            RELATÓRIO OFICIAL
-          </strong>
+          <div class="print-report-field">
+            <span class="print-report-field-label">
+              Número do diagnóstico
+            </span>
 
-          <br>
+            <span class="print-report-field-value">
+              ${escaparHTML(info.id)}
+            </span>
+          </div>
 
-          Página ${index + 1} de ${total}
+          <div class="print-report-field">
+            <span class="print-report-field-label">
+              Resultado
+            </span>
 
-          <br>
+            <span class="print-report-field-value">
+              ${escaparHTML(info.resultado)}
+            </span>
+          </div>
 
-          ${new Date().toLocaleString(
-            "pt-PT",
-            {
-              dateStyle: "short",
-              timeStyle: "short"
-            }
-          )}
+          <div class="print-report-field">
+            <span class="print-report-field-label">
+              Doença identificada
+            </span>
 
-        </div>
+            <span class="print-report-field-value">
+              ${escaparHTML(info.doenca)}
+            </span>
+          </div>
 
-      </div>
+          <div class="print-report-field">
+            <span class="print-report-field-label">
+              Estado
+            </span>
 
-      <h2 class="print-product-title">
-        Histórico do produto
-      </h2>
+            <span class="print-report-field-value">
+              ${escaparHTML(status)}
+            </span>
+          </div>
 
-      <p class="print-product-subtitle">
-        Registo consolidado dos diagnósticos realizados pela Inteligência Artificial
-      </p>
+          <div class="print-report-field">
+            <span class="print-report-field-label">
+              Data de criação
+            </span>
 
-      <div class="print-product-summary">
+            <span class="print-report-field-value">
+              ${escaparHTML(info.criacao)}
+            </span>
+          </div>
 
-        <div class="print-summary-card">
+          <div class="print-report-field">
+            <span class="print-report-field-label">
+              Última atualização
+            </span>
 
-          <span class="print-summary-card-label">
-            Diagnósticos
-          </span>
-
-          <span class="print-summary-card-value">
-            ${analises.length}
-          </span>
-
-        </div>
-
-        <div class="print-summary-card">
-
-          <span class="print-summary-card-label">
-            Concluídos
-          </span>
-
-          <span class="print-summary-card-value">
-            ${concluidos}
-          </span>
-
-        </div>
-
-        <div class="print-summary-card">
-
-          <span class="print-summary-card-label">
-            Maior confiança
-          </span>
-
-          <span class="print-summary-card-value">
-            ${
-              maiorConfianca > 0
-                ? maiorConfianca.toFixed(1) + "%"
-                : "—"
-            }
-          </span>
+            <span class="print-report-field-value">
+              ${escaparHTML(info.atualizacao)}
+            </span>
+          </div>
 
         </div>
 
-      </div>
+        <div class="print-report-confidence">
 
-      <div class="print-product-main">
+          <div class="print-report-confidence-head">
 
-        ${imagemHTML}
+            <span class="print-report-confidence-label">
+              Confiança da Inteligência Artificial
+            </span>
 
-        <div class="print-product-information">
+            <span class="print-report-confidence-value">
+              ${escaparHTML(info.confianca)}
+            </span>
 
-          <span class="print-product-label">
-            Produto agrícola
-          </span>
+          </div>
 
-          <h3 class="print-product-name">
-            ${grupo.produto}
-          </h3>
+          <div class="print-report-confidence-track">
 
-          <p class="print-product-description">
-            Este documento reúne o histórico de diagnósticos
-            registados para este produto no AgroIA Moxico.
-          </p>
+            <div
+              class="print-report-confidence-fill"
+              style="width:${confianca}%;">
+            </div>
+
+          </div>
 
         </div>
 
-      </div>
+        <div class="print-report-details">
 
-      <div class="print-diagnoses-title">
+          <div class="print-report-detail">
 
-        <span class="print-diagnoses-title-main">
-          Diagnósticos realizados
-        </span>
+            <div class="print-report-detail-label">
+              <i class="fas fa-stethoscope"></i>
+              Descrição do resultado
+            </div>
 
-        <span class="print-diagnoses-title-count">
-          ${analises.length}
-          ${analises.length === 1 ? "análise" : "análises"}
-        </span>
+            <p class="print-report-detail-text">
+              ${escaparHTML(info.descricao)}
+            </p>
 
-      </div>
+          </div>
 
-      ${analisesHTML}
+          <div class="print-report-detail">
 
-      <div class="print-product-footer">
+            <div class="print-report-detail-label">
+              <i class="fas fa-list-check"></i>
+              Recomendações
+            </div>
 
-        <span>
-          AgroIA Moxico · Inteligência Artificial aplicada à agricultura
-        </span>
+            <p class="print-report-detail-text">
+              ${escaparHTML(info.recomendacoes)}
+            </p>
 
-        <span>
-          Relatório oficial
-        </span>
+          </div>
 
-        <span>
-          Página ${index + 1} de ${total}
-        </span>
+          <div class="print-report-detail full print-report-observation">
 
-      </div>
-    `;
+            <div class="print-report-detail-label">
+              <i class="fas fa-note-sticky"></i>
+              Observações de acompanhamento
+            </div>
 
-    return page;
-  }
+            <p class="print-report-detail-text">
+              ${escaparHTML(info.observacoes)}
+            </p>
 
-  function prepararPaginasImpressao() {
+          </div>
 
-    const container =
-      document.getElementById(
-        "printPages"
-      );
+          ${erroHTML}
 
-    if (!container) {
-      return;
+        </div>
+
+        <div class="print-report-footer">
+
+          <span>
+            <strong>AgroIA Moxico</strong>
+            · Inteligência Artificial aplicada à agricultura
+          </span>
+
+          <span>
+            Diagnóstico ${escaparHTML(info.id)}
+            · Página ${index + 1} de ${total}
+          </span>
+
+        </div>
+      `;
+
+      return page;
     }
 
-    container.innerHTML = "";
+    function obterItensParaExportacao(
+      itensFornecidos
+    ) {
 
-    const items =
-      getItems().filter(
+      if (
+        Array.isArray(
+          itensFornecidos
+        )
+      ) {
+
+        return itensFornecidos.filter(
+          Boolean
+        );
+      }
+
+      return getItems().filter(
         item =>
           item.style.display !== "none"
       );
-
-    if (!items.length) {
-      return;
     }
 
-    const grupos =
-      agruparPorProduto(items);
+    function prepararPaginasImpressao(
+      itensFornecidos
+    ) {
 
-    grupos.forEach(
-      (grupo, index) => {
-
-        container.appendChild(
-          criarPaginaImpressao(
-            grupo,
-            index,
-            grupos.length
-          )
+      const container =
+        document.getElementById(
+          "printPages"
         );
-      }
-    );
-  }
 
-  window.baixarHistoricoCompleto =
-    function () {
-
-      if (
-        !window.jspdf ||
-        !window.jspdf.jsPDF
-      ) {
-        prepararPaginasImpressao();
-        window.print();
+      if (!container) {
         return;
       }
 
+      container.innerHTML = "";
+
       const items =
-        getItems().filter(
-          item =>
-            item.style.display !== "none"
+        obterItensParaExportacao(
+          itensFornecidos
         );
 
       if (!items.length) {
         return;
       }
 
-      const grupos =
-        agruparPorProduto(items);
+      const infos =
+        items.map(
+          item =>
+            obterInformacoesAnalise(
+              item
+            )
+        );
 
-      if (!grupos.length) {
-        return;
-      }
+      infos.forEach(
+        (info, index) => {
 
-      const {
-        jsPDF
-      } = window.jspdf;
+          container.appendChild(
+            criarPaginaImpressao(
+              info,
+              index,
+              infos.length
+            )
+          );
+        }
+      );
+    }
 
-      const doc =
-        new jsPDF({
-          orientation: "portrait",
-          unit: "mm",
-          format: "a4",
-          compress: true
-        });
+    window.baixarHistoricoCompleto =
+      async function () {
 
-      grupos.forEach(
-        (grupo, index) => {
+        if (
+          !window.jspdf ||
+          !window.jspdf.jsPDF
+        ) {
+
+          prepararPaginasImpressao();
+
+          window.print();
+
+          return;
+        }
+
+        const items =
+          obterItensParaExportacao();
+
+        if (!items.length) {
+          return;
+        }
+
+        const infos =
+          items.map(
+            item =>
+              obterInformacoesAnalise(
+                item
+              )
+          );
+
+        const {
+          jsPDF
+        } = window.jspdf;
+
+        const doc =
+          new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4",
+            compress: true
+          });
+
+        for (
+          let index = 0;
+          index < infos.length;
+          index += 1
+        ) {
 
           if (index > 0) {
             doc.addPage();
           }
 
-          desenharProdutoPDF(
+          const imagemDataURL =
+            await carregarImagemDoHistoricoComoDataURL(
+              infos[index].imagem
+            );
+
+          desenharDiagnosticoPDF(
             doc,
-            grupo,
+            infos[index],
             index + 1,
-            grupos.length
+            infos.length,
+            imagemDataURL
           );
         }
-      );
 
-      doc.save(
-        "agroia-moxico-historico-por-produto.pdf"
-      );
-    };
+        doc.save(
+          "agroia-moxico-historico-diagnosticos.pdf"
+        );
+      };
 
-  let estadoImpressao = false;
+    let estadoImpressao = false;
 
-  function prepararImpressao() {
+    function prepararImpressao() {
 
-    if (estadoImpressao) {
-      return;
+      if (estadoImpressao) {
+        return;
+      }
+
+      estadoImpressao = true;
+
+      prepararPaginasImpressao();
     }
 
-    estadoImpressao = true;
+    function restaurarDepoisDaImpressao() {
 
-    prepararPaginasImpressao();
-  }
+      const container =
+        document.getElementById(
+          "printPages"
+        );
 
-  function restaurarDepoisDaImpressao() {
+      if (container) {
+        container.innerHTML = "";
+      }
 
-    const container =
-      document.getElementById(
-        "printPages"
-      );
-
-    if (container) {
-      container.innerHTML = "";
+      estadoImpressao = false;
     }
 
-    estadoImpressao = false;
-  }
+    window.imprimirHistorico =
+      function () {
 
-  window.imprimirHistorico =
-    function () {
+        prepararImpressao();
 
-      prepararImpressao();
+        setTimeout(
+          function () {
+            window.print();
+          },
+          120
+        );
+      };
 
-      setTimeout(
-        function () {
-          window.print();
-        },
-        120
-      );
-    };
+    window.addEventListener(
+      "beforeprint",
+      function () {
+        prepararImpressao();
+      }
+    );
 
-  window.addEventListener(
-    "beforeprint",
-    function () {
-      prepararImpressao();
-    }
-  );
+    window.addEventListener(
+      "afterprint",
+      function () {
+        restaurarDepoisDaImpressao();
+      }
+    );
 
-  window.addEventListener(
-    "afterprint",
-    function () {
-      restaurarDepoisDaImpressao();
-    }
-  );
+    ordenarItems();
+    atualizarEstatisticas();
+    aplicarFiltros();
+    animarConfiancas();
+    animarContadores();
 
-  ordenarItems();
-  atualizarEstatisticas();
-  aplicarFiltros();
-  animarConfiancas();
-  animarContadores();
-
-})();
+  })();
 </script>
 
 {% endblock %}
