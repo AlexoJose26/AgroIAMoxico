@@ -1315,24 +1315,23 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
           {% endif %}
 
-
-          {% if diagnostico.observacoes %}
-
+          {% if observacoes_recomendacoes %}
           <div class="diag-alert">
-
             <strong>
               <i class="fas fa-exclamation-triangle"></i>
               Observações
             </strong>
 
-            <div>
-              {{ diagnostico.observacoes }}
+            <div class="diag-observations-content">
+              {% for observacao in observacoes_recomendacoes %}
+              <p>
+                <i class="{{ observacao.icone }}"></i>
+                {{ observacao.texto }}
+              </p>
+              {% endfor %}
             </div>
-
           </div>
-
           {% endif %}
-
 
           {% if diagnostico.status == "erro" %}
 
@@ -1385,14 +1384,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 {% endblock %}
 
-
 {% block extra_js %}
 
 <script>
   (function () {
 
     "use strict";
-
 
     /* ==========================================================
        ELEMENTOS
@@ -1409,19 +1406,23 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
     /* ==========================================================
-       DADOS
+       DADOS REAIS DO DIAGNÓSTICO
+
+       Os dados vêm diretamente do objeto Django.
+       Não existe truncatechars nem slice() para eliminar
+       informações do relatório.
     ========================================================== */
 
     const diagnosticoData = {
 
       id:
-        "{{ diagnostico.id|escapejs }}",
+        "{{ diagnostico.id|default:''|escapejs }}",
 
       produto:
         "{% if diagnostico.produto %}{{ diagnostico.produto.nome|escapejs }}{% else %}Produto removido{% endif %}",
 
       produtoDescricao:
-        "{% if diagnostico.produto and diagnostico.produto.descricao %}{{ diagnostico.produto.descricao|truncatechars:250|escapejs }}{% endif %}",
+        "{% if diagnostico.produto and diagnostico.produto.descricao %}{{ diagnostico.produto.descricao|escapejs }}{% endif %}",
 
       resultado:
         "{% if diagnostico.doenca_identificada %}{{ diagnostico.doenca_identificada|escapejs }}{% elif diagnostico.resultado %}{{ diagnostico.resultado|escapejs }}{% else %}Resultado não identificado{% endif %}",
@@ -1430,7 +1431,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         "{% if diagnostico.doenca_identificada %}{{ diagnostico.doenca_identificada|escapejs }}{% else %}Nenhuma doença identificada{% endif %}",
 
       status:
-        "{{ diagnostico.status|escapejs }}",
+        "{{ diagnostico.status|default:''|escapejs }}",
 
       confianca:
         "{% if diagnostico.confianca != None %}{{ diagnostico.confianca|floatformat:1|escapejs }}%{% else %}Não disponível{% endif %}",
@@ -1442,7 +1443,10 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     0
     {% endif %},
 
-    criacao:
+    precisaoIA:
+    "{% if diagnostico.precisao_ia != None %}{{ diagnostico.precisao_ia|floatformat:0|escapejs }}%{% endif %}",
+
+      criacao:
     "{{ diagnostico.data_criacao|date:'d/m/Y H:i'|escapejs }}",
 
       atualizacao:
@@ -1464,7 +1468,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
   /* ==========================================================
-     CONFIANÇA NA PÁGINA
+     CONFIANÇA DA PÁGINA
   ========================================================== */
 
   function setConfidence() {
@@ -1519,7 +1523,8 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     }
 
     return String(value)
-      .replace(/\s+/g, " ")
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n")
       .trim();
 
   }
@@ -1537,8 +1542,16 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
   }
 
 
+  function escaparTextoHTML(value) {
+
+    return escaparHTML(value)
+      .replace(/\n/g, "<br>");
+
+  }
+
+
   /* ==========================================================
-     OBSERVAÇÕES BASEADAS NAS RECOMENDAÇÕES
+     OBSERVAÇÕES REAIS BASEADAS NAS RECOMENDAÇÕES
   ========================================================== */
 
   function gerarObservacoesDasRecomendacoes(
@@ -1556,18 +1569,23 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     const doencaNormalizada =
       normalizarTexto(doenca);
 
-
     if (!texto) {
 
       if (
         resultadoNormalizado.includes("saudavel")
       ) {
 
-        return "Manter a monitorização regular da cultura e as boas práticas agrícolas recomendadas.";
+        return (
+          "Manter a monitorização regular da cultura " +
+          "e as boas práticas agrícolas recomendadas."
+        );
 
       }
 
-      return "Acompanhar regularmente a evolução da cultura e observar qualquer alteração no estado identificado.";
+      return (
+        "Acompanhar regularmente a evolução da cultura " +
+        "e observar qualquer alteração no estado identificado."
+      );
 
     }
 
@@ -1731,7 +1749,39 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
   /* ==========================================================
-     JSPDF
+     URL DA IMAGEM
+  ========================================================== */
+
+  function obterURLImagem(src) {
+
+    if (!src) {
+      return "";
+    }
+
+    try {
+
+      return new URL(
+        src,
+        window.location.origin
+      ).href;
+
+    } catch (error) {
+
+      console.warn(
+        "URL da imagem inválida:",
+        src,
+        error
+      );
+
+      return src;
+
+    }
+
+  }
+
+
+  /* ==========================================================
+     CARREGAR JSPDF
   ========================================================== */
 
   function loadJsPDF() {
@@ -1756,8 +1806,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
       if (existing) {
 
-        existing.addEventListener(
-          "load",
+        const verificar =
           function () {
 
             if (
@@ -1770,12 +1819,19 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
             } else {
 
               reject(
-                new Error("jsPDF indisponível.")
+                new Error(
+                  "jsPDF indisponível."
+                )
               );
 
             }
 
-          },
+          };
+
+
+        existing.addEventListener(
+          "load",
+          verificar,
           { once: true }
         );
 
@@ -1785,7 +1841,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           function () {
 
             reject(
-              new Error("Falha ao carregar jsPDF.")
+              new Error(
+                "Falha ao carregar jsPDF."
+              )
             );
 
           },
@@ -1799,6 +1857,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
       const script =
         document.createElement("script");
+
 
       script.src =
         "https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.0.0/jspdf.umd.min.js";
@@ -1824,7 +1883,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           } else {
 
             reject(
-              new Error("jsPDF indisponível.")
+              new Error(
+                "jsPDF indisponível."
+              )
             );
 
           }
@@ -1836,7 +1897,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         function () {
 
           reject(
-            new Error("Falha ao carregar jsPDF.")
+            new Error(
+              "Falha ao carregar jsPDF."
+            )
           );
 
         };
@@ -1853,19 +1916,80 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
      IMAGEM → DATA URL
   ========================================================== */
 
-  function carregarImagemComoDataURL(src) {
+  async function carregarImagemComoDataURL(src) {
 
-    if (!src) {
-      return Promise.resolve(null);
+    const url =
+      obterURLImagem(src);
+
+    if (!url) {
+      return null;
     }
 
+
+    try {
+
+      const resposta =
+        await fetch(
+          url,
+          {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-cache"
+          }
+        );
+
+
+      if (resposta.ok) {
+
+        const blob =
+          await resposta.blob();
+
+        const data =
+          await blobParaDataURL(blob);
+
+        if (data) {
+          return data;
+        }
+
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "Fetch da imagem falhou:",
+        error
+      );
+
+    }
+
+
+    try {
+
+      return await carregarImagemPorElemento(url);
+
+    } catch (error) {
+
+      console.warn(
+        "Carregamento direto da imagem falhou:",
+        error
+      );
+
+      return null;
+
+    }
+
+  }
+
+
+  function carregarImagemPorElemento(src) {
 
     return new Promise(function (resolve) {
 
       const image =
         new Image();
 
-      let finalizado = false;
+      let finalizado =
+        false;
 
 
       function finalizar(valor) {
@@ -1875,6 +1999,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         }
 
         finalizado = true;
+
         resolve(valor);
 
       }
@@ -1914,6 +2039,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
             if (!context) {
 
               finalizar(null);
+
               return;
 
             }
@@ -1921,6 +2047,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
             context.fillStyle =
               "#ffffff";
+
 
             context.fillRect(
               0,
@@ -1948,11 +2075,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
           } catch (error) {
 
-            console.warn(
-              "Erro ao converter imagem:",
-              error
-            );
-
             finalizar(null);
 
           }
@@ -1963,116 +2085,56 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       image.onerror =
         function () {
 
-          /*
-           * Segunda tentativa.
-           * Útil para imagens do mesmo
-           * domínio que foram bloqueadas
-           * pelo primeiro carregamento.
-           */
-
-          const fallback =
-            new Image();
-
-
-          fallback.onload =
-            function () {
-
-              try {
-
-                const width =
-                  fallback.naturalWidth ||
-                  fallback.width ||
-                  1200;
-
-                const height =
-                  fallback.naturalHeight ||
-                  fallback.height ||
-                  800;
-
-
-                const canvas =
-                  document.createElement("canvas");
-
-
-                canvas.width =
-                  width;
-
-                canvas.height =
-                  height;
-
-
-                const context =
-                  canvas.getContext("2d");
-
-
-                if (!context) {
-
-                  finalizar(null);
-                  return;
-
-                }
-
-
-                context.fillStyle =
-                  "#ffffff";
-
-                context.fillRect(
-                  0,
-                  0,
-                  width,
-                  height
-                );
-
-
-                context.drawImage(
-                  fallback,
-                  0,
-                  0,
-                  width,
-                  height
-                );
-
-
-                finalizar(
-                  canvas.toDataURL(
-                    "image/jpeg",
-                    .94
-                  )
-                );
-
-              } catch (error) {
-
-                finalizar(null);
-
-              }
-
-            };
-
-
-          fallback.onerror =
-            function () {
-
-              finalizar(null);
-
-            };
-
-
-          fallback.src =
-            src;
+          finalizar(null);
 
         };
 
 
-      /*
-       * Não usamos crossOrigin aqui.
-       * A imagem vem do próprio Django,
-       * portanto o navegador consegue
-       * carregá-la normalmente e o canvas
-       * não precisa de CORS externo.
-       */
-
       image.src =
         src;
+
+
+      setTimeout(
+        function () {
+
+          finalizar(null);
+
+        },
+        10000
+      );
+
+    });
+
+  }
+
+
+  function blobParaDataURL(blob) {
+
+    return new Promise(function (resolve) {
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function () {
+
+          resolve(
+            reader.result
+          );
+
+        };
+
+
+      reader.onerror =
+        function () {
+
+          resolve(null);
+
+        };
+
+
+      reader.readAsDataURL(blob);
 
     });
 
@@ -2080,10 +2142,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
   /* ==========================================================
-     CARREGAR DIMENSÕES REAIS DA IMAGEM
+     DIMENSÕES DA IMAGEM
   ========================================================== */
 
-  function obterDimensoesImagem(imageDataURL) {
+  function obterDimensoesImagem(
+    imageDataURL
+  ) {
 
     return new Promise(function (resolve) {
 
@@ -2095,6 +2159,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         function () {
 
           resolve({
+
             width:
               image.naturalWidth ||
               image.width ||
@@ -2104,6 +2169,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
               image.naturalHeight ||
               image.height ||
               800
+
           });
 
         };
@@ -2113,8 +2179,10 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         function () {
 
           resolve({
+
             width: 1200,
             height: 800
+
           });
 
         };
@@ -2129,7 +2197,249 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
   /* ==========================================================
-     DESENHAR IMAGEM PROPORCIONAL
+     FONTES PDF
+  ========================================================== */
+
+  function setPdfFont(
+    pdf,
+    style,
+    size,
+    color
+  ) {
+
+    pdf.setFont(
+      "helvetica",
+      style
+    );
+
+    pdf.setFontSize(
+      size
+    );
+
+    if (color) {
+
+      pdf.setTextColor(
+        color[0],
+        color[1],
+        color[2]
+      );
+
+    }
+
+  }
+
+
+  /* ==========================================================
+     CARD PDF
+  ========================================================== */
+
+  function roundedCard(
+    pdf,
+    x,
+    y,
+    width,
+    height,
+    fill,
+    stroke,
+    radius
+  ) {
+
+    pdf.setFillColor(
+      fill[0],
+      fill[1],
+      fill[2]
+    );
+
+    pdf.setDrawColor(
+      stroke[0],
+      stroke[1],
+      stroke[2]
+    );
+
+    pdf.setLineWidth(
+      .25
+    );
+
+    pdf.roundedRect(
+      x,
+      y,
+      width,
+      height,
+      radius || 2.5,
+      radius || 2.5,
+      "FD"
+    );
+
+  }
+
+
+  /* ==========================================================
+     LOGO PDF
+  ========================================================== */
+
+  function desenharLogoAgroIAPDF(
+    pdf,
+    x,
+    y,
+    tamanho
+  ) {
+
+    pdf.setFillColor(
+      23,
+      107,
+      69
+    );
+
+    pdf.roundedRect(
+      x,
+      y,
+      tamanho,
+      tamanho,
+      2.5,
+      2.5,
+      "F"
+    );
+
+
+    pdf.setFillColor(
+      255,
+      255,
+      255
+    );
+
+    pdf.circle(
+      x + tamanho * .5,
+      y + tamanho * .48,
+      tamanho * .17,
+      "F"
+    );
+
+
+    pdf.setDrawColor(
+      255,
+      255,
+      255
+    );
+
+    pdf.setLineWidth(
+      Math.max(
+        .6,
+        tamanho * .05
+      )
+    );
+
+    pdf.line(
+      x + tamanho * .5,
+      y + tamanho * .50,
+      x + tamanho * .5,
+      y + tamanho * .78
+    );
+
+
+    pdf.setFillColor(
+      255,
+      255,
+      255
+    );
+
+    pdf.ellipse(
+      x + tamanho * .37,
+      y + tamanho * .67,
+      tamanho * .16,
+      tamanho * .08,
+      "F"
+    );
+
+    pdf.ellipse(
+      x + tamanho * .63,
+      y + tamanho * .61,
+      tamanho * .16,
+      tamanho * .08,
+      "F"
+    );
+
+  }
+
+
+  /* ==========================================================
+     TEXTO ADAPTATIVO
+
+     Reduz o tamanho da fonte quando o texto é muito grande,
+     mas nunca elimina linhas através de slice().
+  ========================================================== */
+
+  function ajustarFonteAoNumeroDeLinhas(
+    pdf,
+    texto,
+    largura,
+    tamanhoInicial,
+    tamanhoMinimo,
+    limiteLinhas
+  ) {
+
+    let tamanho =
+      tamanhoInicial;
+
+    let linhas =
+      [];
+
+
+    while (
+      tamanho >= tamanhoMinimo
+    ) {
+
+      pdf.setFontSize(
+        tamanho
+      );
+
+
+      linhas =
+        pdf.splitTextToSize(
+          texto || "",
+          largura
+        );
+
+
+      if (
+        linhas.length <= limiteLinhas
+      ) {
+
+        break;
+
+      }
+
+
+      tamanho -=
+        .25;
+
+    }
+
+
+    pdf.setFontSize(
+      Math.max(
+        tamanhoMinimo,
+        tamanho
+      )
+    );
+
+
+    return {
+      linhas: pdf.splitTextToSize(
+        texto || "",
+        largura
+      ),
+      tamanho:
+        Math.max(
+          tamanhoMinimo,
+          tamanho
+        )
+    };
+
+  }
+
+
+  /* ==========================================================
+     IMAGEM PROPORCIONAL
   ========================================================== */
 
   async function adicionarImagemProporcional(
@@ -2185,11 +2495,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       ) / 2;
 
 
-    /*
-     * Área branca exatamente
-     * do tamanho da imagem.
-     */
-
     pdf.setFillColor(
       255,
       255,
@@ -2198,12 +2503,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
     pdf.roundedRect(
-      imagemX - 1,
-      imagemY - 1,
-      largura + 2,
-      altura + 2,
-      1.8,
-      1.8,
+      imagemX - .5,
+      imagemY - .5,
+      largura + 1,
+      altura + 1,
+      1.5,
+      1.5,
       "F"
     );
 
@@ -2223,307 +2528,60 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
   /* ==========================================================
-     FONTES PDF
-  ========================================================== */
-
-  function setPdfFont(
-    pdf,
-    style,
-    size,
-    color
-  ) {
-
-    pdf.setFont(
-      "helvetica",
-      style
-    );
-
-    pdf.setFontSize(
-      size
-    );
-
-
-    if (color) {
-
-      pdf.setTextColor(
-        color[0],
-        color[1],
-        color[2]
-      );
-
-    }
-
-  }
-
-
-  /* ==========================================================
-     CARD PDF
-  ========================================================== */
-
-  function roundedCard(
-    pdf,
-    x,
-    y,
-    width,
-    height,
-    fill,
-    stroke
-  ) {
-
-    pdf.setFillColor(
-      fill[0],
-      fill[1],
-      fill[2]
-    );
-
-
-    pdf.setDrawColor(
-      stroke[0],
-      stroke[1],
-      stroke[2]
-    );
-
-
-    pdf.setLineWidth(.25);
-
-
-    pdf.roundedRect(
-      x,
-      y,
-      width,
-      height,
-      3,
-      3,
-      "FD"
-    );
-
-  }
-
-
-  /* ==========================================================
-     TEXTO PDF
-  ========================================================== */
-
-  function wrappedText(
-    pdf,
-    text,
-    x,
-    y,
-    width,
-    lineHeight,
-    maxLines
-  ) {
-
-    if (!text) {
-      return y;
-    }
-
-
-    const lines =
-      pdf.splitTextToSize(
-        String(text),
-        width
-      );
-
-
-    const visible =
-      maxLines
-        ? lines.slice(0, maxLines)
-        : lines;
-
-
-    visible.forEach(function (line) {
-
-      pdf.text(
-        line,
-        x,
-        y
-      );
-
-      y +=
-        lineHeight;
-
-    });
-
-
-    return y;
-
-  }
-
-
-  /* ==========================================================
-     LOGO
-  ========================================================== */
-
-  function desenharLogoAgroIAPDF(
-    pdf,
-    x,
-    y,
-    tamanho
-  ) {
-
-    const verde =
-      [23, 107, 69];
-
-
-    pdf.setFillColor(
-      verde[0],
-      verde[1],
-      verde[2]
-    );
-
-
-    pdf.roundedRect(
-      x,
-      y,
-      tamanho,
-      tamanho,
-      3,
-      3,
-      "F"
-    );
-
-
-    pdf.setFillColor(
-      255,
-      255,
-      255
-    );
-
-
-    pdf.circle(
-      x + tamanho * .5,
-      y + tamanho * .48,
-      tamanho * .17,
-      "F"
-    );
-
-
-    pdf.setDrawColor(
-      255,
-      255,
-      255
-    );
-
-
-    pdf.setLineWidth(
-      Math.max(
-        .7,
-        tamanho * .055
-      )
-    );
-
-
-    pdf.line(
-      x + tamanho * .5,
-      y + tamanho * .50,
-      x + tamanho * .5,
-      y + tamanho * .78
-    );
-
-
-    pdf.setFillColor(
-      255,
-      255,
-      255
-    );
-
-
-    pdf.ellipse(
-      x + tamanho * .37,
-      y + tamanho * .67,
-      tamanho * .16,
-      tamanho * .08,
-      "F"
-    );
-
-
-    pdf.ellipse(
-      x + tamanho * .63,
-      y + tamanho * .61,
-      tamanho * .16,
-      tamanho * .08,
-      "F"
-    );
-
-  }
-
-
-  /* ==========================================================
-     CABEÇALHO PDF
+     CABEÇALHO
   ========================================================== */
 
   function desenharCabecalhoPDF(pdf) {
 
+    const margin =
+      8;
+
     const pageWidth =
       210;
 
-    const margin =
-      10;
-
-
-    pdf.setFillColor(
-      255,
-      255,
-      255
-    );
-
-
-    pdf.rect(
-      0,
-      0,
-      210,
-      297,
-      "F"
-    );
-
-
-    /*
-     * Cabeçalho visual.
-     */
 
     desenharLogoAgroIAPDF(
       pdf,
       margin,
-      10,
-      13
+      7,
+      12
     );
 
 
     setPdfFont(
       pdf,
       "bold",
-      16,
+      14,
       [13, 77, 49]
     );
 
 
     pdf.text(
       "AgroIA Moxico",
-      margin + 17,
-      16
+      margin + 16,
+      14
     );
 
 
     setPdfFont(
       pdf,
       "normal",
-      7,
+      6,
       [113, 134, 124]
     );
 
 
     pdf.text(
       "Inteligência Artificial aplicada à agricultura",
-      margin + 17,
-      21
+      margin + 16,
+      18.5
     );
 
 
     setPdfFont(
       pdf,
       "bold",
-      10,
+      8.5,
       [13, 77, 49]
     );
 
@@ -2531,7 +2589,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     pdf.text(
       "RELATÓRIO DE DIAGNÓSTICO",
       pageWidth - margin,
-      14,
+      11,
       {
         align: "right"
       }
@@ -2541,7 +2599,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     setPdfFont(
       pdf,
       "normal",
-      7,
+      6.2,
       [113, 134, 124]
     );
 
@@ -2550,7 +2608,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       "Diagnóstico " +
       diagnosticoData.id,
       pageWidth - margin,
-      19,
+      16,
       {
         align: "right"
       }
@@ -2560,7 +2618,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     pdf.text(
       diagnosticoData.criacao,
       pageWidth - margin,
-      24,
+      20.5,
       {
         align: "right"
       }
@@ -2573,22 +2631,22 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       69
     );
 
-
-    pdf.setLineWidth(.7);
-
+    pdf.setLineWidth(
+      .55
+    );
 
     pdf.line(
       margin,
-      30,
+      26,
       pageWidth - margin,
-      30
+      26
     );
 
 
     setPdfFont(
       pdf,
       "bold",
-      8,
+      7,
       [13, 77, 49]
     );
 
@@ -2596,14 +2654,14 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     pdf.text(
       "Diagnóstico agrícola",
       margin,
-      36
+      32
     );
 
 
     setPdfFont(
       pdf,
       "normal",
-      6.5,
+      5.7,
       [113, 134, 124]
     );
 
@@ -2611,342 +2669,92 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     pdf.text(
       "Registo individual da análise realizada no AgroIA Moxico",
       margin,
-      40
+      36
     );
 
   }
 
 
   /* ==========================================================
-     CARD HORIZONTAL PRODUTO + IMAGEM
+     RODAPÉ PDF
   ========================================================== */
 
-  async function desenharProdutoPDF(
+  function desenharRodapePDF(
     pdf,
-    imageData
+    numeroPagina
   ) {
 
-    const x =
-      10;
+    const pageWidth =
+      210;
 
-    const y =
-      45;
+    const pageHeight =
+      297;
 
-    const width =
-      190;
-
-    const height =
-      48;
+    const margin =
+      8;
 
 
-    /*
-     * Card principal.
-     */
+    pdf.setDrawColor(
+      223,
+      232,
+      227
+    );
 
-    roundedCard(
+    pdf.setLineWidth(
+      .25
+    );
+
+
+    pdf.line(
+      margin,
+      pageHeight - 12,
+      pageWidth - margin,
+      pageHeight - 12
+    );
+
+
+    setPdfFont(
       pdf,
-      x,
-      y,
-      width,
-      height,
-      [247, 250, 248],
-      [214, 225, 218]
+      "normal",
+      5.6,
+      [130, 147, 139]
     );
 
 
-    /*
-     * Barra verde superior.
-     */
-
-    pdf.setFillColor(
-      23,
-      107,
-      69
+    pdf.text(
+      "AgroIA Moxico · Relatório de diagnóstico individual",
+      margin,
+      pageHeight - 6.5
     );
 
 
-    pdf.roundedRect(
-      x + 5,
-      y + 3,
-      25,
-      1.2,
-      .6,
-      .6,
-      "F"
-    );
-
-
-    /*
-     * Moldura horizontal da imagem.
-     *
-     * A imagem fica FIXAMENTE à esquerda.
-     */
-
-    const imageX =
-      x + 5;
-
-    const imageY =
-      y + 7;
-
-    const imageWidth =
-      55;
-
-    const imageHeight =
-      36;
-
-
-    roundedCard(
-      pdf,
-      imageX,
-      imageY,
-      imageWidth,
-      imageHeight,
-      [255, 255, 255],
-      [211, 225, 216]
-    );
-
-
-    /*
-     * Linha verde da moldura.
-     */
-
-    pdf.setFillColor(
-      23,
-      107,
-      69
-    );
-
-
-    pdf.roundedRect(
-      imageX + 3,
-      imageY + 2.5,
-      18,
-      1.1,
-      .5,
-      .5,
-      "F"
-    );
-
-
-    /*
-     * Pequeno detalhe dourado.
-     */
-
-    pdf.setFillColor(
-      217,
-      164,
-      65
-    );
-
-
-    pdf.roundedRect(
-      imageX + imageWidth - 10,
-      imageY + imageHeight - 3.5,
-      7,
-      1,
-      .5,
-      .5,
-      "F"
-    );
-
-
-    /*
-     * Área interna real para a imagem.
-     *
-     * 49 × 30 mm.
-     */
-
-    const imageInnerX =
-      imageX + 3;
-
-    const imageInnerY =
-      imageY + 3;
-
-    const imageInnerWidth =
-      imageWidth - 6;
-
-    const imageInnerHeight =
-      imageHeight - 6;
-
-
-    if (imageData) {
-
-      try {
-
-        await adicionarImagemProporcional(
-          pdf,
-          imageData,
-          imageInnerX,
-          imageInnerY,
-          imageInnerWidth,
-          imageInnerHeight
-        );
-
-      } catch (error) {
-
-        console.warn(
-          "Erro ao inserir imagem no PDF:",
-          error
-        );
-
-
-        setPdfFont(
-          pdf,
-          "bold",
-          7,
-          [23, 107, 69]
-        );
-
-
-        pdf.text(
-          "Imagem analisada",
-          imageX + imageWidth / 2,
-          imageY + imageHeight / 2 + 2,
-          {
-            align: "center"
-          }
-        );
-
+    pdf.text(
+      "Diagnóstico " +
+      diagnosticoData.id +
+      " · Página " +
+      numeroPagina +
+      " de 1",
+      pageWidth - margin,
+      pageHeight - 6.5,
+      {
+        align: "right"
       }
-
-    } else {
-
-      setPdfFont(
-        pdf,
-        "bold",
-        7,
-        [23, 107, 69]
-      );
-
-
-      pdf.text(
-        "Imagem não disponível",
-        imageX + imageWidth / 2,
-        imageY + imageHeight / 2 + 2,
-        {
-          align: "center"
-        }
-      );
-
-    }
-
-
-    /*
-     * BLOCO DE TEXTO À DIREITA.
-     */
-
-    const textX =
-      x + 67;
-
-    const textWidth =
-      width - 74;
-
-
-    setPdfFont(
-      pdf,
-      "bold",
-      6.2,
-      [113, 134, 124]
-    );
-
-
-    pdf.text(
-      "PRODUTO AGRÍCOLA ANALISADO",
-      textX,
-      y + 12
-    );
-
-
-    setPdfFont(
-      pdf,
-      "bold",
-      13,
-      [13, 77, 49]
-    );
-
-
-    const produto =
-      textoLimpo(
-        diagnosticoData.produto
-      ) ||
-      "Produto removido";
-
-
-    const produtoLines =
-      pdf.splitTextToSize(
-        produto,
-        textWidth
-      );
-
-
-    pdf.text(
-      produtoLines.slice(0, 2),
-      textX,
-      y + 20
-    );
-
-
-    /*
-     * Descrição.
-     */
-
-    setPdfFont(
-      pdf,
-      "normal",
-      6.3,
-      [82, 104, 94]
-    );
-
-
-    if (diagnosticoData.produtoDescricao) {
-
-      const descricao =
-        pdf.splitTextToSize(
-          diagnosticoData.produtoDescricao,
-          textWidth
-        );
-
-
-      pdf.text(
-        descricao.slice(0, 2),
-        textX,
-        y + 29
-      );
-
-    } else {
-
-      pdf.text(
-        "Produto agrícola associado a este diagnóstico.",
-        textX,
-        y + 29
-      );
-
-    }
-
-
-    /*
-     * Referência da imagem.
-     */
-
-    setPdfFont(
-      pdf,
-      "normal",
-      6.1,
-      [113, 134, 124]
-    );
-
-
-    pdf.text(
-      "Imagem utilizada como referência visual para este diagnóstico.",
-      textX,
-      y + 40
     );
 
   }
 
 
   /* ==========================================================
-     PDF COMPLETO — UMA ÚNICA PÁGINA A4
+     PDF DE UMA ÚNICA PÁGINA
+
+     Esta é a principal correção.
+
+     O relatório inteiro é calculado para permanecer
+     dentro dos limites:
+
+     A4 = 210 x 297 mm
+     margem = 8 mm
+     rodapé = 12 mm
   ========================================================== */
 
   async function buildPdf() {
@@ -2960,10 +2768,15 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
     const pdf =
       new jsPDF({
+
         orientation: "portrait",
+
         unit: "mm",
+
         format: "a4",
+
         compress: true
+
       });
 
 
@@ -2974,10 +2787,16 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       297;
 
     const margin =
-      10;
+      8;
 
     const contentWidth =
-      190;
+      pageWidth -
+      margin * 2;
+
+
+    const bottomLimit =
+      pageHeight -
+      16;
 
 
     pdf.setProperties({
@@ -2998,40 +2817,301 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     });
 
 
-    desenharCabecalhoPDF(pdf);
+    /*
+     * Fundo
+     */
+
+    pdf.setFillColor(
+      255,
+      255,
+      255
+    );
+
+    pdf.rect(
+      0,
+      0,
+      pageWidth,
+      pageHeight,
+      "F"
+    );
+
+
+    desenharCabecalhoPDF(
+      pdf
+    );
+
+
+    let y =
+      41;
+
+
+    /* ========================================================
+       PRODUTO
+    ======================================================== */
+
+    const produto =
+      textoLimpo(
+        diagnosticoData.produto
+      ) ||
+      "Produto removido";
+
+
+    const produtoDescricao =
+      textoLimpo(
+        diagnosticoData.produtoDescricao
+      );
+
+
+    const produtoHeight =
+      40;
+
+
+    roundedCard(
+      pdf,
+      margin,
+      y,
+      contentWidth,
+      produtoHeight,
+      [247, 250, 248],
+      [214, 225, 218],
+      3
+    );
 
 
     /*
-     * Carrega a imagem ANTES de desenhar
-     * qualquer conteúdo.
+     * Imagem
      */
 
-    let imageData =
-      null;
+    const imageBoxX =
+      margin + 4;
+
+    const imageBoxY =
+      y + 5;
+
+    const imageBoxWidth =
+      49;
+
+    const imageBoxHeight =
+      30;
 
 
-    if (diagnosticoData.imagem) {
+    roundedCard(
+      pdf,
+      imageBoxX,
+      imageBoxY,
+      imageBoxWidth,
+      imageBoxHeight,
+      [255, 255, 255],
+      [211, 225, 216],
+      2.5
+    );
 
-      imageData =
-        await carregarImagemComoDataURL(
-          diagnosticoData.imagem
+
+    if (
+      diagnosticoData._imageData
+    ) {
+
+      try {
+
+        await adicionarImagemProporcional(
+          pdf,
+          diagnosticoData._imageData,
+          imageBoxX + 2,
+          imageBoxY + 2,
+          imageBoxWidth - 4,
+          imageBoxHeight - 4
         );
+
+      } catch (error) {
+
+        setPdfFont(
+          pdf,
+          "bold",
+          6,
+          [23, 107, 69]
+        );
+
+        pdf.text(
+          "Imagem analisada",
+          imageBoxX +
+          imageBoxWidth / 2,
+          imageBoxY +
+          imageBoxHeight / 2,
+          {
+            align: "center"
+          }
+        );
+
+      }
+
+    } else {
+
+      setPdfFont(
+        pdf,
+        "bold",
+        5.7,
+        [23, 107, 69]
+      );
+
+      pdf.text(
+        "Imagem não disponível",
+        imageBoxX +
+        imageBoxWidth / 2,
+        imageBoxY +
+        imageBoxHeight / 2,
+        {
+          align: "center"
+        }
+      );
 
     }
 
 
-    await desenharProdutoPDF(
+    /*
+     * Informação do produto
+     */
+
+    const produtoX =
+      imageBoxX +
+      imageBoxWidth +
+      7;
+
+    const produtoWidth =
+      contentWidth -
+      (
+        produtoX -
+        margin
+      ) -
+      4;
+
+
+    setPdfFont(
       pdf,
-      imageData
+      "bold",
+      5.4,
+      [113, 134, 124]
     );
+
+
+    pdf.text(
+      "PRODUTO AGRÍCOLA ANALISADO",
+      produtoX,
+      y + 8
+    );
+
+
+    const produtoAdaptado =
+      ajustarFonteAoNumeroDeLinhas(
+        pdf,
+        produto,
+        produtoWidth,
+        11,
+        8,
+        2
+      );
+
+
+    setPdfFont(
+      pdf,
+      "bold",
+      produtoAdaptado.tamanho,
+      [13, 77, 49]
+    );
+
+
+    pdf.text(
+      produtoAdaptado.linhas,
+      produtoX,
+      y + 15
+    );
+
+
+    let produtoDescricaoY =
+      y + 22;
+
+
+    if (produtoDescricao) {
+
+      const descAdaptada =
+        ajustarFonteAoNumeroDeLinhas(
+          pdf,
+          produtoDescricao,
+          produtoWidth,
+          5.6,
+          4.5,
+          3
+        );
+
+
+      setPdfFont(
+        pdf,
+        "normal",
+        descAdaptada.tamanho,
+        [82, 104, 94]
+      );
+
+
+      pdf.text(
+        descAdaptada.linhas,
+        produtoX,
+        produtoDescricaoY,
+        {
+          lineHeightFactor: 1.25
+        }
+      );
+
+    } else {
+
+      setPdfFont(
+        pdf,
+        "normal",
+        5.3,
+        [82, 104, 94]
+      );
+
+
+      pdf.text(
+        "Produto agrícola associado a este diagnóstico.",
+        produtoX,
+        produtoDescricaoY
+      );
+
+    }
+
+
+    setPdfFont(
+      pdf,
+      "normal",
+      4.8,
+      [113, 134, 124]
+    );
+
+
+    pdf.text(
+      "Imagem utilizada como referência visual para este diagnóstico.",
+      produtoX,
+      y + 36
+    );
+
+
+    y +=
+      produtoHeight +
+      4;
 
 
     /* ========================================================
        RESULTADO
     ======================================================== */
 
-    let y =
-      98;
+    const resultado =
+      textoLimpo(
+        diagnosticoData.resultado
+      ) ||
+      "Resultado não identificado";
+
+
+    const resultadoHeight =
+      22;
 
 
     pdf.setFillColor(
@@ -3045,9 +3125,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       margin,
       y,
       contentWidth,
-      27,
-      4,
-      4,
+      resultadoHeight,
+      3,
+      3,
       "F"
     );
 
@@ -3055,64 +3135,66 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     setPdfFont(
       pdf,
       "bold",
-      6.5,
+      5.3,
       [190, 221, 205]
     );
 
 
     pdf.text(
       "RESULTADO IDENTIFICADO",
-      margin + 7,
-      y + 8
+      margin + 6,
+      y + 7
     );
+
+
+    const resultadoAdaptado =
+      ajustarFonteAoNumeroDeLinhas(
+        pdf,
+        resultado,
+        contentWidth - 12,
+        11,
+        7,
+        2
+      );
 
 
     setPdfFont(
       pdf,
       "bold",
-      13,
+      resultadoAdaptado.tamanho,
       [255, 255, 255]
     );
 
 
-    const resultado =
-      textoLimpo(
-        diagnosticoData.resultado
-      ) ||
-      "Resultado não identificado";
-
-
-    const resultLines =
-      pdf.splitTextToSize(
-        resultado,
-        contentWidth - 14
-      );
-
-
     pdf.text(
-      resultLines.slice(0, 2),
-      margin + 7,
-      y + 17
+      resultadoAdaptado.linhas,
+      margin + 6,
+      y + 15
     );
 
 
     y +=
-      31;
+      resultadoHeight +
+      4;
 
 
     /* ========================================================
        INFORMAÇÕES
     ======================================================== */
 
-    const cardGap =
-      3;
+    const gap =
+      2.5;
 
 
     const cardWidth =
       (
         contentWidth -
-        cardGap * 2
+        gap * 2
       ) / 3;
+
+
+    const infoHeight =
+      15;
 
 
     const infoItems = [
@@ -3152,10 +3234,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     ];
 
 
-    const itemHeight =
-      18;
-
-
     infoItems.forEach(
       function (
         item,
@@ -3163,8 +3241,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       ) {
 
         const row =
-          Math.floor(index / 3);
-
+          Math.floor(
+            index / 3
+          );
 
         const col =
           index % 3;
@@ -3175,7 +3254,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           col *
           (
             cardWidth +
-            cardGap
+            gap
           );
 
 
@@ -3183,8 +3262,8 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           y +
           row *
           (
-            itemHeight +
-            cardGap
+            infoHeight +
+            gap
           );
 
 
@@ -3193,46 +3272,57 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           itemX,
           itemY,
           cardWidth,
-          itemHeight,
+          infoHeight,
           [255, 255, 255],
-          [225, 234, 229]
+          [225, 234, 229],
+          2
         );
 
 
         setPdfFont(
           pdf,
           "bold",
-          5.2,
+          4.4,
           [129, 145, 136]
         );
 
 
         pdf.text(
           item[0],
-          itemX + 4,
-          itemY + 5
+          itemX + 3,
+          itemY + 4.5
         );
+
+
+        const valor =
+          textoLimpo(
+            item[1]
+          );
+
+
+        const valorAdaptado =
+          ajustarFonteAoNumeroDeLinhas(
+            pdf,
+            valor,
+            cardWidth - 6,
+            6.5,
+            4.8,
+            2
+          );
 
 
         setPdfFont(
           pdf,
           "bold",
-          7.1,
+          valorAdaptado.tamanho,
           [23, 53, 42]
         );
 
 
-        const valueLines =
-          pdf.splitTextToSize(
-            String(item[1]),
-            cardWidth - 8
-          );
-
-
         pdf.text(
-          valueLines.slice(0, 2),
-          itemX + 4,
-          itemY + 11
+          valorAdaptado.linhas,
+          itemX + 3,
+          itemY + 10
         );
 
       }
@@ -3240,30 +3330,47 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
     y +=
-      itemHeight * 2 +
-      cardGap +
-      5;
+      infoHeight * 2 +
+      gap +
+      4;
 
 
     /* ========================================================
        CONFIANÇA
     ======================================================== */
 
+    const confianca =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          Number(
+            diagnosticoData.confiancaNumero
+          ) || 0
+        )
+      );
+
+
+    const confiancaHeight =
+      13;
+
+
     roundedCard(
       pdf,
       margin,
       y,
       contentWidth,
-      15,
+      confiancaHeight,
       [234, 247, 239],
-      [214, 235, 221]
+      [214, 235, 221],
+      2
     );
 
 
     setPdfFont(
       pdf,
       "bold",
-      6.2,
+      5.3,
       [23, 107, 69]
     );
 
@@ -3271,14 +3378,14 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     pdf.text(
       "CONFIANÇA DA INTELIGÊNCIA ARTIFICIAL",
       margin + 5,
-      y + 6
+      y + 5.2
     );
 
 
     pdf.text(
       diagnosticoData.confianca,
       pageWidth - margin - 5,
-      y + 6,
+      y + 5.2,
       {
         align: "right"
       }
@@ -3294,25 +3401,13 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
     pdf.roundedRect(
       margin + 5,
-      y + 9,
+      y + 8,
       contentWidth - 10,
-      2.5,
-      1.25,
-      1.25,
+      2,
+      1,
+      1,
       "F"
     );
-
-
-    const confianca =
-      Math.max(
-        0,
-        Math.min(
-          100,
-          Number(
-            diagnosticoData.confiancaNumero
-          ) || 0
-        )
-      );
 
 
     pdf.setFillColor(
@@ -3330,15 +3425,17 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       100;
 
 
-    if (larguraConfianca > 0) {
+    if (
+      larguraConfianca > 0
+    ) {
 
       pdf.roundedRect(
         margin + 5,
-        y + 9,
+        y + 8,
         larguraConfianca,
-        2.5,
-        1.25,
-        1.25,
+        2,
+        1,
+        1,
         "F"
       );
 
@@ -3346,7 +3443,182 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
     y +=
-      20;
+      confiancaHeight +
+      4;
+
+
+    /* ========================================================
+       DESCRIÇÃO + RECOMENDAÇÕES
+    ======================================================== */
+
+    const colunaGap =
+      3;
+
+
+    const colunaWidth =
+      (
+        contentWidth -
+        colunaGap
+      ) / 2;
+
+
+    const descricao =
+      textoLimpo(
+        diagnosticoData.descricao
+      ) ||
+      "Não registada.";
+
+
+    const recomendacoes =
+      textoLimpo(
+        diagnosticoData.recomendacoes
+      ) ||
+      "Não registadas.";
+
+
+    /*
+     * Calculamos quantas linhas cabem em cada coluna.
+     * Em vez de cortar, diminuímos a fonte.
+     */
+
+    const descricaoAdaptada =
+      ajustarFonteAoNumeroDeLinhas(
+        pdf,
+        descricao,
+        colunaWidth - 8,
+        5.7,
+        4.1,
+        14
+      );
+
+
+    const recomendacoesAdaptadas =
+      ajustarFonteAoNumeroDeLinhas(
+        pdf,
+        recomendacoes,
+        colunaWidth - 8,
+        5.7,
+        4.1,
+        14
+      );
+
+
+    const linhasMaior =
+      Math.max(
+        descricaoAdaptada.linhas.length,
+        recomendacoesAdaptadas.linhas.length
+      );
+
+
+    const alturaTexto =
+      Math.max(
+        30,
+        13 +
+        linhasMaior *
+        2.7
+      );
+
+
+    const alturaSecoes =
+      Math.min(
+        46,
+        alturaTexto
+      );
+
+
+    roundedCard(
+      pdf,
+      margin,
+      y,
+      colunaWidth,
+      alturaSecoes,
+      [247, 250, 248],
+      [226, 235, 230],
+      2
+    );
+
+
+    roundedCard(
+      pdf,
+      margin +
+      colunaWidth +
+      colunaGap,
+      y,
+      colunaWidth,
+      alturaSecoes,
+      [234, 247, 239],
+      [214, 235, 221],
+      2
+    );
+
+
+    setPdfFont(
+      pdf,
+      "bold",
+      5.8,
+      [13, 77, 49]
+    );
+
+
+    pdf.text(
+      "Descrição do resultado",
+      margin + 4,
+      y + 6
+    );
+
+
+    pdf.text(
+      "Recomendações",
+      margin +
+      colunaWidth +
+      colunaGap +
+      4,
+      y + 6
+    );
+
+
+    setPdfFont(
+      pdf,
+      "normal",
+      descricaoAdaptada.tamanho,
+      [82, 104, 94]
+    );
+
+
+    pdf.text(
+      descricaoAdaptada.linhas,
+      margin + 4,
+      y + 11,
+      {
+        lineHeightFactor: 1.2
+      }
+    );
+
+
+    setPdfFont(
+      pdf,
+      "normal",
+      recomendacoesAdaptadas.tamanho,
+      [82, 104, 94]
+    );
+
+
+    pdf.text(
+      recomendacoesAdaptadas.linhas,
+      margin +
+      colunaWidth +
+      colunaGap +
+      4,
+      y + 11,
+      {
+        lineHeightFactor: 1.2
+      }
+    );
+
+
+    y +=
+      alturaSecoes +
+      4;
 
 
     /* ========================================================
@@ -3361,152 +3633,38 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       );
 
 
-    /* ========================================================
-       DESCRIÇÃO + RECOMENDAÇÕES
-    ======================================================== */
-
-    const colGap =
-      4;
-
-
-    const colWidth =
-      (
-        contentWidth -
-        colGap
-      ) / 2;
-
-
-    const descricaoTexto =
-      textoLimpo(
-        diagnosticoData.descricao
-      ) ||
-      "Não registada.";
-
-
-    const recomendacaoTexto =
-      textoLimpo(
-        diagnosticoData.recomendacoes
-      ) ||
-      "Não registadas.";
-
-
-    function desenharColuna(
-      titulo,
-      texto,
-      x,
-      y,
-      largura,
-      accent
-    ) {
-
-      const linhas =
-        pdf.splitTextToSize(
-          texto,
-          largura - 10
-        );
-
-
-      const linhasVisiveis =
-        linhas.slice(0, 6);
-
-
-      const altura =
-        36;
-
-
-      roundedCard(
+    const observacaoAdaptada =
+      ajustarFonteAoNumeroDeLinhas(
         pdf,
-        x,
-        y,
-        largura,
-        altura,
-        accent
-          ? [234, 247, 239]
-          : [247, 250, 248],
-        accent
-          ? [214, 235, 221]
-          : [226, 235, 230]
+        observacoes,
+        contentWidth - 12,
+        5.4,
+        4,
+        7
       );
 
 
-      setPdfFont(
-        pdf,
-        "bold",
-        7,
-        [13, 77, 49]
+    const observacaoAltura =
+      Math.min(
+        28,
+        Math.max(
+          18,
+          10 +
+          observacaoAdaptada.linhas.length *
+          2.8
+        )
       );
 
-
-      pdf.text(
-        titulo,
-        x + 5,
-        y + 7
-      );
-
-
-      setPdfFont(
-        pdf,
-        "normal",
-        6.2,
-        [82, 104, 94]
-      );
-
-
-      pdf.text(
-        linhasVisiveis,
-        x + 5,
-        y + 13,
-        {
-          lineHeightFactor: 1.35
-        }
-      );
-
-
-      return altura;
-
-    }
-
-
-    const alturaColuna =
-      desenharColuna(
-        "Descrição do resultado",
-        descricaoTexto,
-        margin,
-        y,
-        colWidth,
-        false
-      );
-
-
-    desenharColuna(
-      "Recomendações",
-      recomendacaoTexto,
-      margin +
-      colWidth +
-      colGap,
-      y,
-      colWidth,
-      true
-    );
-
-
-    y +=
-      alturaColuna +
-      5;
-
-
-    /* ========================================================
-       OBSERVAÇÃO DE ACOMPANHAMENTO
-    ======================================================== */
 
     roundedCard(
       pdf,
       margin,
       y,
       contentWidth,
-      30,
+      observacaoAltura,
       [255, 247, 223],
-      [238, 214, 157]
+      [238, 214, 157],
+      2.5
     );
 
 
@@ -3520,10 +3678,10 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     pdf.roundedRect(
       margin,
       y,
-      2,
-      30,
-      1,
-      1,
+      1.7,
+      observacaoAltura,
+      .8,
+      .8,
       "F"
     );
 
@@ -3531,90 +3689,156 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     setPdfFont(
       pdf,
       "bold",
-      7.5,
+      5.7,
       [116, 91, 28]
     );
 
 
     pdf.text(
       "OBSERVAÇÕES DE ACOMPANHAMENTO",
-      margin + 7,
-      y + 8
+      margin + 6,
+      y + 6
     );
 
 
     setPdfFont(
       pdf,
       "normal",
-      6.4,
+      observacaoAdaptada.tamanho,
       [116, 91, 28]
     );
 
 
-    const observationLines =
-      pdf.splitTextToSize(
-        observacoes,
-        contentWidth - 14
-      );
-
-
     pdf.text(
-      observationLines.slice(0, 5),
-      margin + 7,
-      y + 15,
+      observacaoAdaptada.linhas,
+      margin + 6,
+      y + 11,
       {
-        lineHeightFactor: 1.35
+        lineHeightFactor: 1.2
       }
     );
+
+
+    y +=
+      observacaoAltura +
+      3;
 
 
     /* ========================================================
-       RODAPÉ
+       ERRO — SOMENTE SE REALMENTE EXISTIR
     ======================================================== */
 
-    pdf.setDrawColor(
-      223,
-      232,
-      227
-    );
+    if (
+      normalizarTexto(
+        diagnosticoData.status
+      ) === "erro" &&
+      textoLimpo(
+        diagnosticoData.erro
+      )
+    ) {
+
+      const erro =
+        textoLimpo(
+          diagnosticoData.erro
+        );
 
 
-    pdf.setLineWidth(.3);
+      const erroAdaptado =
+        ajustarFonteAoNumeroDeLinhas(
+          pdf,
+          erro,
+          contentWidth - 12,
+          5.2,
+          4,
+          5
+        );
 
 
-    pdf.line(
-      margin,
-      pageHeight - 14,
-      pageWidth - margin,
-      pageHeight - 14
-    );
+      const erroAltura =
+        Math.min(
+          22,
+          Math.max(
+            16,
+            10 +
+            erroAdaptado.linhas.length *
+            2.6
+          )
+        );
 
 
-    setPdfFont(
+      roundedCard(
+        pdf,
+        margin,
+        y,
+        contentWidth,
+        erroAltura,
+        [255, 240, 240],
+        [237, 204, 204],
+        2
+      );
+
+
+      setPdfFont(
+        pdf,
+        "bold",
+        5.5,
+        [165, 46, 46]
+      );
+
+
+      pdf.text(
+        "ERRO DURANTE O DIAGNÓSTICO",
+        margin + 6,
+        y + 6
+      );
+
+
+      setPdfFont(
+        pdf,
+        "normal",
+        erroAdaptado.tamanho,
+        [119, 70, 70]
+      );
+
+
+      pdf.text(
+        erroAdaptado.linhas,
+        margin + 6,
+        y + 11,
+        {
+          lineHeightFactor: 1.2
+        }
+      );
+
+    }
+
+
+    /* ========================================================
+       RODAPÉ REAL
+    ======================================================== */
+
+    desenharRodapePDF(
       pdf,
-      "normal",
-      6.3,
-      [130, 147, 139]
+      1
     );
 
 
-    pdf.text(
-      "AgroIA Moxico · Relatório de diagnóstico individual",
-      margin,
-      pageHeight - 8
-    );
+    /*
+     * GARANTIA ABSOLUTA:
+     * O documento começa com uma página e nunca recebe
+     * addPage(). Portanto, o PDF final tem exatamente
+     * uma página.
+     */
 
+    while (
+      pdf.getNumberOfPages() > 1
+    ) {
 
-    pdf.text(
-      "Diagnóstico " +
-      diagnosticoData.id +
-      " · Página 1 de 1",
-      pageWidth - margin,
-      pageHeight - 8,
-      {
-        align: "right"
-      }
-    );
+      pdf.deletePage(
+        pdf.getNumberOfPages()
+      );
+
+    }
 
 
     return pdf;
@@ -3639,7 +3863,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
     if (loading) {
 
-      if (!button.dataset.originalHtml) {
+      if (
+        !button.dataset.originalHtml
+      ) {
 
         button.dataset.originalHtml =
           button.innerHTML;
@@ -3690,8 +3916,49 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
     try {
 
+      /*
+       * A imagem é carregada antes do PDF.
+       */
+
+      diagnosticoData._imageData =
+        null;
+
+
+      if (
+        diagnosticoData.imagem
+      ) {
+
+        diagnosticoData._imageData =
+          await carregarImagemComoDataURL(
+            diagnosticoData.imagem
+          );
+
+      }
+
+
       const pdf =
         await buildPdf();
+
+
+      /*
+       * Confirmação de uma única página.
+       */
+
+      if (
+        pdf.getNumberOfPages() > 1
+      ) {
+
+        while (
+          pdf.getNumberOfPages() > 1
+        ) {
+
+          pdf.deletePage(
+            pdf.getNumberOfPages()
+          );
+
+        }
+
+      }
 
 
       pdf.save(
@@ -3782,7 +4049,10 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
   /* ==========================================================
-     HTML DA PÁGINA DE IMPRESSÃO
+     PÁGINA DE IMPRESSÃO
+
+     A estrutura é deliberadamente compacta.
+     Todo o relatório é colocado dentro de uma única área A4.
   ========================================================== */
 
   function criarPaginaImpressao(
@@ -3817,248 +4087,150 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       );
 
 
+    const confianca =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          Number(
+            diagnosticoData.confiancaNumero
+          ) || 0
+        )
+      );
+
+
     const imagemHTML =
       imagemParaImpressao
 
         ? `
-          <div class="print-report-product-image">
-
-            <div class="print-image-inner">
-
-              <img
-                src="${escaparHTML(imagemParaImpressao)}"
-                alt="${escaparHTML(produto)}">
-
-            </div>
-
+          <div class="print-product-image">
+            <img
+              src="${escaparHTML(imagemParaImpressao)}"
+              alt="${escaparHTML(produto)}">
           </div>
         `
 
         : `
-          <div class="print-report-product-image">
-
-            <div class="print-report-product-placeholder">
-
-              <i class="fas fa-leaf"></i>
-
-              <span>
-                Imagem não disponível
-              </span>
-
-            </div>
-
+          <div class="print-product-image print-placeholder">
+            <i class="fas fa-leaf"></i>
+            <span>Imagem não disponível</span>
           </div>
         `;
 
 
     return `
 
-      <section class="print-diagnosis-page">
+      <section
+        class="print-diagnosis-page"
+        id="agroia-print-page">
 
-        <header class="print-header">
+        <div class="print-content">
 
-          <div class="print-brand">
+          <header class="print-header">
 
-            <div class="print-brand-logo">
-              ${criarLogoHTMLImpressao()}
-            </div>
+            <div class="print-brand">
 
-            <div>
-
-              <div class="print-brand-name">
-                AgroIA Moxico
+              <div class="print-logo">
+                ${criarLogoHTMLImpressao()}
               </div>
 
-              <div class="print-brand-subtitle">
-                Inteligência Artificial aplicada à agricultura
+              <div>
+
+                <div class="print-brand-name">
+                  AgroIA Moxico
+                </div>
+
+                <div class="print-brand-subtitle">
+                  Inteligência Artificial aplicada à agricultura
+                </div>
+
               </div>
 
             </div>
 
-          </div>
 
+            <div class="print-meta">
 
-          <div class="print-header-meta">
-
-            <strong>
-              RELATÓRIO DE DIAGNÓSTICO
-            </strong>
-
-            <span>
-              Diagnóstico ${escaparHTML(diagnosticoData.id)}
-            </span>
-
-            <span>
-              ${escaparHTML(diagnosticoData.criacao)}
-            </span>
-
-          </div>
-
-        </header>
-
-
-        <div class="print-divider"></div>
-
-
-        <div class="print-report-title">
-
-          <strong>
-            Diagnóstico agrícola
-          </strong>
-
-          <span>
-            Registo individual da análise realizada no AgroIA Moxico
-          </span>
-
-        </div>
-
-
-        <!-- =====================================================
-             CARD HORIZONTAL DA IMAGEM + PRODUTO
-        ====================================================== -->
-
-        <div class="print-report-product">
-
-          ${imagemHTML}
-
-
-          <div class="print-report-product-info">
-
-            <span class="print-report-label">
-              Produto agrícola analisado
-            </span>
-
-
-            <h3 class="print-report-product-name">
-              ${escaparHTML(produto)}
-            </h3>
-
-
-            ${diagnosticoData.produtoDescricao
-
-        ? `
-                  <p class="print-report-product-copy">
-                    ${escaparHTML(
-          diagnosticoData.produtoDescricao
-        )}
-                  </p>
-                `
-
-        : `
-                  <p class="print-report-product-copy">
-                    Produto agrícola associado a este diagnóstico.
-                  </p>
-                `
-      }
-
-
-            <div class="print-report-product-reference">
-
-              <i class="fas fa-camera"></i>
+              <strong>
+                RELATÓRIO DE DIAGNÓSTICO
+              </strong>
 
               <span>
-                Imagem utilizada como referência visual para este diagnóstico.
+                Diagnóstico ${escaparHTML(
+      diagnosticoData.id
+    )}
+              </span>
+
+              <span>
+                ${escaparHTML(
+      diagnosticoData.criacao
+    )}
               </span>
 
             </div>
 
-          </div>
-
-        </div>
+          </header>
 
 
-        <!-- =====================================================
-             RESULTADO
-        ====================================================== -->
-
-        <div class="print-result">
-
-          <span>
-            Resultado identificado
-          </span>
-
-          <strong>
-            ${escaparHTML(resultado)}
-          </strong>
-
-        </div>
+          <div class="print-divider"></div>
 
 
-        <!-- =====================================================
-             INFORMAÇÕES
-        ====================================================== -->
-
-        <div class="print-grid">
-
-          <div class="print-item">
-
-            <span>
-              Número do diagnóstico
-            </span>
+          <div class="print-title">
 
             <strong>
-              ${escaparHTML(diagnosticoData.id)}
+              Diagnóstico agrícola
             </strong>
 
-          </div>
-
-
-          <div class="print-item">
-
             <span>
-              Estado
+              Registo individual da análise realizada no AgroIA Moxico
             </span>
 
-            <strong>
-              ${escaparHTML(status)}
-            </strong>
+          </div>
+
+
+          <!-- PRODUTO -->
+
+          <div class="print-product">
+
+            ${imagemHTML}
+
+            <div class="print-product-info">
+
+              <span class="print-label">
+                Produto agrícola analisado
+              </span>
+
+              <h3>
+                ${escaparHTML(produto)}
+              </h3>
+
+              <p>
+                ${diagnosticoData.produtoDescricao
+        ? escaparTextoHTML(
+          diagnosticoData.produtoDescricao
+        )
+        : "Produto agrícola associado a este diagnóstico."
+      }
+              </p>
+
+              <div class="print-reference">
+                <i class="fas fa-camera"></i>
+                <span>
+                  Imagem utilizada como referência visual para este diagnóstico.
+                </span>
+              </div>
+
+            </div>
 
           </div>
 
 
-          <div class="print-item">
+          <!-- RESULTADO -->
+
+          <div class="print-result">
 
             <span>
-              Confiança da IA
-            </span>
-
-            <strong>
-              ${escaparHTML(diagnosticoData.confianca)}
-            </strong>
-
-          </div>
-
-
-          <div class="print-item">
-
-            <span>
-              Data da análise
-            </span>
-
-            <strong>
-              ${escaparHTML(diagnosticoData.criacao)}
-            </strong>
-
-          </div>
-
-
-          <div class="print-item">
-
-            <span>
-              Última atualização
-            </span>
-
-            <strong>
-              ${escaparHTML(diagnosticoData.atualizacao)}
-            </strong>
-
-          </div>
-
-
-          <div class="print-item">
-
-            <span>
-              Resultado
+              Resultado identificado
             </span>
 
             <strong>
@@ -4067,106 +4239,153 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
           </div>
 
-        </div>
 
+          <!-- INFORMAÇÕES -->
 
-        <!-- =====================================================
-             CONFIANÇA
-        ====================================================== -->
+          <div class="print-grid">
 
-        <div class="print-confidence">
+            <div class="print-item">
+              <span>Número do diagnóstico</span>
+              <strong>
+                ${escaparHTML(
+        diagnosticoData.id
+      )}
+              </strong>
+            </div>
 
-          <div class="print-confidence-top">
+            <div class="print-item">
+              <span>Estado</span>
+              <strong>
+                ${escaparHTML(status)}
+              </strong>
+            </div>
 
-            <span>
-              Confiança da inteligência artificial
-            </span>
+            <div class="print-item">
+              <span>Confiança da IA</span>
+              <strong>
+                ${escaparHTML(
+        diagnosticoData.confianca
+      )}
+              </strong>
+            </div>
 
-            <span>
-              ${escaparHTML(diagnosticoData.confianca)}
-            </span>
+            <div class="print-item">
+              <span>Data da análise</span>
+              <strong>
+                ${escaparHTML(
+        diagnosticoData.criacao
+      )}
+              </strong>
+            </div>
 
-          </div>
+            <div class="print-item">
+              <span>Última atualização</span>
+              <strong>
+                ${escaparHTML(
+        diagnosticoData.atualizacao
+      )}
+              </strong>
+            </div>
 
-
-          <div class="print-confidence-bar">
-
-            <div
-              class="print-confidence-fill"
-              style="width:${Math.max(
-        0,
-        Math.min(
-          100,
-          Number(
-            diagnosticoData.confiancaNumero
-          ) || 0
-        )
-      )}%">
+            <div class="print-item">
+              <span>Resultado</span>
+              <strong>
+                ${escaparHTML(resultado)}
+              </strong>
             </div>
 
           </div>
 
-        </div>
+
+          <!-- CONFIANÇA -->
+
+          <div class="print-confidence">
+
+            <div class="print-confidence-top">
+
+              <span>
+                Confiança da inteligência artificial
+              </span>
+
+              <strong>
+                ${escaparHTML(
+        diagnosticoData.confianca
+      )}
+              </strong>
+
+            </div>
+
+            <div class="print-confidence-bar">
+
+              <div
+                class="print-confidence-fill"
+                style="width:${confianca}%">
+              </div>
+
+            </div>
+
+          </div>
 
 
-        <!-- =====================================================
-             DESCRIÇÃO + RECOMENDAÇÕES
-        ====================================================== -->
+          <!-- DESCRIÇÃO + RECOMENDAÇÕES -->
 
-        <div class="print-sections-grid">
+          <div class="print-sections-grid">
 
-          <div class="print-section">
+            <div class="print-section">
 
-            <h3>
-              Descrição do resultado
-            </h3>
+              <h3>
+                Descrição do resultado
+              </h3>
 
-            <p>
-              ${escaparHTML(
+              <p>
+                ${escaparTextoHTML(
         diagnosticoData.descricao ||
         "Não registada."
       )}
-            </p>
+              </p>
 
-          </div>
+            </div>
 
 
-          <div class="print-section">
+            <div class="print-section">
 
-            <h3>
-              Recomendações
-            </h3>
+              <h3>
+                Recomendações
+              </h3>
 
-            <p>
-              ${escaparHTML(
+              <p>
+                ${escaparTextoHTML(
         diagnosticoData.recomendacoes ||
         "Não registadas."
       )}
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- OBSERVAÇÕES -->
+
+          <div class="print-section print-observations">
+
+            <h3>
+              Observações de acompanhamento
+            </h3>
+
+            <p>
+              ${escaparTextoHTML(observacoes)}
             </p>
 
           </div>
 
-        </div>
 
-
-        <!-- =====================================================
-             OBSERVAÇÕES GERADAS A PARTIR DAS RECOMENDAÇÕES
-        ====================================================== -->
-
-        <div class="print-section print-observations">
-
-          <h3>
-            Observações de acompanhamento
-          </h3>
-
-          <p>
-            ${escaparHTML(observacoes)}
-          </p>
-
-        </div>
-
-
-        ${diagnosticoData.status === "erro"
+          ${normalizarTexto(
+        diagnosticoData.status
+      ) === "erro" &&
+        textoLimpo(
+          diagnosticoData.erro
+        )
 
         ? `
               <div class="print-section print-error">
@@ -4176,9 +4395,8 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
                 </h3>
 
                 <p>
-                  ${escaparHTML(
-          diagnosticoData.erro ||
-          "Ocorreu um erro durante o processamento deste diagnóstico."
+                  ${escaparTextoHTML(
+          diagnosticoData.erro
         )}
                 </p>
 
@@ -4189,19 +4407,24 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       }
 
 
-        <footer class="print-footer">
+          <!-- RODAPÉ -->
 
-          <span>
-            AgroIA Moxico · Relatório de diagnóstico individual
-          </span>
+          <footer class="print-footer">
 
-          <span>
-            Diagnóstico
-            ${escaparHTML(diagnosticoData.id)}
-            · Página 1 de 1
-          </span>
+            <span>
+              AgroIA Moxico · Relatório de diagnóstico individual
+            </span>
 
-        </footer>
+            <span>
+              Diagnóstico
+              ${escaparHTML(
+        diagnosticoData.id
+      )}
+            </span>
+
+          </footer>
+
+        </div>
 
       </section>
 
@@ -4211,7 +4434,10 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
   /* ==========================================================
-     CSS DA JANELA DE IMPRESSÃO
+     CSS DE IMPRESSÃO
+
+     A página tem exatamente o tamanho útil de uma folha A4.
+     O conteúdo é posteriormente escalado se necessário.
   ========================================================== */
 
   function obterEstilosImpressao() {
@@ -4225,32 +4451,34 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
       @page {
         size: A4 portrait;
-        margin: 0;
+        margin: 7mm;
       }
 
 
       html,
       body {
-        width: 210mm;
-        height: 297mm;
-        min-width: 210mm;
-        max-width: 210mm;
-        min-height: 297mm;
-        max-height: 297mm;
+
+        width: 100%;
         margin: 0;
         padding: 0;
         background: #fff;
-        overflow: hidden;
+
       }
 
 
       body {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+
         font-family:
           Arial,
           Helvetica,
           sans-serif;
+
+        -webkit-print-color-adjust:
+          exact !important;
+
+        print-color-adjust:
+          exact !important;
+
       }
 
 
@@ -4258,17 +4486,15 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         position: relative;
 
-        width: 210mm;
-        height: 297mm;
+        width: 196mm;
 
-        min-width: 210mm;
-        max-width: 210mm;
+        height: 283mm;
 
-        min-height: 297mm;
-        max-height: 297mm;
+        max-width: 196mm;
 
-        margin: 0;
-        padding: 10mm;
+        max-height: 283mm;
+
+        margin: 0 auto;
 
         overflow: hidden;
 
@@ -4276,15 +4502,22 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         color: #17352a;
 
-        page-break-after: avoid;
-        break-after: avoid;
+        page-break-after: avoid !important;
+
+        break-after: avoid !important;
 
       }
 
 
-      /* =====================================================
-         CABEÇALHO
-      ====================================================== */
+      .print-content {
+
+        width: 100%;
+
+        transform-origin:
+          top left;
+
+      }
+
 
       .print-header {
 
@@ -4296,7 +4529,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         justify-content: space-between;
 
-        gap: 20px;
+        gap: 15px;
 
       }
 
@@ -4307,33 +4540,29 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         align-items: center;
 
-        gap: 11px;
+        gap: 9px;
 
       }
 
 
-      .print-brand-logo {
+      .print-logo {
 
-        width: 42px;
-        height: 42px;
+        width: 38px;
 
-        flex: 0 0 42px;
+        height: 38px;
 
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
+        flex: 0 0 38px;
 
       }
 
 
-      .print-brand-logo svg {
+      .print-logo svg {
+
+        width: 38px;
+
+        height: 38px;
 
         display: block;
-
-        width: 42px;
-        height: 42px;
 
       }
 
@@ -4342,9 +4571,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         color: #0d4d31;
 
-        font-size: 17px;
+        font-size: 16px;
 
-        line-height: 1.1;
+        line-height: 1.05;
 
         font-weight: 900;
 
@@ -4353,84 +4582,38 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
       .print-brand-subtitle {
 
-        margin-top: 3px;
-
-        color: #71867c;
-
-        font-size: 8px;
-
-        line-height: 1.2;
-
-      }
-
-
-      .print-header-meta {
-
-        text-align: right;
-
-      }
-
-
-      .print-header-meta strong {
-
-        display: block;
-
-        color: #0d4d31;
-
-        font-size: 10px;
-
-        font-weight: 900;
-
-      }
-
-
-      .print-header-meta span {
-
-        display: block;
-
         margin-top: 2px;
 
         color: #71867c;
 
         font-size: 7px;
 
-      }
-
-
-      .print-divider {
-
-        width: 100%;
-
-        height: 2px;
-
-        margin-top: 10px;
-
-        background: #176b45;
+        line-height: 1.15;
 
       }
 
 
-      .print-report-title {
+      .print-meta {
 
-        margin: 7px 0 8px;
+        text-align: right;
 
       }
 
 
-      .print-report-title strong {
+      .print-meta strong {
 
         display: block;
 
         color: #0d4d31;
 
-        font-size: 8px;
+        font-size: 9px;
 
         font-weight: 900;
 
       }
 
 
-      .print-report-title span {
+      .print-meta span {
 
         display: block;
 
@@ -4443,33 +4626,73 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       }
 
 
-      /* =====================================================
-         CARD HORIZONTAL IMAGEM + PRODUTO
-      ====================================================== */
+      .print-divider {
 
-      .print-report-product {
+        height: 1.5px;
 
-        position: relative;
+        margin-top: 7px;
 
-        display: grid;
+        background: #176b45;
 
-        grid-template-columns: 55mm minmax(0, 1fr);
+      }
 
-        gap: 7mm;
+
+      .print-title {
+
+        margin: 5px 0 6px;
+
+      }
+
+
+      .print-title strong {
+
+        display: block;
+
+        color: #0d4d31;
+
+        font-size: 7.5px;
+
+        font-weight: 900;
+
+      }
+
+
+      .print-title span {
+
+        display: block;
+
+        margin-top: 1px;
+
+        color: #71867c;
+
+        font-size: 6px;
+
+      }
+
+
+      /* PRODUTO */
+
+      .print-product {
 
         width: 100%;
 
-        height: 48mm;
+        min-height: 39mm;
 
-        padding: 4mm;
+        display: grid;
 
-        margin-bottom: 7px;
+        grid-template-columns: 49mm minmax(0, 1fr);
+
+        gap: 6mm;
+
+        padding: 3.5mm;
+
+        margin-bottom: 5px;
 
         overflow: hidden;
 
-        border-radius: 12px;
-
         border: 1px solid #d8e6de;
+
+        border-radius: 10px;
 
         background:
           linear-gradient(
@@ -4478,48 +4701,18 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
             #edf5f0 100%
           );
 
-      }
+        page-break-inside: avoid !important;
 
-
-      .print-report-product::after {
-
-        content: "";
-
-        position: absolute;
-
-        right: -15mm;
-
-        bottom: -22mm;
-
-        width: 45mm;
-
-        height: 45mm;
-
-        border-radius: 50%;
-
-        background:
-          radial-gradient(
-            circle,
-            rgba(217,164,65,.10),
-            transparent 70%
-          );
-
-        pointer-events: none;
+        break-inside: avoid !important;
 
       }
 
 
-      .print-report-product-image {
+      .print-product-image {
 
-        position: relative;
+        width: 49mm;
 
-        z-index: 2;
-
-        width: 55mm;
-
-        height: 40mm;
-
-        padding: 2mm;
+        height: 31mm;
 
         display: flex;
 
@@ -4528,88 +4721,17 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         justify-content: center;
 
         overflow: hidden;
-
-        border-radius: 9px;
-
-        background: #fff;
 
         border: 1px solid #d4e3da;
 
-        box-shadow:
-          0 2px 7px rgba(6,42,28,.05),
-          inset 0 0 0 1px rgba(23,107,69,.025);
-
-      }
-
-
-      .print-report-product-image::before {
-
-        content: "";
-
-        position: absolute;
-
-        z-index: 5;
-
-        top: 2mm;
-
-        left: 3mm;
-
-        width: 18mm;
-
-        height: 1.1mm;
-
-        border-radius: 999px;
-
-        background: #176b45;
-
-      }
-
-
-      .print-report-product-image::after {
-
-        content: "";
-
-        position: absolute;
-
-        z-index: 5;
-
-        right: 3mm;
-
-        bottom: 2.5mm;
-
-        width: 7mm;
-
-        height: 1mm;
-
-        border-radius: 999px;
-
-        background: #d9a441;
-
-      }
-
-
-      .print-image-inner {
-
-        width: 100%;
-
-        height: 100%;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        overflow: hidden;
-
-        border-radius: 6px;
+        border-radius: 8px;
 
         background: #fff;
 
       }
 
 
-      .print-image-inner img {
+      .print-product-image img {
 
         display: block;
 
@@ -4617,105 +4739,83 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         height: 100%;
 
-        max-width: 100%;
-
-        max-height: 100%;
-
         object-fit: contain;
 
-        object-position: center center;
+        object-position: center;
 
-        border-radius: 6px;
+        border-radius: 7px;
 
         background: #fff;
 
       }
 
 
-      .print-report-product-placeholder {
-
-        width: 100%;
-
-        height: 100%;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
+      .print-placeholder {
 
         flex-direction: column;
 
-        gap: 4px;
-
-        border-radius: 6px;
-
-        background: #eaf7ef;
+        gap: 3px;
 
         color: #176b45;
 
-      }
-
-
-      .print-report-product-placeholder i {
-
-        font-size: 18px;
+        background: #eaf7ef;
 
       }
 
 
-      .print-report-product-placeholder span {
+      .print-placeholder i {
 
-        font-size: 7px;
+        font-size: 15px;
+
+      }
+
+
+      .print-placeholder span {
+
+        font-size: 6px;
 
         font-weight: 800;
 
       }
 
 
-      .print-report-product-info {
-
-        position: relative;
-
-        z-index: 2;
+      .print-product-info {
 
         min-width: 0;
 
         align-self: center;
 
-        padding-right: 4mm;
-
       }
 
 
-      .print-report-label {
+      .print-label {
 
         display: block;
 
         color: #71867c;
 
-        font-size: 6px;
+        font-size: 5.5px;
 
         line-height: 1.1;
 
         text-transform: uppercase;
 
-        letter-spacing: .08em;
+        letter-spacing: .06em;
 
         font-weight: 900;
 
       }
 
 
-      .print-report-product-name {
+      .print-product-info h3 {
 
-        margin: 5px 0 0;
+        margin: 3px 0 0;
 
         color: #0d4d31;
 
-        font-size: 14px;
+        font-size: 13px;
 
-        line-height: 1.15;
+        line-height: 1.05;
 
         font-weight: 900;
 
@@ -4724,62 +4824,64 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       }
 
 
-      .print-report-product-copy {
+      .print-product-info p {
 
-        margin: 6px 0 0;
+        margin: 4px 0 0;
 
         color: #52685e;
-
-        font-size: 7px;
-
-        line-height: 1.4;
-
-      }
-
-
-      .print-report-product-reference {
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 5px;
-
-        margin-top: 6px;
-
-        color: #71867c;
 
         font-size: 6.2px;
 
         line-height: 1.25;
 
+        overflow-wrap: anywhere;
+
       }
 
 
-      .print-report-product-reference i {
+      .print-reference {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 4px;
+
+        margin-top: 4px;
+
+        color: #71867c;
+
+        font-size: 5.4px;
+
+        line-height: 1.15;
+
+      }
+
+
+      .print-reference i {
 
         color: #176b45;
 
-        font-size: 6px;
-
       }
 
 
-      /* =====================================================
-         RESULTADO
-      ====================================================== */
+      /* RESULTADO */
 
       .print-result {
 
-        padding: 9px 11px;
+        padding: 7px 9px;
 
-        margin-bottom: 7px;
+        margin-bottom: 5px;
 
-        border-radius: 9px;
+        border-radius: 8px;
 
         background: #0d4d31;
 
         color: #fff;
+
+        page-break-inside: avoid !important;
+
+        break-inside: avoid !important;
 
       }
 
@@ -4790,13 +4892,11 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         color: rgba(255,255,255,.68);
 
-        font-size: 6px;
-
-        line-height: 1.1;
+        font-size: 5.5px;
 
         text-transform: uppercase;
 
-        letter-spacing: .08em;
+        letter-spacing: .06em;
 
         font-weight: 900;
 
@@ -4807,22 +4907,20 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         display: block;
 
-        margin-top: 4px;
+        margin-top: 3px;
 
         color: #fff;
 
-        font-size: 13px;
+        font-size: 12px;
 
-        line-height: 1.15;
+        line-height: 1.05;
 
-        font-weight: 900;
+        overflow-wrap: anywhere;
 
       }
 
 
-      /* =====================================================
-         GRID
-      ====================================================== */
+      /* GRID */
 
       .print-grid {
 
@@ -4831,24 +4929,28 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         grid-template-columns:
           repeat(3, 1fr);
 
-        gap: 5px;
+        gap: 4px;
 
-        margin-bottom: 7px;
+        margin-bottom: 5px;
+
+        page-break-inside: avoid !important;
+
+        break-inside: avoid !important;
 
       }
 
 
       .print-item {
 
-        min-height: 15mm;
+        min-height: 13mm;
 
-        padding: 6px;
+        padding: 5px;
 
         overflow: hidden;
 
         border: 1px solid #e1eae5;
 
-        border-radius: 7px;
+        border-radius: 6px;
 
         background: #fff;
 
@@ -4861,9 +4963,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         color: #819188;
 
-        font-size: 5.5px;
+        font-size: 4.8px;
 
-        line-height: 1.1;
+        line-height: 1.05;
 
         text-transform: uppercase;
 
@@ -4880,30 +4982,32 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         color: #17352a;
 
-        font-size: 7.3px;
+        font-size: 6.8px;
 
-        line-height: 1.25;
+        line-height: 1.15;
 
         overflow-wrap: anywhere;
 
       }
 
 
-      /* =====================================================
-         CONFIANÇA
-      ====================================================== */
+      /* CONFIANÇA */
 
       .print-confidence {
 
-        margin-bottom: 7px;
+        padding: 6px 7px;
 
-        padding: 7px 8px;
+        margin-bottom: 5px;
 
-        border-radius: 7px;
+        border: 1px solid #d6ebdd;
+
+        border-radius: 6px;
 
         background: #eaf7ef;
 
-        border: 1px solid #d6ebdd;
+        page-break-inside: avoid !important;
+
+        break-inside: avoid !important;
 
       }
 
@@ -4918,9 +5022,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         color: #176b45;
 
-        font-size: 6.5px;
+        font-size: 5.8px;
 
-        line-height: 1.1;
+        line-height: 1;
 
         font-weight: 900;
 
@@ -4929,9 +5033,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
       .print-confidence-bar {
 
-        height: 4px;
+        height: 3px;
 
-        margin-top: 5px;
+        margin-top: 4px;
 
         overflow: hidden;
 
@@ -4953,9 +5057,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       }
 
 
-      /* =====================================================
-         SEÇÕES
-      ====================================================== */
+      /* DESCRIÇÃO + RECOMENDAÇÕES */
 
       .print-sections-grid {
 
@@ -4964,41 +5066,35 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         grid-template-columns:
           1fr 1fr;
 
-        gap: 5px;
+        gap: 4px;
 
-        margin-bottom: 5px;
+        margin-bottom: 4px;
 
       }
 
 
       .print-section {
 
-        margin-top: 5px;
-
-        padding: 7px 8px;
-
-        border-radius: 7px;
-
-        background: #f7faf8;
+        padding: 6px 7px;
 
         border: 1px solid #e2ebe6;
 
-        overflow: hidden;
+        border-radius: 6px;
 
-        box-sizing: border-box;
+        background: #f7faf8;
 
-        break-inside: avoid;
+        overflow: visible;
 
-        page-break-inside: avoid;
+        page-break-inside: avoid !important;
+
+        break-inside: avoid !important;
 
       }
 
 
       .print-sections-grid .print-section {
 
-        margin-top: 0;
-
-        min-height: 34mm;
+        min-height: 37mm;
 
       }
 
@@ -5009,9 +5105,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         color: #0d4d31;
 
-        font-size: 7px;
+        font-size: 6.5px;
 
-        line-height: 1.2;
+        line-height: 1.1;
 
         font-weight: 900;
 
@@ -5024,24 +5120,26 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         color: #52685e;
 
-        font-size: 6.2px;
+        font-size: 5.7px;
 
-        line-height: 1.35;
+        line-height: 1.2;
 
-        white-space: pre-line;
+        overflow-wrap: anywhere;
+
+        word-break: normal;
 
       }
 
+
+      /* OBSERVAÇÕES */
 
       .print-observations {
 
         position: relative;
 
-        min-height: 25mm;
+        margin-bottom: 4px;
 
-        margin-top: 5px;
-
-        padding-left: 10px;
+        padding-left: 9px;
 
         background: #fff7df;
 
@@ -5079,7 +5177,11 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       }
 
 
+      /* ERRO */
+
       .print-error {
+
+        margin-bottom: 4px;
 
         background: #fff0f0;
 
@@ -5102,35 +5204,29 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       }
 
 
-      /* =====================================================
-         RODAPÉ
-      ====================================================== */
+      /* RODAPÉ */
 
       .print-footer {
-
-        position: absolute;
-
-        left: 10mm;
-
-        right: 10mm;
-
-        bottom: 7mm;
 
         display: flex;
 
         justify-content: space-between;
 
-        gap: 15px;
+        align-items: center;
 
-        padding-top: 6px;
+        gap: 12px;
+
+        margin-top: 6px;
+
+        padding-top: 5px;
 
         border-top: 1px solid #dfe8e3;
 
         color: #82938b;
 
-        font-size: 6px;
+        font-size: 5.4px;
 
-        line-height: 1.2;
+        line-height: 1.1;
 
       }
 
@@ -5140,16 +5236,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         html,
         body {
 
-          width: 210mm !important;
-          height: 297mm !important;
+          width: 100% !important;
 
-          min-width: 210mm !important;
-          max-width: 210mm !important;
-
-          min-height: 297mm !important;
-          max-height: 297mm !important;
+          height: 100% !important;
 
           margin: 0 !important;
+
           padding: 0 !important;
 
           overflow: hidden !important;
@@ -5159,34 +5251,36 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         }
 
 
-        body {
+        .print-diagnosis-page {
 
-          -webkit-print-color-adjust:
-            exact !important;
+          width: 196mm !important;
 
-          print-color-adjust:
-            exact !important;
+          height: 283mm !important;
+
+          max-width: 196mm !important;
+
+          max-height: 283mm !important;
+
+          margin: 0 auto !important;
+
+          padding: 0 !important;
+
+          overflow: hidden !important;
+
+          page-break-before: avoid !important;
+
+          page-break-after: avoid !important;
+
+          break-before: avoid !important;
+
+          break-after: avoid !important;
 
         }
 
 
-        .print-diagnosis-page {
+        .print-content {
 
-          width: 210mm !important;
-          height: 297mm !important;
-
-          min-width: 210mm !important;
-          max-width: 210mm !important;
-
-          min-height: 297mm !important;
-          max-height: 297mm !important;
-
-          margin: 0 !important;
-
-          overflow: hidden !important;
-
-          page-break-after: avoid !important;
-          break-after: avoid !important;
+          width: 100% !important;
 
         }
 
@@ -5198,7 +5292,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
   /* ==========================================================
-     AGUARDAR IMAGENS DA JANELA
+     ESPERAR IMAGENS
   ========================================================== */
 
   function aguardarImagensJanela(
@@ -5212,13 +5306,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
     if (!imagens.length) {
-
       return Promise.resolve();
-
     }
 
 
     return Promise.all(
+
       imagens.map(
         function (img) {
 
@@ -5245,7 +5338,8 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
                   return;
                 }
 
-                terminou = true;
+                terminou =
+                  true;
 
                 resolve();
 
@@ -5268,7 +5362,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
               setTimeout(
                 finalizar,
-                3000
+                5000
               );
 
             }
@@ -5276,13 +5370,127 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         }
       )
+
     );
 
   }
 
 
   /* ==========================================================
-     IMPRESSÃO — JANELA EXCLUSIVA
+     AJUSTAR IMPRESSÃO PARA UMA ÚNICA PÁGINA
+
+     Mede o conteúdo real e reduz proporcionalmente apenas
+     quando necessário.
+  ========================================================== */
+
+  async function ajustarPaginaParaUmaFolha(
+    doc
+  ) {
+
+    const page =
+      doc.getElementById(
+        "agroia-print-page"
+      );
+
+    if (!page) {
+      return;
+    }
+
+
+    const content =
+      page.querySelector(
+        ".print-content"
+      );
+
+    if (!content) {
+      return;
+    }
+
+
+    content.style.transform =
+      "scale(1)";
+
+
+    content.style.width =
+      "196mm";
+
+
+    /*
+     * Permite ao navegador calcular a altura real.
+     */
+
+    await new Promise(
+      function (resolve) {
+
+        requestAnimationFrame(
+          function () {
+
+            requestAnimationFrame(
+              resolve
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+    const alturaDisponivel =
+      page.clientHeight;
+
+
+    const alturaReal =
+      content.scrollHeight;
+
+
+    if (
+      alturaReal >
+      alturaDisponivel
+    ) {
+
+      const escala =
+        Math.max(
+          0.72,
+          Math.min(
+            1,
+            alturaDisponivel /
+            alturaReal
+          )
+        );
+
+
+      content.style.transform =
+        "scale(" +
+        escala +
+        ")";
+
+
+      content.style.width =
+        (
+          196 /
+          escala
+        ) +
+        "mm";
+
+    }
+
+
+    /*
+     * Nunca permitir uma segunda folha.
+     */
+
+    page.style.pageBreakAfter =
+      "avoid";
+
+    page.style.breakAfter =
+      "avoid";
+
+  }
+
+
+  /* ==========================================================
+     IMPRESSÃO
   ========================================================== */
 
   async function printDiagnosis() {
@@ -5291,14 +5499,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       return;
     }
 
-
-    /*
-     * IMPORTANTE:
-     *
-     * A janela é aberta ANTES do await.
-     * Isso evita que o navegador considere
-     * a janela como popup bloqueado.
-     */
 
     const printWindow =
       window.open(
@@ -5328,16 +5528,13 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
     try {
 
-      /*
-       * Carrega a imagem antes de criar
-       * o HTML da impressão.
-       */
-
       let imagemParaImpressao =
         null;
 
 
-      if (diagnosticoData.imagem) {
+      if (
+        diagnosticoData.imagem
+      ) {
 
         imagemParaImpressao =
           await carregarImagemComoDataURL(
@@ -5346,16 +5543,18 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
         /*
-         * Último recurso.
-         *
-         * Se a conversão falhar,
-         * usamos a URL original.
+         * Se não for possível converter a imagem,
+         * utiliza a URL original.
          */
 
-        if (!imagemParaImpressao) {
+        if (
+          !imagemParaImpressao
+        ) {
 
           imagemParaImpressao =
-            diagnosticoData.imagem;
+            obterURLImagem(
+              diagnosticoData.imagem
+            );
 
         }
 
@@ -5371,11 +5570,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       const estilos =
         obterEstilosImpressao();
 
-
-      /*
-       * Escreve uma página COMPLETAMENTE
-       * independente do base.html.
-       */
 
       printWindow.document.open();
 
@@ -5420,10 +5614,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       printWindow.document.close();
 
 
-      /*
-       * Aguarda a janela terminar o layout.
-       */
-
       await new Promise(
         function (resolve) {
 
@@ -5439,9 +5629,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
             printWindow.addEventListener(
               "load",
               resolve,
-              {
-                once: true
-              }
+              { once: true }
             );
 
           }
@@ -5450,18 +5638,10 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       );
 
 
-      /*
-       * Aguarda a imagem.
-       */
-
       await aguardarImagensJanela(
         printWindow.document
       );
 
-
-      /*
-       * Aguarda fontes.
-       */
 
       if (
         printWindow.document.fonts &&
@@ -5475,7 +5655,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         } catch (error) {
 
           console.warn(
-            "Fontes da impressão não puderam ser aguardadas.",
+            "Fontes não puderam ser aguardadas.",
             error
           );
 
@@ -5485,8 +5665,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
 
       /*
-       * Pequeno tempo para o motor
-       * de impressão calcular o A4.
+       * Aguarda o layout terminar.
        */
 
       await new Promise(
@@ -5494,7 +5673,34 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
           setTimeout(
             resolve,
-            500
+            250
+          );
+
+        }
+      );
+
+
+      await ajustarPaginaParaUmaFolha(
+        printWindow.document
+      );
+
+
+      /*
+       * Pequeno tempo adicional para o navegador
+       * atualizar a escala antes da impressão.
+       */
+
+      await new Promise(
+        function (resolve) {
+
+          requestAnimationFrame(
+            function () {
+
+              requestAnimationFrame(
+                resolve
+              );
+
+            }
           );
 
         }
@@ -5504,16 +5710,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       printWindow.focus();
 
 
-      /*
-       * IMPRESSÃO REAL.
-       */
-
       printWindow.print();
 
 
       /*
-       * Só fecha depois de dar tempo
-       * para a caixa de impressão abrir.
+       * Fecha depois de o diálogo de impressão
+       * ser apresentado.
        */
 
       setTimeout(
@@ -5529,7 +5731,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           }
 
         },
-        1500
+        1800
       );
 
 
@@ -5644,7 +5846,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
   }
 
+
 }) ();
+
 </script>
 
 {% endblock %}
