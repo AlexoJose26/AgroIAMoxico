@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.db.models import Avg, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -53,6 +52,7 @@ def normalizar_texto(valor):
     Normaliza texto para facilitar comparações entre português,
     inglês, maiúsculas, acentos etc.
     """
+
     if valor is None:
         return ""
 
@@ -76,6 +76,7 @@ def obter_produto(produto_id):
     """
     Obtém um produto agrícola ativo.
     """
+
     return get_object_or_404(
         ProdutoAgricola,
         pk=produto_id,
@@ -87,6 +88,7 @@ def obter_nome_imagem(produto):
     """
     Obtém um nome seguro para a imagem do diagnóstico.
     """
+
     try:
         nome = Path(produto.imagem.name).name
 
@@ -103,6 +105,7 @@ def obter_content_type(nome_imagem):
     """
     Descobre o MIME type da imagem.
     """
+
     content_type, _ = mimetypes.guess_type(nome_imagem)
 
     if content_type:
@@ -115,6 +118,7 @@ def validar_imagem(imagem_bytes):
     """
     Valida se existem dados na imagem e limita o tamanho.
     """
+
     if not imagem_bytes:
         raise ValueError(
             "A imagem do produto está vazia."
@@ -139,8 +143,9 @@ def baixar_imagem_da_url(url):
     Faz download da imagem através de uma URL pública.
 
     Necessário principalmente quando a imagem do produto
-    está armazenada no Vercel Blob.
+    está armazenada em um storage externo, incluindo Vercel Blob.
     """
+
     if not url:
         raise ValueError(
             "URL da imagem não encontrada."
@@ -152,6 +157,13 @@ def baixar_imagem_da_url(url):
             timeout=30,
             allow_redirects=True,
         )
+
+    except requests.Timeout as erro:
+        raise ValueError(
+            "O servidor demorou demasiado tempo para fornecer "
+            "a imagem do produto."
+        ) from erro
+
     except requests.RequestException as erro:
         raise ValueError(
             f"Não foi possível obter a imagem do produto: {erro}"
@@ -182,6 +194,7 @@ def obter_url_imagem_produto(produto):
     Funciona com storages que disponibilizam uma URL pública,
     incluindo Vercel Blob.
     """
+
     try:
         if not produto.imagem:
             return None
@@ -207,10 +220,12 @@ def obter_imagem_produto(produto):
     Obtém os bytes da imagem do produto.
 
     Ordem:
+
     1. URL pública do storage;
     2. abertura direta pelo storage;
     3. erro.
     """
+
     if not produto.imagem:
         raise ValueError(
             "Este produto não possui uma imagem registada."
@@ -271,7 +286,7 @@ def enviar_para_api_ia(
         campo:
             imagem
 
-    E devolve:
+    Resposta esperada:
 
         {
             "sucesso": true,
@@ -351,7 +366,7 @@ def enviar_para_api_ia(
             detalhe = resposta.text[:500]
 
         mensagem = (
-            f"A API de inteligência artificial respondeu "
+            "A API de inteligência artificial respondeu "
             f"com HTTP {resposta.status_code}."
         )
 
@@ -395,11 +410,15 @@ def enviar_para_api_ia(
 # TRADUÇÃO / CLASSIFICAÇÃO DO RESULTADO
 # ============================================================
 
-def obter_nome_produto_detectado(classe, resultado_api):
+def obter_nome_produto_detectado(
+    classe,
+    resultado_api,
+):
     """
     Obtém o nome do produto identificado pela API.
 
     Prioridade:
+
     1. produto enviado pela própria API;
     2. classe;
     3. nome da classe.
@@ -419,10 +438,6 @@ def obter_nome_produto_detectado(classe, resultado_api):
 
     if not classe_texto:
         return ""
-
-    # --------------------------------------------------------
-    # Mapeamentos adicionais para maior tolerância
-    # --------------------------------------------------------
 
     classe_normalizada = normalizar_texto(
         classe_texto
@@ -510,12 +525,9 @@ def obter_nome_produto_detectado(classe, resultado_api):
     if classe_normalizada in produtos:
         return produtos[classe_normalizada]
 
-    # Procura pelo início da classe
     for chave, nome in produtos.items():
-        if (
-            classe_normalizada.startswith(
-                normalizar_texto(chave)
-            )
+        if classe_normalizada.startswith(
+            normalizar_texto(chave)
         ):
             return nome
 
@@ -530,15 +542,6 @@ def determinar_resultado_final(
 ):
     """
     Determina o resultado final salvo no Diagnostico.
-
-    Nunca depende exclusivamente de um campo chamado
-    'resultado', porque a API atual devolve principalmente:
-
-        classe
-        produto
-        problema
-        tipo
-        confianca
     """
 
     resultado_explicitamente_informado = (
@@ -659,7 +662,9 @@ def determinar_resultado_final(
     )
 
     if not problema_normalizado:
-        classe_normalizada = normalizar_texto(classe)
+        classe_normalizada = normalizar_texto(
+            classe
+        )
 
         if any(
             palavra in classe_normalizada
@@ -670,8 +675,8 @@ def determinar_resultado_final(
         ):
             return "saudavel"
 
-    # Se existe problema, existe uma condição detectada.
     if problema_normalizado:
+
         if any(
             palavra in problema_normalizado
             for palavra in [
@@ -779,8 +784,7 @@ def construir_descricao(
     Gera uma descrição útil para o diagnóstico.
 
     A API FastAPI atual não devolve descricao_resultado,
-    portanto o Django gera esse texto com base nos dados reais
-    devolvidos pela IA.
+    portanto o Django gera esse texto.
     """
 
     nome_produto = (
@@ -833,12 +837,13 @@ def construir_descricao(
         )
 
     if resultado == "doenca":
+
         descricao_tipo = ""
 
         if tipo_texto:
             descricao_tipo = (
-                f" A classificação indicada pela IA é "
-                f"“{tipo_texto}”."
+                f' A classificação indicada pela IA é '
+                f'“{tipo_texto}”.'
             )
 
         return (
@@ -866,8 +871,6 @@ def construir_recomendacoes(
 ):
     """
     Gera recomendações práticas para o diagnóstico.
-
-    Não substitui avaliação agronómica presencial.
     """
 
     nome_produto = (
@@ -885,7 +888,7 @@ def construir_recomendacoes(
         return (
             f"Continue a acompanhar regularmente {nome_produto}, "
             f"mantendo boas práticas de cultivo, irrigação e "
-            f"nutrição. Observe as folhas, frutos e caules "
+            f"nutrição. Observe folhas, frutos e caules "
             f"periodicamente para identificar alterações precoces."
         )
 
@@ -936,7 +939,7 @@ def construir_recomendacoes(
 
 
 # ============================================================
-# OBSERVAÇÕES
+# COMPATIBILIDADE
 # ============================================================
 
 def verificar_compatibilidade(
@@ -946,11 +949,6 @@ def verificar_compatibilidade(
     """
     Verifica se o produto identificado pela IA corresponde
     ao produto selecionado pelo utilizador.
-
-    Retorna:
-        True
-        False
-        None
     """
 
     if not produto_detectado:
@@ -1029,6 +1027,10 @@ def verificar_compatibilidade(
     return False
 
 
+# ============================================================
+# OBSERVAÇÕES
+# ============================================================
+
 def construir_observacoes(
     produto,
     resultado,
@@ -1084,6 +1086,7 @@ def construir_observacoes(
 
     try:
         confianca = float(confianca)
+
     except (TypeError, ValueError):
         confianca = 0
 
@@ -1134,21 +1137,8 @@ def normalizar_resultado_ia(
     produto=None,
 ):
     """
-    Converte a resposta real da FastAPI para o formato utilizado
-    pelo Django.
-
-    API atual:
-
-        {
-            "sucesso": true,
-            "resultado": {
-                "classe": "...",
-                "produto": "...",
-                "problema": "...",
-                "tipo": "...",
-                "confianca": 91.72
-            }
-        }
+    Converte a resposta real da FastAPI para o formato
+    utilizado pelo Django.
     """
 
     if not isinstance(dados_api, dict):
@@ -1160,9 +1150,7 @@ def normalizar_resultado_ia(
     # Resultado pode estar dentro de "resultado"
     # --------------------------------------------------------
 
-    resultado_api = dados_api.get(
-        "resultado"
-    )
+    resultado_api = dados_api.get("resultado")
 
     if not isinstance(resultado_api, dict):
         resultado_api = dados_api
@@ -1231,7 +1219,6 @@ def normalizar_resultado_ia(
     try:
         confianca = float(confianca)
 
-        # Caso venha entre 0 e 1
         if 0 < confianca <= 1:
             confianca *= 100
 
@@ -1264,9 +1251,6 @@ def normalizar_resultado_ia(
 
     # --------------------------------------------------------
     # Descrição
-    #
-    # A API atual não envia estes campos.
-    # Se futuramente enviar, eles terão prioridade.
     # --------------------------------------------------------
 
     descricao = (
@@ -1276,9 +1260,7 @@ def normalizar_resultado_ia(
         or ""
     )
 
-    descricao = str(
-        descricao
-    ).strip()
+    descricao = str(descricao).strip()
 
     if not descricao:
         descricao = construir_descricao(
@@ -1300,9 +1282,7 @@ def normalizar_resultado_ia(
         or ""
     )
 
-    recomendacoes = str(
-        recomendacoes
-    ).strip()
+    recomendacoes = str(recomendacoes).strip()
 
     if not recomendacoes:
         recomendacoes = construir_recomendacoes(
@@ -1332,24 +1312,37 @@ def normalizar_resultado_ia(
 
     return {
         "classe": classe,
+
         "produto": produto_detectado,
+
         "produtos": (
             [produto_detectado]
             if produto_detectado
             else []
         ),
+
         "problema": problema,
+
         "tipo": tipo,
+
         "confianca": confianca,
+
         "resultado": resultado_final,
+
         "doenca": problema,
+
         "descricao": descricao,
+
         "recomendacoes": recomendacoes,
+
         "principais_previsoes": principais_previsoes,
+
         "tempo_api": dados_api.get("tempo_api"),
+
         "tempo_predicao": resultado_api.get(
             "tempo_predicao"
         ),
+
         "tempo_total": resultado_api.get(
             "tempo_total"
         ),
@@ -1370,10 +1363,12 @@ def analisar_imagem(
     """
 
     if not nome_imagem:
+
         if produto is not None:
             nome_imagem = obter_nome_imagem(
                 produto
             )
+
         else:
             nome_imagem = "imagem.jpg"
 
@@ -1394,7 +1389,7 @@ def analisar_imagem(
 
 
 # ============================================================
-# PÁGINA PRINCIPAL DO DIAGNÓSTICO
+# PÁGINA PRINCIPAL
 # ============================================================
 
 @login_required
@@ -1469,6 +1464,7 @@ def analisar(
     diagnostico_obj = None
 
     try:
+
         # ----------------------------------------------------
         # Produto
         # ----------------------------------------------------
@@ -1509,7 +1505,7 @@ def analisar(
         )
 
         # ----------------------------------------------------
-        # Criar diagnóstico inicialmente
+        # Criar diagnóstico
         # ----------------------------------------------------
 
         diagnostico_obj = Diagnostico.objects.create(
@@ -1629,7 +1625,7 @@ def analisar(
         )
 
         return redirect(
-            "detalhe",
+            "diagnostico:detalhe",
             diagnostico_id=diagnostico_obj.pk,
         )
 
@@ -1644,16 +1640,23 @@ def analisar(
             )
 
         # ----------------------------------------------------
-        # Se já existe diagnóstico, guardar erro
+        # Guardar erro
         # ----------------------------------------------------
 
         if diagnostico_obj is not None:
 
             try:
+
                 diagnostico_obj.status = "erro"
-                diagnostico_obj.resultado = "indeterminado"
+
+                diagnostico_obj.resultado = (
+                    "indeterminado"
+                )
+
                 diagnostico_obj.confianca = 0
+
                 diagnostico_obj.erro = erro
+
                 diagnostico_obj.observacoes = (
                     "O diagnóstico não pôde ser concluído "
                     "devido a um erro durante o processamento."
@@ -1679,18 +1682,25 @@ def analisar(
 
         if produto_id:
             return redirect(
-                "diagnostico_produto",
+                "diagnostico:diagnostico_produto",
                 produto_id=produto_id,
             )
 
         return redirect(
-            "diagnostico"
+            "diagnostico:diagnostico"
         )
+
+
+# ============================================================
+# ANÁLISE GERAL
+# ============================================================
 
 @login_required
 @require_POST
 def analisar_geral(request):
-
+    """
+    Recebe uma análise iniciada pela página geral.
+    """
 
     produto_id = (
         request.POST.get("produto_id")
@@ -1699,13 +1709,14 @@ def analisar_geral(request):
     )
 
     if not produto_id:
+
         messages.error(
             request,
             "Selecione um produto antes de iniciar a análise.",
         )
 
         return redirect(
-            "diagnostico"
+            "diagnostico:diagnostico"
         )
 
     return analisar(
@@ -1714,12 +1725,19 @@ def analisar_geral(request):
     )
 
 
+# ============================================================
+# HISTÓRICO DO PRODUTO
+# ============================================================
+
 @login_required
 def historico_produto(
     request,
     produto_id,
 ):
-
+    """
+    Mostra o histórico de diagnósticos do produto
+    pertencentes ao utilizador autenticado.
+    """
 
     produto = obter_produto(
         produto_id
@@ -1735,7 +1753,10 @@ def historico_produto(
             "produto",
             "usuario",
         )
-        .order_by("-criado_em", "-id")
+        .order_by(
+            "-criado_em",
+            "-id",
+        )
     )
 
     contexto = {
@@ -1750,11 +1771,21 @@ def historico_produto(
     )
 
 
+# ============================================================
+# DETALHE DO DIAGNÓSTICO
+# ============================================================
+
 @login_required
-def detalhe(
+def detalhe_diagnostico(
     request,
     diagnostico_id,
 ):
+    """
+    Exibe os detalhes de um diagnóstico.
+
+    Esta é a função utilizada oficialmente por
+    diagnostico/urls.py.
+    """
 
     diagnostico_obj = get_object_or_404(
         Diagnostico.objects.select_related(
@@ -1767,11 +1798,26 @@ def detalhe(
 
     contexto = {
         "diagnostico": diagnostico_obj,
-        "resultado": diagnostico_obj.resultado,
-        "produto": diagnostico_obj.produto,
-        "descricao": diagnostico_obj.descricao_resultado,
-        "recomendacoes": diagnostico_obj.recomendacoes,
-        "observacoes": diagnostico_obj.observacoes,
+
+        "resultado": (
+            diagnostico_obj.resultado
+        ),
+
+        "produto": (
+            diagnostico_obj.produto
+        ),
+
+        "descricao": (
+            diagnostico_obj.descricao_resultado
+        ),
+
+        "recomendacoes": (
+            diagnostico_obj.recomendacoes
+        ),
+
+        "observacoes": (
+            diagnostico_obj.observacoes
+        ),
     }
 
     return render(
@@ -1781,24 +1827,59 @@ def detalhe(
     )
 
 
+# ============================================================
+# COMPATIBILIDADE COM O NOME ANTIGO "detalhe"
+# ============================================================
+
+@login_required
+def detalhe(
+    request,
+    diagnostico_id,
+):
+    """
+    Alias de compatibilidade.
+
+    Mantém qualquer código antigo que ainda utilize
+    views.detalhe().
+    """
+
+    return detalhe_diagnostico(
+        request,
+        diagnostico_id=diagnostico_id,
+    )
+
+
+# ============================================================
+# ALIAS PARA DIAGNÓSTICO IA
+# ============================================================
+
 @login_required
 def diagnostico_ia(request):
-
-
+    """
+    Alias para a página principal de diagnóstico.
+    """
 
     return diagnostico(
         request
     )
 
 
+# ============================================================
+# ALIAS PARA REALIZAR DIAGNÓSTICO
+# ============================================================
+
 @login_required
 def realizar_diagnostico(request):
+    """
+    Compatibilidade com chamadas antigas.
 
+    Aceita apenas POST para iniciar uma análise.
+    """
 
     if request.method != "POST":
 
         return redirect(
-            "diagnostico"
+            "diagnostico:diagnostico"
         )
 
     produto_id = (
@@ -1808,13 +1889,14 @@ def realizar_diagnostico(request):
     )
 
     if not produto_id:
+
         messages.error(
             request,
             "Selecione um produto antes de realizar a análise.",
         )
 
         return redirect(
-            "diagnostico"
+            "diagnostico:diagnostico"
         )
 
     return analisar(
