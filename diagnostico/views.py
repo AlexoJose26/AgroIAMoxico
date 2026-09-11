@@ -15,17 +15,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from produtos.models import ProdutoAgricola
+
 from .models import Diagnostico
 
 
-MAX_IMAGE_SIZE = 10 * 1024 * 1024
-
-FORMATOS_PERMITIDOS = {
-    "jpg": "image/jpeg",
-    "jpeg": "image/jpeg",
-    "png": "image/png",
-    "webp": "image/webp",
-}
+# ============================================================
+# CONFIGURAÇÃO DA API DE IA
+# ============================================================
 
 API_IA_URL = os.environ.get(
     "AGROIA_API_URL",
@@ -35,6 +31,7 @@ API_IA_URL = os.environ.get(
         "http://127.0.0.1:8001/analisar",
     ),
 ).strip().rstrip("/")
+
 
 try:
     API_TIMEOUT = int(
@@ -47,7 +44,15 @@ except (TypeError, ValueError):
     API_TIMEOUT = 120
 
 
+# ============================================================
+# FUNÇÕES AUXILIARES
+# ============================================================
+
 def normalizar_texto(valor):
+    """
+    Normaliza texto para facilitar comparações entre português,
+    inglês, maiúsculas, acentos etc.
+    """
     if valor is None:
         return ""
 
@@ -56,1236 +61,969 @@ def normalizar_texto(valor):
     texto = unicodedata.normalize(
         "NFKD",
         texto,
-    ).encode(
-        "ascii",
-        "ignore",
-    ).decode(
-        "ascii"
+    )
+
+    texto = "".join(
+        caractere
+        for caractere in texto
+        if not unicodedata.combining(caractere)
     )
 
     return texto
 
 
-def obter_contadores():
-    total_diagnosticos = Diagnostico.objects.count()
-
-    produtos_ativos = ProdutoAgricola.objects.filter(
-        ativo=True
-    ).count()
-
-    return {
-        "total_diagnosticos": total_diagnosticos,
-        "produtos_ativos": produtos_ativos,
-        "precisao_ia": 92,
-    }
-
-
-def obter_estatisticas_utilizador(request):
-    diagnosticos = Diagnostico.objects.filter(
-        usuario=request.user
-    )
-
-    total = diagnosticos.count()
-
-    concluidos = diagnosticos.filter(
-        status="concluido"
-    ).count()
-
-    erros = diagnosticos.filter(
-        status="erro"
-    ).count()
-
-    processando = diagnosticos.filter(
-        status="processando"
-    ).count()
-
-    pendentes = diagnosticos.filter(
-        status="pendente"
-    ).count()
-
-    problemas = diagnosticos.filter(
-        resultado__in=[
-            "doenca",
-            "praga",
-            "fungo",
-            "deficiencia",
-        ],
-        status="concluido",
-    ).count()
-
-    saudaveis = diagnosticos.filter(
-        resultado="saudavel",
-        status="concluido",
-    ).count()
-
-    media_confianca = diagnosticos.filter(
-        status="concluido"
-    ).aggregate(
-        media=Avg("confianca")
-    )["media"]
-
-    return {
-        "total": total,
-        "concluidos": concluidos,
-        "erros": erros,
-        "processando": processando,
-        "pendentes": pendentes,
-        "problemas": problemas,
-        "saudaveis": saudaveis,
-        "media_confianca": float(
-            media_confianca or 0
-        ),
-    }
-
-
-def obter_estatisticas_produto(request, produto):
-    diagnosticos = Diagnostico.objects.filter(
-        usuario=request.user,
-        produto=produto,
-    )
-
-    total = diagnosticos.count()
-
-    concluidos = diagnosticos.filter(
-        status="concluido"
-    ).count()
-
-    erros = diagnosticos.filter(
-        status="erro"
-    ).count()
-
-    problemas = diagnosticos.filter(
-        resultado__in=[
-            "doenca",
-            "praga",
-            "fungo",
-            "deficiencia",
-        ],
-        status="concluido",
-    ).count()
-
-    saudaveis = diagnosticos.filter(
-        resultado="saudavel",
-        status="concluido",
-    ).count()
-
-    media_confianca = diagnosticos.filter(
-        status="concluido"
-    ).aggregate(
-        media=Avg("confianca")
-    )["media"]
-
-    ultimo_diagnostico = (
-        diagnosticos
-        .filter(status="concluido")
-        .order_by("-data_criacao")
-        .first()
-    )
-
-    primeiro_diagnostico = (
-        diagnosticos
-        .filter(status="concluido")
-        .order_by("data_criacao")
-        .first()
-    )
-
-    return {
-        "total": total,
-        "concluidos": concluidos,
-        "erros": erros,
-        "problemas": problemas,
-        "saudaveis": saudaveis,
-        "media_confianca": float(
-            media_confianca or 0
-        ),
-        "ultimo_diagnostico": ultimo_diagnostico,
-        "primeiro_diagnostico": primeiro_diagnostico,
-    }
-
-
-def obter_ultimos_diagnosticos(
-    request,
-    produto=None,
-    limite=5,
-):
-    queryset = (
-        Diagnostico.objects
-        .filter(
-            usuario=request.user,
-            status="concluido",
-        )
-        .select_related(
-            "produto",
-            "usuario",
-        )
-        .order_by(
-            "-data_criacao"
-        )
-    )
-
-    if produto is not None:
-        queryset = queryset.filter(
-            produto=produto
-        )
-
-    return queryset[:limite]
-
-
-def obter_diagnosticos_produto(request, produto):
-    return (
-        Diagnostico.objects
-        .filter(
-            usuario=request.user,
-            produto=produto,
-        )
-        .select_related(
-            "produto",
-            "usuario",
-        )
-        .order_by(
-            "-data_criacao"
-        )
-    )
-
-
-def obter_produtos_ativos(request=None):
-    return (
-        ProdutoAgricola.objects
-        .filter(
-            ativo=True
-        )
-        .prefetch_related(
-            "categorias"
-        )
-        .order_by(
-            "nome"
-        )
-    )
-
-
 def obter_produto(produto_id):
+    """
+    Obtém um produto agrícola ativo.
+    """
     return get_object_or_404(
-        ProdutoAgricola.objects
-        .filter(
-            ativo=True
-        )
-        .prefetch_related(
-            "categorias"
-        ),
+        ProdutoAgricola,
         pk=produto_id,
+        ativo=True,
     )
-
-
-def obter_produtos_com_resumo(request):
-    produtos = list(
-        obter_produtos_ativos(request)
-    )
-
-    diagnosticos = list(
-        Diagnostico.objects
-        .filter(
-            usuario=request.user,
-            status="concluido",
-        )
-        .select_related(
-            "produto"
-        )
-        .order_by(
-            "-data_criacao"
-        )
-    )
-
-    diagnosticos_por_produto = {}
-
-    for diagnostico in diagnosticos:
-        if diagnostico.produto_id not in diagnosticos_por_produto:
-            diagnosticos_por_produto[
-                diagnostico.produto_id
-            ] = []
-
-        diagnosticos_por_produto[
-            diagnostico.produto_id
-        ].append(diagnostico)
-
-    historico_recente = []
-
-    for produto in produtos:
-        historico = diagnosticos_por_produto.get(
-            produto.id,
-            []
-        )
-
-        produto.diagnosticos_usuario = historico
-        produto.numero_diagnosticos_usuario = len(
-            historico
-        )
-        produto.total_diagnosticos = len(
-            historico
-        )
-
-        produto.ultimo_diagnostico_usuario = (
-            historico[0]
-            if historico
-            else None
-        )
-
-        produto.ultimo_diagnostico = (
-            historico[0]
-            if historico
-            else None
-        )
-
-        if historico:
-            historico_recente.append(
-                {
-                    "produto": produto,
-                    "diagnostico": historico[0],
-                }
-            )
-
-    historico_recente.sort(
-        key=lambda item: item["diagnostico"].data_criacao,
-        reverse=True,
-    )
-
-    return produtos, historico_recente
 
 
 def obter_nome_imagem(produto):
-    if not produto.imagem:
-        return "imagem.jpg"
+    """
+    Obtém um nome seguro para a imagem do diagnóstico.
+    """
+    try:
+        nome = Path(produto.imagem.name).name
 
-    nome = Path(
-        produto.imagem.name
-    ).name
+        if nome:
+            return nome
 
-    return nome or "imagem.jpg"
+    except Exception:
+        pass
+
+    return f"produto_{produto.pk}.jpg"
 
 
 def obter_content_type(nome_imagem):
-    extensao = (
-        Path(nome_imagem)
-        .suffix
-        .lower()
-        .replace(
-            ".",
-            "",
-        )
-    )
+    """
+    Descobre o MIME type da imagem.
+    """
+    content_type, _ = mimetypes.guess_type(nome_imagem)
 
-    if extensao in FORMATOS_PERMITIDOS:
-        return FORMATOS_PERMITIDOS[
-            extensao
-        ]
-
-    content_type, _ = mimetypes.guess_type(
-        nome_imagem
-    )
-
-    if content_type in FORMATOS_PERMITIDOS.values():
+    if content_type:
         return content_type
 
     return "image/jpeg"
 
 
-def obter_url_imagem_produto(produto):
-    if not produto.imagem:
-        raise ValueError(
-            "Este produto não possui uma imagem cadastrada."
-        )
-
-    try:
-        url = produto.imagem.url
-    except Exception as exc:
-        raise ValueError(
-            "Não foi possível obter a URL da imagem do produto."
-        ) from exc
-
-    if not url:
-        raise ValueError(
-            "A imagem do produto não possui uma URL válida."
-        )
-
-    if (
-        url.startswith("http://")
-        or url.startswith("https://")
-    ):
-        return url
-
-    return None
-
-
-def baixar_imagem_da_url(url):
-    try:
-        response = requests.get(
-            url,
-            timeout=API_TIMEOUT,
-            allow_redirects=True,
-        )
-    except requests.exceptions.Timeout as exc:
-        raise TimeoutError(
-            "O carregamento da imagem do produto demorou demasiado tempo."
-        ) from exc
-    except requests.exceptions.ConnectionError as exc:
-        raise ConnectionError(
-            "Não foi possível conectar ao armazenamento da imagem."
-        ) from exc
-    except requests.exceptions.RequestException as exc:
-        raise RuntimeError(
-            f"Erro ao carregar a imagem do armazenamento: {exc}"
-        ) from exc
-
-    if response.status_code != 200:
-        raise RuntimeError(
-            "O armazenamento não conseguiu disponibilizar "
-            f"a imagem do produto. Estado HTTP: {response.status_code}."
-        )
-
-    imagem_bytes = response.content
-
-    if not imagem_bytes:
-        raise ValueError(
-            "O armazenamento devolveu uma imagem vazia."
-        )
-
-    if len(imagem_bytes) > MAX_IMAGE_SIZE:
-        raise ValueError(
-            "A imagem do produto excede o limite máximo de 10 MB."
-        )
-
-    return imagem_bytes
-
-
-def obter_imagem_produto(produto):
-    if not produto.imagem:
-        raise ValueError(
-            "Este produto não possui uma imagem cadastrada."
-        )
-
-    storage = produto.imagem.storage
-    nome = produto.imagem.name
-
-    if not nome:
-        raise ValueError(
-            "A imagem do produto não possui um nome válido."
-        )
-
-    if (
-        nome.startswith("http://")
-        or nome.startswith("https://")
-    ):
-        return baixar_imagem_da_url(nome)
-
-    try:
-        url = obter_url_imagem_produto(
-            produto
-        )
-
-        if url:
-            return baixar_imagem_da_url(
-                url
-            )
-
-    except Exception:
-        pass
-
-    try:
-        with storage.open(
-            nome,
-            "rb",
-        ) as arquivo:
-            imagem_bytes = arquivo.read()
-
-        if not imagem_bytes:
-            raise ValueError(
-                "A imagem armazenada está vazia."
-            )
-
-        if len(imagem_bytes) > MAX_IMAGE_SIZE:
-            raise ValueError(
-                "A imagem do produto excede o limite máximo de 10 MB."
-            )
-
-        return imagem_bytes
-
-    except Exception as erro_storage:
-        raise ValueError(
-            "Não foi possível carregar a imagem do produto. "
-            f"Storage: {erro_storage}."
-        ) from erro_storage
-
-
 def validar_imagem(imagem_bytes):
+    """
+    Valida se existem dados na imagem e limita o tamanho.
+    """
     if not imagem_bytes:
         raise ValueError(
-            "A imagem enviada está vazia."
+            "A imagem do produto está vazia."
         )
 
-    if len(imagem_bytes) > MAX_IMAGE_SIZE:
+    tamanho_maximo = 10 * 1024 * 1024
+
+    if len(imagem_bytes) > tamanho_maximo:
         raise ValueError(
-            "A imagem do produto excede o limite máximo de 10 MB."
+            "A imagem não pode ultrapassar 10 MB."
         )
 
     return True
 
 
-def enviar_para_api_ia(
-    imagem_bytes,
-    nome_imagem="imagem.jpg",
-):
-    validar_imagem(
-        imagem_bytes
-    )
+# ============================================================
+# IMAGENS DOS PRODUTOS
+# ============================================================
 
-    content_type = obter_content_type(
-        nome_imagem
-    )
+def baixar_imagem_da_url(url):
+    """
+    Faz download da imagem através de uma URL pública.
+
+    Necessário principalmente quando a imagem do produto
+    está armazenada no Vercel Blob.
+    """
+    if not url:
+        raise ValueError(
+            "URL da imagem não encontrada."
+        )
+
+    try:
+        resposta = requests.get(
+            url,
+            timeout=30,
+            allow_redirects=True,
+        )
+    except requests.RequestException as erro:
+        raise ValueError(
+            f"Não foi possível obter a imagem do produto: {erro}"
+        ) from erro
+
+    if resposta.status_code != 200:
+        raise ValueError(
+            "Não foi possível obter a imagem do produto. "
+            f"Servidor respondeu com HTTP {resposta.status_code}."
+        )
+
+    conteudo = resposta.content
+
+    if not conteudo:
+        raise ValueError(
+            "A imagem obtida está vazia."
+        )
+
+    validar_imagem(conteudo)
+
+    return conteudo
+
+
+def obter_url_imagem_produto(produto):
+    """
+    Obtém a URL absoluta da imagem do produto.
+
+    Funciona com storages que disponibilizam uma URL pública,
+    incluindo Vercel Blob.
+    """
+    try:
+        if not produto.imagem:
+            return None
+
+        url = produto.imagem.url
+
+        if not url:
+            return None
+
+        url = str(url).strip()
+
+        if url.startswith("http://") or url.startswith("https://"):
+            return url
+
+    except Exception:
+        pass
+
+    return None
+
+
+def obter_imagem_produto(produto):
+    """
+    Obtém os bytes da imagem do produto.
+
+    Ordem:
+    1. URL pública do storage;
+    2. abertura direta pelo storage;
+    3. erro.
+    """
+    if not produto.imagem:
+        raise ValueError(
+            "Este produto não possui uma imagem registada."
+        )
+
+    nome = produto.imagem.name
+    storage = produto.imagem.storage
+
+    # --------------------------------------------------------
+    # 1. Tentar URL pública
+    # --------------------------------------------------------
+
+    try:
+        url = obter_url_imagem_produto(produto)
+
+        if url:
+            return baixar_imagem_da_url(url)
+
+    except Exception:
+        pass
+
+    # --------------------------------------------------------
+    # 2. Tentar diretamente pelo storage
+    # --------------------------------------------------------
+
+    try:
+        with storage.open(nome, "rb") as arquivo:
+            imagem_bytes = arquivo.read()
+
+        validar_imagem(imagem_bytes)
+
+        return imagem_bytes
+
+    except Exception as erro_storage:
+        raise ValueError(
+            "Não foi possível obter a imagem do produto "
+            "através do armazenamento configurado. "
+            f"Detalhes: {erro_storage}"
+        ) from erro_storage
+
+
+# ============================================================
+# COMUNICAÇÃO COM A API DA IA
+# ============================================================
+
+def enviar_para_api_ia(
+    imagem,
+    nome_imagem,
+    content_type=None,
+):
+    """
+    Envia a imagem para a API FastAPI.
+
+    A API espera:
+
+        POST /analisar
+
+        campo:
+            imagem
+
+    E devolve:
+
+        {
+            "sucesso": true,
+            "resultado": {
+                "classe": "...",
+                "produto": "...",
+                "problema": "...",
+                "tipo": "...",
+                "confianca": 91.72
+            }
+        }
+    """
+
+    validar_imagem(imagem)
+
+    if not API_IA_URL:
+        raise ValueError(
+            "A URL da API de inteligência artificial "
+            "não está configurada."
+        )
+
+    if not content_type:
+        content_type = obter_content_type(nome_imagem)
 
     arquivos = {
         "imagem": (
             nome_imagem,
-            imagem_bytes,
+            imagem,
             content_type,
         )
     }
 
     try:
-        response = requests.post(
+        resposta = requests.post(
             API_IA_URL,
             files=arquivos,
             timeout=API_TIMEOUT,
         )
 
-    except requests.exceptions.Timeout as exc:
-        raise TimeoutError(
-            "A inteligência artificial demorou demasiado tempo "
-            "para responder."
-        ) from exc
-
-    except requests.exceptions.ConnectionError as exc:
-        raise ConnectionError(
-            "Não foi possível conectar ao serviço de inteligência "
-            "artificial."
-        ) from exc
-
-    except requests.exceptions.RequestException as exc:
+    except requests.Timeout as erro:
         raise RuntimeError(
-            f"Erro de comunicação com a inteligência artificial: {exc}"
-        ) from exc
+            "A API de inteligência artificial demorou "
+            "demasiado tempo para responder."
+        ) from erro
 
-    if response.status_code >= 400:
+    except requests.ConnectionError as erro:
+        raise RuntimeError(
+            "Não foi possível estabelecer ligação com a API "
+            "de inteligência artificial."
+        ) from erro
+
+    except requests.RequestException as erro:
+        raise RuntimeError(
+            f"Erro de comunicação com a API de IA: {erro}"
+        ) from erro
+
+    # --------------------------------------------------------
+    # Verificação HTTP
+    # --------------------------------------------------------
+
+    if resposta.status_code < 200 or resposta.status_code >= 300:
+
+        detalhe = ""
+
         try:
-            erro_api = response.json()
-        except ValueError:
-            erro_api = response.text
+            dados_erro = resposta.json()
 
-        raise RuntimeError(
-            "A API de inteligência artificial retornou "
-            f"HTTP {response.status_code}: {erro_api}"
+            if isinstance(dados_erro, dict):
+                detalhe = (
+                    dados_erro.get("detail")
+                    or dados_erro.get("erro")
+                    or dados_erro.get("message")
+                    or ""
+                )
+
+        except ValueError:
+            detalhe = resposta.text[:500]
+
+        mensagem = (
+            f"A API de inteligência artificial respondeu "
+            f"com HTTP {resposta.status_code}."
         )
 
-    try:
-        dados = response.json()
-    except ValueError as exc:
-        raise ValueError(
-            "A API de inteligência artificial retornou "
-            "uma resposta que não é JSON válido."
-        ) from exc
+        if detalhe:
+            mensagem += f" Detalhes: {detalhe}"
 
-    if not isinstance(
-        dados,
-        dict,
-    ):
-        raise ValueError(
-            "A API de inteligência artificial retornou "
-            "um formato de dados inválido."
+        raise RuntimeError(mensagem)
+
+    # --------------------------------------------------------
+    # JSON
+    # --------------------------------------------------------
+
+    try:
+        dados = resposta.json()
+
+    except ValueError as erro:
+        raise RuntimeError(
+            "A API de inteligência artificial devolveu "
+            "uma resposta que não é um JSON válido."
+        ) from erro
+
+    if not isinstance(dados, dict):
+        raise RuntimeError(
+            "A API de inteligência artificial devolveu "
+            "um formato de resposta inválido."
         )
 
     if dados.get("sucesso") is False:
-        mensagem = (
-            dados.get("mensagem")
+        detalhe = (
+            dados.get("detail")
             or dados.get("erro")
-            or "A inteligência artificial não conseguiu analisar a imagem."
+            or "A API recusou a análise."
         )
 
-        raise RuntimeError(
-            str(mensagem)
-        )
+        raise RuntimeError(str(detalhe))
 
     return dados
 
 
-def identificar_produto_da_classe(classe):
-    texto = normalizar_texto(
-        classe
+# ============================================================
+# TRADUÇÃO / CLASSIFICAÇÃO DO RESULTADO
+# ============================================================
+
+def obter_nome_produto_detectado(classe, resultado_api):
+    """
+    Obtém o nome do produto identificado pela API.
+
+    Prioridade:
+    1. produto enviado pela própria API;
+    2. classe;
+    3. nome da classe.
+    """
+
+    produto = (
+        resultado_api.get("produto")
+        or resultado_api.get("produto_detectado")
+        or resultado_api.get("produto_identificado")
+        or ""
     )
 
-    culturas = {
-        "milho": [
-            "corn",
-            "maize",
-            "milho",
-        ],
-        "tomate": [
-            "tomato",
-            "tomate",
-        ],
-        "batata": [
-            "potato",
-            "batata",
-        ],
-        "maca": [
-            "apple",
-            "maca",
-        ],
-        "uva": [
-            "grape",
-            "uva",
-        ],
-        "pessego": [
-            "peach",
-            "pessego",
-        ],
-        "cereja": [
-            "cherry",
-            "cereja",
-        ],
-        "laranja": [
-            "orange",
-            "laranja",
-        ],
-        "soja": [
-            "soybean",
-            "soy",
-            "soja",
-        ],
-        "morango": [
-            "strawberry",
-            "morango",
-        ],
-        "framboesa": [
-            "raspberry",
-            "framboesa",
-        ],
-        "mirtilo": [
-            "blueberry",
-            "mirtilo",
-        ],
-        "pimentao": [
-            "pepper",
-            "bell_pepper",
-            "pimentao",
-        ],
-        "abobora": [
-            "squash",
-            "pumpkin",
-            "abobora",
-        ],
-        "feijao": [
-            "bean",
-            "beans",
-            "feijao",
-        ],
-        "mandioca": [
-            "cassava",
-            "yuca",
-            "mandioca",
-        ],
-        "arroz": [
-            "rice",
-            "arroz",
-        ],
+    if produto:
+        return str(produto).strip()
+
+    classe_texto = str(classe or "").strip()
+
+    if not classe_texto:
+        return ""
+
+    # --------------------------------------------------------
+    # Mapeamentos adicionais para maior tolerância
+    # --------------------------------------------------------
+
+    classe_normalizada = normalizar_texto(
+        classe_texto
+    )
+
+    produtos = {
+        "apple": "Maçã",
+        "apple scab": "Maçã",
+        "apple___apple_scab": "Maçã",
+        "apple___healthy": "Maçã",
+
+        "blueberry": "Mirtilo",
+        "blueberry___healthy": "Mirtilo",
+
+        "cherry": "Cereja",
+        "cherry___healthy": "Cereja",
+        "cherry___powdery_mildew": "Cereja",
+
+        "corn": "Milho",
+        "corn___healthy": "Milho",
+        "corn___common_rust": "Milho",
+        "corn___northern_leaf_blight": "Milho",
+        "corn___cercospora_leaf_spot_gray_leaf_spot": "Milho",
+
+        "grape": "Uva",
+        "grape___healthy": "Uva",
+        "grape___black_rot": "Uva",
+        "grape___esca_black_measles": "Uva",
+        "grape___leaf_blight_isariopsis_leaf_spot": "Uva",
+
+        "peach": "Pêssego",
+        "peach___healthy": "Pêssego",
+        "peach___bacterial_spot": "Pêssego",
+
+        "pepper": "Pimento",
+        "pepper___bell___healthy": "Pimento",
+        "pepper___bell___bacterial_spot": "Pimento",
+
+        "potato": "Batata",
+        "potato___healthy": "Batata",
+        "potato___early_blight": "Batata",
+        "potato___late_blight": "Batata",
+
+        "raspberry": "Framboesa",
+        "raspberry___healthy": "Framboesa",
+
+        "soybean": "Soja",
+        "soybean___healthy": "Soja",
+
+        "squash": "Abóbora",
+        "squash___powdery_mildew": "Abóbora",
+
+        "strawberry": "Morango",
+        "strawberry___healthy": "Morango",
+        "strawberry___leaf_scorch": "Morango",
+
+        "tomato": "Tomate",
+        "tomato___healthy": "Tomate",
+        "tomato___bacterial_spot": "Tomate",
+        "tomato___early_blight": "Tomate",
+        "tomato___late_blight": "Tomate",
+        "tomato___leaf_mold": "Tomate",
+        "tomato___septoria_leaf_spot": "Tomate",
+        "tomato___spider_mites_two_spotted_spider_mite": "Tomate",
+        "tomato___target_spot": "Tomate",
+        "tomato___tomato_mosaic_virus": "Tomate",
+        "tomato___tomato_yellow_leaf_curl_virus": "Tomate",
+
+        "banana": "Banana",
+        "banana___healthy": "Banana",
+
+        "mango": "Manga",
+        "mango___healthy": "Manga",
+
+        "cassava": "Mandioca",
+        "cassava___healthy": "Mandioca",
+
+        "rice": "Arroz",
+        "rice___healthy": "Arroz",
+
+        "wheat": "Trigo",
+        "wheat___healthy": "Trigo",
     }
 
-    for produto, nomes in culturas.items():
-        if any(
-            nome in texto
-            for nome in nomes
+    if classe_normalizada in produtos:
+        return produtos[classe_normalizada]
+
+    # Procura pelo início da classe
+    for chave, nome in produtos.items():
+        if (
+            classe_normalizada.startswith(
+                normalizar_texto(chave)
+            )
         ):
-            return produto
+            return nome
 
-    return ""
+    return classe_texto
 
 
-def obter_nome_produto_detectado(
+def determinar_resultado_final(
+    resultado_api,
     classe,
-    resultado=None,
+    problema,
+    tipo,
 ):
-    if isinstance(
-        resultado,
-        dict,
-    ):
-        produto = resultado.get(
-            "produto"
-        )
+    """
+    Determina o resultado final salvo no Diagnostico.
 
-        if produto:
-            return str(
-                produto
-            ).strip()
+    Nunca depende exclusivamente de um campo chamado
+    'resultado', porque a API atual devolve principalmente:
 
-    produto = identificar_produto_da_classe(
         classe
-    )
-
-    nomes = {
-        "milho": "Milho",
-        "tomate": "Tomate",
-        "batata": "Batata",
-        "maca": "Maçã",
-        "uva": "Uva",
-        "pessego": "Pêssego",
-        "cereja": "Cereja",
-        "laranja": "Laranja",
-        "soja": "Soja",
-        "morango": "Morango",
-        "framboesa": "Framboesa",
-        "mirtilo": "Mirtilo",
-        "pimentao": "Pimentão",
-        "abobora": "Abóbora",
-        "feijao": "Feijão",
-        "mandioca": "Mandioca",
-        "arroz": "Arroz",
-    }
-
-    return nomes.get(
-        produto,
-        "",
-    )
-
-
-def normalizar_resultado_ia(
-    dados_api,
-    produto=None,
-):
-    if not isinstance(
-        dados_api,
-        dict,
-    ):
-        raise ValueError(
-            "Resposta da API inválida."
-        )
-
-    resultado_api = dados_api.get(
-        "resultado"
-    )
-
-    if not isinstance(
-        resultado_api,
-        dict,
-    ):
-        resultado_api = dados_api
-
-    classe = (
-        resultado_api.get(
-            "classe"
-        )
-        or resultado_api.get(
-            "class"
-        )
-        or resultado_api.get(
-            "classe_identificada"
-        )
-        or ""
-    )
-
-    classe = str(
-        classe
-    ).strip()
-
-    produto_detectado = obter_nome_produto_detectado(
-        classe,
-        resultado_api,
-    )
-
-    problema = (
-        resultado_api.get(
-            "problema"
-        )
-        or resultado_api.get(
-            "doenca"
-        )
-        or resultado_api.get(
-            "doenca_identificada"
-        )
-        or ""
-    )
-
-    problema = str(
+        produto
         problema
-    ).strip()
-
-    tipo = (
-        resultado_api.get(
-            "tipo"
-        )
-        or ""
-    )
-
-    tipo_normalizado = normalizar_texto(
         tipo
-    )
+        confianca
+    """
 
-    problema_normalizado = normalizar_texto(
-        problema
-    )
-
-    resultado = (
-        resultado_api.get(
-            "resultado"
-        )
+    resultado_explicitamente_informado = (
+        resultado_api.get("resultado")
+        or resultado_api.get("resultado_final")
+        or resultado_api.get("classificacao")
         or ""
     )
 
     resultado_normalizado = normalizar_texto(
-        resultado
+        resultado_explicitamente_informado
     )
+
+    # --------------------------------------------------------
+    # Resultado explícito
+    # --------------------------------------------------------
 
     if resultado_normalizado in {
         "saudavel",
         "saude",
         "healthy",
-        "normal",
     }:
-        resultado_final = "saudavel"
+        return "saudavel"
 
-    elif resultado_normalizado in {
+    if resultado_normalizado in {
         "praga",
         "pest",
-        "pests",
+        "inseto",
     }:
-        resultado_final = "praga"
+        return "praga"
 
-    elif resultado_normalizado in {
+    if resultado_normalizado in {
         "fungo",
-        "fungica",
-        "fungico",
         "fungal",
         "fungal_disease",
     }:
-        resultado_final = "fungo"
+        return "fungo"
 
-    elif resultado_normalizado in {
+    if resultado_normalizado in {
         "doenca",
         "disease",
-        "viral",
         "bacterial",
-        "bacteriana",
-        "bacteriano",
-        "virica",
-        "virico",
+        "viral",
     }:
-        resultado_final = "doenca"
+        return "doenca"
 
-    elif resultado_normalizado in {
+    if resultado_normalizado in {
         "deficiencia",
         "deficiency",
         "nutritional_deficiency",
     }:
-        resultado_final = "deficiencia"
+        return "deficiencia"
 
-    elif (
-        "fung" in tipo_normalizado
-        or "fung" in problema_normalizado
+    # --------------------------------------------------------
+    # Tipo
+    # --------------------------------------------------------
+
+    tipo_normalizado = normalizar_texto(tipo)
+
+    if any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "saudavel",
+            "healthy",
+            "normal",
+        ]
     ):
-        resultado_final = "fungo"
+        return "saudavel"
 
-    elif (
-        "praga" in tipo_normalizado
-        or "pest" in tipo_normalizado
-        or "praga" in problema_normalizado
-        or "pest" in problema_normalizado
+    if any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "praga",
+            "pest",
+            "inseto",
+        ]
     ):
-        resultado_final = "praga"
+        return "praga"
 
-    elif (
-        "viral" in tipo_normalizado
-        or "bacter" in tipo_normalizado
-        or "viral" in problema_normalizado
-        or "bacter" in problema_normalizado
+    if any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "fung",
+            "fungal",
+            "fungo",
+        ]
     ):
-        resultado_final = "doenca"
+        return "fungo"
 
-    elif (
-        "deficien" in tipo_normalizado
-        or "deficien" in problema_normalizado
+    if any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "deficien",
+            "deficiency",
+            "nutricional",
+        ]
     ):
-        resultado_final = "deficiencia"
+        return "deficiencia"
 
-    elif (
-        "healthy" in normalizar_texto(classe)
-        or "saudavel" in normalizar_texto(classe)
+    if any(
+        palavra in tipo_normalizado
+        for palavra in [
+            "bacter",
+            "viral",
+            "virus",
+            "doenca",
+            "disease",
+        ]
     ):
-        resultado_final = "saudavel"
+        return "doenca"
 
-    elif problema:
-        resultado_final = "doenca"
+    # --------------------------------------------------------
+    # Problema
+    # --------------------------------------------------------
 
-    else:
-        resultado_final = "indeterminado"
-
-    try:
-        confianca = float(
-            resultado_api.get(
-                "confianca",
-                0,
-            )
-            or 0
-        )
-    except (
-        TypeError,
-        ValueError,
-    ):
-        confianca = 0.0
-
-    confianca = max(
-        0.0,
-        min(
-            100.0,
-            confianca,
-        ),
+    problema_normalizado = normalizar_texto(
+        problema
     )
 
-    principais_previsoes = (
-        resultado_api.get(
-            "principais_previsoes",
-            [],
-        )
-        or []
-    )
+    if not problema_normalizado:
+        classe_normalizada = normalizar_texto(classe)
 
-    if not isinstance(
-        principais_previsoes,
-        list,
-    ):
-        principais_previsoes = []
-
-    previsoes_normalizadas = []
-
-    for previsao in principais_previsoes:
-        if not isinstance(
-            previsao,
-            dict,
+        if any(
+            palavra in classe_normalizada
+            for palavra in [
+                "healthy",
+                "saudavel",
+            ]
         ):
-            continue
+            return "saudavel"
 
-        previsao_classe = str(
-            previsao.get(
-                "classe",
-                "",
-            )
-            or ""
-        ).strip()
-
-        previsao_produto = (
-            previsao.get(
-                "produto"
-            )
-            or obter_nome_produto_detectado(
-                previsao_classe,
-                previsao,
-            )
-        )
-
-        previsao_problema = str(
-            previsao.get(
-                "problema",
-                "",
-            )
-            or ""
-        ).strip()
-
-        try:
-            previsao_confianca = float(
-                previsao.get(
-                    "confianca",
-                    0,
-                )
-                or 0
-            )
-        except (
-            TypeError,
-            ValueError,
+    # Se existe problema, existe uma condição detectada.
+    if problema_normalizado:
+        if any(
+            palavra in problema_normalizado
+            for palavra in [
+                "insect",
+                "pest",
+                "aphid",
+                "mite",
+                "caterpillar",
+                "bug",
+                "praga",
+            ]
         ):
-            previsao_confianca = 0.0
+            return "praga"
 
-        previsoes_normalizadas.append(
-            {
-                "classe": previsao_classe,
-                "produto": str(
-                    previsao_produto or ""
-                ),
-                "problema": previsao_problema,
-                "tipo": str(
-                    previsao.get(
-                        "tipo",
-                        "",
-                    )
-                    or ""
-                ),
-                "confianca": max(
-                    0.0,
-                    min(
-                        100.0,
-                        previsao_confianca,
-                    ),
-                ),
-            }
-        )
+        if any(
+            palavra in problema_normalizado
+            for palavra in [
+                "fung",
+                "mildew",
+                "mold",
+                "rot",
+                "rust",
+                "blight",
+                "fungo",
+            ]
+        ):
+            return "fungo"
 
-    descricao = (
-        resultado_api.get(
-            "descricao"
-        )
-        or resultado_api.get(
-            "descricao_resultado"
-        )
-        or ""
+        if any(
+            palavra in problema_normalizado
+            for palavra in [
+                "deficien",
+                "deficiency",
+                "nutrient",
+            ]
+        ):
+            return "deficiencia"
+
+        return "doenca"
+
+    # --------------------------------------------------------
+    # Classe
+    # --------------------------------------------------------
+
+    classe_normalizada = normalizar_texto(
+        classe
     )
 
-    recomendacoes = (
-        resultado_api.get(
-            "recomendacoes"
-        )
-        or ""
-    )
+    if any(
+        palavra in classe_normalizada
+        for palavra in [
+            "healthy",
+            "saudavel",
+        ]
+    ):
+        return "saudavel"
 
-    baixa_confianca = resultado_api.get(
-        "baixa_confianca"
-    )
+    if any(
+        palavra in classe_normalizada
+        for palavra in [
+            "rust",
+            "mildew",
+            "mold",
+            "blight",
+            "rot",
+            "scab",
+            "spot",
+            "virus",
+            "bacterial",
+            "disease",
+            "fung",
+        ]
+    ):
+        if any(
+            palavra in classe_normalizada
+            for palavra in [
+                "rust",
+                "mildew",
+                "mold",
+                "fung",
+                "rot",
+                "scab",
+                "blight",
+            ]
+        ):
+            return "fungo"
 
-    if baixa_confianca is None:
-        baixa_confianca = confianca < 40.0
+        return "doenca"
 
-    produto_compativel = resultado_api.get(
-        "produto_compativel"
-    )
-
-    mensagem_compatibilidade = (
-        resultado_api.get(
-            "mensagem_compatibilidade"
-        )
-        or ""
-    )
-
-    resultado = {
-        "classe": classe,
-        "produto": produto_detectado,
-        "produtos": (
-            [produto_detectado]
-            if produto_detectado
-            else []
-        ),
-        "problema": problema,
-        "tipo": str(
-            tipo
-        ).strip(),
-        "confianca": confianca,
-        "resultado": resultado_final,
-        "doenca": problema,
-        "descricao": str(
-            descricao
-        ).strip(),
-        "recomendacoes": str(
-            recomendacoes
-        ).strip(),
-        "principais_previsoes": previsoes_normalizadas,
-        "produto_compativel": produto_compativel,
-        "mensagem_compatibilidade": str(
-            mensagem_compatibilidade
-        ).strip(),
-        "baixa_confianca": bool(
-            baixa_confianca
-        ),
-    }
-
-    if produto is not None:
-        if produto_compativel is None:
-            produto_compativel = verificar_compatibilidade(
-                produto,
-                produto_detectado,
-            )
-
-            resultado[
-                "produto_compativel"
-            ] = produto_compativel
-
-        if not produto_compativel:
-            resultado[
-                "mensagem_compatibilidade"
-            ] = (
-                "A cultura identificada pela inteligência artificial "
-                "não corresponde claramente ao produto selecionado."
-            )
-
-    return resultado
+    return "indeterminado"
 
 
-def analisar_imagem(
-    imagem=None,
-    produto=None,
-    nome_imagem="imagem.jpg",
+# ============================================================
+# DESCRIÇÃO E RECOMENDAÇÕES
+# ============================================================
+
+def construir_descricao(
+    produto,
+    produto_detectado,
+    problema,
+    tipo,
+    resultado,
 ):
-    if imagem is None and produto is not None:
-        imagem = obter_imagem_produto(
-            produto
+    """
+    Gera uma descrição útil para o diagnóstico.
+
+    A API FastAPI atual não devolve descricao_resultado,
+    portanto o Django gera esse texto com base nos dados reais
+    devolvidos pela IA.
+    """
+
+    nome_produto = (
+        produto_detectado
+        or getattr(produto, "nome", "")
+        or "o produto agrícola"
+    )
+
+    nome_problema = (
+        problema
+        or "uma condição que requer observação"
+    )
+
+    tipo_texto = str(tipo or "").strip()
+
+    if resultado == "saudavel":
+        return (
+            f"A análise por inteligência artificial indica que "
+            f"{nome_produto} apresenta características compatíveis "
+            f"com uma condição saudável na imagem analisada. "
+            f"Não foram identificados sinais relevantes de doença "
+            f"ou praga na análise atual."
         )
 
-    if imagem is None:
-        raise ValueError(
-            "Nenhuma imagem foi fornecida para análise."
+    if resultado == "praga":
+        return (
+            f"A análise por inteligência artificial identificou "
+            f"sinais compatíveis com a presença de {nome_problema} "
+            f"em {nome_produto}. "
+            f"A identificação é baseada nos padrões visuais "
+            f"presentes na imagem enviada."
         )
 
-    if hasattr(
-        imagem,
-        "read",
-    ):
-        imagem_bytes = imagem.read()
+    if resultado == "fungo":
+        return (
+            f"A análise por inteligência artificial identificou "
+            f"sinais compatíveis com {nome_problema} em "
+            f"{nome_produto}. "
+            f"O resultado apresenta características associadas "
+            f"a uma condição de origem fúngica."
+        )
 
-        if hasattr(
-            imagem,
-            "name",
-        ):
-            nome_imagem = (
-                Path(
-                    imagem.name
-                ).name
-                or nome_imagem
+    if resultado == "deficiencia":
+        return (
+            f"A análise por inteligência artificial identificou "
+            f"sinais compatíveis com {nome_problema} em "
+            f"{nome_produto}. "
+            f"Os sinais observados podem estar relacionados "
+            f"a uma deficiência ou desequilíbrio nutricional."
+        )
+
+    if resultado == "doenca":
+        descricao_tipo = ""
+
+        if tipo_texto:
+            descricao_tipo = (
+                f" A classificação indicada pela IA é "
+                f"“{tipo_texto}”."
             )
-    else:
-        imagem_bytes = bytes(
-            imagem
+
+        return (
+            f"A análise por inteligência artificial identificou "
+            f"sinais compatíveis com {nome_problema} em "
+            f"{nome_produto}.{descricao_tipo} "
+            f"O resultado foi obtido a partir dos padrões "
+            f"visuais encontrados na imagem."
         )
 
-    validar_imagem(
-        imagem_bytes
+    return (
+        f"A análise de {nome_produto} não permitiu estabelecer "
+        f"uma classificação conclusiva. "
+        f"Recomenda-se observar novamente o produto com uma "
+        f"imagem nítida e com boa iluminação."
     )
 
-    dados_api = enviar_para_api_ia(
-        imagem_bytes,
-        nome_imagem,
+
+def construir_recomendacoes(
+    produto,
+    produto_detectado,
+    problema,
+    tipo,
+    resultado,
+):
+    """
+    Gera recomendações práticas para o diagnóstico.
+
+    Não substitui avaliação agronómica presencial.
+    """
+
+    nome_produto = (
+        produto_detectado
+        or getattr(produto, "nome", "")
+        or "o produto"
     )
 
-    return normalizar_resultado_ia(
-        dados_api,
-        produto=produto,
+    nome_problema = (
+        problema
+        or "a condição observada"
     )
 
+    if resultado == "saudavel":
+        return (
+            f"Continue a acompanhar regularmente {nome_produto}, "
+            f"mantendo boas práticas de cultivo, irrigação e "
+            f"nutrição. Observe as folhas, frutos e caules "
+            f"periodicamente para identificar alterações precoces."
+        )
+
+    if resultado == "praga":
+        return (
+            f"Inspecione cuidadosamente {nome_produto} e as plantas "
+            f"próximas para verificar a presença de outros sinais "
+            f"de {nome_problema}. Remova partes muito afetadas "
+            f"quando apropriado, mantenha a área limpa e utilize "
+            f"medidas de controlo adequadas à cultura e à praga "
+            f"identificada."
+        )
+
+    if resultado == "fungo":
+        return (
+            f"Evite excesso de humidade sobre as folhas de "
+            f"{nome_produto}, melhore a circulação de ar e remova "
+            f"partes muito afetadas quando isso for recomendado "
+            f"para a cultura. Evite espalhar material vegetal "
+            f"suspeito para plantas saudáveis."
+        )
+
+    if resultado == "deficiencia":
+        return (
+            f"Observe o estado geral de {nome_produto} e avalie "
+            f"as condições do solo. Antes de aplicar fertilizantes, "
+            f"procure confirmar a deficiência através de avaliação "
+            f"agronómica ou análise do solo, evitando aplicações "
+            f"desnecessárias."
+        )
+
+    if resultado == "doenca":
+        return (
+            f"Separe, quando possível, plantas com sinais de "
+            f"{nome_problema}, evite manipulação desnecessária das "
+            f"partes afetadas e mantenha boas condições de higiene "
+            f"na área de cultivo. Para definir o tratamento adequado, "
+            f"confirme a doença com um técnico agrícola antes de "
+            f"aplicar qualquer produto."
+        )
+
+    return (
+        f"Repita a análise de {nome_produto} com uma fotografia "
+        f"nítida, bem iluminada e focada na parte afetada. "
+        f"Compare a evolução dos sinais ao longo dos dias e, "
+        f"caso persistam, procure orientação de um técnico agrícola."
+    )
+
+
+# ============================================================
+# OBSERVAÇÕES
+# ============================================================
 
 def verificar_compatibilidade(
     produto,
     produto_detectado,
 ):
+    """
+    Verifica se o produto identificado pela IA corresponde
+    ao produto selecionado pelo utilizador.
+
+    Retorna:
+        True
+        False
+        None
+    """
+
     if not produto_detectado:
+        return None
+
+    nome_produto = getattr(
+        produto,
+        "nome",
+        "",
+    )
+
+    if not nome_produto:
+        return None
+
+    a = normalizar_texto(nome_produto)
+    b = normalizar_texto(produto_detectado)
+
+    if not a or not b:
+        return None
+
+    if a == b:
         return True
 
-    produto_base = normalizar_texto(
-        produto.nome
-    )
+    if a in b or b in a:
+        return True
 
-    detectado = normalizar_texto(
-        produto_detectado
-    )
+    aliases = {
+        "maca": ["apple"],
+        "apple": ["maca"],
 
-    equivalencias = {
-        "milho": [
-            "milho",
-            "maize",
-            "corn",
-        ],
-        "feijao": [
-            "feijao",
-            "bean",
-            "beans",
-        ],
-        "mandioca": [
-            "mandioca",
-            "cassava",
-            "yuca",
-        ],
-        "arroz": [
-            "arroz",
-            "rice",
-        ],
-        "tomate": [
-            "tomate",
-            "tomato",
-        ],
-        "maca": [
-            "maca",
-            "apple",
-        ],
-        "mirtilo": [
-            "mirtilo",
-            "blueberry",
-        ],
-        "cereja": [
-            "cereja",
-            "cherry",
-        ],
-        "uva": [
-            "uva",
-            "grape",
-        ],
-        "laranja": [
-            "laranja",
-            "orange",
-        ],
-        "pessego": [
-            "pessego",
-            "peach",
-        ],
-        "pimentao": [
-            "pimentao",
-            "pepper",
-        ],
-        "batata": [
-            "batata",
-            "potato",
-        ],
-        "framboesa": [
-            "framboesa",
-            "raspberry",
-        ],
-        "soja": [
-            "soja",
-            "soybean",
-        ],
-        "abobora": [
-            "abobora",
-            "squash",
-        ],
-        "morango": [
-            "morango",
-            "strawberry",
-        ],
+        "banana": ["banana"],
+
+        "milho": ["corn", "maize"],
+        "corn": ["milho", "maize"],
+
+        "tomate": ["tomato"],
+        "tomato": ["tomate"],
+
+        "batata": ["potato"],
+        "potato": ["batata"],
+
+        "uva": ["grape"],
+        "grape": ["uva"],
+
+        "pimento": ["pepper", "bell pepper"],
+        "pepper": ["pimento"],
+
+        "morango": ["strawberry"],
+        "strawberry": ["morango"],
+
+        "soja": ["soybean"],
+        "soybean": ["soja"],
+
+        "abobora": ["squash"],
+        "squash": ["abobora"],
+
+        "cereja": ["cherry"],
+        "cherry": ["cereja"],
+
+        "mirtilo": ["blueberry"],
+        "blueberry": ["mirtilo"],
+
+        "pessego": ["peach"],
+        "peach": ["pessego"],
+
+        "framboesa": ["raspberry"],
+        "raspberry": ["framboesa"],
     }
 
-    for nomes in equivalencias.values():
-        produto_correspondente = any(
-            nome in produto_base
-            for nome in nomes
-        )
+    if b in aliases.get(a, []):
+        return True
 
-        detectado_correspondente = any(
-            nome in detectado
-            for nome in nomes
-        )
-
-        if (
-            produto_correspondente
-            and detectado_correspondente
-        ):
-            return True
-
-    if (
-        produto_base
-        and detectado
-        and (
-            produto_base in detectado
-            or detectado in produto_base
-        )
-    ):
+    if a in aliases.get(b, []):
         return True
 
     return False
@@ -1294,214 +1032,388 @@ def verificar_compatibilidade(
 def construir_observacoes(
     produto,
     resultado,
-    compativel=True,
+    compativel,
 ):
+    """
+    Gera observações complementares para o diagnóstico.
+    """
+
+    nome_produto = (
+        getattr(produto, "nome", "")
+        or resultado.get("produto")
+        or "produto analisado"
+    )
+
+    produto_detectado = (
+        resultado.get("produto")
+        or ""
+    )
+
     observacoes = []
 
-    if not compativel:
+    # --------------------------------------------------------
+    # Compatibilidade
+    # --------------------------------------------------------
+
+    if compativel is False:
         observacoes.append(
-            "A cultura identificada pela inteligência artificial "
-            "não corresponde claramente ao produto selecionado. "
-            "O resultado deve ser interpretado com cautela."
+            "A IA identificou um produto diferente daquele "
+            f"selecionado: {produto_detectado}."
         )
 
-    if resultado.get(
-        "baixa_confianca"
-    ):
         observacoes.append(
-            "A confiança da inteligência artificial está abaixo "
-            "do nível mínimo recomendado para uma interpretação "
-            "segura."
+            "Confirme se a imagem corresponde ao produto "
+            f"selecionado ({nome_produto}) antes de utilizar "
+            "o resultado como referência."
         )
 
-    produto_detectado = resultado.get(
-        "produto"
-    )
-
-    if produto_detectado:
+    elif compativel is True:
         observacoes.append(
-            "Cultura identificada pela IA: "
-            f"{produto_detectado}."
+            "O produto identificado pela IA é compatível "
+            "com o produto selecionado."
         )
 
-    tipo = resultado.get(
-        "tipo"
-    )
-
-    if tipo:
-        observacoes.append(
-            "Tipo de resultado identificado: "
-            f"{tipo}."
-        )
-
-    classe = resultado.get(
-        "classe"
-    )
-
-    if classe:
-        observacoes.append(
-            "Classe identificada: "
-            f"{classe}."
-        )
+    # --------------------------------------------------------
+    # Confiança
+    # --------------------------------------------------------
 
     confianca = resultado.get(
-        "confianca"
+        "confianca",
+        0,
     )
 
-    if confianca is not None:
+    try:
+        confianca = float(confianca)
+    except (TypeError, ValueError):
+        confianca = 0
+
+    if confianca >= 90:
         observacoes.append(
-            f"Confiança da análise: {float(confianca):.2f}%."
+            "A análise apresentou um nível elevado de confiança."
         )
 
-    previsoes = resultado.get(
-        "principais_previsoes"
-    )
-
-    if isinstance(
-        previsoes,
-        list,
-    ) and previsoes:
+    elif confianca >= 70:
         observacoes.append(
-            "A análise considerou múltiplas previsões "
-            "do modelo de inteligência artificial."
+            "A análise apresentou um nível moderado de confiança. "
+            "Recomenda-se acompanhar a evolução dos sinais."
+        )
+
+    elif confianca > 0:
+        observacoes.append(
+            "A análise apresentou confiança reduzida. "
+            "Considere realizar uma nova análise com uma imagem "
+            "mais nítida."
+        )
+
+    # --------------------------------------------------------
+    # Resultado indeterminado
+    # --------------------------------------------------------
+
+    if resultado.get("resultado") == "indeterminado":
+        observacoes.append(
+            "O resultado não foi conclusivo. "
+            "Uma nova fotografia, com melhor iluminação e foco, "
+            "pode melhorar a análise."
         )
 
     if not observacoes:
         observacoes.append(
-            "Diagnóstico processado com sucesso pela "
-            "inteligência artificial."
+            "O resultado deve ser acompanhado juntamente com "
+            "a evolução visual da cultura."
         )
 
-    return "\n".join(
-        observacoes
+    return " ".join(observacoes)
+
+
+# ============================================================
+# NORMALIZAÇÃO DO RESULTADO DA API
+# ============================================================
+
+def normalizar_resultado_ia(
+    dados_api,
+    produto=None,
+):
+    """
+    Converte a resposta real da FastAPI para o formato utilizado
+    pelo Django.
+
+    API atual:
+
+        {
+            "sucesso": true,
+            "resultado": {
+                "classe": "...",
+                "produto": "...",
+                "problema": "...",
+                "tipo": "...",
+                "confianca": 91.72
+            }
+        }
+    """
+
+    if not isinstance(dados_api, dict):
+        raise ValueError(
+            "A resposta da API de IA não possui um formato válido."
+        )
+
+    # --------------------------------------------------------
+    # Resultado pode estar dentro de "resultado"
+    # --------------------------------------------------------
+
+    resultado_api = dados_api.get(
+        "resultado"
     )
 
+    if not isinstance(resultado_api, dict):
+        resultado_api = dados_api
+
+    # --------------------------------------------------------
+    # Classe
+    # --------------------------------------------------------
+
+    classe = (
+        resultado_api.get("classe")
+        or resultado_api.get("class")
+        or resultado_api.get("classe_identificada")
+        or resultado_api.get("class_name")
+        or ""
+    )
+
+    classe = str(classe).strip()
+
+    # --------------------------------------------------------
+    # Produto
+    # --------------------------------------------------------
+
+    produto_detectado = obter_nome_produto_detectado(
+        classe,
+        resultado_api,
+    )
+
+    # --------------------------------------------------------
+    # Problema
+    # --------------------------------------------------------
+
+    problema = (
+        resultado_api.get("problema")
+        or resultado_api.get("doenca")
+        or resultado_api.get("doenca_identificada")
+        or resultado_api.get("problema_identificado")
+        or ""
+    )
+
+    problema = str(problema).strip()
+
+    # --------------------------------------------------------
+    # Tipo
+    # --------------------------------------------------------
+
+    tipo = (
+        resultado_api.get("tipo")
+        or resultado_api.get("tipo_resultado")
+        or resultado_api.get("categoria")
+        or ""
+    )
+
+    tipo = str(tipo).strip()
+
+    # --------------------------------------------------------
+    # Confiança
+    # --------------------------------------------------------
+
+    confianca = (
+        resultado_api.get("confianca")
+        or resultado_api.get("confidence")
+        or resultado_api.get("precisao")
+        or 0
+    )
+
+    try:
+        confianca = float(confianca)
+
+        # Caso venha entre 0 e 1
+        if 0 < confianca <= 1:
+            confianca *= 100
+
+    except (TypeError, ValueError):
+        confianca = 0
+
+    confianca = max(
+        0,
+        min(
+            100,
+            confianca,
+        ),
+    )
+
+    confianca = round(
+        confianca,
+        2,
+    )
+
+    # --------------------------------------------------------
+    # Resultado final
+    # --------------------------------------------------------
+
+    resultado_final = determinar_resultado_final(
+        resultado_api=resultado_api,
+        classe=classe,
+        problema=problema,
+        tipo=tipo,
+    )
+
+    # --------------------------------------------------------
+    # Descrição
+    #
+    # A API atual não envia estes campos.
+    # Se futuramente enviar, eles terão prioridade.
+    # --------------------------------------------------------
+
+    descricao = (
+        resultado_api.get("descricao")
+        or resultado_api.get("descricao_resultado")
+        or resultado_api.get("description")
+        or ""
+    )
+
+    descricao = str(
+        descricao
+    ).strip()
+
+    if not descricao:
+        descricao = construir_descricao(
+            produto=produto,
+            produto_detectado=produto_detectado,
+            problema=problema,
+            tipo=tipo,
+            resultado=resultado_final,
+        )
+
+    # --------------------------------------------------------
+    # Recomendações
+    # --------------------------------------------------------
+
+    recomendacoes = (
+        resultado_api.get("recomendacoes")
+        or resultado_api.get("recomendacoes_resultado")
+        or resultado_api.get("recommendations")
+        or ""
+    )
+
+    recomendacoes = str(
+        recomendacoes
+    ).strip()
+
+    if not recomendacoes:
+        recomendacoes = construir_recomendacoes(
+            produto=produto,
+            produto_detectado=produto_detectado,
+            problema=problema,
+            tipo=tipo,
+            resultado=resultado_final,
+        )
+
+    # --------------------------------------------------------
+    # Principais previsões
+    # --------------------------------------------------------
+
+    principais_previsoes = (
+        resultado_api.get("principais_previsoes")
+        or resultado_api.get("top_predictions")
+        or []
+    )
+
+    if not isinstance(principais_previsoes, list):
+        principais_previsoes = []
+
+    # --------------------------------------------------------
+    # Retorno normalizado
+    # --------------------------------------------------------
+
+    return {
+        "classe": classe,
+        "produto": produto_detectado,
+        "produtos": (
+            [produto_detectado]
+            if produto_detectado
+            else []
+        ),
+        "problema": problema,
+        "tipo": tipo,
+        "confianca": confianca,
+        "resultado": resultado_final,
+        "doenca": problema,
+        "descricao": descricao,
+        "recomendacoes": recomendacoes,
+        "principais_previsoes": principais_previsoes,
+        "tempo_api": dados_api.get("tempo_api"),
+        "tempo_predicao": resultado_api.get(
+            "tempo_predicao"
+        ),
+        "tempo_total": resultado_api.get(
+            "tempo_total"
+        ),
+    }
+
+
+# ============================================================
+# ANÁLISE COMPLETA
+# ============================================================
+
+def analisar_imagem(
+    imagem,
+    produto=None,
+    nome_imagem=None,
+):
+    """
+    Executa uma análise completa através da API externa.
+    """
+
+    if not nome_imagem:
+        if produto is not None:
+            nome_imagem = obter_nome_imagem(
+                produto
+            )
+        else:
+            nome_imagem = "imagem.jpg"
+
+    content_type = obter_content_type(
+        nome_imagem
+    )
+
+    dados_api = enviar_para_api_ia(
+        imagem=imagem,
+        nome_imagem=nome_imagem,
+        content_type=content_type,
+    )
+
+    return normalizar_resultado_ia(
+        dados_api=dados_api,
+        produto=produto,
+    )
+
+
+# ============================================================
+# PÁGINA PRINCIPAL DO DIAGNÓSTICO
+# ============================================================
 
 @login_required
-def diagnostico(
-    request,
-    produto_id=None,
-):
-    contadores = obter_contadores()
+def diagnostico(request):
+    """
+    Página principal do diagnóstico.
+    """
 
-    estatisticas = obter_estatisticas_utilizador(
-        request
+    produtos = (
+        ProdutoAgricola.objects
+        .filter(
+            ativo=True,
+            analise_por_imagem=True,
+        )
+        .order_by("nome")
     )
-
-    produtos, historico_recente = (
-        obter_produtos_com_resumo(
-            request
-        )
-    )
-
-    produto = None
-    diagnostico_atual = None
-    historico = []
-    estatisticas_produto = None
-
-    if produto_id is not None:
-        produto = obter_produto(
-            produto_id
-        )
-
-        historico = list(
-            obter_diagnosticos_produto(
-                request,
-                produto,
-            )
-        )
-
-        diagnostico_atual = (
-            historico[0]
-            if historico
-            else None
-        )
-
-        estatisticas_produto = (
-            obter_estatisticas_produto(
-                request,
-                produto,
-            )
-        )
-
-    confianca_media = estatisticas[
-        "media_confianca"
-    ]
 
     contexto = {
         "produtos": produtos,
-        "produto": produto,
-        "diagnostico": diagnostico_atual,
-        "diagnostico_atual": diagnostico_atual,
-        "historico": historico,
-
-        "historico_produto": historico,
-
-        "historico_recente": historico_recente,
-
-        "total_produtos": contadores[
-            "produtos_ativos"
-        ],
-
-        "total_diagnosticos": estatisticas[
-            "total"
-        ],
-
-        "total_diagnosticos_usuario": estatisticas[
-            "concluidos"
-        ],
-
-        "diagnosticos_realizados": estatisticas[
-            "concluidos"
-        ],
-
-        "diagnosticos_concluidos": estatisticas[
-            "concluidos"
-        ],
-
-        "diagnosticos_erros": estatisticas[
-            "erros"
-        ],
-
-        "diagnosticos_processando": estatisticas[
-            "processando"
-        ],
-
-        "diagnosticos_pendentes": estatisticas[
-            "pendentes"
-        ],
-
-        "total_problemas": estatisticas[
-            "problemas"
-        ],
-
-        "total_saudaveis": estatisticas[
-            "saudaveis"
-        ],
-
-        "media_confianca": confianca_media,
-
-        "confianca_media": confianca_media,
-
-        "precisao_ia": contadores[
-            "precisao_ia"
-        ],
-
-        "ultimos_diagnosticos": (
-            obter_ultimos_diagnosticos(
-                request,
-                produto=produto,
-                limite=5,
-            )
-        ),
-
-        "estatisticas": estatisticas,
-
-        "estatisticas_produto": (
-            estatisticas_produto
-        ),
-
-        "api_ia_url": API_IA_URL,
     }
 
     return render(
@@ -1511,54 +1423,77 @@ def diagnostico(
     )
 
 
+# ============================================================
+# DIAGNÓSTICO DE UM PRODUTO
+# ============================================================
+
+@login_required
+def diagnostico_produto(
+    request,
+    produto_id,
+):
+    """
+    Página de análise de um produto específico.
+    """
+
+    produto = obter_produto(
+        produto_id
+    )
+
+    contexto = {
+        "produto": produto,
+    }
+
+    return render(
+        request,
+        "diagnostico/diagnostico_produto.html",
+        contexto,
+    )
+
+
+# ============================================================
+# REALIZAR ANÁLISE
+# ============================================================
+
 @login_required
 @require_POST
 def analisar(
     request,
     produto_id=None,
 ):
-    produto_id_post = request.POST.get(
-        "produto_id"
-    )
-
-    if produto_id is None and produto_id_post:
-        try:
-            produto_id = int(
-                produto_id_post
-            )
-        except (
-            TypeError,
-            ValueError,
-        ):
-            messages.error(
-                request,
-                "Produto inválido.",
-            )
-
-            return redirect(
-                "diagnostico:diagnostico"
-            )
-
-    if produto_id is None:
-        messages.error(
-            request,
-            "É necessário selecionar um produto.",
-        )
-
-        return redirect(
-            "diagnostico:diagnostico"
-        )
-
-    produto = obter_produto(
-        produto_id
-    )
+    """
+    Recebe o pedido de análise, obtém a imagem do produto,
+    envia para a API e grava o resultado no banco de dados.
+    """
 
     diagnostico_obj = None
 
     try:
+        # ----------------------------------------------------
+        # Produto
+        # ----------------------------------------------------
+
+        if produto_id is None:
+            produto_id = request.POST.get(
+                "produto_id"
+            )
+
+        if not produto_id:
+            raise ValueError(
+                "Nenhum produto foi selecionado."
+            )
+
+        produto = obter_produto(
+            produto_id
+        )
+
+        # ----------------------------------------------------
+        # Imagem
+        # ----------------------------------------------------
+
         if not produto.imagem:
             raise ValueError(
-                "Este produto não possui uma imagem cadastrada."
+                "O produto selecionado não possui uma imagem."
             )
 
         imagem_bytes = obter_imagem_produto(
@@ -1573,6 +1508,10 @@ def analisar(
             imagem_bytes
         )
 
+        # ----------------------------------------------------
+        # Criar diagnóstico inicialmente
+        # ----------------------------------------------------
+
         diagnostico_obj = Diagnostico.objects.create(
             usuario=request.user,
             produto=produto,
@@ -1585,29 +1524,37 @@ def analisar(
             confianca=0,
         )
 
+        # ----------------------------------------------------
+        # API IA
+        # ----------------------------------------------------
+
         resultado = analisar_imagem(
             imagem=imagem_bytes,
             produto=produto,
             nome_imagem=nome_imagem,
         )
 
-        if not isinstance(
-            resultado,
-            dict,
-        ):
-            raise ValueError(
-                "O serviço de inteligência artificial "
-                "retornou um resultado inválido."
-            )
+        # ----------------------------------------------------
+        # Produto detectado
+        # ----------------------------------------------------
 
-        produto_detectado = resultado.get(
-            "produto"
+        produto_detectado = (
+            resultado.get("produto")
+            or ""
         )
+
+        # ----------------------------------------------------
+        # Compatibilidade
+        # ----------------------------------------------------
 
         compativel = verificar_compatibilidade(
             produto,
             produto_detectado,
         )
+
+        # ----------------------------------------------------
+        # Observações
+        # ----------------------------------------------------
 
         observacoes = construir_observacoes(
             produto,
@@ -1615,7 +1562,12 @@ def analisar(
             compativel,
         )
 
+        # ----------------------------------------------------
+        # Gravar resultado
+        # ----------------------------------------------------
+
         with transaction.atomic():
+
             diagnostico_obj.classe_identificada = (
                 resultado.get(
                     "classe",
@@ -1628,6 +1580,7 @@ def analisar(
                     "resultado",
                     "indeterminado",
                 )
+                or "indeterminado"
             )
 
             diagnostico_obj.doenca_identificada = (
@@ -1672,35 +1625,35 @@ def analisar(
 
         messages.success(
             request,
-            "Diagnóstico concluído com sucesso.",
+            "A análise do produto foi concluída com sucesso.",
         )
 
         return redirect(
-            "diagnostico:detalhe",
+            "detalhe",
             diagnostico_id=diagnostico_obj.pk,
         )
 
     except Exception as exc:
-        erro = str(
-            exc
-        ).strip()
+
+        erro = str(exc).strip()
 
         if not erro:
             erro = (
-                "Ocorreu um erro desconhecido durante "
-                "o processamento do diagnóstico."
+                "Ocorreu um erro desconhecido "
+                "durante o diagnóstico."
             )
 
+        # ----------------------------------------------------
+        # Se já existe diagnóstico, guardar erro
+        # ----------------------------------------------------
+
         if diagnostico_obj is not None:
+
             try:
                 diagnostico_obj.status = "erro"
-
-                diagnostico_obj.resultado = (
-                    "indeterminado"
-                )
-
+                diagnostico_obj.resultado = "indeterminado"
+                diagnostico_obj.confianca = 0
                 diagnostico_obj.erro = erro
-
                 diagnostico_obj.observacoes = (
                     "O diagnóstico não pôde ser concluído "
                     "devido a um erro durante o processamento."
@@ -1710,9 +1663,9 @@ def analisar(
                     update_fields=[
                         "status",
                         "resultado",
+                        "confianca",
                         "erro",
                         "observacoes",
-                        "data_atualizacao",
                     ]
                 )
 
@@ -1721,14 +1674,44 @@ def analisar(
 
         messages.error(
             request,
-            "Não foi possível realizar o diagnóstico: "
-            f"{erro}",
+            f"Não foi possível concluir o diagnóstico: {erro}",
+        )
+
+        if produto_id:
+            return redirect(
+                "diagnostico_produto",
+                produto_id=produto_id,
+            )
+
+        return redirect(
+            "diagnostico"
+        )
+
+@login_required
+@require_POST
+def analisar_geral(request):
+
+
+    produto_id = (
+        request.POST.get("produto_id")
+        or request.POST.get("produto")
+        or request.POST.get("id_produto")
+    )
+
+    if not produto_id:
+        messages.error(
+            request,
+            "Selecione um produto antes de iniciar a análise.",
         )
 
         return redirect(
-            "diagnostico:diagnostico_produto",
-            produto_id=produto.pk,
+            "diagnostico"
         )
+
+    return analisar(
+        request,
+        produto_id=produto_id,
+    )
 
 
 @login_required
@@ -1736,103 +1719,28 @@ def historico_produto(
     request,
     produto_id,
 ):
+
+
     produto = obter_produto(
         produto_id
     )
 
-    diagnosticos = list(
-        obter_diagnosticos_produto(
-            request,
-            produto,
-        )
-    )
-
-    estatisticas = obter_estatisticas_produto(
-        request,
-        produto,
-    )
-
-    distribuicao = (
+    diagnosticos = (
         Diagnostico.objects
         .filter(
             usuario=request.user,
             produto=produto,
-            status="concluido",
         )
-        .values(
-            "resultado"
+        .select_related(
+            "produto",
+            "usuario",
         )
-        .annotate(
-            total=Count("id")
-        )
-        .order_by(
-            "-total"
-        )
+        .order_by("-criado_em", "-id")
     )
-
-    evolucao_confianca = []
-
-    for item in diagnosticos:
-        if item.status != "concluido":
-            continue
-
-        evolucao_confianca.append(
-            {
-                "data": item.data_criacao,
-                "confianca": float(
-                    item.confianca or 0
-                ),
-                "resultado": item.resultado,
-            }
-        )
 
     contexto = {
         "produto": produto,
         "diagnosticos": diagnosticos,
-
-        "total_diagnosticos": estatisticas[
-            "total"
-        ],
-
-        "diagnosticos_concluidos": estatisticas[
-            "concluidos"
-        ],
-
-        "diagnosticos_erros": estatisticas[
-            "erros"
-        ],
-
-        "total_problemas": estatisticas[
-            "problemas"
-        ],
-
-        "total_saudaveis": estatisticas[
-            "saudaveis"
-        ],
-
-        "media_confianca": estatisticas[
-            "media_confianca"
-        ],
-
-        "primeiro_diagnostico": estatisticas[
-            "primeiro_diagnostico"
-        ],
-
-        "ultimo_diagnostico": estatisticas[
-            "ultimo_diagnostico"
-        ],
-
-        "distribuicao": distribuicao,
-
-        "evolucao_confianca": evolucao_confianca,
-
-        "ultimos_diagnosticos": (
-            obter_ultimos_diagnosticos(
-                request,
-                produto=produto,
-                limite=10,
-            )
-        ),
     }
 
     return render(
@@ -1843,62 +1751,73 @@ def historico_produto(
 
 
 @login_required
-def detalhe_diagnostico(
+def detalhe(
     request,
     diagnostico_id,
 ):
+
     diagnostico_obj = get_object_or_404(
-        Diagnostico.objects
-        .select_related(
+        Diagnostico.objects.select_related(
             "produto",
             "usuario",
-        )
-        .filter(
-            usuario=request.user
         ),
         pk=diagnostico_id,
-    )
-
-    produto = diagnostico_obj.produto
-
-    estatisticas = obter_estatisticas_utilizador(
-        request
-    )
-
-    recentes = obter_ultimos_diagnosticos(
-        request,
-        produto=produto,
-        limite=5,
+        usuario=request.user,
     )
 
     contexto = {
         "diagnostico": diagnostico_obj,
-        "diagnostico_obj": diagnostico_obj,
-        "produto": produto,
-
-        "total_diagnosticos": estatisticas[
-            "total"
-        ],
-
-        "diagnosticos_concluidos": estatisticas[
-            "concluidos"
-        ],
-
-        "media_confianca": estatisticas[
-            "media_confianca"
-        ],
-
-        "confianca_media": estatisticas[
-            "media_confianca"
-        ],
-
-        "ultimos_diagnosticos": recentes,
-
-        "estatisticas": estatisticas,
+        "resultado": diagnostico_obj.resultado,
+        "produto": diagnostico_obj.produto,
+        "descricao": diagnostico_obj.descricao_resultado,
+        "recomendacoes": diagnostico_obj.recomendacoes,
+        "observacoes": diagnostico_obj.observacoes,
     }
 
     return render(
         request,
         "diagnostico/detalhe.html",
         contexto,
+    )
+
+
+@login_required
+def diagnostico_ia(request):
+
+
+
+    return diagnostico(
+        request
+    )
+
+
+@login_required
+def realizar_diagnostico(request):
+
+
+    if request.method != "POST":
+
+        return redirect(
+            "diagnostico"
+        )
+
+    produto_id = (
+        request.POST.get("produto_id")
+        or request.POST.get("produto")
+        or request.POST.get("id_produto")
+    )
+
+    if not produto_id:
+        messages.error(
+            request,
+            "Selecione um produto antes de realizar a análise.",
+        )
+
+        return redirect(
+            "diagnostico"
+        )
+
+    return analisar(
+        request,
+        produto_id=produto_id,
     )
