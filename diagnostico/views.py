@@ -1423,13 +1423,22 @@ def diagnostico_produto(
     request,
     produto_id,
 ):
+    """
+    Mantém compatibilidade com chamadas antigas.
 
+    A rota atual utiliza views.diagnostico, mas esta função
+    continua disponível caso algum template ou código antigo
+    ainda a utilize.
+    """
     return diagnostico(
         request,
         produto_id=produto_id,
     )
 
 
+# ============================================================
+# REALIZAR ANÁLISE
+# ============================================================
 
 @login_required
 @require_POST
@@ -1437,10 +1446,16 @@ def analisar(
     request,
     produto_id=None,
 ):
-
+    """
+    Recebe o pedido de análise, obtém a imagem do produto,
+    envia para a API e grava o resultado no banco de dados.
+    """
     diagnostico_obj = None
 
     try:
+        # ----------------------------------------------------
+        # Produto
+        # ----------------------------------------------------
 
         if produto_id is None:
             produto_id = (
@@ -1709,22 +1724,14 @@ def analisar_geral(request):
     )
 
 
-# ============================================================
-# HISTÓRICO DO PRODUTO
-# ============================================================
-
 @login_required
-def historico_produto(
-    request,
-    produto_id,
-):
+def historico_produto(request, produto_id):
     """
     Mostra o histórico de diagnósticos do produto
     pertencentes ao utilizador autenticado.
     """
-    produto = obter_produto(
-        produto_id
-    )
+
+    produto = obter_produto(produto_id)
 
     diagnosticos = (
         Diagnostico.objects
@@ -1737,7 +1744,7 @@ def historico_produto(
             "usuario",
         )
         .order_by(
-            "-criado_em",
+            "-data_criacao",
             "-id",
         )
     )
@@ -1748,13 +1755,10 @@ def historico_produto(
         {
             "produto": produto,
             "diagnosticos": diagnosticos,
+            "ultimos_diagnosticos": diagnosticos,
         },
     )
 
-
-# ============================================================
-# DETALHE DO DIAGNÓSTICO
-# ============================================================
 
 @login_required
 def detalhe_diagnostico(
