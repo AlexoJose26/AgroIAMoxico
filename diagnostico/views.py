@@ -14,7 +14,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from produtos.models import ProdutoAgricola
-
 from .models import Diagnostico
 
 
@@ -52,7 +51,6 @@ def normalizar_texto(valor):
     Normaliza texto para facilitar comparações entre português,
     inglês, maiúsculas, acentos etc.
     """
-
     if valor is None:
         return ""
 
@@ -76,7 +74,6 @@ def obter_produto(produto_id):
     """
     Obtém um produto agrícola ativo.
     """
-
     return get_object_or_404(
         ProdutoAgricola,
         pk=produto_id,
@@ -88,13 +85,11 @@ def obter_nome_imagem(produto):
     """
     Obtém um nome seguro para a imagem do diagnóstico.
     """
-
     try:
         nome = Path(produto.imagem.name).name
 
         if nome:
             return nome
-
     except Exception:
         pass
 
@@ -105,7 +100,6 @@ def obter_content_type(nome_imagem):
     """
     Descobre o MIME type da imagem.
     """
-
     content_type, _ = mimetypes.guess_type(nome_imagem)
 
     if content_type:
@@ -118,7 +112,6 @@ def validar_imagem(imagem_bytes):
     """
     Valida se existem dados na imagem e limita o tamanho.
     """
-
     if not imagem_bytes:
         raise ValueError(
             "A imagem do produto está vazia."
@@ -143,9 +136,8 @@ def baixar_imagem_da_url(url):
     Faz download da imagem através de uma URL pública.
 
     Necessário principalmente quando a imagem do produto
-    está armazenada em um storage externo, incluindo Vercel Blob.
+    está armazenada em storage externo, incluindo Vercel Blob.
     """
-
     if not url:
         raise ValueError(
             "URL da imagem não encontrada."
@@ -194,7 +186,6 @@ def obter_url_imagem_produto(produto):
     Funciona com storages que disponibilizam uma URL pública,
     incluindo Vercel Blob.
     """
-
     try:
         if not produto.imagem:
             return None
@@ -220,12 +211,10 @@ def obter_imagem_produto(produto):
     Obtém os bytes da imagem do produto.
 
     Ordem:
-
     1. URL pública do storage;
     2. abertura direta pelo storage;
     3. erro.
     """
-
     if not produto.imagem:
         raise ValueError(
             "Este produto não possui uma imagem registada."
@@ -285,21 +274,7 @@ def enviar_para_api_ia(
 
         campo:
             imagem
-
-    Resposta esperada:
-
-        {
-            "sucesso": true,
-            "resultado": {
-                "classe": "...",
-                "produto": "...",
-                "problema": "...",
-                "tipo": "...",
-                "confianca": 91.72
-            }
-        }
     """
-
     validar_imagem(imagem)
 
     if not API_IA_URL:
@@ -348,7 +323,6 @@ def enviar_para_api_ia(
     # --------------------------------------------------------
 
     if resposta.status_code < 200 or resposta.status_code >= 300:
-
         detalhe = ""
 
         try:
@@ -418,12 +392,10 @@ def obter_nome_produto_detectado(
     Obtém o nome do produto identificado pela API.
 
     Prioridade:
-
     1. produto enviado pela própria API;
     2. classe;
     3. nome da classe.
     """
-
     produto = (
         resultado_api.get("produto")
         or resultado_api.get("produto_detectado")
@@ -543,7 +515,6 @@ def determinar_resultado_final(
     """
     Determina o resultado final salvo no Diagnostico.
     """
-
     resultado_explicitamente_informado = (
         resultado_api.get("resultado")
         or resultado_api.get("resultado_final")
@@ -676,7 +647,6 @@ def determinar_resultado_final(
             return "saudavel"
 
     if problema_normalizado:
-
         if any(
             palavra in problema_normalizado
             for palavra in [
@@ -786,7 +756,6 @@ def construir_descricao(
     A API FastAPI atual não devolve descricao_resultado,
     portanto o Django gera esse texto.
     """
-
     nome_produto = (
         produto_detectado
         or getattr(produto, "nome", "")
@@ -837,7 +806,6 @@ def construir_descricao(
         )
 
     if resultado == "doenca":
-
         descricao_tipo = ""
 
         if tipo_texto:
@@ -872,7 +840,6 @@ def construir_recomendacoes(
     """
     Gera recomendações práticas para o diagnóstico.
     """
-
     nome_produto = (
         produto_detectado
         or getattr(produto, "nome", "")
@@ -950,7 +917,6 @@ def verificar_compatibilidade(
     Verifica se o produto identificado pela IA corresponde
     ao produto selecionado pelo utilizador.
     """
-
     if not produto_detectado:
         return None
 
@@ -1016,6 +982,18 @@ def verificar_compatibilidade(
 
         "framboesa": ["raspberry"],
         "raspberry": ["framboesa"],
+
+        "manga": ["mango"],
+        "mango": ["manga"],
+
+        "mandioca": ["cassava"],
+        "cassava": ["mandioca"],
+
+        "arroz": ["rice"],
+        "rice": ["arroz"],
+
+        "trigo": ["wheat"],
+        "wheat": ["trigo"],
     }
 
     if b in aliases.get(a, []):
@@ -1039,7 +1017,6 @@ def construir_observacoes(
     """
     Gera observações complementares para o diagnóstico.
     """
-
     nome_produto = (
         getattr(produto, "nome", "")
         or resultado.get("produto")
@@ -1140,7 +1117,6 @@ def normalizar_resultado_ia(
     Converte a resposta real da FastAPI para o formato
     utilizado pelo Django.
     """
-
     if not isinstance(dados_api, dict):
         raise ValueError(
             "A resposta da API de IA não possui um formato válido."
@@ -1361,14 +1337,11 @@ def analisar_imagem(
     """
     Executa uma análise completa através da API externa.
     """
-
     if not nome_imagem:
-
         if produto is not None:
             nome_imagem = obter_nome_imagem(
                 produto
             )
-
         else:
             nome_imagem = "imagem.jpg"
 
@@ -1389,14 +1362,39 @@ def analisar_imagem(
 
 
 # ============================================================
-# PÁGINA PRINCIPAL
+# PÁGINA PRINCIPAL / PRODUTO
 # ============================================================
 
 @login_required
-def diagnostico(request):
+def diagnostico(request, produto_id=None):
     """
     Página principal do diagnóstico.
+
+    /diagnostico/
+        Lista os produtos disponíveis para análise.
+
+    /diagnostico/produto/<produto_id>/
+        Abre diretamente o produto selecionado.
     """
+
+    # --------------------------------------------------------
+    # Quando a URL possui produto_id
+    # --------------------------------------------------------
+
+    if produto_id is not None:
+        produto = obter_produto(produto_id)
+
+        return render(
+            request,
+            "diagnostico/diagnostico.html",
+            {
+                "produto": produto,
+            },
+        )
+
+    # --------------------------------------------------------
+    # Página geral
+    # --------------------------------------------------------
 
     produtos = (
         ProdutoAgricola.objects
@@ -1407,14 +1405,12 @@ def diagnostico(request):
         .order_by("nome")
     )
 
-    contexto = {
-        "produtos": produtos,
-    }
-
     return render(
         request,
         "diagnostico/diagnostico.html",
-        contexto,
+        {
+            "produtos": produtos,
+        },
     )
 
 
@@ -1427,28 +1423,13 @@ def diagnostico_produto(
     request,
     produto_id,
 ):
-    """
-    Página de análise de um produto específico.
-    """
 
-    produto = obter_produto(
-        produto_id
-    )
-
-    contexto = {
-        "produto": produto,
-    }
-
-    return render(
+    return diagnostico(
         request,
-        "diagnostico/diagnostico_produto.html",
-        contexto,
+        produto_id=produto_id,
     )
 
 
-# ============================================================
-# REALIZAR ANÁLISE
-# ============================================================
 
 @login_required
 @require_POST
@@ -1456,22 +1437,16 @@ def analisar(
     request,
     produto_id=None,
 ):
-    """
-    Recebe o pedido de análise, obtém a imagem do produto,
-    envia para a API e grava o resultado no banco de dados.
-    """
 
     diagnostico_obj = None
 
     try:
 
-        # ----------------------------------------------------
-        # Produto
-        # ----------------------------------------------------
-
         if produto_id is None:
-            produto_id = request.POST.get(
-                "produto_id"
+            produto_id = (
+                request.POST.get("produto_id")
+                or request.POST.get("produto")
+                or request.POST.get("id_produto")
             )
 
         if not produto_id:
@@ -1569,6 +1544,7 @@ def analisar(
                     "classe",
                     "",
                 )
+                or ""
             )
 
             diagnostico_obj.resultado = (
@@ -1584,6 +1560,7 @@ def analisar(
                     "problema",
                     "",
                 )
+                or ""
             )
 
             diagnostico_obj.confianca = (
@@ -1591,6 +1568,7 @@ def analisar(
                     "confianca",
                     0,
                 )
+                or 0
             )
 
             diagnostico_obj.descricao_resultado = (
@@ -1598,6 +1576,7 @@ def analisar(
                     "descricao",
                     "",
                 )
+                or ""
             )
 
             diagnostico_obj.recomendacoes = (
@@ -1605,19 +1584,23 @@ def analisar(
                     "recomendacoes",
                     "",
                 )
+                or ""
             )
 
             diagnostico_obj.observacoes = (
                 observacoes
+                or ""
             )
 
-            diagnostico_obj.status = (
-                "concluido"
-            )
+            diagnostico_obj.status = "concluido"
 
             diagnostico_obj.erro = ""
 
             diagnostico_obj.save()
+
+        # ----------------------------------------------------
+        # Sucesso
+        # ----------------------------------------------------
 
         messages.success(
             request,
@@ -1640,13 +1623,12 @@ def analisar(
             )
 
         # ----------------------------------------------------
-        # Guardar erro
+        # Guardar erro no diagnóstico
         # ----------------------------------------------------
 
         if diagnostico_obj is not None:
 
             try:
-
                 diagnostico_obj.status = "erro"
 
                 diagnostico_obj.resultado = (
@@ -1680,6 +1662,10 @@ def analisar(
             f"Não foi possível concluir o diagnóstico: {erro}",
         )
 
+        # ----------------------------------------------------
+        # Voltar para o produto
+        # ----------------------------------------------------
+
         if produto_id:
             return redirect(
                 "diagnostico:diagnostico_produto",
@@ -1701,7 +1687,6 @@ def analisar_geral(request):
     """
     Recebe uma análise iniciada pela página geral.
     """
-
     produto_id = (
         request.POST.get("produto_id")
         or request.POST.get("produto")
@@ -1709,7 +1694,6 @@ def analisar_geral(request):
     )
 
     if not produto_id:
-
         messages.error(
             request,
             "Selecione um produto antes de iniciar a análise.",
@@ -1738,7 +1722,6 @@ def historico_produto(
     Mostra o histórico de diagnósticos do produto
     pertencentes ao utilizador autenticado.
     """
-
     produto = obter_produto(
         produto_id
     )
@@ -1759,15 +1742,13 @@ def historico_produto(
         )
     )
 
-    contexto = {
-        "produto": produto,
-        "diagnosticos": diagnosticos,
-    }
-
     return render(
         request,
         "diagnostico/historico_produto.html",
-        contexto,
+        {
+            "produto": produto,
+            "diagnosticos": diagnosticos,
+        },
     )
 
 
@@ -1786,7 +1767,6 @@ def detalhe_diagnostico(
     Esta é a função utilizada oficialmente por
     diagnostico/urls.py.
     """
-
     diagnostico_obj = get_object_or_404(
         Diagnostico.objects.select_related(
             "produto",
@@ -1796,39 +1776,22 @@ def detalhe_diagnostico(
         usuario=request.user,
     )
 
-    contexto = {
-        "diagnostico": diagnostico_obj,
-
-        "resultado": (
-            diagnostico_obj.resultado
-        ),
-
-        "produto": (
-            diagnostico_obj.produto
-        ),
-
-        "descricao": (
-            diagnostico_obj.descricao_resultado
-        ),
-
-        "recomendacoes": (
-            diagnostico_obj.recomendacoes
-        ),
-
-        "observacoes": (
-            diagnostico_obj.observacoes
-        ),
-    }
-
     return render(
         request,
         "diagnostico/detalhe.html",
-        contexto,
+        {
+            "diagnostico": diagnostico_obj,
+            "resultado": diagnostico_obj.resultado,
+            "produto": diagnostico_obj.produto,
+            "descricao": diagnostico_obj.descricao_resultado,
+            "recomendacoes": diagnostico_obj.recomendacoes,
+            "observacoes": diagnostico_obj.observacoes,
+        },
     )
 
 
 # ============================================================
-# COMPATIBILIDADE COM O NOME ANTIGO "detalhe"
+# COMPATIBILIDADE COM O NOME "detalhe"
 # ============================================================
 
 @login_required
@@ -1838,11 +1801,7 @@ def detalhe(
 ):
     """
     Alias de compatibilidade.
-
-    Mantém qualquer código antigo que ainda utilize
-    views.detalhe().
     """
-
     return detalhe_diagnostico(
         request,
         diagnostico_id=diagnostico_id,
@@ -1858,10 +1817,7 @@ def diagnostico_ia(request):
     """
     Alias para a página principal de diagnóstico.
     """
-
-    return diagnostico(
-        request
-    )
+    return diagnostico(request)
 
 
 # ============================================================
@@ -1875,9 +1831,7 @@ def realizar_diagnostico(request):
 
     Aceita apenas POST para iniciar uma análise.
     """
-
     if request.method != "POST":
-
         return redirect(
             "diagnostico:diagnostico"
         )
@@ -1889,7 +1843,6 @@ def realizar_diagnostico(request):
     )
 
     if not produto_id:
-
         messages.error(
             request,
             "Selecione um produto antes de realizar a análise.",
