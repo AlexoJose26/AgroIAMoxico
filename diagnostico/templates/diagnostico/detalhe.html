@@ -316,6 +316,35 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
     font-size: .78rem;
   }
 
+  .diag-product-recommendations {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .diag-product-recommendations strong {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--diag-primary-dark);
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-weight: 900;
+  }
+
+  .diag-product-recommendations strong i {
+    color: var(--diag-primary);
+  }
+
+  .diag-product-recommendations span {
+    color: var(--diag-muted);
+    font-size: .76rem;
+    line-height: 1.55;
+    white-space: pre-line;
+  }
+
   .diag-product-stats {
     display: flex;
     gap: 10px;
@@ -921,7 +950,19 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         {% if diagnostico.produto.descricao %}
         <div class="diag-product-description">
-          {{ diagnostico.produto.descricao|truncatechars:180 }}
+          {{ diagnostico.produto.descricao }}
+        </div>
+        {% endif %}
+
+        {% if diagnostico.recomendacoes %}
+        <div class="diag-product-description diag-product-recommendations">
+          <strong>
+            <i class="fas fa-leaf"></i>
+            Recomendações
+          </strong>
+          <span>
+            {{ diagnostico.recomendacoes }}
+          </span>
         </div>
         {% endif %}
 
@@ -1423,6 +1464,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
       produtoDescricao:
         "{% if diagnostico.produto and diagnostico.produto.descricao %}{{ diagnostico.produto.descricao|escapejs }}{% endif %}",
+
+      produtoRecomendacoes:
+        "{% if diagnostico.recomendacoes %}{{ diagnostico.recomendacoes|escapejs }}{% endif %}",
 
       resultado:
         "{% if diagnostico.doenca_identificada %}{{ diagnostico.doenca_identificada|escapejs }}{% elif diagnostico.resultado %}{{ diagnostico.resultado|escapejs }}{% else %}Resultado não identificado{% endif %}",
@@ -2758,75 +2802,98 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
   ========================================================== */
 
   async function buildPdf() {
-
     await loadJsPDF();
 
+    const jsPDF = window.jspdf.jsPDF;
 
-    const jsPDF =
-      window.jspdf.jsPDF;
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+      compress: true
+    });
 
-
-    const pdf =
-      new jsPDF({
-
-        orientation: "portrait",
-
-        unit: "mm",
-
-        format: "a4",
-
-        compress: true
-
-      });
-
-
-    const pageWidth =
-      210;
-
-    const pageHeight =
-      297;
-
-    const margin =
-      8;
-
-    const contentWidth =
-      pageWidth -
-      margin * 2;
-
-
-    const bottomLimit =
-      pageHeight -
-      16;
-
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = 10;
+    const contentWidth = pageWidth - margin * 2;
+    const topStart = 39;
+    const bottomLimit = pageHeight - 18;
 
     pdf.setProperties({
-
       title:
         "AgroIA Moxico - Diagnóstico " +
         diagnosticoData.id,
-
       subject:
         "Relatório de diagnóstico agrícola",
-
       author:
         "AgroIA Moxico",
-
       creator:
         "AgroIA Moxico"
-
     });
 
+    function novaPagina() {
+      pdf.addPage();
+      pdf.setFillColor(255, 255, 255);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+      desenharCabecalhoPDF(pdf);
+      return topStart;
+    }
 
-    /*
-     * Fundo
-     */
+    function garantirEspaco(alturaNecessaria, yAtual) {
+      if (yAtual + alturaNecessaria > bottomLimit) {
+        return novaPagina();
+      }
+      return yAtual;
+    }
 
-    pdf.setFillColor(
-      255,
-      255,
-      255
-    );
+    function escreverBlocoTexto(
+      texto,
+      x,
+      y,
+      largura,
+      tamanho,
+      cor,
+      peso,
+      lineHeight
+    ) {
+      const valor = textoLimpo(texto);
+      if (!valor) {
+        return y;
+      }
 
+      setPdfFont(
+        pdf,
+        peso || "normal",
+        tamanho,
+        cor || [82, 104, 94]
+      );
+
+      const linhas = pdf.splitTextToSize(
+        valor,
+        largura
+      );
+
+      pdf.text(
+        linhas,
+        x,
+        y,
+        {
+          lineHeightFactor:
+            lineHeight || 1.3
+        }
+      );
+
+      return (
+        y +
+        linhas.length *
+        tamanho *
+        0.36 *
+        (lineHeight || 1.3)
+      );
+    }
+
+    pdf.setFillColor(255, 255, 255);
     pdf.rect(
       0,
       0,
@@ -2835,15 +2902,9 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       "F"
     );
 
+    desenharCabecalhoPDF(pdf);
 
-    desenharCabecalhoPDF(
-      pdf
-    );
-
-
-    let y =
-      41;
-
+    let y = topStart;
 
     /* ========================================================
        PRODUTO
@@ -2855,16 +2916,23 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       ) ||
       "Produto removido";
 
-
     const produtoDescricao =
       textoLimpo(
         diagnosticoData.produtoDescricao
       );
 
+    const produtoRecomendacoes =
+      textoLimpo(
+        diagnosticoData.produtoRecomendacoes ||
+        diagnosticoData.recomendacoes
+      );
 
-    const produtoHeight =
-      40;
+    const produtoHeight = 47;
 
+    y = garantirEspaco(
+      produtoHeight + 4,
+      y
+    );
 
     roundedCard(
       pdf,
@@ -2877,23 +2945,10 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       3
     );
 
-
-    /*
-     * Imagem
-     */
-
-    const imageBoxX =
-      margin + 4;
-
-    const imageBoxY =
-      y + 5;
-
-    const imageBoxWidth =
-      49;
-
-    const imageBoxHeight =
-      30;
-
+    const imageBoxX = margin + 4;
+    const imageBoxY = y + 5;
+    const imageBoxWidth = 49;
+    const imageBoxHeight = 36;
 
     roundedCard(
       pdf,
@@ -2906,13 +2961,8 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       2.5
     );
 
-
-    if (
-      diagnosticoData._imageData
-    ) {
-
+    if (diagnosticoData._imageData) {
       try {
-
         await adicionarImagemProporcional(
           pdf,
           diagnosticoData._imageData,
@@ -2921,9 +2971,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           imageBoxWidth - 4,
           imageBoxHeight - 4
         );
-
       } catch (error) {
-
         setPdfFont(
           pdf,
           "bold",
@@ -2933,19 +2981,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
         pdf.text(
           "Imagem analisada",
-          imageBoxX +
-          imageBoxWidth / 2,
-          imageBoxY +
-          imageBoxHeight / 2,
-          {
-            align: "center"
-          }
+          imageBoxX + imageBoxWidth / 2,
+          imageBoxY + imageBoxHeight / 2,
+          { align: "center" }
         );
-
       }
-
     } else {
-
       setPdfFont(
         pdf,
         "bold",
@@ -2955,21 +2996,11 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
 
       pdf.text(
         "Imagem não disponível",
-        imageBoxX +
-        imageBoxWidth / 2,
-        imageBoxY +
-        imageBoxHeight / 2,
-        {
-          align: "center"
-        }
+        imageBoxX + imageBoxWidth / 2,
+        imageBoxY + imageBoxHeight / 2,
+        { align: "center" }
       );
-
     }
-
-
-    /*
-     * Informação do produto
-     */
 
     const produtoX =
       imageBoxX +
@@ -2984,7 +3015,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       ) -
       4;
 
-
     setPdfFont(
       pdf,
       "bold",
@@ -2992,13 +3022,11 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       [113, 134, 124]
     );
 
-
     pdf.text(
       "PRODUTO AGRÍCOLA ANALISADO",
       produtoX,
       y + 8
     );
-
 
     const produtoAdaptado =
       ajustarFonteAoNumeroDeLinhas(
@@ -3010,7 +3038,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         2
       );
 
-
     setPdfFont(
       pdf,
       "bold",
@@ -3018,86 +3045,78 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       [13, 77, 49]
     );
 
-
     pdf.text(
       produtoAdaptado.linhas,
       produtoX,
       y + 15
     );
 
-
-    let produtoDescricaoY =
-      y + 22;
-
+    let produtoY = y + 22;
 
     if (produtoDescricao) {
+      setPdfFont(
+        pdf,
+        "normal",
+        5.4,
+        [82, 104, 94]
+      );
 
-      const descAdaptada =
-        ajustarFonteAoNumeroDeLinhas(
-          pdf,
+      const descricaoLinhas =
+        pdf.splitTextToSize(
           produtoDescricao,
-          produtoWidth,
-          5.6,
-          4.5,
-          3
+          produtoWidth
         );
 
-
-      setPdfFont(
-        pdf,
-        "normal",
-        descAdaptada.tamanho,
-        [82, 104, 94]
-      );
-
-
       pdf.text(
-        descAdaptada.linhas,
+        descricaoLinhas.slice(0, 4),
         produtoX,
-        produtoDescricaoY,
-        {
-          lineHeightFactor: 1.25
-        }
+        produtoY,
+        { lineHeightFactor: 1.2 }
       );
 
-    } else {
-
-      setPdfFont(
-        pdf,
-        "normal",
-        5.3,
-        [82, 104, 94]
-      );
-
-
-      pdf.text(
-        "Produto agrícola associado a este diagnóstico.",
-        produtoX,
-        produtoDescricaoY
-      );
-
+      produtoY +=
+        Math.min(
+          4,
+          descricaoLinhas.length
+        ) *
+        5.4 *
+        0.36 *
+        1.2 +
+        3;
     }
 
+    if (produtoRecomendacoes) {
+      setPdfFont(
+        pdf,
+        "bold",
+        5.2,
+        [23, 107, 69]
+      );
+
+      pdf.text(
+        "RECOMENDAÇÕES",
+        produtoX,
+        Math.min(
+          y + produtoHeight - 9,
+          produtoY
+        )
+      );
+    }
 
     setPdfFont(
       pdf,
       "normal",
-      4.8,
+      4.5,
       [113, 134, 124]
     );
-
 
     pdf.text(
       "Imagem utilizada como referência visual para este diagnóstico.",
       produtoX,
-      y + 36
+      y + produtoHeight - 4
     );
 
-
-    y +=
-      produtoHeight +
-      4;
-
+    y += produtoHeight + 4;
 
     /* ========================================================
        RESULTADO
@@ -3109,17 +3128,29 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       ) ||
       "Resultado não identificado";
 
+    const resultadoLinhas =
+      pdf.splitTextToSize(
+        resultado,
+        contentWidth - 12
+      );
 
     const resultadoHeight =
-      22;
+      Math.max(
+        22,
+        13 +
+        resultadoLinhas.length * 4.5
+      );
 
+    y = garantirEspaco(
+      resultadoHeight + 4,
+      y
+    );
 
     pdf.setFillColor(
       13,
       77,
       49
     );
-
 
     pdf.roundedRect(
       margin,
@@ -3131,7 +3162,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       "F"
     );
 
-
     setPdfFont(
       pdf,
       "bold",
@@ -3139,52 +3169,42 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       [190, 221, 205]
     );
 
-
     pdf.text(
       "RESULTADO IDENTIFICADO",
       margin + 6,
       y + 7
     );
 
-
-    const resultadoAdaptado =
-      ajustarFonteAoNumeroDeLinhas(
-        pdf,
-        resultado,
-        contentWidth - 12,
-        11,
-        7,
-        2
-      );
-
-
     setPdfFont(
       pdf,
       "bold",
-      resultadoAdaptado.tamanho,
+      Math.max(
+        7,
+        Math.min(
+          11,
+          150 / Math.max(
+            1,
+            resultado.length
+          )
+        )
+      ),
       [255, 255, 255]
     );
 
-
     pdf.text(
-      resultadoAdaptado.linhas,
+      resultadoLinhas,
       margin + 6,
-      y + 15
+      y + 15,
+      { lineHeightFactor: 1.2 }
     );
 
-
-    y +=
-      resultadoHeight +
-      4;
-
+    y += resultadoHeight + 4;
 
     /* ========================================================
        INFORMAÇÕES
     ======================================================== */
 
-    const gap =
-      2.5;
-
+    const gap = 2.5;
 
     const cardWidth =
       (
@@ -3192,62 +3212,49 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         gap * 2
       ) / 3;
 
-
-    const infoHeight =
-      15;
-
+    const infoHeight = 15;
 
     const infoItems = [
-
       [
         "NÚMERO DO DIAGNÓSTICO",
         diagnosticoData.id
       ],
-
       [
         "ESTADO",
         normalizarStatus(
           diagnosticoData.status
         )
       ],
-
       [
         "CONFIANÇA DA IA",
         diagnosticoData.confianca
       ],
-
       [
         "DATA DA ANÁLISE",
         diagnosticoData.criacao
       ],
-
       [
         "ÚLTIMA ATUALIZAÇÃO",
         diagnosticoData.atualizacao
       ],
-
       [
         "RESULTADO",
         resultado
       ]
-
     ];
 
+    y = garantirEspaco(
+      infoHeight * 2 + gap + 4,
+      y
+    );
 
     infoItems.forEach(
-      function (
-        item,
-        index
-      ) {
-
+      function (item, index) {
         const row =
-          Math.floor(
-            index / 3
-          );
+          Math.floor(index / 3);
 
         const col =
           index % 3;
-
 
         const itemX =
           margin +
@@ -3257,7 +3264,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
             gap
           );
 
-
         const itemY =
           y +
           row *
@@ -3265,7 +3271,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
             infoHeight +
             gap
           );
-
 
         roundedCard(
           pdf,
@@ -3278,7 +3283,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           2
         );
 
-
         setPdfFont(
           pdf,
           "bold",
@@ -3286,19 +3290,16 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           [129, 145, 136]
         );
 
-
         pdf.text(
           item[0],
           itemX + 3,
           itemY + 4.5
         );
 
-
         const valor =
           textoLimpo(
             item[1]
           );
-
 
         const valorAdaptado =
           ajustarFonteAoNumeroDeLinhas(
@@ -3310,7 +3311,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
             2
           );
 
-
         setPdfFont(
           pdf,
           "bold",
@@ -3318,22 +3318,18 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
           [23, 53, 42]
         );
 
-
         pdf.text(
           valorAdaptado.linhas,
           itemX + 3,
           itemY + 10
         );
-
       }
     );
-
 
     y +=
       infoHeight * 2 +
       gap +
       4;
-
 
     /* ========================================================
        CONFIANÇA
@@ -3350,10 +3346,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         )
       );
 
+    const confiancaHeight = 13;
 
-    const confiancaHeight =
-      13;
-
+    y = garantirEspaco(
+      confiancaHeight + 4,
+      y
+    );
 
     roundedCard(
       pdf,
@@ -3366,7 +3364,6 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       2
     );
 
-
     setPdfFont(
       pdf,
       "bold",
@@ -3374,30 +3371,24 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       [23, 107, 69]
     );
 
-
     pdf.text(
       "CONFIANÇA DA INTELIGÊNCIA ARTIFICIAL",
       margin + 5,
       y + 5.2
     );
 
-
     pdf.text(
       diagnosticoData.confianca,
       pageWidth - margin - 5,
       y + 5.2,
-      {
-        align: "right"
-      }
+      { align: "right" }
     );
-
 
     pdf.setFillColor(
       215,
       229,
       220
     );
-
 
     pdf.roundedRect(
       margin + 5,
@@ -3409,13 +3400,11 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       "F"
     );
 
-
     pdf.setFillColor(
       23,
       107,
       69
     );
-
 
     const larguraConfianca =
       (
@@ -3424,11 +3413,7 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       confianca /
       100;
 
-
-    if (
-      larguraConfianca > 0
-    ) {
-
+    if (larguraConfianca > 0) {
       pdf.roundedRect(
         margin + 5,
         y + 8,
@@ -3438,29 +3423,16 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         1,
         "F"
       );
-
     }
-
 
     y +=
       confiancaHeight +
       4;
 
-
     /* ========================================================
-       DESCRIÇÃO + RECOMENDAÇÕES
+       DESCRIÇÃO DO RESULTADO
+       Sem limite artificial: cria nova página quando necessário.
     ======================================================== */
-
-    const colunaGap =
-      3;
-
-
-    const colunaWidth =
-      (
-        contentWidth -
-        colunaGap
-      ) / 2;
-
 
     const descricao =
       textoLimpo(
@@ -3468,158 +3440,139 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
       ) ||
       "Não registada.";
 
-
     const recomendacoes =
       textoLimpo(
         diagnosticoData.recomendacoes
       ) ||
       "Não registadas.";
 
+    function adicionarSecaoLonga(
+      titulo,
+      texto,
+      fundo,
+      borda
+    ) {
+      const linhas =
+        pdf.splitTextToSize(
+          texto,
+          contentWidth - 10
+        );
 
-    /*
-     * Calculamos quantas linhas cabem em cada coluna.
-     * Em vez de cortar, diminuímos a fonte.
-     */
+      let indice = 0;
+      let primeira = true;
 
-    const descricaoAdaptada =
-      ajustarFonteAoNumeroDeLinhas(
-        pdf,
-        descricao,
-        colunaWidth - 8,
-        5.7,
-        4.1,
-        14
-      );
+      while (
+        indice <
+        linhas.length
+      ) {
+        const linhasPorPagina =
+          Math.max(
+            1,
+            Math.floor(
+              (
+                bottomLimit -
+                y -
+                14
+              ) / 2.7
+            )
+          );
 
+        if (
+          linhasPorPagina < 3
+        ) {
+          y = novaPagina();
+        }
 
-    const recomendacoesAdaptadas =
-      ajustarFonteAoNumeroDeLinhas(
-        pdf,
-        recomendacoes,
-        colunaWidth - 8,
-        5.7,
-        4.1,
-        14
-      );
+        const lote =
+          linhas.slice(
+            indice,
+            indice +
+            linhasPorPagina
+          );
 
+        const altura =
+          Math.max(
+            20,
+            12 +
+            lote.length * 2.7
+          );
 
-    const linhasMaior =
-      Math.max(
-        descricaoAdaptada.linhas.length,
-        recomendacoesAdaptadas.linhas.length
-      );
+        y = garantirEspaco(
+          altura + 4,
+          y
+        );
 
+        roundedCard(
+          pdf,
+          margin,
+          y,
+          contentWidth,
+          altura,
+          fundo,
+          borda,
+          2
+        );
 
-    const alturaTexto =
-      Math.max(
-        30,
-        13 +
-        linhasMaior *
-        2.7
-      );
+        setPdfFont(
+          pdf,
+          "bold",
+          5.8,
+          [13, 77, 49]
+        );
 
+        pdf.text(
+          primeira
+            ? titulo
+            : titulo + " (continuação)",
+          margin + 4,
+          y + 6
+        );
 
-    const alturaSecoes =
-      Math.min(
-        46,
-        alturaTexto
-      );
+        setPdfFont(
+          pdf,
+          "normal",
+          5.5,
+          [82, 104, 94]
+        );
 
+        pdf.text(
+          lote,
+          margin + 4,
+          y + 11,
+          { lineHeightFactor: 1.2 }
+        );
 
-    roundedCard(
-      pdf,
-      margin,
-      y,
-      colunaWidth,
-      alturaSecoes,
-      [247, 250, 248],
-      [226, 235, 230],
-      2
-    );
+        y +=
+          altura +
+          4;
 
+        indice +=
+          lote.length;
 
-    roundedCard(
-      pdf,
-      margin +
-      colunaWidth +
-      colunaGap,
-      y,
-      colunaWidth,
-      alturaSecoes,
-      [234, 247, 239],
-      [214, 235, 221],
-      2
-    );
+        primeira = false;
 
+        if (
+          indice <
+          linhas.length
+        ) {
+          y = novaPagina();
+        }
+      }
+    }
 
-    setPdfFont(
-      pdf,
-      "bold",
-      5.8,
-      [13, 77, 49]
-    );
-
-
-    pdf.text(
+    adicionarSecaoLonga(
       "Descrição do resultado",
-      margin + 4,
-      y + 6
+      descricao,
+      [247, 250, 248],
+      [226, 235, 230]
     );
 
-
-    pdf.text(
+    adicionarSecaoLonga(
       "Recomendações",
-      margin +
-      colunaWidth +
-      colunaGap +
-      4,
-      y + 6
+      recomendacoes,
+      [234, 247, 239],
+      [214, 235, 221]
     );
-
-
-    setPdfFont(
-      pdf,
-      "normal",
-      descricaoAdaptada.tamanho,
-      [82, 104, 94]
-    );
-
-
-    pdf.text(
-      descricaoAdaptada.linhas,
-      margin + 4,
-      y + 11,
-      {
-        lineHeightFactor: 1.2
-      }
-    );
-
-
-    setPdfFont(
-      pdf,
-      "normal",
-      recomendacoesAdaptadas.tamanho,
-      [82, 104, 94]
-    );
-
-
-    pdf.text(
-      recomendacoesAdaptadas.linhas,
-      margin +
-      colunaWidth +
-      colunaGap +
-      4,
-      y + 11,
-      {
-        lineHeightFactor: 1.2
-      }
-    );
-
-
-    y +=
-      alturaSecoes +
-      4;
-
 
     /* ========================================================
        OBSERVAÇÕES
@@ -3632,97 +3585,12 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         diagnosticoData.doenca
       );
 
-
-    const observacaoAdaptada =
-      ajustarFonteAoNumeroDeLinhas(
-        pdf,
-        observacoes,
-        contentWidth - 12,
-        5.4,
-        4,
-        7
-      );
-
-
-    const observacaoAltura =
-      Math.min(
-        28,
-        Math.max(
-          18,
-          10 +
-          observacaoAdaptada.linhas.length *
-          2.8
-        )
-      );
-
-
-    roundedCard(
-      pdf,
-      margin,
-      y,
-      contentWidth,
-      observacaoAltura,
-      [255, 247, 223],
-      [238, 214, 157],
-      2.5
-    );
-
-
-    pdf.setFillColor(
-      217,
-      164,
-      65
-    );
-
-
-    pdf.roundedRect(
-      margin,
-      y,
-      1.7,
-      observacaoAltura,
-      .8,
-      .8,
-      "F"
-    );
-
-
-    setPdfFont(
-      pdf,
-      "bold",
-      5.7,
-      [116, 91, 28]
-    );
-
-
-    pdf.text(
+    adicionarSecaoLonga(
       "OBSERVAÇÕES DE ACOMPANHAMENTO",
-      margin + 6,
-      y + 6
+      observacoes,
+      [255, 247, 223],
+      [238, 214, 157]
     );
-
-
-    setPdfFont(
-      pdf,
-      "normal",
-      observacaoAdaptada.tamanho,
-      [116, 91, 28]
-    );
-
-
-    pdf.text(
-      observacaoAdaptada.linhas,
-      margin + 6,
-      y + 11,
-      {
-        lineHeightFactor: 1.2
-      }
-    );
-
-
-    y +=
-      observacaoAltura +
-      3;
-
 
     /* ========================================================
        ERRO — SOMENTE SE REALMENTE EXISTIR
@@ -3736,115 +3604,36 @@ Diagnóstico {{ diagnostico.id }} | AgroIA Moxico
         diagnosticoData.erro
       )
     ) {
-
-      const erro =
-        textoLimpo(
-          diagnosticoData.erro
-        );
-
-
-      const erroAdaptado =
-        ajustarFonteAoNumeroDeLinhas(
-          pdf,
-          erro,
-          contentWidth - 12,
-          5.2,
-          4,
-          5
-        );
-
-
-      const erroAltura =
-        Math.min(
-          22,
-          Math.max(
-            16,
-            10 +
-            erroAdaptado.linhas.length *
-            2.6
-          )
-        );
-
-
-      roundedCard(
-        pdf,
-        margin,
-        y,
-        contentWidth,
-        erroAltura,
-        [255, 240, 240],
-        [237, 204, 204],
-        2
-      );
-
-
-      setPdfFont(
-        pdf,
-        "bold",
-        5.5,
-        [165, 46, 46]
-      );
-
-
-      pdf.text(
+      adicionarSecaoLonga(
         "ERRO DURANTE O DIAGNÓSTICO",
-        margin + 6,
-        y + 6
+        diagnosticoData.erro,
+        [255, 240, 240],
+        [237, 204, 204]
       );
-
-
-      setPdfFont(
-        pdf,
-        "normal",
-        erroAdaptado.tamanho,
-        [119, 70, 70]
-      );
-
-
-      pdf.text(
-        erroAdaptado.linhas,
-        margin + 6,
-        y + 11,
-        {
-          lineHeightFactor: 1.2
-        }
-      );
-
     }
-
 
     /* ========================================================
-       RODAPÉ REAL
+       RODAPÉ EM TODAS AS PÁGINAS
     ======================================================== */
 
-    desenharRodapePDF(
-      pdf,
-      1
-    );
+    const totalPaginas =
+      pdf.getNumberOfPages();
 
-
-    /*
-     * GARANTIA ABSOLUTA:
-     * O documento começa com uma página e nunca recebe
-     * addPage(). Portanto, o PDF final tem exatamente
-     * uma página.
-     */
-
-    while (
-      pdf.getNumberOfPages() > 1
+    for (
+      let pagina = 1;
+      pagina <= totalPaginas;
+      pagina++
     ) {
+      pdf.setPage(pagina);
 
-      pdf.deletePage(
-        pdf.getNumberOfPages()
+      desenharRodapePDF(
+        pdf,
+        pagina
       );
-
     }
 
-
     return pdf;
-
   }
-
 
   /* ==========================================================
      LOADING DOS BOTÕES
