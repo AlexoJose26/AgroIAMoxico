@@ -2,9 +2,8 @@ from pathlib import Path
 import mimetypes
 import os
 import unicodedata
-
 import requests
-
+from django.db.models import Avg
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -12,7 +11,6 @@ from django.core.files.base import ContentFile
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
 from produtos.models import ProdutoAgricola
 from .models import Diagnostico
 
@@ -1361,42 +1359,10 @@ def analisar_imagem(
     )
 
 
-# ============================================================
-# PÁGINA PRINCIPAL / PRODUTO
-# ============================================================
-
 @login_required
 def diagnostico(request, produto_id=None):
-    """
-    Página principal do diagnóstico.
 
-    /diagnostico/
-        Lista os produtos disponíveis para análise.
-
-    /diagnostico/produto/<produto_id>/
-        Abre diretamente o produto selecionado.
-    """
-
-    # --------------------------------------------------------
-    # Quando a URL possui produto_id
-    # --------------------------------------------------------
-
-    if produto_id is not None:
-        produto = obter_produto(produto_id)
-
-        return render(
-            request,
-            "diagnostico/diagnostico.html",
-            {
-                "produto": produto,
-            },
-        )
-
-    # --------------------------------------------------------
-    # Página geral
-    # --------------------------------------------------------
-
-    produtos = (
+    produtos = list(
         ProdutoAgricola.objects
         .filter(
             ativo=True,
@@ -1405,41 +1371,129 @@ def diagnostico(request, produto_id=None):
         .order_by("nome")
     )
 
+
+    diagnosticos_usuario = (
+        Diagnostico.objects
+        .filter(
+            usuario=request.user,
+        )
+        .select_related(
+            "produto",
+        )
+        .order_by(
+            "-data_criacao",
+            "-id",
+        )
+    )
+
+    total_produtos = len(produtos)
+
+    total_diagnosticos_usuario = diagnosticos_usuario.count()
+
+    diagnosticos_concluidos = diagnosticos_usuario.filter(
+        status="concluido"
+    ).count()
+
+    confianca_media = (
+        diagnosticos_usuario
+        .filter(
+            status="concluido",
+            confianca__isnull=False,
+        )
+        .aggregate(
+            media=Avg("confianca")
+        )
+        .get("media")
+        or 0
+    )
+    ultimo_diagnostico_geral = (
+        diagnosticos_usuario
+        .first()
+    )
+
+    for produto in produtos:
+
+        diagnosticos_produto = [
+            diagnostico
+            for diagnostico in diagnosticos_usuario
+            if diagnostico.produto_id == produto.id
+        ]
+
+        produto.total_diagnosticos = len(
+            diagnosticos_produto
+        )
+
+        produto.ultimo_diagnostico = (
+            diagnosticos_produto[0]
+            if diagnosticos_produto
+            else None
+        )
+
+
+    produto = None
+    diagnostico_obj = None
+    historico_produto = []
+
+    if produto_id is not None:
+
+        produto = obter_produto(produto_id)
+
+
+        historico_produto = list(
+            diagnosticos_usuario
+            .filter(
+                produto=produto,
+            )
+            .order_by(
+                "-data_criacao",
+                "-id",
+            )
+        )
+
+
+        diagnostico_obj = (
+            historico_produto[0]
+            if historico_produto
+            else None
+        )
+
+    context = {
+        # Página / produtos
+        "produtos": produtos,
+        "total_produtos": total_produtos,
+
+        # Estatísticas
+        "total_diagnosticos_usuario": total_diagnosticos_usuario,
+        "diagnosticos_concluidos": diagnosticos_concluidos,
+        "confianca_media": confianca_media,
+
+        # Diagnóstico geral
+        "diagnostico_geral": ultimo_diagnostico_geral,
+
+        # Produto selecionado
+        "produto": produto,
+
+        # Diagnóstico do produto selecionado
+        "diagnostico": diagnostico_obj,
+        "historico_produto": historico_produto,
+    }
+
     return render(
         request,
         "diagnostico/diagnostico.html",
-        {
-            "produtos": produtos,
-        },
+        context,
     )
 
-
-# ============================================================
-# DIAGNÓSTICO DE UM PRODUTO
-# ============================================================
 
 @login_required
 def diagnostico_produto(
     request,
     produto_id,
 ):
-    """
-    Mantém compatibilidade com chamadas antigas.
-
-    A rota atual utiliza views.diagnostico, mas esta função
-    continua disponível caso algum template ou código antigo
-    ainda a utilize.
-    """
     return diagnostico(
         request,
         produto_id=produto_id,
     )
-
-
-# ============================================================
-# REALIZAR ANÁLISE
-# ============================================================
-
 @login_required
 @require_POST
 def analisar(
