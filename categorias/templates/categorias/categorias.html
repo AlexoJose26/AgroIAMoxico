@@ -1,260 +1,209 @@
 {% extends "base.html" %}
 
-{% block title %}
-Categorias Agrícolas | AgroIA Moxico
-{% endblock %}
+{% load static %}
+
+{% block title %}Categorias Agrícolas | AgroIA Moxico{% endblock %}
 
 {% block extra_css %}
 
 <style>
-  :root {
-    --cat-primary: #176b45;
-    --cat-primary-dark: #0d4d31;
-    --cat-primary-deep: #062d1d;
-    --cat-primary-soft: #eaf7ef;
-    --cat-gold: #d9a441;
-    --cat-gold-soft: #fbf5e7;
-    --cat-text: #163c2c;
-    --cat-muted: #718078;
-    --cat-border: #e2ebe6;
-    --cat-background: #f4f8f5;
-    --cat-white: #ffffff;
-    --cat-danger: #b33b3b;
-    --cat-shadow: 0 18px 55px rgba(13, 77, 49, .08);
-  }
-
-  /* =========================================================
-   BASE
-   ========================================================= */
-
   .categories-page {
+    position: relative;
     min-height: 100vh;
-    background:
-      radial-gradient(circle at 5% 15%, rgba(23, 107, 69, .07), transparent 25%),
-      radial-gradient(circle at 95% 45%, rgba(217, 164, 65, .06), transparent 23%),
-      linear-gradient(180deg, #f9fcfa 0%, #f2f7f4 100%);
-    color: var(--cat-text);
+    padding-bottom: 80px;
+    background: #f8faf9;
   }
-
-  /* =========================================================
-   HERO
-   ========================================================= */
 
   .categories-hero {
     position: relative;
-    min-height: 570px;
+    min-height: 560px;
     overflow: hidden;
     display: flex;
     align-items: center;
-    isolation: isolate;
-    background:
-      linear-gradient(100deg,
-        rgba(3, 27, 17, .98) 0%,
-        rgba(5, 61, 37, .91) 48%,
-        rgba(4, 47, 29, .66) 100%);
+    background: linear-gradient(135deg, #082c1c 0%, #0d4d31 48%, #176b45 100%);
+    color: #fff;
   }
 
   .categories-hero-bg {
     position: absolute;
-    inset: -7%;
-    z-index: -5;
+    inset: 0;
     background:
-      url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=92") center / cover no-repeat;
-    opacity: .48;
-    animation: heroZoom 18s ease-in-out infinite alternate;
+      linear-gradient(90deg, rgba(4, 27, 17, .94), rgba(8, 59, 37, .76)),
+      url("https://delivery-p136806-e1377785.adobeaemcloud.com/adobe/assets/urn:aaid:aem:598d15c7-1626-4606-9a0d-94e5f97e3301/as/ag-agriculture-1.jpg") center/cover no-repeat;
+    transform: scale(1.03);
   }
 
   .categories-hero-overlay {
     position: absolute;
     inset: 0;
-    z-index: -4;
     background:
-      radial-gradient(circle at 78% 22%, rgba(190, 238, 204, .18), transparent 22%),
-      radial-gradient(circle at 20% 90%, rgba(217, 164, 65, .13), transparent 24%);
+      radial-gradient(circle at 80% 20%, rgba(217, 164, 65, .18), transparent 30%),
+      radial-gradient(circle at 15% 80%, rgba(23, 107, 69, .35), transparent 35%);
   }
 
   .categories-grid {
     position: absolute;
     inset: 0;
-    z-index: -3;
-    opacity: .09;
+    opacity: .08;
     background-image:
-      linear-gradient(rgba(255, 255, 255, .13) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, .13) 1px, transparent 1px);
-    background-size: 56px 56px;
-    animation: gridMove 20s linear infinite;
+      linear-gradient(rgba(255, 255, 255, .35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, .35) 1px, transparent 1px);
+    background-size: 45px 45px;
   }
 
   .categories-particles {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    overflow: hidden;
   }
 
   .categories-particle {
     position: absolute;
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, .68);
-    box-shadow: 0 0 16px rgba(180, 240, 200, .65);
-    animation: particleFloat 7s ease-in-out infinite;
+    background: rgba(217, 164, 65, .65);
+    animation: categoryFloat 8s infinite ease-in-out;
   }
 
   .categories-particle:nth-child(1) {
-    left: 9%;
-    top: 27%;
+    left: 8%;
+    top: 20%;
   }
 
   .categories-particle:nth-child(2) {
-    left: 25%;
-    top: 75%;
+    left: 22%;
+    top: 70%;
     animation-delay: 1s;
   }
 
   .categories-particle:nth-child(3) {
     left: 46%;
-    top: 19%;
+    top: 25%;
     animation-delay: 2s;
   }
 
   .categories-particle:nth-child(4) {
     left: 68%;
-    top: 70%;
+    top: 72%;
     animation-delay: 3s;
   }
 
   .categories-particle:nth-child(5) {
-    left: 82%;
+    left: 84%;
     top: 28%;
-    animation-delay: 1.5s;
-  }
-
-  .categories-particle:nth-child(6) {
-    left: 94%;
-    top: 61%;
     animation-delay: 4s;
   }
 
-  .categories-hero-inner {
-    width: min(1240px, calc(100% - 42px));
-    margin: auto;
-    padding: 90px 0 75px;
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr);
-    gap: 60px;
-    align-items: center;
+  .categories-particle:nth-child(6) {
+    left: 92%;
+    top: 78%;
+    animation-delay: 5s;
   }
 
-  .categories-hero-content {
-    animation: heroContent .8s ease both;
+  @keyframes categoryFloat {
+
+    0%,
+    100% {
+      transform: translateY(0);
+      opacity: .3;
+    }
+
+    50% {
+      transform: translateY(-24px);
+      opacity: .9;
+    }
+  }
+
+  .categories-hero-inner {
+    position: relative;
+    z-index: 2;
+    width: min(1180px, calc(100% - 40px));
+    margin: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, .75fr);
+    gap: 70px;
+    align-items: center;
+    padding: 80px 0;
   }
 
   .categories-label {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    padding: 9px 14px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255, 255, 255, .16);
+    padding: 8px 14px;
+    border: 1px solid rgba(217, 164, 65, .35);
     border-radius: 999px;
     background: rgba(255, 255, 255, .07);
-    color: #dff5e7;
-    font-size: .67rem;
-    font-weight: 850;
+    color: #f1d58d;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .04em;
     text-transform: uppercase;
-    letter-spacing: .10em;
-    backdrop-filter: blur(14px);
   }
 
-  .categories-label i {
-    color: var(--cat-gold);
+  .categories-hero-content h1 {
+    margin: 22px 0 16px;
+    font-size: clamp(2.7rem, 6vw, 5.3rem);
+    line-height: .98;
+    letter-spacing: -.055em;
+    font-weight: 800;
   }
 
-  .categories-hero h1 {
-    max-width: 850px;
-    margin: 0;
-    color: #fff;
-    font-size: clamp(3rem, 7vw, 5.9rem);
-    line-height: .94;
-    font-weight: 950;
-    letter-spacing: -.065em;
-    text-shadow: 0 15px 45px rgba(0, 0, 0, .25);
-  }
-
-  .categories-hero h1 span {
-    display: inline-block;
-    color: transparent;
-    background:
-      linear-gradient(120deg, #e1f6e7, #9edbb4, #efd17b);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    animation: gradientText 6s ease infinite;
+  .categories-hero-content h1 span {
+    display: block;
+    color: #d9a441;
   }
 
   .categories-description {
-    max-width: 690px;
-    margin: 25px 0 0;
-    color: rgba(255, 255, 255, .76);
-    font-size: 1rem;
+    max-width: 680px;
+    margin: 0;
+    color: rgba(255, 255, 255, .82);
+    font-size: 1.02rem;
     line-height: 1.8;
-  }
-
-  .categories-description strong {
-    color: #fff;
   }
 
   .categories-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
     margin-top: 30px;
   }
 
   .categories-btn {
-    min-height: 47px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 9px;
-    padding: 10px 17px;
-    border-radius: 11px;
+    min-height: 48px;
+    padding: 0 20px;
+    border-radius: 12px;
     text-decoration: none;
-    font-size: .74rem;
-    font-weight: 850;
-    transition: .22s ease;
+    font-size: .9rem;
+    font-weight: 700;
+    transition: .25s ease;
   }
 
   .categories-btn.primary {
-    background: #fff;
-    color: var(--cat-primary-dark);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, .17);
-  }
-
-  .categories-btn.primary:hover {
-    color: var(--cat-primary-dark);
-    transform: translateY(-3px);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, .25);
+    background: #d9a441;
+    color: #123b28;
   }
 
   .categories-btn.secondary {
-    border: 1px solid rgba(255, 255, 255, .18);
+    border: 1px solid rgba(255, 255, 255, .2);
     background: rgba(255, 255, 255, .08);
     color: #fff;
-    backdrop-filter: blur(12px);
   }
 
-  .categories-btn.secondary:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, .15);
-    transform: translateY(-3px);
+  .categories-btn:hover {
+    transform: translateY(-2px);
   }
 
   .categories-info {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 18px;
     margin-top: 28px;
   }
 
@@ -262,1206 +211,637 @@ Categorias Agrícolas | AgroIA Moxico
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    color: rgba(255, 255, 255, .62);
-    font-size: .67rem;
-    font-weight: 750;
+    color: rgba(255, 255, 255, .72);
+    font-size: .78rem;
   }
 
   .categories-info i {
-    color: #9fddb4;
+    color: #d9a441;
   }
-
-  /* =========================================================
-   HERO PANEL
-   ========================================================= */
 
   .categories-panel {
-    position: relative;
-    overflow: hidden;
-    padding: 27px;
-    border: 1px solid rgba(255, 255, 255, .15);
-    border-radius: 25px;
-    background:
-      linear-gradient(145deg,
-        rgba(255, 255, 255, .15),
-        rgba(255, 255, 255, .045));
-    backdrop-filter: blur(20px);
-    box-shadow:
-      0 30px 75px rgba(0, 0, 0, .20),
-      inset 0 1px 0 rgba(255, 255, 255, .14);
-    animation: panelFloat 6s ease-in-out infinite;
-  }
-
-  .categories-panel::after {
-    content: "";
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    right: -110px;
-    top: -120px;
-    border-radius: 50%;
-    background: rgba(217, 164, 65, .12);
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .09);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .22);
   }
 
   .categories-panel-top {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 25px;
+    align-items: center;
   }
 
   .categories-panel-icon {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, .09);
-    color: #fff;
-    font-size: 1rem;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(217, 164, 65, .14);
+    color: #d9a441;
+    font-size: 1.15rem;
   }
 
   .categories-panel-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 7px 10px;
+    padding: 6px 10px;
     border-radius: 999px;
-    background: rgba(110, 221, 145, .11);
-    color: #b9eaca;
-    font-size: .60rem;
-    font-weight: 850;
-  }
-
-  .categories-panel-status::before {
-    content: "";
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #72d996;
-    box-shadow: 0 0 13px #72d996;
+    background: rgba(75, 210, 133, .12);
+    color: #80e1a7;
+    font-size: .72rem;
+    font-weight: 700;
   }
 
   .categories-panel-label {
-    margin: 0 0 7px;
-    color: rgba(255, 255, 255, .55);
-    font-size: .67rem;
-    font-weight: 750;
+    margin: 28px 0 4px;
+    color: rgba(255, 255, 255, .62);
+    font-size: .78rem;
   }
 
   .categories-panel-number {
     display: block;
     color: #fff;
-    font-size: 4rem;
-    line-height: .9;
-    font-weight: 950;
-    letter-spacing: -.07em;
+    font-size: 3.6rem;
+    line-height: 1;
   }
 
   .categories-panel-text {
-    margin: 13px 0 0;
-    color: rgba(255, 255, 255, .60);
-    font-size: .72rem;
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, .7);
+    font-size: .84rem;
     line-height: 1.65;
   }
 
   .categories-panel-divider {
     height: 1px;
-    margin: 21px 0;
-    background: rgba(255, 255, 255, .10);
+    margin: 22px 0;
+    background: rgba(255, 255, 255, .1);
   }
 
   .categories-panel-caption {
-    margin-bottom: 10px;
-    color: rgba(255, 255, 255, .52);
-    font-size: .60rem;
-    font-weight: 850;
+    margin-bottom: 12px;
+    color: rgba(255, 255, 255, .5);
+    font-size: .72rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .09em;
+    letter-spacing: .08em;
   }
 
   .categories-chip-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
   }
 
   .categories-chip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 8px;
-    border: 1px solid rgba(255, 255, 255, .09);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .05);
-    color: #fff;
-    font-size: .61rem;
-    font-weight: 750;
+    gap: 7px;
+    padding: 8px 11px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .06);
+    color: rgba(255, 255, 255, .82);
+    font-size: .73rem;
   }
 
   .categories-chip i {
-    color: #8ed2a9;
+    color: #d9a441;
   }
 
-  /* =========================================================
-   MAIN
-   ========================================================= */
-
   .categories-main {
-    width: min(1240px, calc(100% - 38px));
-    margin: auto;
-    padding: 58px 0 90px;
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
   }
 
   .categories-back {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 25px;
-    padding: 9px 13px;
-    border: 1px solid var(--cat-border);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, .90);
-    color: #68776f;
+    margin: 34px 0 24px;
+    color: #176b45;
     text-decoration: none;
-    font-size: .70rem;
-    font-weight: 800;
-    transition: .2s ease;
+    font-size: .86rem;
+    font-weight: 700;
   }
 
   .categories-back:hover {
-    color: var(--cat-primary);
-    transform: translateX(-3px);
+    color: #0d4d31;
   }
-
-  /* =========================================================
-   HEADER
-   ========================================================= */
 
   .categories-header {
     display: flex;
-    align-items: flex-end;
     justify-content: space-between;
-    gap: 25px;
-    margin-bottom: 28px;
+    gap: 30px;
+    align-items: flex-end;
+    margin-bottom: 24px;
   }
 
   .categories-heading small {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    margin-bottom: 8px;
-    color: var(--cat-primary);
-    font-size: .65rem;
-    font-weight: 850;
+    color: #176b45;
+    font-size: .74rem;
+    font-weight: 800;
+    letter-spacing: .07em;
     text-transform: uppercase;
-    letter-spacing: .09em;
   }
 
   .categories-heading h2 {
-    margin: 0;
-    color: var(--cat-primary-dark);
-    font-size: clamp(1.7rem, 3vw, 2.25rem);
-    font-weight: 900;
-    letter-spacing: -.045em;
+    margin: 8px 0 7px;
+    color: #123b28;
+    font-size: clamp(1.65rem, 3vw, 2.25rem);
+    letter-spacing: -.035em;
   }
 
   .categories-heading p {
-    max-width: 720px;
-    margin: 9px 0 0;
-    color: #718078;
-    font-size: .82rem;
-    line-height: 1.65;
+    max-width: 680px;
+    margin: 0;
+    color: #6d7b74;
+    font-size: .9rem;
+    line-height: 1.7;
   }
 
-  .create-category {
+  .catalog-badge {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    min-height: 43px;
-    padding: 9px 16px;
-    border-radius: 11px;
-    background: linear-gradient(135deg, var(--cat-primary), var(--cat-primary-dark));
-    color: #fff;
-    text-decoration: none;
-    font-size: .72rem;
-    font-weight: 850;
+    padding: 9px 13px;
+    border: 1px solid rgba(23, 107, 69, .12);
+    border-radius: 10px;
+    background: rgba(23, 107, 69, .05);
+    color: #176b45;
+    font-size: .73rem;
+    font-weight: 700;
     white-space: nowrap;
-    box-shadow: 0 9px 23px rgba(23, 107, 69, .16);
-    transition: .2s ease;
   }
-
-  .create-category:hover {
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 13px 29px rgba(23, 107, 69, .23);
-  }
-
-  /* =========================================================
-   STATS
-   ========================================================= */
 
   .categories-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
-    margin-bottom: 27px;
+    margin-bottom: 22px;
   }
 
   .stat-box {
-    position: relative;
-    overflow: hidden;
-    min-height: 100px;
-    padding: 19px;
-    border: 1px solid var(--cat-border);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, .96);
-    box-shadow: 0 8px 26px rgba(13, 77, 49, .045);
-    transition: transform .2s ease, box-shadow .2s ease;
-  }
-
-  .stat-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(13, 77, 49, .08);
-  }
-
-  .stat-box::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 58px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--cat-primary), var(--cat-gold));
+    padding: 18px 20px;
+    border: 1px solid #e7ece9;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 8px 25px rgba(20, 65, 43, .04);
   }
 
   .stat-box span {
     display: block;
-    margin-bottom: 8px;
-    color: #7b8982;
-    font-size: .65rem;
-    font-weight: 750;
+    color: #7a8881;
+    font-size: .73rem;
+    font-weight: 600;
   }
 
   .stat-box strong {
     display: block;
-    color: var(--cat-primary-dark);
-    font-size: 1.8rem;
-    line-height: 1;
-    font-weight: 950;
+    margin-top: 5px;
+    color: #123b28;
+    font-size: 1.3rem;
   }
 
-  /* =========================================================
-   TOOLBAR
-   ========================================================= */
-
   .categories-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto;
     gap: 14px;
-    margin-bottom: 18px;
-    padding: 13px;
-    border: 1px solid var(--cat-border);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, .96);
-    box-shadow: 0 7px 25px rgba(13, 77, 49, .04);
+    align-items: center;
+    margin-bottom: 28px;
   }
 
   .category-search {
     position: relative;
-    flex: 1;
-    max-width: 600px;
+    min-width: 0;
   }
 
   .category-search>i {
     position: absolute;
-    left: 14px;
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: #87958e;
-    font-size: .75rem;
+    color: #84928b;
+    pointer-events: none;
   }
 
   .category-search input {
     width: 100%;
-    height: 42px;
-    padding: 0 40px;
-    border: 1px solid #dfe8e3;
-    border-radius: 11px;
-    outline: none;
-    background: #f8fbf9;
-    color: var(--cat-text);
-    font-size: .73rem;
-    font-weight: 650;
+    height: 50px;
     box-sizing: border-box;
+    padding: 0 45px;
+    border: 1px solid #dfe7e2;
+    border-radius: 13px;
+    outline: none;
+    background: #fff;
+    color: #173f2c;
+    font-size: .85rem;
     transition: .2s ease;
   }
 
   .category-search input:focus {
-    border-color: rgba(23, 107, 69, .40);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(23, 107, 69, .07);
-  }
-
-  .category-search input::placeholder {
-    color: #9aa59f;
+    border-color: rgba(23, 107, 69, .5);
+    box-shadow: 0 0 0 4px rgba(23, 107, 69, .08);
   }
 
   .search-clear {
     position: absolute;
     right: 8px;
     top: 50%;
+    width: 34px;
+    height: 34px;
     transform: translateY(-50%);
-    width: 26px;
-    height: 26px;
-    display: none;
-    align-items: center;
-    justify-content: center;
     border: 0;
-    border-radius: 7px;
-    background: #eaf1ed;
-    color: #63746b;
+    border-radius: 9px;
+    background: transparent;
+    color: #87938e;
     cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: .2s ease;
+  }
+
+  .search-clear.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .search-clear:hover {
+    background: #eef4f0;
+    color: #176b45;
   }
 
   .category-filters {
     display: flex;
-    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 7px;
   }
 
   .category-filter {
-    height: 38px;
+    min-height: 40px;
     padding: 0 13px;
-    border: 1px solid #e1e9e4;
-    border-radius: 9px;
-    background: #f8fbf9;
-    color: #68776f;
-    font-size: .65rem;
-    font-weight: 800;
+    border: 1px solid #dfe7e2;
+    border-radius: 10px;
+    background: #fff;
+    color: #617069;
     cursor: pointer;
+    font-size: .76rem;
+    font-weight: 700;
     transition: .2s ease;
   }
 
   .category-filter:hover {
-    border-color: #b9d2c2;
-    color: var(--cat-primary);
+    border-color: rgba(23, 107, 69, .3);
+    color: #176b45;
   }
 
   .category-filter.active {
-    border-color: var(--cat-primary);
-    background: var(--cat-primary);
+    border-color: #176b45;
+    background: #176b45;
     color: #fff;
-    box-shadow: 0 5px 14px rgba(23, 107, 69, .15);
+    box-shadow: 0 5px 14px rgba(23, 107, 69, .16);
   }
-
-  /* =========================================================
-   LIST HEADER
-   ========================================================= */
 
   .list-heading {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin: 22px 2px 11px;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
   }
 
   .list-title {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 11px;
   }
 
   .list-icon {
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
     border-radius: 10px;
-    background: var(--cat-primary-soft);
-    color: var(--cat-primary);
-    font-size: .76rem;
+    background: rgba(23, 107, 69, .08);
+    color: #176b45;
   }
 
   .list-title h2 {
     margin: 0;
-    color: #183f2e;
-    font-size: .94rem;
-    font-weight: 850;
+    color: #183d2d;
+    font-size: 1.1rem;
   }
 
   .list-count {
-    color: #84918b;
-    font-size: .66rem;
-    font-weight: 750;
+    color: #718078;
+    font-size: .75rem;
+    font-weight: 700;
   }
 
-  /* =========================================================
-   CATEGORY LIST
-   ========================================================= */
-
-  .categories-list {
-    overflow: hidden;
-    border: 1px solid var(--cat-border);
-    border-radius: 19px;
-    background: #fff;
-    box-shadow: var(--cat-shadow);
-  }
-
-  /*
-   Cabeçalho da lista
-*/
-
-  .categories-list-header {
+  .categories-grid-list {
     display: grid;
-    grid-template-columns: minmax(300px, 1fr) 95px 95px 105px 290px;
-    align-items: center;
-    min-height: 48px;
-    padding: 0 18px;
-    background:
-      linear-gradient(180deg, #f8fbf9, #f3f8f5);
-    border-bottom: 1px solid #e6eee9;
-    color: #74827b;
-    font-size: .59rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: .07em;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
   }
 
-  .categories-list-header>div:last-child {
-    text-align: center;
-  }
-
-  /*
-   Linha
-*/
-
-  .category-row {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(300px, 1fr) 95px 95px 105px 290px;
-    align-items: center;
-    min-height: 94px;
-    padding: 12px 18px;
-    border-bottom: 1px solid #edf2ef;
-    background: #fff;
-    transition:
-      background .2s ease,
-      transform .2s ease,
-      box-shadow .2s ease;
-  }
-
-  .category-row:last-child {
-    border-bottom: 0;
-  }
-
-  .category-row:hover {
-    z-index: 2;
-    background: #fbfefc;
-    box-shadow:
-      inset 4px 0 0 var(--cat-primary),
-      0 8px 25px rgba(13, 77, 49, .06);
-  }
-
-  /* =========================================================
-   IDENTIDADE
-   ========================================================= */
-
-  .category-identity {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    min-width: 0;
-  }
-
-  .category-image {
-    position: relative;
-    width: 62px;
-    height: 62px;
-    flex: 0 0 62px;
+  .category-card {
     overflow: hidden;
-    border-radius: 15px;
-    background: #eaf3ed;
-    box-shadow: 0 5px 15px rgba(13, 77, 49, .08);
+    min-height: 470px;
+    border: 1px solid #e5ebe7;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 10px 28px rgba(20, 65, 43, .055);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   }
 
-  .category-image::after {
+  .category-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(23, 107, 69, .2);
+    box-shadow: 0 20px 48px rgba(20, 65, 43, .12);
+  }
+
+  .category-card-image {
+    position: relative;
+    height: 230px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #dbe8df, #a7c5b1);
+  }
+
+  .category-card-image::after {
     content: "";
     position: absolute;
     inset: 0;
-    border: 1px solid rgba(255, 255, 255, .35);
-    border-radius: inherit;
+    background: linear-gradient(to top, rgba(5, 32, 21, .45), transparent 55%);
     pointer-events: none;
   }
 
-  .category-image img {
+  .category-card-image img {
     width: 100%;
     height: 100%;
     display: block;
     object-fit: cover;
-    transition: transform .35s ease;
+    transition: transform .5s ease;
   }
 
-  .category-row:hover .category-image img {
-    transform: scale(1.09);
+  .category-card:hover .category-card-image img {
+    transform: scale(1.06);
   }
 
-  .category-info {
-    min-width: 0;
-  }
-
-  .category-name {
-    display: block;
-    overflow: hidden;
-    margin-bottom: 5px;
-    color: #153e2d;
-    font-size: .82rem;
-    font-weight: 900;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .category-description {
-    display: block;
-    max-width: 520px;
-    overflow: hidden;
-    color: #829088;
-    font-size: .65rem;
-    line-height: 1.5;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  /* =========================================================
-   NUMBERS
-   ========================================================= */
-
-  .category-number {
+  .category-number-badge {
+    position: absolute;
+    z-index: 3;
+    left: 13px;
+    top: 13px;
     display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    color: #56675e;
-    font-size: .69rem;
-    font-weight: 850;
-  }
-
-  .category-number-icon {
-    width: 31px;
-    height: 31px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9px;
-    background: #edf7f0;
-    color: var(--cat-primary);
-    font-size: .60rem;
-  }
-
-  .category-number.active-number .category-number-icon {
-    background: var(--cat-gold-soft);
-    color: #876b1c;
-  }
-
-  /* =========================================================
-   STATUS
-   ========================================================= */
-
-  .category-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    width: fit-content;
-    padding: 6px 9px;
-    border-radius: 999px;
-    font-size: .59rem;
-    font-weight: 850;
-  }
-
-  .category-status.active {
-    background: #eaf7ef;
-    color: #176b45;
-  }
-
-  .category-status.inactive {
-    background: #f1f2f2;
-    color: #7d8581;
-  }
-
-  .category-status i {
-    font-size: .46rem;
-  }
-
-  /* =========================================================
-   AÇÕES — MAIS VISÍVEIS
-   ========================================================= */
-
-  .category-actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-  }
-
-  .category-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    min-width: 39px;
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid #dfe8e3;
-    border-radius: 9px;
-    background: #fff;
-    color: #5d6c64;
-    text-decoration: none;
-    font-size: .61rem;
-    font-weight: 850;
-    white-space: nowrap;
-    cursor: pointer;
-    transition:
-      transform .18s ease,
-      background .18s ease,
-      border-color .18s ease,
-      box-shadow .18s ease;
-  }
-
-  .category-action i {
-    font-size: .65rem;
-  }
-
-  .category-action:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 15px rgba(13, 77, 49, .08);
-  }
-
-  .category-action.details {
-    color: #176b45;
-  }
-
-  .category-action.details:hover {
-    background: #eaf7ef;
-    border-color: #b8d9c4;
-  }
-
-  .category-action.products {
-    color: #536c60;
-  }
-
-  .category-action.products:hover {
-    background: #f2f6f3;
-    border-color: #c5d4cc;
-  }
-
-  .category-action.edit {
-    color: #987526;
-  }
-
-  .category-action.edit:hover {
-    background: #f8f4e8;
-    border-color: #e3d6b1;
-  }
-
-  .category-action.delete {
-    color: #b33b3b;
-  }
-
-  .category-action.delete:hover {
-    background: #fff0f0;
-    border-color: #efc5c5;
-  }
-
-  /* =========================================================
-   MOBILE ACTIONS
-   ========================================================= */
-
-  .category-actions-label {
-    display: none;
-  }
-
-  /* =========================================================
-   NO RESULTS
-   ========================================================= */
-
-  .no-results {
-    display: none;
-    padding: 65px 20px;
-    text-align: center;
-    border: 1px solid var(--cat-border);
-    border-radius: 18px;
-    background: #fff;
-  }
-
-  .no-results.show {
-    display: block;
-  }
-
-  .no-results-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 17px;
-    background: var(--cat-primary-soft);
-    color: var(--cat-primary);
-    font-size: 1.3rem;
-  }
-
-  .no-results h3 {
-    margin: 0 0 6px;
-    color: var(--cat-primary-dark);
-    font-size: 1rem;
-  }
-
-  .no-results p {
-    margin: 0;
-    color: #829088;
-    font-size: .72rem;
-  }
-
-  /* =========================================================
-   PAGINAÇÃO
-   ========================================================= */
-
-  .categories-pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-top: 13px;
-    padding: 13px 15px;
-    border: 1px solid var(--cat-border);
-    border-radius: 13px;
-    background: rgba(255, 255, 255, .94);
-  }
-
-  .pagination-info {
-    color: #7d8b84;
-    font-size: .64rem;
-    font-weight: 700;
-  }
-
-  .pagination-controls {
-    display: flex;
     align-items: center;
     gap: 5px;
-  }
-
-  .pagination-button {
-    min-width: 32px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 8px;
-    border: 1px solid #e2e9e5;
-    border-radius: 8px;
-    background: #fff;
-    color: #65756d;
-    font-size: .62rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: .18s ease;
-  }
-
-  .pagination-button:hover:not(:disabled) {
-    border-color: #bad6c5;
-    background: #f4faf6;
-    color: var(--cat-primary);
-  }
-
-  .pagination-button.active {
-    border-color: var(--cat-primary);
-    background: var(--cat-primary);
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 9px;
+    background: rgba(6, 38, 24, .74);
     color: #fff;
+    backdrop-filter: blur(8px);
+    font-size: .68rem;
+    font-weight: 800;
   }
 
-  .pagination-button:disabled {
-    opacity: .4;
-    cursor: not-allowed;
-  }
-
-  .pagination-ellipsis {
-    padding: 0 3px;
-    color: #98a49e;
-    font-size: .65rem;
-  }
-
-  /* =========================================================
-   EMPTY
-   ========================================================= */
-
-  .categories-empty {
-    padding: 75px 25px;
-    text-align: center;
-    border: 1px dashed #cad8d0;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, .94);
-  }
-
-  .empty-icon {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 17px;
+  .category-card-body {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 20px;
-    background: var(--cat-primary-soft);
-    color: var(--cat-primary);
-    font-size: 1.7rem;
+    flex-direction: column;
+    min-height: 240px;
+    padding: 20px;
   }
 
-  .categories-empty h3 {
-    margin: 0 0 7px;
-    color: var(--cat-primary-dark);
-    font-size: 1.2rem;
-    font-weight: 850;
+  .category-card-title {
+    margin: 0;
+    color: #163e2c;
+    font-size: 1.12rem;
+    letter-spacing: -.015em;
   }
 
-  .categories-empty p {
-    max-width: 460px;
-    margin: 0 auto 22px;
-    color: #75827c;
+  .category-card-description {
+    margin: 11px 0 17px;
+    color: #728078;
     font-size: .78rem;
     line-height: 1.65;
   }
 
-  /* =========================================================
-   ANIMAÇÕES
-   ========================================================= */
-
-  @keyframes heroZoom {
-    0% {
-      transform: scale(1.05) translate3d(0, 0, 0);
-    }
-
-    100% {
-      transform: scale(1.10) translate3d(1%, -1%, 0);
-    }
+  .category-card-description-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  @keyframes gridMove {
-    from {
-      background-position: 0 0, 0 0;
-    }
-
-    to {
-      background-position: 56px 56px, 56px 56px;
-    }
+  .category-card-description-list li {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    color: #66756d;
+    font-size: .76rem;
+    line-height: 1.55;
   }
 
-  @keyframes particleFloat {
-
-    0%,
-    100% {
-      opacity: .25;
-      transform: translateY(0) scale(.8);
-    }
-
-    50% {
-      opacity: .9;
-      transform: translateY(-30px) scale(1.15);
-    }
+  .category-card-description-list li i {
+    flex: 0 0 auto;
+    margin-top: 4px;
+    color: #d9a441;
+    font-size: .62rem;
   }
 
-  @keyframes heroContent {
-    from {
-      opacity: 0;
-      transform: translateY(25px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .category-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 17px;
+    border-top: 1px solid #edf1ee;
   }
 
-  @keyframes panelFloat {
-
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-7px);
-    }
+  .category-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #176b45;
+    font-size: .7rem;
+    font-weight: 800;
   }
 
-  @keyframes gradientText {
-
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
+  .category-type i {
+    color: #d9a441;
   }
 
-  @keyframes rowIn {
-    from {
-      opacity: 0;
-      transform: translateY(7px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .category-card.hidden {
+    display: none;
   }
 
-  /* =========================================================
-   RESPONSIVIDADE
-   ========================================================= */
-
-  @media (max-width: 1100px) {
-
-    .categories-list-header,
-    .category-row {
-      grid-template-columns:
-        minmax(270px, 1fr) 80px 80px 95px 250px;
-    }
-
-    .category-action {
-      padding: 0 8px;
-    }
-
-    .category-action span {
-      display: none;
-    }
+  .no-results {
+    display: none;
+    padding: 60px 20px;
+    border: 1px dashed #d9e3dd;
+    border-radius: 18px;
+    text-align: center;
+    background: #fbfdfc;
   }
 
-  @media (max-width: 1000px) {
+  .no-results.visible {
+    display: block;
+  }
 
+  .no-results-icon {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: rgba(23, 107, 69, .08);
+    color: #176b45;
+    font-size: 1.1rem;
+  }
+
+  .no-results h3 {
+    margin: 0;
+    color: #183d2d;
+    font-size: 1rem;
+  }
+
+  .no-results p {
+    max-width: 430px;
+    margin: 8px auto 0;
+    color: #7a8781;
+    font-size: .8rem;
+    line-height: 1.6;
+  }
+
+  .categories-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-top: 28px;
+  }
+
+  .pagination-info {
+    color: #7a8781;
+    font-size: .75rem;
+  }
+
+  .pagination-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pagination-button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #dfe7e2;
+    border-radius: 9px;
+    background: #fff;
+    color: #627068;
+    cursor: pointer;
+    font-size: .74rem;
+    font-weight: 700;
+    transition: .2s ease;
+  }
+
+  .pagination-button:hover {
+    border-color: #176b45;
+    color: #176b45;
+  }
+
+  .pagination-button.active {
+    border-color: #176b45;
+    background: #176b45;
+    color: #fff;
+  }
+
+  .pagination-button:disabled {
+    cursor: not-allowed;
+    opacity: .45;
+  }
+
+  @media(max-width: 980px) {
     .categories-hero-inner {
       grid-template-columns: 1fr;
       gap: 35px;
     }
 
     .categories-panel {
-      max-width: 600px;
+      max-width: 560px;
+    }
+
+    .categories-grid-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .categories-toolbar {
+      grid-template-columns: 1fr;
+    }
+
+    .category-filters {
+      justify-content: flex-start;
     }
   }
 
-  @media (max-width: 850px) {
-
-    .categories-header {
-      align-items: flex-start;
-      flex-direction: column;
+  @media(max-width: 680px) {
+    .categories-hero {
+      min-height: auto;
     }
 
-    .create-category {
-      width: 100%;
+    .categories-hero-inner {
+      width: min(100% - 28px, 1180px);
+      padding: 65px 0;
+    }
+
+    .categories-main {
+      width: min(100% - 28px, 1180px);
+    }
+
+    .categories-header {
+      display: block;
+    }
+
+    .catalog-badge {
+      margin-top: 18px;
     }
 
     .categories-stats {
       grid-template-columns: 1fr;
     }
 
-    .categories-toolbar {
-      align-items: stretch;
-      flex-direction: column;
-    }
-
-    .category-search {
-      max-width: none;
-    }
-
-    .category-filters {
-      width: 100%;
-    }
-
-    .category-filter {
-      flex: 1;
-    }
-
-    /*
-     Em tablets removemos a falsa aparência de tabela.
-     Cada categoria vira um bloco compacto.
-  */
-
-    .categories-list {
-      border: 0;
-      background: transparent;
-      box-shadow: none;
-      overflow: visible;
-    }
-
-    .categories-list-header {
-      display: none;
-    }
-
-    .category-row {
+    .categories-grid-list {
       grid-template-columns: 1fr;
-      gap: 15px;
-      min-width: 0;
-      min-height: auto;
-      margin-bottom: 10px;
-      padding: 16px;
-      border: 1px solid var(--cat-border);
-      border-radius: 16px;
-      background: #fff;
-      box-shadow: 0 7px 24px rgba(13, 77, 49, .055);
     }
 
-    .category-row:hover {
-      box-shadow:
-        inset 4px 0 0 var(--cat-primary),
-        0 12px 28px rgba(13, 77, 49, .08);
-    }
-
-    .category-identity {
-      width: 100%;
-    }
-
-    .category-description {
-      max-width: 100%;
-      white-space: normal;
-    }
-
-    .category-number,
-    .category-status {
-      margin-right: 12px;
-    }
-
-    .category-row::after {
-      content: "";
-      display: block;
-    }
-
-    .category-actions {
-      justify-content: flex-start;
-      padding-top: 4px;
-      border-top: 1px solid #edf2ef;
-    }
-
-    .category-action {
-      flex: 1;
-      min-width: 0;
-      height: 38px;
-    }
-
-    .category-action span {
-      display: inline;
-    }
-  }
-
-  @media (max-width: 650px) {
-
-    .categories-hero {
-      min-height: auto;
-    }
-
-    .categories-hero-inner {
-      width: calc(100% - 28px);
-      padding: 85px 0 60px;
-    }
-
-    .categories-hero h1 {
-      font-size: clamp(2.8rem, 14vw, 4.2rem);
-    }
-
-    .categories-actions {
-      flex-direction: column;
-    }
-
-    .categories-btn {
-      width: 100%;
-    }
-
+    .categories-actions,
     .categories-info {
       flex-direction: column;
-      gap: 11px;
-    }
-
-    .categories-main {
-      width: calc(100% - 20px);
-      padding: 43px 0 65px;
+      align-items: flex-start;
     }
 
     .categories-pagination {
-      align-items: stretch;
       flex-direction: column;
+      align-items: flex-start;
     }
 
-    .pagination-controls {
-      justify-content: center;
-      flex-wrap: wrap;
+    .category-card {
+      min-height: auto;
     }
 
-    .category-image {
-      width: 56px;
-      height: 56px;
-      flex-basis: 56px;
-    }
-
-    .category-name {
-      font-size: .78rem;
-    }
-
-    .category-description {
-      font-size: .61rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-
-    .categories-panel {
-      padding: 21px;
-      border-radius: 20px;
-    }
-
-    .categories-panel-number {
-      font-size: 3.4rem;
-    }
-
-    .categories-main {
-      width: calc(100% - 14px);
-    }
-
-    .category-filters {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .category-filter:last-child {
-      grid-column: 1 / -1;
-    }
-
-    .category-row {
-      padding: 13px;
-    }
-
-    .category-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .category-action {
-      width: 100%;
-    }
-
-    .categories-pagination {
-      padding: 11px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
-      animation-duration: .01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: .01ms !important;
+    .category-card-image {
+      height: 220px;
     }
   }
 </style>
@@ -1470,13 +850,11 @@ Categorias Agrícolas | AgroIA Moxico
 
 {% block content %}
 
-<section class="categories-page">
+<div class="categories-page">
 
-  <!-- =====================================================
-       HERO
-       ===================================================== -->
+  <section class="categories-hero">
 
-  <section class="categories-hero" id="categoriesHero">
+    ```
     <div class="categories-hero-bg"></div>
     <div class="categories-hero-overlay"></div>
     <div class="categories-grid"></div>
@@ -1495,8 +873,8 @@ Categorias Agrícolas | AgroIA Moxico
       <div class="categories-hero-content">
 
         <span class="categories-label">
-          <i class="fas fa-layer-group"></i>
-          Gestão inteligente do campo
+          <i class="fas fa-seedling"></i>
+          Catálogo agrícola inteligente
         </span>
 
         <h1>
@@ -1505,127 +883,125 @@ Categorias Agrícolas | AgroIA Moxico
         </h1>
 
         <p class="categories-description">
-          Organize o conhecimento agrícola do
-          <strong>AgroIA Moxico</strong> através de uma estrutura
-          moderna, pesquisável e preparada para acompanhar
-          o crescimento da plataforma.
+          Um catálogo organizado de culturas agrícolas para facilitar
+          a classificação dos produtos no <strong>AgroIA Moxico</strong>.
+          Consulte as culturas disponíveis e filtre rapidamente por grupo agrícola.
         </p>
 
         <div class="categories-actions">
 
-          <a href="{% url 'categorias:categoria_criar' %}" class="categories-btn primary">
-            <i class="fas fa-plus"></i>
-            Nova categoria
-          </a>
-
-          <a href="{% url 'produtos:produtos' %}" class="categories-btn secondary">
+          <a href="{% url 'produtos:produtos' %}" class="categories-btn primary">
             <i class="fas fa-boxes-stacked"></i>
             Explorar produtos
+          </a>
+
+          <a href="#categoriasDisponiveis" class="categories-btn secondary">
+            <i class="fas fa-layer-group"></i>
+            Ver categorias
           </a>
 
         </div>
 
         <div class="categories-info">
-
           <span>
             <i class="fas fa-check-circle"></i>
-            Organização agrícola
+            Culturas organizadas
           </span>
 
           <span>
-            <i class="fas fa-search"></i>
-            Pesquisa rápida
+            <i class="fas fa-magnifying-glass"></i>
+            Pesquisa instantânea
           </span>
 
           <span>
             <i class="fas fa-brain"></i>
             Preparado para IA
           </span>
-
         </div>
 
       </div>
-
-
-      <!-- PAINEL -->
 
       <div class="categories-panel">
 
         <div class="categories-panel-top">
 
           <div class="categories-panel-icon">
-            <i class="fas fa-seedling"></i>
+            <i class="fas fa-leaf"></i>
           </div>
 
           <span class="categories-panel-status">
-            Sistema ativo
+            Catálogo ativo
           </span>
 
         </div>
 
         <p class="categories-panel-label">
-          Categorias cadastradas
+          Culturas agrícolas disponíveis
         </p>
 
-        <strong class="categories-panel-number">
-          {{ total_categorias|default:"0" }}
+        <strong class="categories-panel-number" id="heroCategoryCount">
+          33
         </strong>
 
         <p class="categories-panel-text">
-          Estrutura organizada para facilitar a gestão
-          dos produtos agrícolas e apoiar os processos
-          inteligentes do AgroIA Moxico.
+          Culturas agrícolas selecionadas para representar produtos
+          relevantes ao contexto de produção e classificação do AgroIA Moxico.
         </p>
 
         <div class="categories-panel-divider"></div>
 
         <div class="categories-panel-caption">
-          Categorias disponíveis
+          Exemplos
         </div>
 
         <div class="categories-chip-list">
 
-          {% if categorias %}
-
-          {% for categoria in categorias|slice:":6" %}
-
           <span class="categories-chip">
             <i class="fas fa-leaf"></i>
-            {{ categoria.nome }}
+            Mandioca
           </span>
-
-          {% endfor %}
-
-          {% else %}
 
           <span class="categories-chip">
-            <i class="fas fa-info-circle"></i>
-            Nenhuma categoria
+            <i class="fas fa-seedling"></i>
+            Batata-doce
           </span>
 
-          {% endif %}
+          <span class="categories-chip">
+            <i class="fas fa-wheat-awn"></i>
+            Milho
+          </span>
+
+          <span class="categories-chip">
+            <i class="fas fa-seedling"></i>
+            Feijão
+          </span>
+
+          <span class="categories-chip">
+            <i class="fas fa-apple-whole"></i>
+            Banana
+          </span>
+
+          <span class="categories-chip">
+            <i class="fas fa-carrot"></i>
+            Hortaliças
+          </span>
 
         </div>
 
       </div>
 
     </div>
+    ```
 
   </section>
 
-  <!-- =====================================================
-       CONTEÚDO
-       ===================================================== -->
-
   <main class="categories-main">
 
+    ```
     <a href="{% url 'produtos:produtos' %}" class="categories-back">
       <i class="fas fa-arrow-left"></i>
       Voltar para Produtos
     </a>
-
-
-    <!-- CABEÇALHO -->
 
     <div class="categories-header">
 
@@ -1633,56 +1009,43 @@ Categorias Agrícolas | AgroIA Moxico
 
         <small>
           <i class="fas fa-leaf"></i>
-          Administração agrícola
+          Classificação agrícola
         </small>
 
-        <h2>
-          Todas as categorias
-        </h2>
+        <h2>Categorias disponíveis</h2>
 
         <p>
-          Gerencie as categorias agrícolas de forma rápida,
-          organizada e eficiente, mesmo quando a plataforma
-          crescer para centenas ou milhares de registos.
+          Explore as culturas catalogadas no AgroIA Moxico.
+          Utilize a pesquisa ou os filtros para encontrar rapidamente uma categoria.
         </p>
 
       </div>
 
-      <a href="{% url 'categorias:categoria_criar' %}" class="create-category">
-        <i class="fas fa-plus"></i>
-        Nova categoria
-      </a>
+      <div class="catalog-badge">
+        <i class="fas fa-check-circle"></i>
+        Catálogo atualizado
+      </div>
 
     </div>
-
-
-    <!-- ESTATÍSTICAS -->
 
     <div class="categories-stats">
 
       <div class="stat-box">
-        <span>Total de categorias</span>
-        <strong>{{ total_categorias|default:"0" }}</strong>
+        <span>Culturas disponíveis</span>
+        <strong id="totalCategories">33</strong>
       </div>
 
       <div class="stat-box">
-        <span>Categorias ativas</span>
-        <strong>{{ categorias_ativas|default:"0" }}</strong>
+        <span>Grupos agrícolas</span>
+        <strong>4</strong>
       </div>
 
       <div class="stat-box">
-        <span>Produtos classificados</span>
-        <strong>{{ total_produtos_classificados|default:"0" }}</strong>
+        <span>Utilização</span>
+        <strong>Automática</strong>
       </div>
 
     </div>
-
-
-    {% if categorias %}
-
-    <!-- =================================================
-       TOOLBAR
-       ================================================= -->
 
     <div class="categories-toolbar">
 
@@ -1690,8 +1053,8 @@ Categorias Agrícolas | AgroIA Moxico
 
         <i class="fas fa-search"></i>
 
-        <input type="search" id="categorySearch" placeholder="Pesquisar por categoria ou descrição..."
-          autocomplete="off">
+        <input type="search" id="categorySearch" placeholder="Pesquisar cultura, grupo ou descrição..."
+          autocomplete="off" spellcheck="false">
 
         <button type="button" class="search-clear" id="searchClear" aria-label="Limpar pesquisa">
           <i class="fas fa-times"></i>
@@ -1705,249 +1068,45 @@ Categorias Agrícolas | AgroIA Moxico
           Todas
         </button>
 
-        <button type="button" class="category-filter" data-filter="active">
-          Ativas
+        <button type="button" class="category-filter" data-filter="cereal">
+          Cereais
         </button>
 
-        <button type="button" class="category-filter" data-filter="inactive">
-          Inativas
+        <button type="button" class="category-filter" data-filter="horticultura">
+          Hortaliças
+        </button>
+
+        <button type="button" class="category-filter" data-filter="fruta">
+          Frutas
+        </button>
+
+        <button type="button" class="category-filter" data-filter="oleaginosa">
+          Oleaginosas
         </button>
 
       </div>
 
     </div>
 
-
-    <!-- CABEÇALHO -->
-
-    <div class="list-heading">
+    <div class="list-heading" id="categoriasDisponiveis">
 
       <div class="list-title">
 
         <span class="list-icon">
-          <i class="fas fa-list"></i>
+          <i class="fas fa-layer-group"></i>
         </span>
 
-        <h2>
-          Categorias disponíveis
-        </h2>
+        <h2>Catálogo agrícola</h2>
 
       </div>
 
       <span class="list-count" id="categoriesCount">
-        {{ total_categorias|default:"0" }} categorias
+        33 categorias
       </span>
 
     </div>
 
-
-    <!-- =================================================
-       LISTA
-       ================================================= -->
-
-    <div class="categories-list" id="categoriesList">
-
-      <div class="categories-list-header">
-
-        <div>Categoria</div>
-        <div>Produtos</div>
-        <div>Ativos</div>
-        <div>Estado</div>
-        <div>Ações</div>
-
-      </div>
-
-
-      <div id="categoriesRows">
-
-        {% for categoria in categorias %}
-
-        <article class="category-row" data-category-name="{{ categoria.nome|lower }}"
-          data-category-description="{% if categoria.descricao %}{{ categoria.descricao|lower }}{% endif %}"
-          data-status="{% if categoria.ativo %}active{% else %}inactive{% endif %}">
-
-          <!-- CATEGORIA -->
-
-          <div class="category-identity">
-
-            <div class="category-image">
-
-              {% if "milho" in categoria.nome|lower %}
-
-              <img src="https://blog.agroline.com.br/wp-content/uploads/2021/12/field-g23aa7fdc0_1920-opt.jpg"
-                alt="Milho" loading="lazy">
-
-              {% elif "mandioca" in categoria.nome|lower %}
-
-              <img src="https://www.mandiocadamarela.com.br/images/plantacao.png" alt="Mandioca" loading="lazy">
-
-              {% elif "feijão" in categoria.nome|lower or "feijao" in categoria.nome|lower %}
-
-              <img src="https://altadefensivos.com.br/wp-content/uploads/2025/09/Design-sem-nome-37-1024x576.jpg"
-                alt="Feijão" loading="lazy">
-
-              {% elif "arroz" in categoria.nome|lower %}
-
-              <img
-                src="https://services.meteored.com/img/article/arroz-no-rs-acelera-plantio-supera-50-e-area-recua-5-em-meio-a-14-dias-decisivos-1761509065888_1280.jpg"
-                alt="Arroz" loading="lazy">
-
-              {% elif "tomate" in categoria.nome|lower %}
-
-              <img src="https://www.agroolhar.com.br/imgsite/noticias/plantacao-de-tomate.jpg" alt="Tomate"
-                loading="lazy">
-
-              {% elif "batata-doce" in categoria.nome|lower or "batata doce" in categoria.nome|lower %}
-
-              <img src="https://cursosbig.com.br/wp-content/uploads/2019/03/article.jpg" alt="Batata-doce"
-                loading="lazy">
-
-              {% elif "batata" in categoria.nome|lower %}
-
-              <img src="https://www.argenpapa.com.ar/images/noticias/1743030620_big.jpg" alt="Batata" loading="lazy">
-
-              {% elif "cebola" in categoria.nome|lower %}
-
-              <img
-                src="https://www.libracms.com/content/1001/live/profytodsd.nl/items/530/rasseninformatie-zaaiuien_LjQruFcHnPUR.jpg?v=65a5a82fc17dd"
-                alt="Cebola" loading="lazy">
-
-              {% elif "ginguba" in categoria.nome|lower or "amendoim" in categoria.nome|lower %}
-
-              <img src="https://www.theagribiz.com/wp-content/uploads/2025/04/Amendoim-1024x576.webp" alt="Ginguba"
-                loading="lazy">
-
-              {% else %}
-
-              <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=800&q=85"
-                alt="Cultura agrícola" loading="lazy">
-
-              {% endif %}
-
-            </div>
-
-
-            <div class="category-info">
-
-              <span class="category-name">
-                {{ categoria.nome }}
-              </span>
-
-              <span class="category-description">
-
-                {% if categoria.descricao %}
-                {{ categoria.descricao|truncatechars:110 }}
-                {% else %}
-                Categoria agrícola registada no AgroIA Moxico.
-                {% endif %}
-
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <!-- PRODUTOS -->
-
-          <div class="category-number">
-
-            <span class="category-number-icon">
-              <i class="fas fa-box-open"></i>
-            </span>
-
-            {{ categoria.quantidade_produtos|default:"0" }}
-
-          </div>
-
-
-          <!-- PRODUTOS ATIVOS -->
-
-          <div class="category-number active-number">
-
-            <span class="category-number-icon">
-              <i class="fas fa-check"></i>
-            </span>
-
-            {{ categoria.quantidade_produtos_ativos|default:"0" }}
-
-          </div>
-
-
-          <!-- ESTADO -->
-
-          <div>
-
-            {% if categoria.ativo %}
-
-            <span class="category-status active">
-              <i class="fas fa-circle"></i>
-              Ativa
-            </span>
-
-            {% else %}
-
-            <span class="category-status inactive">
-              <i class="fas fa-circle"></i>
-              Inativa
-            </span>
-
-            {% endif %}
-
-          </div>
-
-
-          <!-- AÇÕES -->
-
-          <div class="category-actions">
-
-            <a href="{% url 'categorias:categoria_detalhes' categoria.pk %}" class="category-action details"
-              aria-label="Ver detalhes de {{ categoria.nome }}" title="Ver detalhes">
-
-              <i class="fas fa-eye"></i>
-              <span>Detalhes</span>
-
-            </a>
-
-
-            <a href="{% url 'produtos:produtos' %}?categoria={{ categoria.pk }}" class="category-action products"
-              aria-label="Ver produtos de {{ categoria.nome }}" title="Ver produtos">
-
-              <i class="fas fa-boxes-stacked"></i>
-              <span>Produtos</span>
-
-            </a>
-
-
-            <a href="{% url 'categorias:categoria_editar' categoria.pk %}" class="category-action edit"
-              aria-label="Editar {{ categoria.nome }}" title="Editar categoria">
-
-              <i class="fas fa-pen"></i>
-              <span>Editar</span>
-
-            </a>
-
-
-            <a href="{% url 'categorias:categoria_eliminar' categoria.pk %}" class="category-action delete"
-              aria-label="Eliminar {{ categoria.nome }}" title="Eliminar categoria">
-
-              <i class="fas fa-trash"></i>
-              <span>Eliminar</span>
-
-            </a>
-
-          </div>
-
-        </article>
-
-        {% endfor %}
-
-      </div>
-
-    </div>
-
-
-    <!-- SEM RESULTADOS -->
+    <div class="categories-grid-list" id="categoriesGrid"></div>
 
     <div class="no-results" id="noResults">
 
@@ -1955,18 +1114,13 @@ Categorias Agrícolas | AgroIA Moxico
         <i class="fas fa-search"></i>
       </div>
 
-      <h3>
-        Nenhuma categoria encontrada
-      </h3>
+      <h3>Nenhuma categoria encontrada</h3>
 
       <p>
-        Tente pesquisar por outro nome ou altere o filtro.
+        Não encontramos nenhuma categoria correspondente à pesquisa ou ao grupo selecionado.
       </p>
 
     </div>
-
-
-    <!-- PAGINAÇÃO -->
 
     <div class="categories-pagination">
 
@@ -1974,774 +1128,1021 @@ Categorias Agrícolas | AgroIA Moxico
         A mostrar categorias
       </span>
 
-      <div class="pagination-controls" id="paginationControls">
-      </div>
+      <div class="pagination-controls" id="paginationControls"></div>
 
     </div>
-
-
-    {% else %}
-
-    <!-- =================================================
-       ESTADO VAZIO
-       ================================================= -->
-
-    <div class="categories-empty">
-
-      <div class="empty-icon">
-        <i class="fas fa-layer-group"></i>
-      </div>
-
-      <h3>
-        Nenhuma categoria cadastrada
-      </h3>
-
-      <p>
-        Comece criando a primeira categoria agrícola
-        do AgroIA Moxico para organizar os seus produtos.
-      </p>
-
-      <a href="{% url 'categorias:categoria_criar' %}" class="create-category">
-
-        <i class="fas fa-plus"></i>
-        Criar primeira categoria
-
-      </a>
-
-    </div>
-
-    {% endif %}
+    ```
 
   </main>
 
-</section>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
 
 <script>
 
-  document.addEventListener("DOMContentLoaded", function () {
+  (function () {
 
-    const rowsContainer =
-      document.getElementById("categoriesRows");
+    "use strict";
 
-    const searchInput =
-      document.getElementById("categorySearch");
+    const grid = document.getElementById("categoriesGrid");
+    const searchInput = document.getElementById("categorySearch");
+    const searchClear = document.getElementById("searchClear");
+    const noResults = document.getElementById("noResults");
+    const categoriesCount = document.getElementById("categoriesCount");
+    const totalCategories = document.getElementById("totalCategories");
+    const heroCategoryCount = document.getElementById("heroCategoryCount");
+    const paginationInfo = document.getElementById("paginationInfo");
+    const paginationControls = document.getElementById("paginationControls");
+    const filterButtons = document.querySelectorAll(".category-filter");
 
-    const searchClear =
-      document.getElementById("searchClear");
-
-    const noResults =
-      document.getElementById("noResults");
-
-    const countElement =
-      document.getElementById("categoriesCount");
-
-    const paginationInfo =
-      document.getElementById("paginationInfo");
-
-    const paginationControls =
-      document.getElementById("paginationControls");
-
-    const filterButtons =
-      document.querySelectorAll(".category-filter");
-
-    const hero =
-      document.getElementById("categoriesHero");
-
-
-    if (!rowsContainer) {
-      return;
-    }
-
-
-    const rows =
-      Array.from(
-        rowsContainer.querySelectorAll(".category-row")
-      );
-
-
-    /*
-       12 categorias por página.
-       Isto mantém a interface rápida mesmo
-       quando existirem centenas de categorias.
-    */
-
-    const ITEMS_PER_PAGE = 12;
+    const pageSize = 9;
 
     let currentPage = 1;
-    let currentFilter = "all";
-    let currentSearch = "";
+    let activeFilter = "all";
+    let searchTerm = "";
 
+    const categories = [
 
-    function normalizeText(value) {
+      {
+        name: "Milho",
+        type: "cereal",
+        label: "Cereal",
+        icon: "fa-wheat-awn",
+        image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=1000&q=90",
+        alt: "Milho",
+        description: [
+          "Cereal de grande importância alimentar.",
+          "Utilizado na alimentação humana e animal.",
+          "Cultura de elevada relevância agrícola."
+        ]
+      },
+
+      {
+        name: "Arroz",
+        type: "cereal",
+        label: "Cereal",
+        icon: "fa-wheat-awn",
+        image: "https://economiarural.ao/wp-content/uploads/2023/04/Arroz-cultura26-1.jpg",
+        alt: "Arroz em espigas com grãos",
+        description: [
+          "Cereal cultivado para produção de grãos.",
+          "Base alimentar importante em Angola.",
+          "Cultivado em diferentes sistemas agrícolas."
+        ]
+      },
+
+      {
+        name: "Trigo",
+        type: "cereal",
+        label: "Cereal",
+        icon: "fa-wheat-awn",
+        image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=1000&q=90",
+        alt: "Trigo",
+        description: [
+          "Cereal destinado principalmente à produção de farinha.",
+          "Utilizado em pães e massas.",
+          "Importante para a indústria alimentar."
+        ]
+      },
+
+      {
+        name: "Feijão",
+        type: "oleaginosa",
+        label: "Leguminosa",
+        icon: "fa-seedling",
+        image: "https://images.unsplash.com/photo-1763368397625-32c8f75fed44?auto=format&fit=crop&fm=jpg&q=85&w=1200",
+        alt: "Grãos de feijão",
+        description: [
+          "Leguminosa de grande importância alimentar.",
+          "Fonte de proteína vegetal.",
+          "Cultivada amplamente pela agricultura familiar."
+        ]
+      },
+
+      {
+        name: "Mandioca",
+        type: "horticultura",
+        label: "Raiz",
+        icon: "fa-leaf",
+        image: "https://economiarural.ao/wp-content/uploads/2023/11/image-13.png",
+        alt: "Raízes de mandioca colhidas em Angola",
+        description: [
+          "Raiz de elevada importância alimentar em Angola.",
+          "Cultivada em diversas regiões do país.",
+          "Pode ser utilizada fresca ou transformada."
+        ]
+      },
+
+      {
+        name: "Batata",
+        type: "horticultura",
+        label: "Tubérculo",
+        icon: "fa-leaf",
+        image: "https://www.kew.org/sites/default/files/styles/original/public/2022-07/Picture_of_many_potatoes.jpg.webp?itok=RmCx1XI4",
+        alt: "Batatas frescas",
+        description: [
+          "Tubérculo utilizado na alimentação.",
+          "Importante para consumo e comercialização.",
+          "Apresenta grande diversidade de utilização culinária."
+        ]
+      },
+
+      {
+        name: "Batata-doce",
+        type: "horticultura",
+        label: "Raiz",
+        icon: "fa-leaf",
+        image: "https://groombridgefarmshop.co.uk/cdn/shop/products/Sweetpotato.jpg?v=1623251168",
+        alt: "Batata-doce",
+        description: [
+          "Raiz rica em energia e utilizada na alimentação.",
+          "Cultivada em diferentes regiões de Angola.",
+          "Importante para sistemas de agricultura familiar."
+        ]
+      },
+
+      {
+        name: "Tomate",
+        type: "horticultura",
+        label: "Fruto",
+        icon: "fa-apple-whole",
+        image: "https://images.unsplash.com/photo-1660788728979-d53cebe62f0f?auto=format&fit=crop&fm=jpg&q=85&w=1200",
+        alt: "Tomates frescos",
+        description: [
+          "Fruto hortícola de grande importância alimentar.",
+          "Utilizado fresco e em preparações culinárias.",
+          "Possui relevância comercial para produtores."
+        ]
+      },
+
+      {
+        name: "Cebola",
+        type: "horticultura",
+        label: "Hortaliça",
+        icon: "fa-carrot",
+        image: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=1000&q=90",
+        alt: "Cebolas",
+        description: [
+          "Bulbo utilizado na alimentação.",
+          "Muito utilizado como tempero.",
+          "Pode ser comercializado fresco."
+        ]
+      },
+
+      {
+        name: "Alho",
+        type: "horticultura",
+        label: "Hortaliça",
+        icon: "fa-carrot",
+        image: "https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?auto=format&fit=crop&w=1000&q=90",
+        alt: "Alho",
+        description: [
+          "Bulbo utilizado como condimento.",
+          "Presente em diversas preparações alimentares.",
+          "Pode ser armazenado após a colheita."
+        ]
+      },
+
+      {
+        name: "Hortaliças",
+        type: "horticultura",
+        label: "Grupo hortícola",
+        icon: "fa-carrot",
+        image: "https://plataformacipra.gov.ao/public/ficheiros/noticias/520209231104531693692293.jpeg",
+        alt: "Hortaliças em cultivo em Angola",
+        description: [
+          "Grupo que reúne diversas culturas hortícolas.",
+          "Inclui folhas, raízes e frutos.",
+          "Destinado principalmente à alimentação."
+        ]
+      },
+
+      {
+        name: "Couve",
+        type: "horticultura",
+        label: "Hortaliça folhosa",
+        icon: "fa-leaf",
+        image: "https://www.streambankgardens.com/cdn/shop/products/Collards_Champion.jpg?v=1519329441&width=1200",
+        alt: "Folhas frescas de couve",
+        description: [
+          "Hortaliça cultivada principalmente pelas folhas.",
+          "Diferencia-se do repolho por não formar cabeça compacta.",
+          "Muito utilizada na alimentação."
+        ]
+      },
+
+      {
+        name: "Alface",
+        type: "horticultura",
+        label: "Hortaliça folhosa",
+        icon: "fa-leaf",
+        image: "https://berliner-zeitung.imgix.net/2025/05/26/8a981902-87ae-431d-a20c-07f4ee2cf69d.jpeg?auto=compress&auto=format&fit=max&rect=0%2C260%2C5000%2C2812&w=1880",
+        alt: "Cabeça de alface fresca",
+        description: [
+          "Hortaliça folhosa de ciclo relativamente curto.",
+          "Consumida principalmente fresca.",
+          "Muito utilizada em saladas."
+        ]
+      },
+
+      {
+        name: "Cenoura",
+        type: "horticultura",
+        label: "Raiz",
+        icon: "fa-carrot",
+        image: "https://images.unsplash.com/photo-1447175008436-054170c2e979?auto=format&fit=crop&w=1000&q=90",
+        alt: "Cenouras",
+        description: [
+          "Raiz hortícola de utilização alimentar.",
+          "Pode ser consumida fresca ou preparada.",
+          "Cultivada em diferentes sistemas hortícolas."
+        ]
+      },
+
+      {
+        name: "Repolho",
+        type: "horticultura",
+        label: "Hortaliça",
+        icon: "fa-carrot",
+        image: "https://dharaseeds.com/cdn/shop/files/cairo-cabbage-seeds-non-gmo-high-germination.webp?v=1764061516&width=1200",
+        alt: "Cabeça de repolho verde",
+        description: [
+          "Forma uma cabeça compacta de folhas.",
+          "Utilizado fresco e em diferentes preparações.",
+          "É uma cultura hortícola importante em Angola."
+        ]
+      },
+
+      {
+        name: "Pimento",
+        type: "horticultura",
+        label: "Hortaliça-fruto",
+        icon: "fa-pepper-hot",
+        image: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?auto=format&fit=crop&w=1000&q=90",
+        alt: "Pimentos",
+        description: [
+          "Hortaliça-fruto de diferentes cores e variedades.",
+          "Utilizada fresca ou cozida.",
+          "Também utilizada como condimento."
+        ]
+      },
+
+      {
+        name: "Pepino",
+        type: "horticultura",
+        label: "Hortaliça-fruto",
+        icon: "fa-carrot",
+        image: "https://images.unsplash.com/photo-1604977042946-1eecc30f269e?auto=format&fit=crop&w=1000&q=90",
+        alt: "Pepinos",
+        description: [
+          "Hortaliça-fruto consumida principalmente fresca.",
+          "Muito utilizada em saladas.",
+          "Também pode ser utilizada em conservas."
+        ]
+      },
+
+      {
+        name: "Abóbora",
+        type: "horticultura",
+        label: "Hortaliça-fruto",
+        icon: "fa-carrot",
+        image: "https://kj1bcdn.b-cdn.net/media/59593/597113bd2c53926793ff74a0e881a9ee.jpg",
+        alt: "Abóboras",
+        description: [
+          "Cultura de fruto utilizada na alimentação.",
+          "Pode apresentar diferentes tamanhos e variedades.",
+          "Utilizada em várias preparações culinárias."
+        ]
+      },
+
+      {
+        name: "Berinjela",
+        type: "horticultura",
+        label: "Hortaliça-fruto",
+        icon: "fa-carrot",
+        image: "https://images.unsplash.com/photo-1615484477201-9f4953340fab?auto=format&fit=crop&w=1000&q=90",
+        alt: "Berinjelas",
+        description: [
+          "Hortaliça-fruto de utilização alimentar.",
+          "Consumida principalmente cozida.",
+          "Cultivada em sistemas hortícolas."
+        ]
+      },
+
+      {
+        name: "Ginguba / Amendoim",
+        type: "oleaginosa",
+        label: "Oleaginosa",
+        icon: "fa-seedling",
+        image: "https://eit-wagpress-prod.s3.amazonaws.com/media/images/peanut_pods.2e16d0ba.fill-1200x700.jpg",
+        alt: "Vagens de ginguba ou amendoim",
+        description: [
+          "Leguminosa também conhecida em Angola como ginguba.",
+          "Produz sementes utilizadas na alimentação.",
+          "Possui importância económica e agroindustrial."
+        ]
+      },
+
+      {
+        name: "Soja",
+        type: "oleaginosa",
+        label: "Oleaginosa",
+        icon: "fa-seedling",
+        image: "https://cloudfront-us-east-1.images.arcpublishing.com/infobae/V33TPTL6OREKXHXO4QQHGDUSW4.jpg",
+        alt: "Vagens de soja",
+        description: [
+          "Leguminosa cultivada para produção de grãos.",
+          "Utilizada na alimentação e produção de óleo.",
+          "Também possui utilização na alimentação animal."
+        ]
+      },
+
+      {
+        name: "Girassol",
+        type: "oleaginosa",
+        label: "Oleaginosa",
+        icon: "fa-sun",
+        image: "https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=1000&q=90",
+        alt: "Girassol",
+        description: [
+          "Cultura oleaginosa cultivada pelas suas sementes.",
+          "Utilizada principalmente na produção de óleo.",
+          "Possui valor alimentar e industrial."
+        ]
+      },
+
+      {
+        name: "Banana",
+        type: "fruta",
+        label: "Fruta",
+        icon: "fa-apple-whole",
+        image: "https://images.unsplash.com/photo-1752006477846-9634fd202d57?auto=format&fit=crop&fm=jpg&q=85&w=1200",
+        alt: "Cacho de bananas",
+        description: [
+          "Fruta tropical de elevada produção em Angola.",
+          "Consumida fresca e utilizada em diferentes preparações.",
+          "Possui grande importância comercial."
+        ]
+      },
+
+      {
+        name: "Abacaxi",
+        type: "fruta",
+        label: "Fruta",
+        icon: "fa-apple-whole",
+        image: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=1000&q=90",
+        alt: "Abacaxi",
+        description: [
+          "Fruta tropical de sabor característico.",
+          "Consumida fresca ou processada.",
+          "Possui valor comercial e alimentar."
+        ]
+      },
+
+      {
+        name: "Manga",
+        type: "fruta",
+        label: "Fruta",
+        icon: "fa-apple-whole",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Mangoes_in_a_basket_01.jpg/1280px-Mangoes_in_a_basket_01.jpg",
+        alt: "Mangas frescas",
+        description: [
+          "Fruta tropical produzida em Angola.",
+          "Consumida principalmente fresca.",
+          "Também pode ser utilizada em sumos e derivados."
+        ]
+      },
+
+      {
+        name: "Mamão",
+        type: "fruta",
+        label: "Fruta",
+        icon: "fa-apple-whole",
+        image: "https://images.unsplash.com/photo-1526318472351-c75fcf070305?auto=format&fit=crop&w=1000&q=90",
+        alt: "Mamão",
+        description: [
+          "Fruta tropical de consumo fresco.",
+          "Possui polpa macia e sabor característico.",
+          "Pode ser utilizada em sumos e preparações."
+        ]
+      },
+
+      {
+        name: "Laranja",
+        type: "fruta",
+        label: "Fruta cítrica",
+        icon: "fa-apple-whole",
+        image: "https://images.unsplash.com/photo-1547514701-42782101795e?auto=format&fit=crop&w=1000&q=90",
+        alt: "Laranjas",
+        description: [
+          "Fruta cítrica de consumo fresco.",
+          "Utilizada também na produção de sumos.",
+          "Possui importância alimentar e comercial."
+        ]
+      },
+
+      {
+        name: "Limão",
+        type: "fruta",
+        label: "Fruta cítrica",
+        icon: "fa-apple-whole",
+        image: "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=1000&q=90",
+        alt: "Limões",
+        description: [
+          "Fruta cítrica utilizada na alimentação.",
+          "Muito utilizada em bebidas e temperos.",
+          "Pode ser comercializada fresca."
+        ]
+      },
+
+      {
+        name: "Uva",
+        type: "fruta",
+        label: "Fruta",
+        icon: "fa-apple-whole",
+        image: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=1000&q=90",
+        alt: "Uvas",
+        description: [
+          "Fruta cultivada em cachos.",
+          "Consumida fresca ou transformada.",
+          "Pode ser utilizada em sumos e derivados."
+        ]
+      },
+
+      {
+        name: "Cacau",
+        type: "fruta",
+        label: "Cultura tropical",
+        icon: "fa-apple-whole",
+        image: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?auto=format&fit=crop&w=1000&q=90",
+        alt: "Cacau",
+        description: [
+          "Cultura tropical destinada à produção de amêndoas.",
+          "Matéria-prima para produtos alimentares.",
+          "Possui importância comercial e agroindustrial."
+        ]
+      },
+
+      {
+        name: "Café",
+        type: "fruta",
+        label: "Cultura perene",
+        icon: "fa-coffee",
+        image: "https://angola-coffee.com/cdn/shop/files/shutterstock_1924016978.jpg?v=1740048037&width=1080",
+        alt: "Cerejas de café de Angola",
+        description: [
+          "Cultura perene de importância histórica em Angola.",
+          "Produz frutos conhecidos como cerejas de café.",
+          "As sementes são utilizadas na produção de café."
+        ]
+      },
+
+      {
+        name: "Cana-de-açúcar",
+        type: "cereal",
+        label: "Cultura agrícola",
+        icon: "fa-seedling",
+        image: "https://www.novagazeta.co.ao/uploads/images/2019/12/angola-precisa-de-10-mil-produtores-de-cana-de-acucar-1576147999.jpg",
+        alt: "Cana-de-açúcar em Angola",
+        description: [
+          "Cultura utilizada principalmente na produção de açúcar.",
+          "Possui importância industrial.",
+          "Também pode originar diferentes derivados."
+        ]
+      },
+
+      {
+        name: "Algodão",
+        type: "oleaginosa",
+        label: "Cultura de fibra",
+        icon: "fa-seedling",
+        image: "https://static.africa-press.net/angola/sites/65/2023/01/postQueueImg_1672544635.07.jpg",
+        alt: "Algodão em Angola",
+        description: [
+          "Cultura cultivada principalmente pela sua fibra.",
+          "Utilizada na indústria têxtil.",
+          "Possui importância agrícola e industrial."
+        ]
+      }
+
+    ];
+
+    function normalize(value) {
 
       return String(value || "")
-        .toLowerCase()
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[-_/]+/g, " ")
+        .replace(/[^\w\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
 
     }
 
+    function getCategorySearchText(category) {
 
-    function getFilteredRows() {
+      const aliases = {
 
-      const search =
-        normalizeText(
-          currentSearch.trim()
-        );
+        milho: "milho cereal cereais grao graos",
+        arroz: "arroz cereal cereais grao graos",
+        trigo: "trigo cereal cereais grao graos",
+        feijao: "feijao feijões leguminosa legumes",
+        mandioca: "mandioca raiz raizes horticultura hortaliça hortaliças",
+        batata: "batata tuberculo tuberculos horticultura hortaliça hortaliças",
+        "batata-doce": "batata doce batata-doce raiz raizes horticultura hortaliça hortaliças",
+        tomate: "tomate fruto fruta horticultura hortaliça hortaliças",
+        cebola: "cebola bulbo horticultura hortaliça hortaliças",
+        alho: "alho bulbo horticultura hortaliça hortaliças",
+        hortalicas: "hortalicas hortaliças horticultura verduras legumes",
+        couve: "couve folha folhas horticultura hortaliça hortaliças",
+        alface: "alface folhas horticultura hortaliça hortaliças",
+        cenoura: "cenoura raiz raizes horticultura hortaliça hortaliças",
+        repolho: "repolho couve repolho horticultura hortaliça hortaliças",
+        pimento: "pimento pimentao horticultura hortaliça hortaliças",
+        pepino: "pepino horticultura hortaliça hortaliças",
+        abobora: "abobora abóbora horticultura hortaliça hortaliças",
+        berinjela: "berinjela beringela horticultura hortaliça hortaliças",
+        ginguba: "ginguba amendoim amendoins oleaginosa oleaginosas leguminosa",
+        soja: "soja oleaginosa oleaginosas leguminosa",
+        girassol: "girassol oleaginosa oleaginosas",
+        banana: "banana bananas fruta frutas",
+        abacaxi: "abacaxi ananas ananás fruta frutas",
+        manga: "manga mangas fruta frutas",
+        mamao: "mamao mamão fruta frutas",
+        laranja: "laranja laranjas citrico citricos fruta frutas",
+        limao: "limao limão citrico citricos fruta frutas",
+        uva: "uva uvas fruta frutas",
+        cacau: "cacau fruta frutas cultura tropical",
+        cafe: "cafe café cultura perene fruta frutas",
+        "cana-de-acucar": "cana de acucar cana-de-acucar cana-de-açúcar cereal cereais cultura",
+        algodao: "algodao algodão oleaginosa oleaginosas fibra"
 
+      };
 
-      return rows.filter(function (row) {
+      const key = normalize(category.name.split(" / ")[0]);
 
-        const name =
-          normalizeText(
-            row.dataset.categoryName
-          );
+      return normalize([
+        category.name,
+        category.type,
+        category.label,
+        category.description.join(" "),
+        aliases[key] || ""
+      ].join(" "));
 
-        const description =
-          normalizeText(
-            row.dataset.categoryDescription
-          );
+    }
 
-        const status =
-          row.dataset.status || "";
+    function matchesSearch(category) {
 
+      const term = normalize(searchTerm);
 
-        const matchesSearch =
-          !search ||
-          name.includes(search) ||
-          description.includes(search);
+      if (!term) {
+        return true;
+      }
 
+      const searchText = getCategorySearchText(category);
+      const words = term.split(" ").filter(Boolean);
 
-        const matchesFilter =
-          currentFilter === "all" ||
-          status === currentFilter;
+      return searchText.includes(term) ||
+        words.every(word => searchText.includes(word));
 
+    }
 
-        return (
-          matchesSearch &&
-          matchesFilter
+    function matchesFilter(category) {
+
+      if (activeFilter === "all") {
+        return true;
+      }
+
+      const text = getCategorySearchText(category);
+
+      const groups = {
+
+        cereal: [
+          "cereal",
+          "cereais",
+          "milho",
+          "arroz",
+          "trigo",
+          "cana de acucar"
+        ],
+
+        horticultura: [
+          "horticultura",
+          "hortalica",
+          "hortalicas",
+          "raiz",
+          "raizes",
+          "tuberculo",
+          "tuberculos",
+          "bulbo",
+          "tomate",
+          "cebola",
+          "alho",
+          "couve",
+          "alface",
+          "cenoura",
+          "repolho",
+          "pimento",
+          "pepino",
+          "abobora",
+          "berinjela",
+          "mandioca",
+          "batata"
+        ],
+
+        fruta: [
+          "fruta",
+          "frutas",
+          "banana",
+          "abacaxi",
+          "ananás",
+          "manga",
+          "mamao",
+          "laranja",
+          "limao",
+          "uva",
+          "cacau",
+          "cafe"
+        ],
+
+        oleaginosa: [
+          "oleaginosa",
+          "oleaginosas",
+          "ginguba",
+          "amendoim",
+          "soja",
+          "girassol",
+          "algodao"
+        ]
+
+      };
+
+      return groups[activeFilter].some(value =>
+        text.includes(normalize(value))
+      );
+
+    }
+
+    function getFilteredCategories() {
+
+      return categories.filter(category =>
+        matchesFilter(category) && matchesSearch(category)
+      );
+
+    }
+
+    function createCard(category, index) {
+
+      const article = document.createElement("article");
+
+      article.className = "category-card";
+      article.dataset.categoryName = normalize(category.name);
+      article.dataset.categoryType = normalize(category.type);
+      article.dataset.categoryDescription =
+        normalize(category.description.join(" "));
+
+      article.innerHTML = `
+
+      <div class="category-card-image">
+
+        <span class="category-number-badge">
+          <i class="fas fa-seedling"></i>
+          ${String(index + 1).padStart(2, "0")}
+        </span>
+
+        <img
+          src="${category.image}"
+          alt="${category.alt}"
+          loading="lazy"
+        >
+
+      </div>
+
+      <div class="category-card-body">
+
+        <h3 class="category-card-title">
+          ${category.name}
+        </h3>
+
+        <div class="category-card-description">
+
+          <ul class="category-card-description-list">
+
+            ${category.description.map(item => `
+
+              <li>
+                <i class="fas fa-circle"></i>
+                <span>${item}</span>
+              </li>
+
+            `).join("")}
+
+          </ul>
+
+        </div>
+
+        <div class="category-card-footer">
+
+          <span class="category-type">
+            <i class="fas ${category.icon}"></i>
+            ${category.label}
+          </span>
+
+        </div>
+
+      </div>
+
+    `;
+
+      const image = article.querySelector("img");
+
+      image.addEventListener("error", function () {
+
+        const container =
+          article.querySelector(".category-card-image");
+
+        this.removeAttribute("src");
+        this.style.display = "none";
+
+        if (container) {
+
+          container.style.background =
+            "linear-gradient(135deg,#0d4d31,#176b45)";
+
+        }
+
+      });
+
+      return article;
+
+    }
+
+    function renderCards(filteredCategories) {
+
+      grid.innerHTML = "";
+
+      filteredCategories.forEach(category => {
+
+        grid.appendChild(
+          createCard(
+            category,
+            categories.indexOf(category)
+          )
         );
 
       });
 
     }
 
+    function updateSearchButton() {
 
-    function renderPagination(totalPages) {
+      searchClear.classList.toggle(
+        "visible",
+        Boolean(searchTerm.trim())
+      );
 
-      if (!paginationControls) {
-        return;
-      }
+    }
 
+    function updateCounters(filteredCategories) {
+
+      const total = categories.length;
+      const filtered = filteredCategories.length;
+
+      totalCategories.textContent = total;
+      heroCategoryCount.textContent = total;
+
+      categoriesCount.textContent =
+        filtered === total
+          ? `${total} categorias`
+          : `${filtered} de ${total} categorias`;
+
+    }
+
+    function scrollToList() {
+
+      document
+        .getElementById("categoriasDisponiveis")
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+    }
+
+    function renderPagination(totalItems) {
 
       paginationControls.innerHTML = "";
 
+      const totalPages =
+        Math.ceil(totalItems / pageSize);
 
-      const filtered =
-        getFilteredRows();
+      if (totalPages <= 1) {
 
+        paginationInfo.textContent =
+          totalItems
+            ? `A mostrar ${totalItems} ${totalItems === 1 ? "categoria" : "categorias"}`
+            : "Nenhuma categoria";
 
-      if (!filtered.length) {
         return;
+
       }
 
+      const start =
+        (currentPage - 1) * pageSize + 1;
+
+      const end =
+        Math.min(currentPage * pageSize, totalItems);
+
+      paginationInfo.textContent =
+        `A mostrar ${start}–${end} de ${totalItems} categorias`;
 
       const previous =
         document.createElement("button");
 
-
       previous.type = "button";
-
-      previous.className =
-        "pagination-button";
-
+      previous.className = "pagination-button";
       previous.innerHTML =
         '<i class="fas fa-chevron-left"></i>';
-
       previous.disabled =
         currentPage === 1;
 
+      previous.addEventListener("click", function () {
 
-      previous.addEventListener(
-        "click",
-        function () {
+        if (currentPage > 1) {
 
-          if (currentPage > 1) {
-
-            currentPage--;
-
-            render();
-
-            scrollToList();
-
-          }
+          currentPage--;
+          render();
+          scrollToList();
 
         }
-      );
 
+      });
 
       paginationControls.appendChild(previous);
 
-
-      const total =
-        totalPages;
-
-
-      let start =
-        Math.max(
-          1,
-          currentPage - 2
-        );
-
-
-      let end =
-        Math.min(
-          total,
-          start + 4
-        );
-
-
-      if (end - start < 4) {
-
-        start =
-          Math.max(
-            1,
-            end - 4
-          );
-
-      }
-
-
-      if (start > 1) {
-
-        addPageButton(1);
-
-        if (start > 2) {
-          addEllipsis();
-        }
-
-      }
-
-
       for (
-        let page = start;
-        page <= end;
+        let page = 1;
+        page <= totalPages;
         page++
       ) {
-
-        addPageButton(page);
-
-      }
-
-
-      if (end < total) {
-
-        if (end < total - 1) {
-          addEllipsis();
-        }
-
-        addPageButton(total);
-
-      }
-
-
-      const next =
-        document.createElement("button");
-
-
-      next.type = "button";
-
-      next.className =
-        "pagination-button";
-
-      next.innerHTML =
-        '<i class="fas fa-chevron-right"></i>';
-
-      next.disabled =
-        currentPage === totalPages;
-
-
-      next.addEventListener(
-        "click",
-        function () {
-
-          if (
-            currentPage <
-            totalPages
-          ) {
-
-            currentPage++;
-
-            render();
-
-            scrollToList();
-
-          }
-
-        }
-      );
-
-
-      paginationControls.appendChild(next);
-
-
-      function addPageButton(page) {
 
         const button =
           document.createElement("button");
 
-
         button.type = "button";
-
         button.className =
           "pagination-button";
 
-        button.textContent =
-          page;
-
+        button.textContent = page;
 
         if (page === currentPage) {
+          button.classList.add("active");
+        }
 
-          button.classList.add(
-            "active"
-          );
+        button.addEventListener("click", function () {
+
+          currentPage = page;
+          render();
+          scrollToList();
+
+        });
+
+        paginationControls.appendChild(button);
+
+      }
+
+      const next =
+        document.createElement("button");
+
+      next.type = "button";
+      next.className = "pagination-button";
+      next.innerHTML =
+        '<i class="fas fa-chevron-right"></i>';
+      next.disabled =
+        currentPage === totalPages;
+
+      next.addEventListener("click", function () {
+
+        if (currentPage < totalPages) {
+
+          currentPage++;
+          render();
+          scrollToList();
 
         }
 
+      });
 
-        button.addEventListener(
-          "click",
-          function () {
-
-            currentPage =
-              page;
-
-            render();
-
-            scrollToList();
-
-          }
-        );
-
-
-        paginationControls.appendChild(
-          button
-        );
-
-      }
-
-
-      function addEllipsis() {
-
-        const span =
-          document.createElement("span");
-
-        span.className =
-          "pagination-ellipsis";
-
-        span.textContent =
-          "…";
-
-        paginationControls.appendChild(
-          span
-        );
-
-      }
+      paginationControls.appendChild(next);
 
     }
 
-
     function render() {
 
-      const filtered =
-        getFilteredRows();
-
-
-      const total =
-        filtered.length;
-
+      const filteredCategories =
+        getFilteredCategories();
 
       const totalPages =
         Math.max(
           1,
-          Math.ceil(
-            total / ITEMS_PER_PAGE
-          )
+          Math.ceil(filteredCategories.length / pageSize)
         );
 
-
-      if (
-        currentPage >
-        totalPages
-      ) {
-
-        currentPage =
-          totalPages;
-
+      if (currentPage > totalPages) {
+        currentPage = totalPages;
       }
-
 
       const start =
-        (currentPage - 1) *
-        ITEMS_PER_PAGE;
+        (currentPage - 1) * pageSize;
 
-
-      const end =
-        start +
-        ITEMS_PER_PAGE;
-
-
-      const visible =
-        filtered.slice(
+      const visibleCategories =
+        filteredCategories.slice(
           start,
-          end
+          start + pageSize
         );
 
+      renderCards(visibleCategories);
 
-      rows.forEach(function (row) {
-
-        row.style.display =
-          "none";
-
-      });
-
-
-      visible.forEach(
-        function (row, index) {
-
-          row.style.display =
-            "grid";
-
-          row.style.animation =
-            "none";
-
-          void row.offsetWidth;
-
-          row.style.animation =
-            "rowIn .28s ease both";
-
-          row.style.animationDelay =
-            `${index * 20}ms`;
-
-        }
+      noResults.classList.toggle(
+        "visible",
+        filteredCategories.length === 0
       );
 
-
-      if (countElement) {
-
-        countElement.textContent =
-          total === 1
-            ? "1 categoria"
-            : `${total} categorias`;
-
-      }
-
-
-      if (noResults) {
-
-        noResults.classList.toggle(
-          "show",
-          total === 0
-        );
-
-      }
-
-
-      if (paginationInfo) {
-
-        if (!total) {
-
-          paginationInfo.textContent =
-            "Nenhuma categoria encontrada";
-
-        } else {
-
-          paginationInfo.textContent =
-            `A mostrar ${start + 1}–${Math.min(end, total)} de ${total}`;
-
-        }
-
-      }
-
-
-      renderPagination(
-        totalPages
-      );
+      updateCounters(filteredCategories);
+      renderPagination(filteredCategories.length);
 
     }
 
+    function setFilter(filter) {
 
-    function scrollToList() {
+      activeFilter = filter;
+      currentPage = 1;
 
-      const list =
-        document.getElementById(
-          "categoriesList"
-        );
+      filterButtons.forEach(button => {
 
-
-      if (!list) {
-        return;
-      }
-
-
-      const position =
-        list.getBoundingClientRect().top +
-        window.scrollY -
-        90;
-
-
-      window.scrollTo({
-        top: Math.max(0, position),
-        behavior: "smooth"
-      });
-
-    }
-
-
-    /*
-       PESQUISA
-    */
-
-    if (searchInput) {
-
-      searchInput.addEventListener(
-        "input",
-        function () {
-
-          currentSearch =
-            this.value;
-
-          currentPage =
-            1;
-
-
-          if (searchClear) {
-
-            searchClear.style.display =
-              this.value
-                ? "inline-flex"
-                : "none";
-
-          }
-
-
-          render();
-
-        }
-      );
-
-    }
-
-
-    /*
-       LIMPAR PESQUISA
-    */
-
-    if (searchClear) {
-
-      searchClear.addEventListener(
-        "click",
-        function () {
-
-          if (!searchInput) {
-            return;
-          }
-
-
-          searchInput.value =
-            "";
-
-          currentSearch =
-            "";
-
-          currentPage =
-            1;
-
-          searchClear.style.display =
-            "none";
-
-          searchInput.focus();
-
-          render();
-
-        }
-      );
-
-    }
-
-
-    /*
-       FILTROS
-    */
-
-    filterButtons.forEach(
-      function (button) {
-
-        button.addEventListener(
-          "click",
-          function () {
-
-            filterButtons.forEach(
-              function (item) {
-
-                item.classList.remove(
-                  "active"
-                );
-
-              }
-            );
-
-
-            this.classList.add(
-              "active"
-            );
-
-
-            currentFilter =
-              this.dataset.filter;
-
-
-            currentPage =
-              1;
-
-
-            render();
-
-          }
-        );
-
-      }
-    );
-
-
-    /*
-       FALLBACK DE IMAGENS
-    */
-
-    const fallbackImage =
-      "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=800&q=85";
-
-
-    document
-      .querySelectorAll(
-        ".category-image img"
-      )
-      .forEach(function (image) {
-
-        image.addEventListener(
-          "error",
-          function () {
-
-            if (
-              this.dataset.fallbackUsed ===
-              "true"
-            ) {
-              return;
-            }
-
-
-            this.dataset.fallbackUsed =
-              "true";
-
-
-            this.src =
-              fallbackImage;
-
-          }
+        button.classList.toggle(
+          "active",
+          button.dataset.filter === filter
         );
 
       });
 
-
-    /*
-       PARALLAX DO HERO
-    */
-
-    if (
-      hero &&
-      window.matchMedia(
-        "(pointer: fine)"
-      ).matches &&
-      !window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches
-    ) {
-
-      const background =
-        hero.querySelector(
-          ".categories-hero-bg"
-        );
-
-
-      hero.addEventListener(
-        "mousemove",
-        function (event) {
-
-          if (!background) {
-            return;
-          }
-
-
-          const rect =
-            hero.getBoundingClientRect();
-
-
-          const x =
-            (
-              event.clientX -
-              rect.left
-            ) /
-            rect.width;
-
-
-          const y =
-            (
-              event.clientY -
-              rect.top
-            ) /
-            rect.height;
-
-
-          const moveX =
-            (x - .5) * 8;
-
-
-          const moveY =
-            (y - .5) * 6;
-
-
-          background.style.transform =
-            `scale(1.07) translate3d(${moveX}px, ${moveY}px, 0)`;
-
-        }
-      );
-
-
-      hero.addEventListener(
-        "mouseleave",
-        function () {
-
-          if (!background) {
-            return;
-          }
-
-
-          background.style.transform =
-            "scale(1.06) translate3d(0,0,0)";
-
-        }
-      );
+      render();
 
     }
 
+    searchInput.addEventListener("input", function () {
 
-    /*
-       INICIALIZAÇÃO
-    */
+      searchTerm = searchInput.value;
+      currentPage = 1;
+
+      updateSearchButton();
+      render();
+
+    });
+
+    searchInput.addEventListener("search", function () {
+
+      searchTerm = searchInput.value;
+      currentPage = 1;
+
+      updateSearchButton();
+      render();
+
+    });
+
+    searchClear.addEventListener("click", function () {
+
+      searchInput.value = "";
+      searchTerm = "";
+      currentPage = 1;
+
+      updateSearchButton();
+      render();
+
+      searchInput.focus();
+
+    });
+
+    filterButtons.forEach(button => {
+
+      button.addEventListener("click", function () {
+
+        setFilter(
+          button.dataset.filter
+        );
+
+      });
+
+    });
 
     render();
 
-  });
+  })();
 
 </script>
 
