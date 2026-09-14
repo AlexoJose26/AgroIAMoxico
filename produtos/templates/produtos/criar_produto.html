@@ -1687,543 +1687,390 @@
   (function () {
     "use strict";
 
-    const form = document.getElementById("productRegisterForm");
-    const categoryTrigger = document.getElementById("categoryTrigger");
-    const categoryDropdown = document.getElementById("categoryDropdown");
-    const categorySearch = document.getElementById("categorySearch");
-    const categoryOptions = document.getElementById("categoryOptions");
-    const categoryItems = Array.from(document.querySelectorAll(".category-option"));
-    const checkboxes = Array.from(document.querySelectorAll(".product-category-checkbox"));
-    const selectedCategories = document.getElementById("selectedCategories");
-    const categoryTriggerTitle = document.getElementById("categoryTriggerTitle");
-    const categoryTriggerSubtitle = document.getElementById("categoryTriggerSubtitle");
-    const visibleCategoryCount = document.getElementById("visibleCategoryCount");
-    const noCategoryResults = document.getElementById("noCategoryResults");
-    const clearCategories = document.getElementById("clearCategories");
-    const summaryCount = document.getElementById("summaryCount");
-    const summaryBar = document.getElementById("summaryBar");
-    const description = document.getElementById("id_descricao");
-    const descriptionCount = document.getElementById("descriptionCount");
-    const imageInput = document.getElementById("id_imagem");
-    const imageDropzone = document.getElementById("imageDropzone");
-    const uploadContent = document.getElementById("uploadContent");
-    const imagePreview = document.getElementById("imagePreview");
-    const previewImage = document.getElementById("previewImage");
-    const imagePreviewName = document.getElementById("imagePreviewName");
-    const submitButton = document.getElementById("submitButton");
-    const progressContainer = document.getElementById("progressContainer");
-    const progressFill = document.getElementById("progressFill");
-    const progressText = document.getElementById("progressText");
-    const progressPercent = document.getElementById("progressPercent");
+    function initProductRegister() {
+      const form = document.getElementById("productRegisterForm");
+      const categoryTrigger = document.getElementById("categoryTrigger");
+      const categoryDropdown = document.getElementById("categoryDropdown");
+      const categorySearch = document.getElementById("categorySearch");
+      const categoryOptions = document.getElementById("categoryOptions");
+      const categoryItems = Array.from(document.querySelectorAll(".category-option"));
+      const checkboxes = Array.from(document.querySelectorAll(".product-category-checkbox"));
+      const selectedCategories = document.getElementById("selectedCategories");
+      const categoryTriggerTitle = document.getElementById("categoryTriggerTitle");
+      const categoryTriggerSubtitle = document.getElementById("categoryTriggerSubtitle");
+      const visibleCategoryCount = document.getElementById("visibleCategoryCount");
+      const noCategoryResults = document.getElementById("noCategoryResults");
+      const clearCategories = document.getElementById("clearCategories");
+      const summaryCount = document.getElementById("summaryCount");
+      const summaryBar = document.getElementById("summaryBar");
+      const description = document.getElementById("id_descricao");
+      const descriptionCount = document.getElementById("descriptionCount");
+      const imageInput = document.getElementById("id_imagem");
+      const imageDropzone = document.getElementById("imageDropzone");
+      const uploadContent = document.getElementById("uploadContent");
+      const imagePreview = document.getElementById("imagePreview");
+      const previewImage = document.getElementById("previewImage");
+      const imagePreviewName = document.getElementById("imagePreviewName");
+      const submitButton = document.getElementById("submitButton");
+      const progressContainer = document.getElementById("progressContainer");
+      const progressFill = document.getElementById("progressFill");
+      const progressText = document.getElementById("progressText");
+      const progressPercent = document.getElementById("progressPercent");
 
-    const categoryOrder = [
-      "Milho",
-      "Arroz",
-      "Trigo",
-      "Feijão",
-      "Mandioca",
-      "Batata",
-      "Batata-doce",
-      "Tomate",
-      "Cebola",
-      "Alho",
-      "Hortaliças",
-      "Couve",
-      "Alface",
-      "Cenoura",
-      "Repolho",
-      "Pimento",
-      "Pepino",
-      "Abóbora",
-      "Berinjela",
-      "Ginguba / Amendoim",
-      "Soja",
-      "Girassol",
-      "Banana",
-      "Abacaxi",
-      "Manga",
-      "Mamão",
-      "Laranja",
-      "Limão",
-      "Uva",
-      "Cacau",
-      "Café",
-      "Cana-de-açúcar",
-      "Algodão"
-    ];
-
-    const categoryGroups = {
-      milho: ["cereal", "cereais"],
-      arroz: ["cereal", "cereais"],
-      trigo: ["cereal", "cereais"],
-      feijao: ["leguminosa", "leguminosas"],
-      mandioca: ["horticultura", "hortaliça", "hortaliças"],
-      batata: ["horticultura", "hortaliça", "hortaliças"],
-      "batata-doce": ["horticultura", "hortaliça", "hortaliças"],
-      tomate: ["horticultura", "hortaliça", "hortaliças"],
-      cebola: ["horticultura", "hortaliça", "hortaliças"],
-      alho: ["horticultura", "hortaliça", "hortaliças"],
-      hortalicas: ["horticultura", "hortaliça", "hortaliças"],
-      couve: ["horticultura", "hortaliça", "hortaliças"],
-      alface: ["horticultura", "hortaliça", "hortaliças"],
-      cenoura: ["horticultura", "hortaliça", "hortaliças"],
-      repolho: ["horticultura", "hortaliça", "hortaliças"],
-      pimento: ["horticultura", "hortaliça", "hortaliças"],
-      pepino: ["horticultura", "hortaliça", "hortaliças"],
-      abobora: ["horticultura", "hortaliça", "hortaliças"],
-      berinjela: ["horticultura", "hortaliça", "hortaliças"],
-      "ginguba / amendoim": ["oleaginosa", "oleaginosas", "ginguba", "amendoim"],
-      ginguba: ["oleaginosa", "oleaginosas", "ginguba", "amendoim"],
-      amendoim: ["oleaginosa", "oleaginosas", "ginguba", "amendoim"],
-      soja: ["oleaginosa", "oleaginosas"],
-      girassol: ["oleaginosa", "oleaginosas"],
-      banana: ["fruta", "frutas"],
-      abacaxi: ["fruta", "frutas"],
-      manga: ["fruta", "frutas"],
-      mamao: ["fruta", "frutas"],
-      laranja: ["fruta", "frutas"],
-      limao: ["fruta", "frutas"],
-      uva: ["fruta", "frutas"],
-      cacau: ["fruta", "frutas"],
-      cafe: ["fruta", "frutas"],
-      "cana-de-acucar": ["cereal", "cereais"],
-      algodao: ["oleaginosa", "oleaginosas"]
-    };
-
-    function normalizeText(value) {
-      return String(value || "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .trim();
-    }
-
-    function categoryRank(name) {
-      const normalized = normalizeText(name);
-
-      const exactIndex = categoryOrder.findIndex(function (item) {
-        return normalizeText(item) === normalized;
-      });
-
-      if (exactIndex !== -1) {
-        return exactIndex;
-      }
-
-      if (normalized === "ginguba" || normalized === "amendoim") {
-        return categoryOrder.findIndex(function (item) {
-          return normalizeText(item) === "ginguba / amendoim";
-        });
-      }
-
-      return 9999;
-    }
-
-    function escapeHtml(value) {
-      return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function prepareCategoryData() {
-      categoryItems.forEach(function (item) {
-        const name = item.dataset.categoryName || "";
-        const descriptionText = item.dataset.categoryDescription || "";
-        const normalizedName = normalizeText(name);
-        const normalizedDescription = normalizeText(descriptionText);
-        const aliases = categoryGroups[normalizedName] || [];
-
-        item.dataset.searchText = [
-          normalizedName,
-          normalizedDescription,
-          ...aliases.map(normalizeText)
-        ].join(" ");
-
-        item.dataset.rank = String(categoryRank(name));
-      });
-
-      const sortedItems = [...categoryItems].sort(function (a, b) {
-        const rankA = Number(a.dataset.rank);
-        const rankB = Number(b.dataset.rank);
-
-        if (rankA !== rankB) {
-          return rankA - rankB;
-        }
-
-        return normalizeText(a.dataset.categoryName)
-          .localeCompare(normalizeText(b.dataset.categoryName));
-      });
-
-      sortedItems.forEach(function (item) {
-        categoryOptions.appendChild(item);
-      });
-
-      if (noCategoryResults) {
-        categoryOptions.appendChild(noCategoryResults);
-      }
-    }
-
-    function getSelectedCheckboxes() {
-      return checkboxes.filter(function (checkbox) {
-        return checkbox.checked;
-      });
-    }
-
-    function updateCategoryInterface() {
-      const selected = getSelectedCheckboxes();
-      const total = checkboxes.length;
-
-      selectedCategories.innerHTML = "";
-
-      selected.forEach(function (checkbox) {
-        const name = checkbox.dataset.categoryName || "Categoria";
-        const chip = document.createElement("div");
-
-        chip.className = "selected-chip";
-
-        chip.innerHTML = `
-                <span>${escapeHtml(name)}</span>
-                <button type="button" aria-label="Remover ${escapeHtml(name)}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="m7 7 10 10M17 7 7 17"></path>
-                    </svg>
-                </button>
-            `;
-
-        chip.querySelector("button").addEventListener("click", function (event) {
-          event.stopPropagation();
-          checkbox.checked = false;
-          updateCategoryInterface();
-        });
-
-        selectedCategories.appendChild(chip);
-      });
-
-      summaryCount.textContent = selected.length;
-
-      const percentage = total
-        ? Math.min((selected.length / total) * 100, 100)
-        : 0;
-
-      summaryBar.style.width = percentage + "%";
-
-      if (selected.length === 0) {
-        categoryTriggerTitle.textContent = "Selecionar categorias";
-        categoryTriggerSubtitle.textContent = "Escolha uma ou mais categorias agrícolas";
-      } else if (selected.length === 1) {
-        categoryTriggerTitle.textContent = selected[0].dataset.categoryName;
-        categoryTriggerSubtitle.textContent = "1 categoria selecionada";
-      } else {
-        categoryTriggerTitle.textContent = selected.length + " categorias selecionadas";
-
-        const names = selected
-          .slice(0, 2)
-          .map(function (item) {
-            return item.dataset.categoryName;
-          });
-
-        categoryTriggerSubtitle.textContent =
-          names.join(", ") +
-          (selected.length > 2 ? " e mais..." : "");
-      }
-    }
-
-    function filterCategories() {
-      const term = normalizeText(categorySearch.value);
-      let visible = 0;
-
-      categoryItems.forEach(function (item) {
-        const searchText = item.dataset.searchText || "";
-        const match = !term || searchText.includes(term);
-
-        item.classList.toggle("hidden", !match);
-
-        if (match) {
-          visible++;
-        }
-      });
-
-      visibleCategoryCount.textContent = visible;
-
-      if (noCategoryResults) {
-        noCategoryResults.classList.toggle("show", visible === 0);
-      }
-    }
-
-    function toggleDropdown(force) {
-      const shouldOpen = typeof force === "boolean"
-        ? force
-        : !categoryDropdown.classList.contains("open");
-
-      categoryDropdown.classList.toggle("open", shouldOpen);
-      categoryTrigger.classList.toggle("active", shouldOpen);
-      categoryTrigger.setAttribute("aria-expanded", String(shouldOpen));
-
-      if (shouldOpen) {
-        setTimeout(function () {
-          categorySearch.focus();
-        }, 50);
-      }
-    }
-
-    function updateDescriptionCounter() {
-      if (!description || !descriptionCount) {
+      if (!categoryTrigger || !categoryDropdown || !categorySearch || !categoryOptions) {
         return;
       }
 
-      descriptionCount.textContent = (description.value || "").length;
-    }
-
-    function resetImagePreview() {
-      imagePreview.classList.remove("show");
-      previewImage.removeAttribute("src");
-      imagePreviewName.textContent = "";
-      uploadContent.style.display = "";
-    }
-
-    function handleImagePreview() {
-      if (
-        !imageInput ||
-        !imageInput.files ||
-        !imageInput.files.length
-      ) {
-        resetImagePreview();
-        return;
+      function normalizeText(value) {
+        return String(value || "")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .trim();
       }
 
-      const file = imageInput.files[0];
-
-      if (!file.type.startsWith("image/")) {
-        imageInput.value = "";
-        resetImagePreview();
-        alert("Selecione um ficheiro de imagem válido.");
-        return;
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
       }
 
-      if (file.size > 10 * 1024 * 1024) {
-        imageInput.value = "";
-        resetImagePreview();
-        alert("A imagem deve ter no máximo 10 MB.");
-        return;
-      }
-
-      const reader = new FileReader();
-
-      reader.onload = function (event) {
-        previewImage.src = event.target.result;
-        imagePreviewName.textContent = file.name;
-        imagePreview.classList.add("show");
-        uploadContent.style.display = "none";
+      const groupAliases = {
+        cereal: ["cereal", "cereais"],
+        "raiz e tuberculo": ["raiz e tuberculo", "raizes e tuberculos", "raiz", "tuberculo", "tuberculos"],
+        leguminosa: ["leguminosa", "leguminosas"],
+        oleaginosa: ["oleaginosa", "oleaginosas"],
+        fruta: ["fruta", "frutas"],
+        horticola: ["horticola", "horticolas", "hortalica", "hortalicas", "horticultura"],
+        "cultura industrial": ["cultura industrial", "culturas industriais", "industrial"],
+        especiaria: ["especiaria", "especiarias"]
       };
 
-      reader.readAsDataURL(file);
-    }
+      function detectGroups(item) {
+        const name = normalizeText(item.dataset.categoryName);
+        const descriptionText = normalizeText(item.dataset.categoryDescription);
+        const combined = name + " " + descriptionText;
+        const aliases = [];
 
-    function restoreSelectedCategories() {
-      const selectedValues = new Set();
-
-      checkboxes.forEach(function (checkbox) {
-        if (checkbox.checked) {
-          selectedValues.add(String(checkbox.value));
-        }
-      });
-
-      const possibleFormValues = [];
-
-      if (form) {
-        const categoryFields = form.querySelectorAll('input[name="categorias"]');
-
-        categoryFields.forEach(function (field) {
-          if (field.checked) {
-            possibleFormValues.push(String(field.value));
+        Object.keys(groupAliases).forEach(function (group) {
+          const words = groupAliases[group];
+          if (words.some(function (word) { return combined.includes(word); })) {
+            aliases.push.apply(aliases, words);
           }
         });
+
+        return aliases;
       }
 
-      if (possibleFormValues.length) {
-        checkboxes.forEach(function (checkbox) {
-          checkbox.checked = possibleFormValues.includes(String(checkbox.value));
+      function prepareCategoryData() {
+        categoryItems.forEach(function (item, index) {
+          const name = item.dataset.categoryName || "";
+          const descriptionText = item.dataset.categoryDescription || "";
+          const aliases = detectGroups(item);
+
+          item.dataset.categoryIndex = String(index);
+          item.dataset.searchText = normalizeText([
+            name,
+            descriptionText,
+            aliases.join(" ")
+          ].join(" "));
+        });
+
+        if (noCategoryResults) {
+          categoryOptions.appendChild(noCategoryResults);
+        }
+      }
+
+      function getSelectedCheckboxes() {
+        return checkboxes.filter(function (checkbox) {
+          return checkbox.checked;
         });
       }
 
-      updateCategoryInterface();
-    }
-
-    function validateForm() {
-      let valid = true;
-      const nameInput = document.getElementById("id_nome");
-
-      if (nameInput && !nameInput.value.trim()) {
-        nameInput.focus();
-        nameInput.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-        valid = false;
-      }
-
-      if (getSelectedCheckboxes().length === 0) {
-        if (valid) {
-          toggleDropdown(true);
-          categoryTrigger.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        }
-
-        categoryTrigger.style.borderColor = "rgba(200, 62, 77, .55)";
-
-        setTimeout(function () {
-          categoryTrigger.style.borderColor = "";
-        }, 1800);
-
-        valid = false;
-      }
-
-      if (
-        imageInput &&
-        imageInput.required &&
-        (!imageInput.files || !imageInput.files.length)
-      ) {
-        if (valid) {
-          imageDropzone.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        }
-
-        imageDropzone.style.borderColor = "rgba(200, 62, 77, .55)";
-
-        setTimeout(function () {
-          imageDropzone.style.borderColor = "";
-        }, 1800);
-
-        valid = false;
-      }
-
-      return valid;
-    }
-
-    function startProgress() {
-      progressContainer.classList.add("show");
-      submitButton.disabled = true;
-
-      const steps = [
-        [20, "Validando informações..."],
-        [45, "Organizando categorias..."],
-        [70, "Preparando imagem..."],
-        [90, "Finalizando cadastro..."]
-      ];
-
-      let index = 0;
-
-      const timer = setInterval(function () {
-        if (index >= steps.length) {
-          clearInterval(timer);
+      function updateCategoryInterface() {
+        if (!selectedCategories || !summaryCount || !summaryBar || !categoryTriggerTitle || !categoryTriggerSubtitle) {
           return;
         }
 
-        const progress = steps[index][0];
+        const selected = getSelectedCheckboxes();
+        const total = checkboxes.length;
 
-        progressFill.style.width = progress + "%";
-        progressPercent.textContent = progress + "%";
-        progressText.textContent = steps[index][1];
+        selectedCategories.innerHTML = "";
 
-        index++;
-      }, 180);
-    }
+        selected.forEach(function (checkbox) {
+          const name = checkbox.dataset.categoryName || "Categoria";
+          const chip = document.createElement("div");
+          chip.className = "selected-chip";
+          chip.innerHTML = '<span>' + escapeHtml(name) + '</span><button type="button" aria-label="Remover ' + escapeHtml(name) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m7 7 10 10M17 7 7 17"></path></svg></button>';
 
-    prepareCategoryData();
-    restoreSelectedCategories();
-    updateDescriptionCounter();
-    filterCategories();
+          const removeButton = chip.querySelector("button");
+          if (removeButton) {
+            removeButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              event.stopPropagation();
+              checkbox.checked = false;
+              updateCategoryInterface();
+            });
+          }
 
-    categoryTrigger.addEventListener("click", function () {
-      toggleDropdown();
-    });
+          selectedCategories.appendChild(chip);
+        });
 
-    categorySearch.addEventListener("input", filterCategories);
+        summaryCount.textContent = String(selected.length);
+        summaryBar.style.width = (total ? Math.min((selected.length / total) * 100, 100) : 0) + "%";
 
-    checkboxes.forEach(function (checkbox) {
-      checkbox.addEventListener("change", function () {
-        updateCategoryInterface();
-        categoryTrigger.style.borderColor = "";
+        if (selected.length === 0) {
+          categoryTriggerTitle.textContent = "Selecionar categorias";
+          categoryTriggerSubtitle.textContent = "Escolha uma ou mais categorias agrícolas";
+        } else if (selected.length === 1) {
+          categoryTriggerTitle.textContent = selected[0].dataset.categoryName || "Categoria";
+          categoryTriggerSubtitle.textContent = "1 categoria selecionada";
+        } else {
+          categoryTriggerTitle.textContent = selected.length + " categorias selecionadas";
+          const names = selected.slice(0, 2).map(function (item) {
+            return item.dataset.categoryName || "Categoria";
+          });
+          categoryTriggerSubtitle.textContent = names.join(", ") + (selected.length > 2 ? " e mais..." : "");
+        }
+      }
+
+      function filterCategories() {
+        const term = normalizeText(categorySearch.value);
+        let visible = 0;
+
+        categoryItems.forEach(function (item) {
+          const match = !term || (item.dataset.searchText || "").includes(term);
+          item.classList.toggle("hidden", !match);
+          if (match) visible++;
+        });
+
+        if (visibleCategoryCount) {
+          visibleCategoryCount.textContent = String(visible);
+        }
+
+        if (noCategoryResults) {
+          noCategoryResults.classList.toggle("show", visible === 0);
+        }
+      }
+
+      function toggleDropdown(force) {
+        const shouldOpen = typeof force === "boolean"
+          ? force
+          : !categoryDropdown.classList.contains("open");
+
+        categoryDropdown.classList.toggle("open", shouldOpen);
+        categoryTrigger.classList.toggle("active", shouldOpen);
+        categoryTrigger.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+
+        if (shouldOpen) {
+          filterCategories();
+          window.setTimeout(function () {
+            try { categorySearch.focus(); } catch (error) { }
+          }, 30);
+        }
+      }
+
+      function updateDescriptionCounter() {
+        if (description && descriptionCount) {
+          descriptionCount.textContent = String((description.value || "").length);
+        }
+      }
+
+      function resetImagePreview() {
+        if (!imagePreview || !previewImage || !imagePreviewName || !uploadContent) return;
+        imagePreview.classList.remove("show");
+        previewImage.removeAttribute("src");
+        imagePreviewName.textContent = "";
+        uploadContent.style.display = "";
+      }
+
+      function handleImagePreview() {
+        if (!imageInput || !imageInput.files || !imageInput.files.length) {
+          resetImagePreview();
+          return;
+        }
+
+        const file = imageInput.files[0];
+        if (!file.type.startsWith("image/")) {
+          imageInput.value = "";
+          resetImagePreview();
+          alert("Selecione um ficheiro de imagem válido.");
+          return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          imageInput.value = "";
+          resetImagePreview();
+          alert("A imagem deve ter no máximo 10 MB.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          if (previewImage && imagePreview && imagePreviewName && uploadContent) {
+            previewImage.src = event.target.result;
+            imagePreviewName.textContent = file.name;
+            imagePreview.classList.add("show");
+            uploadContent.style.display = "none";
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function validateForm() {
+        let valid = true;
+        const nameInput = document.getElementById("id_nome");
+
+        if (nameInput && !nameInput.value.trim()) {
+          nameInput.focus();
+          nameInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          valid = false;
+        }
+
+        if (getSelectedCheckboxes().length === 0) {
+          if (valid) {
+            toggleDropdown(true);
+            categoryTrigger.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          categoryTrigger.style.borderColor = "rgba(200, 62, 77, .55)";
+          window.setTimeout(function () { categoryTrigger.style.borderColor = ""; }, 1800);
+          valid = false;
+        }
+
+        if (imageInput && imageInput.required && (!imageInput.files || !imageInput.files.length)) {
+          if (valid && imageDropzone) {
+            imageDropzone.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          if (imageDropzone) {
+            imageDropzone.style.borderColor = "rgba(200, 62, 77, .55)";
+            window.setTimeout(function () { imageDropzone.style.borderColor = ""; }, 1800);
+          }
+          valid = false;
+        }
+
+        return valid;
+      }
+
+      function startProgress() {
+        if (!progressContainer || !submitButton || !progressFill || !progressText || !progressPercent) return;
+        progressContainer.classList.add("show");
+        submitButton.disabled = true;
+
+        const steps = [
+          [20, "Validando informações..."],
+          [45, "Organizando categorias..."],
+          [70, "Preparando imagem..."],
+          [90, "Finalizando cadastro..."]
+        ];
+
+        let index = 0;
+        const timer = window.setInterval(function () {
+          if (index >= steps.length) {
+            window.clearInterval(timer);
+            return;
+          }
+          progressFill.style.width = steps[index][0] + "%";
+          progressPercent.textContent = steps[index][0] + "%";
+          progressText.textContent = steps[index][1];
+          index++;
+        }, 180);
+      }
+
+      prepareCategoryData();
+      updateCategoryInterface();
+      updateDescriptionCounter();
+      filterCategories();
+
+      categoryTrigger.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleDropdown();
       });
-    });
 
-    clearCategories.addEventListener("click", function () {
+      categorySearch.addEventListener("input", filterCategories);
+      categorySearch.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
       checkboxes.forEach(function (checkbox) {
-        checkbox.checked = false;
-      });
-
-      updateCategoryInterface();
-    });
-
-    document.addEventListener("click", function (event) {
-      if (
-        !categoryDropdown.contains(event.target) &&
-        !categoryTrigger.contains(event.target)
-      ) {
-        toggleDropdown(false);
-      }
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        toggleDropdown(false);
-      }
-    });
-
-    if (description) {
-      description.addEventListener("input", updateDescriptionCounter);
-    }
-
-    if (imageInput) {
-      imageInput.addEventListener("change", handleImagePreview);
-    }
-
-    if (imageDropzone) {
-      ["dragenter", "dragover"].forEach(function (eventName) {
-        imageDropzone.addEventListener(eventName, function (event) {
-          event.preventDefault();
-          imageDropzone.classList.add("dragover");
+        checkbox.addEventListener("change", function () {
+          updateCategoryInterface();
+          categoryTrigger.style.borderColor = "";
         });
       });
 
-      ["dragleave", "drop"].forEach(function (eventName) {
-        imageDropzone.addEventListener(eventName, function (event) {
+      if (clearCategories) {
+        clearCategories.addEventListener("click", function (event) {
           event.preventDefault();
-          imageDropzone.classList.remove("dragover");
+          event.stopPropagation();
+          checkboxes.forEach(function (checkbox) { checkbox.checked = false; });
+          updateCategoryInterface();
         });
-      });
+      }
 
-      imageDropzone.addEventListener("drop", function (event) {
-        const files = event.dataTransfer.files;
-
-        if (!files.length || !imageInput) {
-          return;
-        }
-
-        try {
-          imageInput.files = files;
-          handleImagePreview();
-        } catch (error) {
-          return;
+      document.addEventListener("click", function (event) {
+        if (!categoryDropdown.contains(event.target) && !categoryTrigger.contains(event.target)) {
+          toggleDropdown(false);
         }
       });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          toggleDropdown(false);
+        }
+      });
+
+      if (description) {
+        description.addEventListener("input", updateDescriptionCounter);
+      }
+
+      if (imageInput) {
+        imageInput.addEventListener("change", handleImagePreview);
+      }
+
+      if (imageDropzone && imageInput) {
+        ["dragenter", "dragover"].forEach(function (eventName) {
+          imageDropzone.addEventListener(eventName, function (event) {
+            event.preventDefault();
+            imageDropzone.classList.add("dragover");
+          });
+        });
+
+        ["dragleave", "drop"].forEach(function (eventName) {
+          imageDropzone.addEventListener(eventName, function (event) {
+            event.preventDefault();
+            imageDropzone.classList.remove("dragover");
+          });
+        });
+
+        imageDropzone.addEventListener("drop", function (event) {
+          const files = event.dataTransfer.files;
+          if (!files.length) return;
+          try {
+            imageInput.files = files;
+            handleImagePreview();
+          } catch (error) { }
+        });
+      }
+
+      if (form) {
+        form.addEventListener("submit", function (event) {
+          if (!validateForm()) {
+            event.preventDefault();
+            return;
+          }
+          startProgress();
+        });
+      }
     }
 
-    if (form) {
-      form.addEventListener("submit", function (event) {
-        if (!validateForm()) {
-          event.preventDefault();
-          return;
-        }
-
-        startProgress();
-      });
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initProductRegister, { once: true });
+    } else {
+      initProductRegister();
     }
   })();
 </script>

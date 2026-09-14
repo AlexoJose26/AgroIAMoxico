@@ -1,0 +1,1510 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Categorias Agrícolas | AgroIA Moxico{% endblock %}
+
+{% block extra_css %}
+<style>
+  .categories-page {
+    --agro-950: #031f14;
+    --agro-900: #062a1c;
+    --agro-850: #0a3825;
+    --agro-800: #0d4d31;
+    --agro-700: #176b45;
+    --agro-600: #238a5a;
+    --gold: #d9a441;
+    --gold-light: #f0c866;
+    --cream: #f7f9f6;
+    --white: #ffffff;
+    --text: #173326;
+    --muted: #6c7d74;
+    --border: #e3eae5;
+    --soft: #f4f7f5;
+
+    min-height: 100vh;
+    padding: 30px 0 80px;
+
+    background:
+      radial-gradient(circle at 10% 15%,
+        rgba(35, 138, 90, .07),
+        transparent 28%),
+      radial-gradient(circle at 90% 45%,
+        rgba(217, 164, 65, .06),
+        transparent 24%),
+      #f8faf8;
+  }
+
+  .categories-container {
+    width: min(1380px, calc(100% - 40px));
+    margin: 0 auto;
+  }
+
+  /* =========================================================
+       HERO
+    ========================================================= */
+
+  .categories-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 390px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 52px;
+
+    border-radius: 30px;
+
+    background: linear-gradient(100deg,
+      rgba(3, 31, 20, .97) 0%,
+      rgba(6, 42, 28, .88) 48%,
+      rgba(6, 42, 28, .42) 100%),
+    url("{% static 'images/agroia-hero.jpg' %}") center / cover no-repeat;
+
+    isolation: isolate;
+  }
+
+  .categories-hero::before {
+    content: "";
+
+    position: absolute;
+    width: 330px;
+    height: 330px;
+
+    right: -110px;
+    top: -130px;
+
+    border: 1px solid rgba(255, 255, 255, .13);
+    border-radius: 50%;
+  }
+
+  .categories-hero::after {
+    content: "";
+
+    position: absolute;
+    width: 230px;
+    height: 230px;
+
+    right: 90px;
+    bottom: -170px;
+
+    border: 1px solid rgba(217, 164, 65, .18);
+    border-radius: 50%;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 9px 15px;
+
+    border: 1px solid rgba(217, 164, 65, .35);
+    border-radius: 999px;
+
+    background: rgba(217, 164, 65, .10);
+
+    color: #f5d887;
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+
+    margin-bottom: 20px;
+  }
+
+  .hero-badge i {
+    font-size: 13px;
+  }
+
+  .hero-title {
+    margin: 0;
+
+    color: #fff;
+
+    font-size: clamp(34px, 5vw, 58px);
+    line-height: 1.02;
+    font-weight: 900;
+    letter-spacing: -.045em;
+  }
+
+  .hero-title span {
+    color: var(--gold-light);
+  }
+
+  .hero-description {
+    max-width: 690px;
+
+    margin: 20px 0 28px;
+
+    color: rgba(255, 255, 255, .76);
+
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .hero-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: rgba(255, 255, 255, .85);
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .hero-meta-item i {
+    color: var(--gold-light);
+  }
+
+  .hero-decoration {
+    position: absolute;
+    z-index: 1;
+
+    right: 70px;
+    bottom: 55px;
+
+    width: 155px;
+    height: 155px;
+
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .10);
+  }
+
+  .hero-decoration::before,
+  .hero-decoration::after {
+    content: "";
+
+    position: absolute;
+    inset: 23px;
+
+    border-radius: 50%;
+    border: 1px solid rgba(217, 164, 65, .18);
+  }
+
+  .hero-decoration::after {
+    inset: 47px;
+    background: rgba(217, 164, 65, .06);
+  }
+
+  /* =========================================================
+       ESTATÍSTICAS
+    ========================================================= */
+
+  .stats-grid {
+    position: relative;
+    z-index: 5;
+
+    margin-top: -55px;
+    padding: 0 34px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .stat-card {
+    min-height: 125px;
+
+    display: flex;
+    align-items: center;
+    gap: 17px;
+
+    padding: 22px;
+
+    border: 1px solid rgba(226, 234, 229, .95);
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, .98);
+
+    box-shadow: 0 10px 25px rgba(21, 55, 40, .07);
+
+    transition:
+      transform .25s ease,
+      border-color .25s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(35, 138, 90, .25);
+  }
+
+  .stat-icon {
+    flex: 0 0 56px;
+
+    width: 56px;
+    height: 56px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 17px;
+
+    background: #edf7f1;
+    color: var(--agro-700);
+
+    font-size: 21px;
+  }
+
+  .stat-card:nth-child(2) .stat-icon {
+    background: #fff7e7;
+    color: #b67d16;
+  }
+
+  .stat-card:nth-child(3) .stat-icon {
+    background: #eef3f0;
+    color: var(--agro-800);
+  }
+
+  .stat-value {
+    display: block;
+
+    color: var(--agro-950);
+
+    font-size: 27px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+
+    margin-top: 7px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  /* =========================================================
+       SECÇÃO
+    ========================================================= */
+
+  .categories-section {
+    margin-top: 58px;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .heading-eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--agro-600);
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    margin: 0;
+
+    color: var(--agro-950);
+
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: -.035em;
+  }
+
+  .section-subtitle {
+    margin: 8px 0 0;
+
+    color: var(--muted);
+
+    font-size: 14px;
+  }
+
+  .categories-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 9px 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 999px;
+
+    background: #fff;
+    color: var(--agro-800);
+
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  /* =========================================================
+       TOOLBAR
+    ========================================================= */
+
+  .categories-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+    padding: 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, .88);
+  }
+
+  .search-box {
+    position: relative;
+
+    flex: 1;
+    max-width: 520px;
+  }
+
+  .search-box>i {
+    position: absolute;
+
+    left: 16px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #8b9a92;
+
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 46px;
+
+    padding: 0 45px;
+
+    border: 1px solid var(--border);
+    border-radius: 13px;
+
+    outline: none;
+
+    background: #f9fbfa;
+    color: var(--text);
+
+    font-size: 13px;
+
+    transition:
+      border-color .2s ease,
+      box-shadow .2s ease;
+  }
+
+  .search-input:focus {
+    border-color: rgba(35, 138, 90, .55);
+
+    box-shadow:
+      0 0 0 4px rgba(35, 138, 90, .08);
+  }
+
+  .clear-search {
+    position: absolute;
+
+    right: 13px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 25px;
+    height: 25px;
+
+    border: 0;
+    border-radius: 50%;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9efeb;
+    color: #607168;
+
+    cursor: pointer;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    height: 40px;
+
+    padding: 0 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    background: #fff;
+    color: #65766d;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+  }
+
+  .filter-btn:hover {
+    border-color: rgba(35, 138, 90, .35);
+    color: var(--agro-700);
+  }
+
+  .filter-btn.active {
+    border-color: var(--agro-700);
+
+    background: var(--agro-700);
+    color: #fff;
+  }
+
+  /* =========================================================
+       GRID
+    ========================================================= */
+
+  .categories-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+  }
+
+  .category-card {
+    position: relative;
+    overflow: hidden;
+
+    min-width: 0;
+
+    border: 1px solid #e1e9e4;
+    border-radius: 22px;
+
+    background: #fff;
+
+    box-shadow: 0 5px 18px rgba(20, 53, 38, .045);
+
+    transition:
+      transform .25s ease,
+      border-color .25s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-5px);
+
+    border-color: rgba(23, 107, 69, .25);
+  }
+
+  .category-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background:
+      linear-gradient(180deg,
+        var(--agro-600),
+        var(--gold));
+  }
+
+  .category-main {
+    padding: 24px 24px 20px 28px;
+  }
+
+  .category-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 15px;
+  }
+
+  .category-identity {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    min-width: 0;
+  }
+
+  .category-icon {
+    flex: 0 0 58px;
+
+    width: 58px;
+    height: 58px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 17px;
+
+    background:
+      linear-gradient(145deg,
+        #eaf7ef,
+        #f5f9f6);
+
+    color: var(--agro-700);
+
+    font-size: 23px;
+
+    border: 1px solid #dcece2;
+  }
+
+  .category-card:nth-child(2n) .category-icon {
+    background:
+      linear-gradient(145deg,
+        #fff7e4,
+        #fffaf0);
+
+    color: #b07b17;
+
+    border-color: #f1e2bd;
+  }
+
+  .category-number {
+    color: #a4b1aa;
+
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .08em;
+  }
+
+  .category-name {
+    margin: 3px 0 0;
+
+    color: var(--agro-950);
+
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: -.025em;
+  }
+
+  /* =========================================================
+       STATUS
+    ========================================================= */
+
+  .category-status {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 9px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  .category-status.active {
+    background: #eaf7ef;
+    color: #187348;
+  }
+
+  .category-status.inactive {
+    background: #f5eeee;
+    color: #9a4c4c;
+  }
+
+  .category-status::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+  }
+
+  /* =========================================================
+       DESCRIÇÃO
+    ========================================================= */
+
+  .category-description {
+    min-height: 62px;
+
+    margin: 19px 0 18px;
+
+    color: #65766d;
+
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* =========================================================
+       RODAPÉ DO CARD
+    ========================================================= */
+
+  .category-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-top: 17px;
+
+    border-top: 1px solid #edf1ee;
+  }
+
+  .product-count {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: #6c7d74;
+
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .product-count i {
+    color: var(--agro-600);
+  }
+
+  /* =========================================================
+       BOTÃO VISUALIZAR
+    ========================================================= */
+
+  .category-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .category-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 38px;
+
+    padding: 0 16px;
+
+    border: 1px solid var(--agro-700);
+    border-radius: 10px;
+
+    background: var(--agro-700);
+    color: #fff;
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+      background .2s ease,
+      border-color .2s ease,
+      transform .2s ease,
+      box-shadow .2s ease;
+  }
+
+  .category-action:hover {
+    background: var(--agro-800);
+    border-color: var(--agro-800);
+    color: #fff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+      0 7px 16px rgba(23, 107, 69, .18);
+  }
+
+  .category-action i {
+    font-size: 12px;
+  }
+
+  /* =========================================================
+       EMPTY STATE
+    ========================================================= */
+
+  .empty-state {
+    display: none;
+
+    grid-column: 1 / -1;
+
+    padding: 65px 25px;
+
+    text-align: center;
+
+    border: 1px dashed #ccd8d1;
+    border-radius: 22px;
+
+    background: #fff;
+  }
+
+  .empty-state i {
+    display: inline-grid;
+    place-items: center;
+
+    width: 64px;
+    height: 64px;
+
+    margin-bottom: 15px;
+
+    border-radius: 50%;
+
+    background: #edf5f0;
+    color: var(--agro-700);
+
+    font-size: 22px;
+  }
+
+  .empty-state h3 {
+    margin: 0 0 7px;
+
+    color: var(--agro-950);
+
+    font-size: 18px;
+  }
+
+  .empty-state p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+  }
+
+  /* =========================================================
+       RESPONSIVO
+    ========================================================= */
+
+  @media (max-width: 1000px) {
+    .categories-hero {
+      padding: 42px;
+    }
+
+    .hero-decoration {
+      right: 25px;
+      opacity: .5;
+    }
+
+    .categories-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .categories-container {
+      width: min(100% - 24px, 1380px);
+    }
+
+    .categories-hero {
+      min-height: 370px;
+
+      padding: 34px 25px;
+
+      border-radius: 23px;
+    }
+
+    .hero-decoration {
+      display: none;
+    }
+
+    .stats-grid {
+      margin-top: -35px;
+
+      padding: 0 12px;
+
+      grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+      min-height: 95px;
+    }
+
+    .categories-section {
+      margin-top: 42px;
+    }
+
+    .section-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .categories-toolbar {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .search-box {
+      max-width: none;
+    }
+
+    .filter-group {
+      width: 100%;
+    }
+
+    .filter-btn {
+      flex: 1;
+    }
+
+    .category-footer {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .category-actions {
+      width: 100%;
+    }
+
+    .category-action {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 470px) {
+    .hero-title {
+      font-size: 35px;
+    }
+
+    .category-top {
+      flex-direction: column;
+    }
+
+    .category-status {
+      align-self: flex-start;
+    }
+
+    .category-identity {
+      align-items: flex-start;
+    }
+
+    .category-icon {
+      flex-basis: 50px;
+
+      width: 50px;
+      height: 50px;
+    }
+
+    .category-name {
+      font-size: 17px;
+    }
+
+    .category-actions {
+      width: 100%;
+    }
+
+    .category-action {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="categories-page">
+
+  <div class="categories-container">
+
+    <!-- =====================================================
+             HERO
+        ====================================================== -->
+
+    <section class="categories-hero">
+
+      <div class="hero-content">
+
+        <div class="hero-badge">
+          <i class="fas fa-seedling"></i>
+          AgroIA Moxico
+        </div>
+
+        <h1 class="hero-title">
+          Categorias <span>Agrícolas</span>
+        </h1>
+
+        <p class="hero-description">
+          Organize e classifique as culturas agrícolas de forma
+          simples, inteligente e estruturada. Explore as categorias
+          oficiais utilizadas pelo sistema AgroIA Moxico.
+        </p>
+
+        <div class="hero-meta">
+
+          <span class="hero-meta-item">
+            <i class="fas fa-layer-group"></i>
+            {{ total_categorias }} categorias registadas
+          </span>
+
+          <span class="hero-meta-item">
+            <i class="fas fa-circle-check"></i>
+            {{ categorias_ativas }} ativas
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="hero-decoration"></div>
+
+    </section>
+
+
+    <!-- =====================================================
+             ESTATÍSTICAS
+        ====================================================== -->
+
+    <section class="stats-grid">
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          <i class="fas fa-layer-group"></i>
+        </div>
+
+        <div>
+          <span class="stat-value">
+            {{ total_categorias }}
+          </span>
+
+          <span class="stat-label">
+            Total de categorias
+          </span>
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          <i class="fas fa-circle-check"></i>
+        </div>
+
+        <div>
+          <span class="stat-value">
+            {{ categorias_ativas }}
+          </span>
+
+          <span class="stat-label">
+            Categorias ativas
+          </span>
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          <i class="fas fa-wheat-awn"></i>
+        </div>
+
+        <div>
+          <span class="stat-value">
+            {{ total_produtos_classificados }}
+          </span>
+
+          <span class="stat-label">
+            Produtos classificados
+          </span>
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- =====================================================
+             CATEGORIAS
+        ====================================================== -->
+
+    <section class="categories-section">
+
+      <div class="section-heading">
+
+        <div>
+
+          <span class="heading-eyebrow">
+            Classificação agrícola
+          </span>
+
+          <h2 class="section-title">
+            Categorias disponíveis
+          </h2>
+
+          <p class="section-subtitle">
+            Consulte e explore as categorias utilizadas
+            no sistema AgroIA Moxico.
+          </p>
+
+        </div>
+
+        <span class="categories-count">
+
+          <i class="fas fa-list"></i>
+
+          <span id="visibleCount">
+            {{ total_categorias }}
+          </span>
+
+          encontradas
+
+        </span>
+
+      </div>
+
+
+      <!-- =================================================
+                 PESQUISA E FILTROS
+            ================================================== -->
+
+      <div class="categories-toolbar">
+
+        <div class="search-box">
+
+          <i class="fas fa-search"></i>
+
+          <input type="search" id="categorySearch" class="search-input" placeholder="Pesquisar por nome ou descrição..."
+            autocomplete="off">
+
+          <button type="button" id="clearSearch" class="clear-search" aria-label="Limpar pesquisa">
+            <i class="fas fa-times"></i>
+          </button>
+
+        </div>
+
+
+        <div class="filter-group">
+
+          <button type="button" class="filter-btn active" data-filter="all">
+            Todas
+          </button>
+
+          <button type="button" class="filter-btn" data-filter="active">
+            Ativas
+          </button>
+
+          <button type="button" class="filter-btn" data-filter="inactive">
+            Inativas
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+                 GRID DE CATEGORIAS
+            ================================================== -->
+
+      <div class="categories-grid" id="categoriesGrid">
+
+        {% for categoria in categorias %}
+
+        <article class="category-card" data-name="{{ categoria.nome|escapejs }}"
+          data-description="{{ categoria.descricao|default:''|escapejs }}"
+          data-status="{% if categoria.ativo %}active{% else %}inactive{% endif %}">
+
+          <div class="category-main">
+
+            <div class="category-top">
+
+              <div class="category-identity">
+
+                <div class="category-icon">
+
+                  {% if "Cereal" in categoria.nome %}
+                  <i class="fas fa-wheat-awn"></i>
+
+                  {% elif "Frutas" in categoria.nome %}
+                  <i class="fas fa-apple-whole"></i>
+
+                  {% elif "Raízes" in categoria.nome %}
+                  <i class="fas fa-carrot"></i>
+
+                  {% elif "Leguminosas" in categoria.nome %}
+                  <i class="fas fa-seedling"></i>
+
+                  {% elif "Oleaginosas" in categoria.nome %}
+                  <i class="fas fa-sun"></i>
+
+                  {% elif "Hortícolas" in categoria.nome %}
+                  <i class="fas fa-leaf"></i>
+
+                  {% elif "Industriais" in categoria.nome %}
+                  <i class="fas fa-industry"></i>
+
+                  {% elif "Especiarias" in categoria.nome %}
+                  <i class="fas fa-mortar-pestle"></i>
+
+                  {% else %}
+                  <i class="fas fa-leaf"></i>
+                  {% endif %}
+
+                </div>
+
+
+                <div>
+
+                  <div class="category-number">
+                    CATEGORIA {{ forloop.counter|stringformat:"02d" }}
+                  </div>
+
+                  <h3 class="category-name">
+                    {{ categoria.nome }}
+                  </h3>
+
+                </div>
+
+              </div>
+
+
+              <span class="category-status {% if categoria.ativo %}active{% else %}inactive{% endif %}">
+
+                {% if categoria.ativo %}
+                Ativa
+                {% else %}
+                Inativa
+                {% endif %}
+
+              </span>
+
+            </div>
+
+
+            <p class="category-description">
+
+              {% if categoria.descricao %}
+              {{ categoria.descricao }}
+              {% else %}
+              Esta categoria ainda não possui uma
+              descrição registada.
+              {% endif %}
+
+            </p>
+
+
+            <div class="category-footer">
+
+              <div class="product-count">
+
+                <i class="fas fa-boxes-stacked"></i>
+
+                <span>
+
+                  {{ categoria.produtos_count|default:0 }}
+
+                  {% if categoria.produtos_count == 1 %}
+                  produto
+                  {% else %}
+                  produtos
+                  {% endif %}
+
+                </span>
+
+              </div>
+
+
+              <!-- ÚNICO BOTÃO DISPONÍVEL -->
+
+              <div class="category-actions">
+
+                <a href="{% url 'categorias:detalhe_categoria' categoria.pk %}" class="category-action">
+
+                  <i class="fas fa-eye"></i>
+
+                  Visualizar
+
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </article>
+
+
+        {% empty %}
+
+        <div class="empty-state" style="display: block;">
+
+          <i class="fas fa-folder-open"></i>
+
+          <h3>
+            Nenhuma categoria encontrada
+          </h3>
+
+          <p>
+            Ainda não existem categorias registadas no sistema.
+          </p>
+
+        </div>
+
+        {% endfor %}
+
+
+        <!-- Estado quando a pesquisa não encontra resultados -->
+
+        <div class="empty-state" id="searchEmptyState">
+
+          <i class="fas fa-magnifying-glass"></i>
+
+          <h3>
+            Nenhuma categoria encontrada
+          </h3>
+
+          <p>
+            Tente pesquisar por outro nome ou descrição.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput =
+      document.getElementById("categorySearch");
+
+    const clearSearch =
+      document.getElementById("clearSearch");
+
+    const visibleCount =
+      document.getElementById("visibleCount");
+
+    const searchEmptyState =
+      document.getElementById("searchEmptyState");
+
+    const filterButtons =
+      document.querySelectorAll(".filter-btn");
+
+    const categoryCards =
+      document.querySelectorAll(".category-card");
+
+
+    let currentFilter = "all";
+
+
+    function normalizeText(value) {
+
+      return value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    }
+
+
+    function updateCategories() {
+
+      const query =
+        normalizeText(
+          searchInput.value.trim()
+        );
+
+
+      let visible = 0;
+
+
+      categoryCards.forEach(function (card) {
+
+        const name =
+          normalizeText(
+            card.dataset.name || ""
+          );
+
+
+        const description =
+          normalizeText(
+            card.dataset.description || ""
+          );
+
+
+        const status =
+          card.dataset.status || "";
+
+
+        const matchesSearch =
+          !query ||
+          name.includes(query) ||
+          description.includes(query);
+
+
+        const matchesFilter =
+          currentFilter === "all" ||
+          status === currentFilter;
+
+
+        const shouldShow =
+          matchesSearch &&
+          matchesFilter;
+
+
+        card.style.display =
+          shouldShow ? "" : "block";
+
+
+        if (shouldShow) {
+          visible++;
+        }
+
+      });
+
+
+      visibleCount.textContent = visible;
+
+
+      if (query.length > 0) {
+
+        clearSearch.style.display = "flex";
+
+      } else {
+
+        clearSearch.style.display = "none";
+
+      }
+
+
+      if (
+        visible === 0 &&
+        categoryCards.length > 0
+      ) {
+
+        searchEmptyState.style.display = "block";
+
+      } else {
+
+        searchEmptyState.style.display = "none";
+
+      }
+
+    }
+
+
+    /* =========================================================
+       PESQUISA
+    ========================================================= */
+
+    searchInput.addEventListener(
+      "input",
+      updateCategories
+    );
+
+
+    clearSearch.addEventListener(
+      "click",
+      function () {
+
+        searchInput.value = "";
+
+        searchInput.focus();
+
+        updateCategories();
+
+      }
+    );
+
+
+    /* =========================================================
+       FILTROS
+    ========================================================= */
+
+    filterButtons.forEach(
+      function (button) {
+
+        button.addEventListener(
+          "click",
+          function () {
+
+            filterButtons.forEach(
+              function (item) {
+
+                item.classList.remove(
+                  "active"
+                );
+
+              }
+            );
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            currentFilter =
+              button.dataset.filter;
+
+
+            updateCategories();
+
+          }
+        );
+
+      }
+    );
+
+
+    /* =========================================================
+       INICIALIZAÇÃO
+    ========================================================= */
+
+    updateCategories();
+
+  });
+</script>
+
+{% endblock %}
