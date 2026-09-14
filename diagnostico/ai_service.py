@@ -6,51 +6,33 @@ import requests
 from PIL import Image, UnidentifiedImageError
 
 
-# ============================================================
-# CONFIGURAÇÕES
-# ============================================================
-
 MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10 MB
 
-# Em produção, a Vercel deverá usar a variável:
-# AGROIA_API_URL=https://agroia-api.onrender.com/analisar
-#
-# O endereço local continua como fallback para desenvolvimento.
+
 API_URL = os.getenv(
     "AGROIA_API_URL",
     "http://127.0.0.1:8001/analisar",
 ).strip().rstrip("/")
 
+
 API_TIMEOUT = int(
     os.getenv(
         "AGROIA_API_TIMEOUT",
-        "120",
+        "30",
     )
 )
 
 
-# ============================================================
-# NORMALIZAR TEXTO
-# ============================================================
-
 def normalizar_texto(valor):
-    """
-    Converte um valor para texto normalizado.
-    """
+
     if valor is None:
         return ""
 
     return str(valor).strip().lower()
 
 
-# ============================================================
-# OBTER NOME DO PRODUTO
-# ============================================================
-
 def obter_nome_produto(produto):
-    """
-    Obtém o nome do produto Django.
-    """
+
     if produto is None:
         return ""
 
@@ -63,22 +45,14 @@ def obter_nome_produto(produto):
     return normalizar_texto(nome)
 
 
-# ============================================================
-# NORMALIZAR CULTURA
-# ============================================================
-
 def normalizar_cultura(valor):
-    """
-    Converte diferentes formas de identificação de uma
-    cultura para um nome padrão utilizado pelo sistema.
-    """
 
     texto = normalizar_texto(valor)
 
     if not texto:
         return ""
 
-    # Remover caracteres utilizados nas classes da IA
+
     texto = (
         texto
         .replace("_", " ")
@@ -88,14 +62,11 @@ def normalizar_cultura(valor):
         .strip()
     )
 
-    # Remover espaços duplicados
+
     texto = " ".join(texto.split())
 
     equivalencias = {
 
-        # ----------------------------------------------------
-        # MILHO
-        # ----------------------------------------------------
         "milho": "milho",
         "corn": "milho",
         "maize": "milho",
@@ -103,85 +74,52 @@ def normalizar_cultura(valor):
         "corn maize healthy": "milho",
         "corn maize common rust": "milho",
 
-        # ----------------------------------------------------
-        # TOMATE
-        # ----------------------------------------------------
+
         "tomate": "tomate",
         "tomato": "tomate",
 
-        # ----------------------------------------------------
-        # BATATA
-        # ----------------------------------------------------
+
         "batata": "batata",
         "potato": "batata",
 
-        # ----------------------------------------------------
-        # MAÇÃ
-        # ----------------------------------------------------
         "maca": "maçã",
         "maçã": "maçã",
         "apple": "maçã",
 
-        # ----------------------------------------------------
-        # UVA
-        # ----------------------------------------------------
         "uva": "uva",
         "grape": "uva",
 
-        # ----------------------------------------------------
-        # PÊSSEGO
-        # ----------------------------------------------------
         "pessego": "pêssego",
         "pêssego": "pêssego",
         "peach": "pêssego",
 
-        # ----------------------------------------------------
-        # CEREJA
-        # ----------------------------------------------------
         "cereja": "cereja",
         "cherry": "cereja",
 
-        # ----------------------------------------------------
-        # LARANJA
-        # ----------------------------------------------------
         "laranja": "laranja",
         "orange": "laranja",
 
-        # ----------------------------------------------------
-        # SOJA
-        # ----------------------------------------------------
         "soja": "soja",
         "soybean": "soja",
 
-        # ----------------------------------------------------
-        # MORANGO
-        # ----------------------------------------------------
         "morango": "morango",
         "strawberry": "morango",
 
-        # ----------------------------------------------------
-        # FRAMBOESA
-        # ----------------------------------------------------
+
         "framboesa": "framboesa",
         "raspberry": "framboesa",
 
-        # ----------------------------------------------------
-        # MIRTILO
-        # ----------------------------------------------------
+
         "mirtilo": "mirtilo",
         "blueberry": "mirtilo",
 
-        # ----------------------------------------------------
-        # PIMENTÃO
-        # ----------------------------------------------------
+
         "pimentao": "pimentão",
         "pimentão": "pimentão",
         "pepper": "pimentão",
         "pepper bell": "pimentão",
 
-        # ----------------------------------------------------
-        # ABÓBORA
-        # ----------------------------------------------------
+
         "abobora": "abóbora",
         "abóbora": "abóbora",
         "squash": "abóbora",
@@ -193,23 +131,7 @@ def normalizar_cultura(valor):
     )
 
 
-# ============================================================
-# IDENTIFICAR PRODUTO DA CLASSE
-# ============================================================
-
 def identificar_produto_da_classe(classe):
-    """
-    Identifica a cultura/produto a partir da classe retornada
-    pela API de inteligência artificial.
-
-    Exemplos:
-
-        Corn_(maize)___healthy
-        -> milho
-
-        Tomato___Late_blight
-        -> tomate
-    """
 
     if not classe:
         return ""
@@ -226,27 +148,12 @@ def identificar_produto_da_classe(classe):
 
     return normalizar_cultura(produto)
 
-
-# ============================================================
-# IDENTIFICAR CULTURA
-# ============================================================
-
 def identificar_cultura_da_classe(classe):
-    """
-    Alias para identificação da cultura.
-    """
+
     return identificar_produto_da_classe(classe)
 
-
-# ============================================================
-# VALIDAR PRODUTO COM CLASSE
-# ============================================================
-
 def validar_produto_com_classe(produto, classe):
-    """
-    Verifica se o produto selecionado no Django corresponde
-    à cultura identificada pela IA.
-    """
+
 
     if produto is None or not classe:
         return {
@@ -266,8 +173,6 @@ def validar_produto_com_classe(produto, classe):
         classe
     )
 
-    # Se não conseguirmos determinar algum dos dois,
-    # não bloqueamos o diagnóstico.
     if not nome_produto or not produto_detectado:
         return {
             "corresponde": True,
@@ -297,23 +202,12 @@ def validar_produto_com_classe(produto, classe):
     }
 
 
-# ============================================================
-# VALIDAR IMAGEM
-# ============================================================
-
 def validar_imagem(image_file):
-    """
-    Valida a imagem antes de enviá-la para a API externa.
-    """
 
     if image_file is None:
         raise ValueError(
             "Nenhuma imagem foi fornecida para análise."
         )
-
-    # --------------------------------------------------------
-    # TAMANHO
-    # --------------------------------------------------------
 
     try:
         tamanho = getattr(
@@ -381,10 +275,6 @@ def validar_imagem(image_file):
             "no produto."
         ) from exc
 
-    # --------------------------------------------------------
-    # CONVERTER PARA RGB
-    # --------------------------------------------------------
-
     try:
 
         imagem = imagem.convert("RGB")
@@ -399,14 +289,8 @@ def validar_imagem(image_file):
     return imagem
 
 
-# ============================================================
-# OBTER BYTES DA IMAGEM
-# ============================================================
 
 def obter_bytes_imagem(image_file):
-    """
-    Obtém os bytes reais da imagem.
-    """
 
     if image_file is None:
         raise ValueError(
@@ -456,10 +340,6 @@ def obter_bytes_imagem(image_file):
     return dados
 
 
-# ============================================================
-# DETERMINAR MIME TYPE
-# ============================================================
-
 def obter_content_type(nome_arquivo):
     """
     Determina o tipo MIME da imagem.
@@ -493,23 +373,11 @@ def obter_content_type(nome_arquivo):
     return "image/jpeg"
 
 
-# ============================================================
-# ENVIAR IMAGEM PARA A API EXTERNA
-# ============================================================
 
 def enviar_para_api(
     imagem_bytes,
     nome_arquivo="imagem.jpg",
 ):
-    """
-    Envia a imagem para a API externa AgroIA.
-
-    Produção:
-        https://agroia-api.onrender.com/analisar
-
-    Desenvolvimento:
-        http://127.0.0.1:8001/analisar
-    """
 
     if not imagem_bytes:
         raise ValueError(
@@ -555,6 +423,7 @@ def enviar_para_api(
         raise ValueError(
             "A API de inteligência artificial demorou "
             "demasiado tempo para responder. "
+            "O tempo máximo de espera é de 30 segundos. "
             "Tente novamente."
         ) from exc
 
@@ -565,9 +434,6 @@ def enviar_para_api(
             "de inteligência artificial."
         ) from exc
 
-    # ========================================================
-    # ERROS HTTP
-    # ========================================================
 
     if resposta.status_code >= 400:
 
@@ -628,10 +494,6 @@ def enviar_para_api(
             )
         )
 
-    # ========================================================
-    # JSON
-    # ========================================================
-
     try:
 
         dados = resposta.json()
@@ -653,12 +515,7 @@ def enviar_para_api(
     return dados
 
 
-# ============================================================
-# EXTRAIR RESULTADO DA API
-# ============================================================
-
 def extrair_resultado_api(dados_api):
-  
 
     if not dados_api:
 
@@ -703,18 +560,10 @@ def extrair_resultado_api(dados_api):
     return resultado
 
 
-# ============================================================
-# NORMALIZAR RESULTADO DA API
-# ============================================================
-
 def normalizar_resultado_api(
     resultado,
     produto=None,
 ):
-    """
-    Converte o resultado da API externa para o formato
-    utilizado pelo sistema Django.
-    """
 
     if not resultado:
 
@@ -722,10 +571,6 @@ def normalizar_resultado_api(
             "A inteligência artificial não retornou "
             "nenhum resultado."
         )
-
-    # --------------------------------------------------------
-    # CAMPOS PRINCIPAIS
-    # --------------------------------------------------------
 
     classe = str(
         resultado.get(
@@ -759,9 +604,6 @@ def normalizar_resultado_api(
         or ""
     ).strip()
 
-    # --------------------------------------------------------
-    # CONFIANÇA
-    # --------------------------------------------------------
 
     try:
 
@@ -787,9 +629,6 @@ def normalizar_resultado_api(
         ),
     )
 
-    # --------------------------------------------------------
-    # PRINCIPAIS PREVISÕES
-    # --------------------------------------------------------
 
     principais_previsoes = resultado.get(
         "principais_previsoes",
@@ -802,9 +641,6 @@ def normalizar_resultado_api(
     ):
         principais_previsoes = []
 
-    # --------------------------------------------------------
-    # NORMALIZAÇÃO
-    # --------------------------------------------------------
 
     tipo_lower = normalizar_texto(
         tipo
@@ -813,10 +649,6 @@ def normalizar_resultado_api(
     problema_lower = normalizar_texto(
         problema
     )
-
-    # --------------------------------------------------------
-    # DETERMINAR RESULTADO
-    # --------------------------------------------------------
 
     if (
         "healthy" in problema_lower
@@ -872,10 +704,6 @@ def normalizar_resultado_api(
 
         resultado_final = "indeterminado"
 
-    # --------------------------------------------------------
-    # DOENÇA
-    # --------------------------------------------------------
-
     if resultado_final == "saudavel":
 
         doenca = ""
@@ -888,9 +716,6 @@ def normalizar_resultado_api(
 
         doenca = ""
 
-    # --------------------------------------------------------
-    # NOME DO PRODUTO
-    # --------------------------------------------------------
 
     produto_nome = (
         produto_detectado
@@ -898,9 +723,6 @@ def normalizar_resultado_api(
         or "o produto analisado"
     )
 
-    # --------------------------------------------------------
-    # DESCRIÇÃO
-    # --------------------------------------------------------
 
     if resultado_final == "saudavel":
 
@@ -923,10 +745,6 @@ def normalizar_resultado_api(
             "determinar com precisão o problema presente "
             "na imagem."
         )
-
-    # --------------------------------------------------------
-    # RECOMENDAÇÕES
-    # --------------------------------------------------------
 
     if resultado_final == "saudavel":
 
@@ -959,24 +777,13 @@ def normalizar_resultado_api(
             "orientação técnica quando necessário."
         )
 
-    # --------------------------------------------------------
-    # CONFIANÇA BAIXA
-    # --------------------------------------------------------
 
     baixa_confianca = confianca < 60.0
-
-    # --------------------------------------------------------
-    # COMPATIBILIDADE
-    # --------------------------------------------------------
 
     compatibilidade = validar_produto_com_classe(
         produto,
         classe,
     )
-
-    # --------------------------------------------------------
-    # RESULTADO FINAL
-    # --------------------------------------------------------
 
     return {
         "classe": classe,
@@ -1015,41 +822,10 @@ def normalizar_resultado_api(
     }
 
 
-# ============================================================
-# FUNÇÃO PRINCIPAL — ANALISAR IMAGEM
-# ============================================================
-
 def analisar_imagem(
     image_file=None,
     produto=None,
 ):
-    """
-    Função principal utilizada pela views.py.
-
-    Fluxo:
-
-        Produto Django
-              ↓
-        Imagem cadastrada
-              ↓
-        Validação
-              ↓
-        Bytes da imagem
-              ↓
-        API externa Render
-              ↓
-        Modelo IA
-              ↓
-        Resultado JSON
-              ↓
-        Normalização
-              ↓
-        Django
-    """
-
-    # ========================================================
-    # OBTER IMAGEM DO PRODUTO
-    # ========================================================
 
     if produto is not None:
 
@@ -1068,9 +844,6 @@ def analisar_imagem(
 
         image_file = produto_imagem
 
-    # ========================================================
-    # VERIFICAR IMAGEM
-    # ========================================================
 
     if image_file is None:
 
@@ -1079,25 +852,14 @@ def analisar_imagem(
             "o diagnóstico."
         )
 
-    # ========================================================
-    # VALIDAR IMAGEM
-    # ========================================================
-
     validar_imagem(
         image_file
     )
 
-    # ========================================================
-    # OBTER BYTES
-    # ========================================================
 
     imagem_bytes = obter_bytes_imagem(
         image_file
     )
-
-    # ========================================================
-    # NOME DO ARQUIVO
-    # ========================================================
 
     nome_arquivo = "imagem.jpg"
 
@@ -1118,26 +880,17 @@ def analisar_imagem(
     if not nome_arquivo:
         nome_arquivo = "imagem.jpg"
 
-    # ========================================================
-    # ENVIAR PARA API EXTERNA
-    # ========================================================
 
     dados_api = enviar_para_api(
         imagem_bytes,
         nome_arquivo,
     )
 
-    # ========================================================
-    # EXTRAIR RESULTADO
-    # ========================================================
 
     resultado_api = extrair_resultado_api(
         dados_api
     )
 
-    # ========================================================
-    # NORMALIZAR RESULTADO
-    # ========================================================
 
     resultado_final = normalizar_resultado_api(
         resultado_api,
